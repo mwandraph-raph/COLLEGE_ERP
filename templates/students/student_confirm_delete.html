@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Delete Student</h2>
+
+<hr>
+
+<p>
+    You are about to permanently delete this student.
+</p>
+
+<table>
+
+    <tr>
+        <th>Admission Number</th>
+        <td>{{ student.admission_no }}</td>
+    </tr>
+
+    <tr>
+        <th>First Name</th>
+        <td>{{ student.first_name }}</td>
+    </tr>
+
+    <tr>
+        <th>Last Name</th>
+        <td>{{ student.last_name }}</td>
+    </tr>
+
+    <tr>
+        <th>Programme</th>
+        <td>{{ student.programme }}</td>
+    </tr>
+
+    <tr>
+        <th>Phone</th>
+        <td>{{ student.phone }}</td>
+    </tr>
+
+</table>
+
+<br>
+
+<p>
+
+<strong style="color:red;">
+
+This action cannot be undone.
+
+</strong>
+
+</p>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <button type="submit">
+
+        Confirm Delete
+
+    </button>
+
+</form>
+
+<br>
+
+<a href="{% url 'student_detail' student.id %}">
+
+    Cancel
+
+</a>
+
+{% endblock %}
