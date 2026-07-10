@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>
+
+        Unit Registration
+
+    </h2>
+
+    <p>
+
+        Student:
+
+        <strong>
+
+            {{ student }}
+
+        </strong>
+
+    </p>
+
+    <div class="alert alert-info">
+
+        <strong>Academic Year:</strong>
+
+        {{ enrollment.academic_year }}
+
+        <br>
+
+        <strong>Semester:</strong>
+
+        {{ enrollment.semester }}
+
+        <br>
+
+        <strong>Study Level:</strong>
+
+        {{ enrollment.study_level }}
+
+    </div>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div class="card">
+
+            <div class="card-header">
+
+                Available Units
+
+            </div>
+
+            <div class="card-body">
+
+                {% for unit in units %}
+
+                <div class="form-check mb-2">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="units"
+                        value="{{ unit.id }}"
+                        id="unit{{ unit.id }}">
+
+                    <label
+                        class="form-check-label"
+                        for="unit{{ unit.id }}">
+
+                        <strong>
+
+                            {{ unit.unit_code }}
+
+                        </strong>
+
+                        -
+
+                        {{ unit.unit_name }}
+
+                    </label>
+
+                </div>
+
+                {% empty %}
+
+                <div class="alert alert-warning">
+
+                    No units available for your programme in the active semester.
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <br>
+
+        <button
+            type="submit"
+            class="btn btn-primary">
+
+            Register Units
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+{% if course %}
+    <h2>Edit Course</h2>
+{% else %}
+    <h2>Create Course</h2>
+{% endif %}
+
+<div class="card shadow">
+
+    <div class="card-body">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Course Code
+
+                </label>
+
+                {{ form.course_code }}
+
+                {% if form.course_code.errors %}
+
+                    <div class="text-danger">
+
+                        {{ form.course_code.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Course Name
+
+                </label>
+
+                {{ form.course_name }}
+
+                {% if form.course_name.errors %}
+
+                    <div class="text-danger">
+
+                        {{ form.course_name.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Programme
+
+                </label>
+
+                {{ form.programme }}
+
+                {% if form.programme.errors %}
+
+                    <div class="text-danger">
+
+                        {{ form.programme.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Study Level
+
+                </label>
+
+                {{ form.study_level }}
+
+                {% if form.study_level.errors %}
+
+                    <div class="text-danger">
+
+                        {{ form.study_level.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Semester
+
+                </label>
+
+                {{ form.semester }}
+
+                {% if form.semester.errors %}
+
+                    <div class="text-danger">
+
+                        {{ form.semester.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Credit Hours
+
+                </label>
+
+                {{ form.credit_hours }}
+
+                {% if form.credit_hours.errors %}
+
+                    <div class="text-danger">
+
+                        {{ form.credit_hours.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-success">
+
+                Save Course
+
+            </button>
+
+            <a
+                href="{% url 'course_list' %}"
+                class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

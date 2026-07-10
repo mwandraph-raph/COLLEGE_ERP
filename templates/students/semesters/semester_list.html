@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between mb-3">
+
+        <h2>Semesters</h2>
+
+        <a
+            href="{% url 'semester_create' %}"
+            class="btn btn-primary">
+            Add Semester
+        </a>
+
+    </div>
+
+    <table class="table table-bordered">
+
+        <thead>
+            <tr>
+                <th>Academic Year</th>
+                <th>Semester</th>
+                <th>Status</th>
+                <th width="250">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for semester in semesters %}
+
+            <tr>
+
+                <td>
+                    {{ semester.academic_year }}
+                </td>
+
+                <td>
+                    {{ semester.semester_name }}
+                </td>
+
+                <td>
+
+                    {% if semester.is_active %}
+                        <span class="badge bg-success">
+                            Active
+                        </span>
+                    {% else %}
+                        <span class="badge bg-secondary">
+                            Inactive
+                        </span>
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <a
+                        href="{% url 'semester_update' semester.id %}"
+                        class="btn btn-warning btn-sm">
+                        Edit
+                    </a>
+
+                    <a
+                        href="{% url 'activate_semester' semester.id %}"
+                        class="btn btn-success btn-sm">
+                        Activate
+                    </a>
+
+                    <a
+                        href="{% url 'semester_delete' semester.id %}"
+                        class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

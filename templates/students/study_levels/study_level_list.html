@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between mb-3">
+
+        <h2>Study Levels</h2>
+
+        {% if perms.students.add_studylevel %}
+        <a href="{% url 'study_level_create' %}"
+           class="btn btn-primary">
+            Add Study Level
+        </a>
+        {% endif %}
+
+    </div>
+
+    <table class="table table-bordered">
+
+        <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Programme</th>
+                <th>Level</th>
+                <th>Actions</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for level in levels %}
+
+            <tr>
+
+                <td>{{ level.id }}</td>
+
+                <td>{{ level.programme }}</td>
+
+                <td>{{ level.level_name }}</td>
+
+                <td>
+
+                    {% if perms.students.change_studylevel %}
+                    <a href="{% url 'study_level_update' level.id %}"
+                       class="btn btn-warning btn-sm">
+                        Edit
+                    </a>
+                    {% endif %}
+
+                    {% if perms.students.delete_studylevel %}
+                    <a href="{% url 'study_level_delete' level.id %}"
+                       class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="4">
+                    No study levels found.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

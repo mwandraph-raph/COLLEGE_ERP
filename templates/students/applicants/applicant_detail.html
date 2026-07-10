@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h3 class="mb-0">
+                Applicant Details
+            </h3>
+
+            <a
+                href="{% url 'applicant_list' %}"
+                class="btn btn-secondary"
+            >
+                Back to Applicants
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <h5 class="mb-3">
+                        Application Information
+                    </h5>
+
+                    <table class="table table-bordered">
+
+                        <tr>
+                            <th width="40%">
+                                Application No
+                            </th>
+                            <td>
+                                {{ applicant.application_no }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Academic Year
+                            </th>
+                            <td>
+                                {{ applicant.academic_year }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Intake
+                            </th>
+                            <td>
+                                {{ applicant.intake }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Programme
+                            </th>
+                            <td>
+                                {{ applicant.programme }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Status
+                            </th>
+                            <td>
+
+                                {% if applicant.status == "PENDING" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+
+                                {% elif applicant.status == "APPROVED" %}
+
+                                    <span class="badge bg-success">
+                                        Approved
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Rejected
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Application Date
+                            </th>
+                            <td>
+                                {{ applicant.application_date }}
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <h5 class="mb-3">
+                        Personal Information
+                    </h5>
+
+                    <table class="table table-bordered">
+
+                        <tr>
+                            <th width="40%">
+                                First Name
+                            </th>
+                            <td>
+                                {{ applicant.first_name }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Middle Name
+                            </th>
+                            <td>
+                                {{ applicant.middle_name }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Last Name
+                            </th>
+                            <td>
+                                {{ applicant.last_name }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Gender
+                            </th>
+                            <td>
+                                {{ applicant.gender }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Date of Birth
+                            </th>
+                            <td>
+                                {{ applicant.date_of_birth }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                ID Number
+                            </th>
+                            <td>
+                                {{ applicant.id_number }}
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <div class="row mt-3">
+
+                <div class="col-md-6">
+
+                    <h5 class="mb-3">
+                        Contact Information
+                    </h5>
+
+                    <table class="table table-bordered">
+
+                        <tr>
+                            <th width="40%">
+                                Phone Number
+                            </th>
+                            <td>
+                                {{ applicant.phone_number }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Email
+                            </th>
+                            <td>
+                                {{ applicant.email }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Address
+                            </th>
+                            <td>
+                                {{ applicant.address }}
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <h5 class="mb-3">
+                        Student Information
+                    </h5>
+
+                    <table class="table table-bordered">
+
+                        {% if applicant.student %}
+
+                        <tr>
+                            <th width="40%">
+                                Admission Number
+                            </th>
+                            <td>
+                                {{ applicant.student.admission_no }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Student Record
+                            </th>
+                            <td>
+
+                                <span class="badge bg-success">
+                                    Created
+                                </span>
+
+                            </td>
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td
+                                colspan="2"
+                                class="text-center"
+                            >
+
+                                Student record not yet created.
+
+                            </td>
+                        </tr>
+
+                        {% endif %}
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+
+            <div class="btn-group">
+
+                <a
+                    href="{% url 'applicant_update' applicant.pk %}"
+                    class="btn btn-primary"
+                >
+                    Edit Applicant
+                </a>
+
+                {% if applicant.status == "PENDING" %}
+
+                <a
+                    href="{% url 'approve_applicant' applicant.pk %}"
+                    class="btn btn-success"
+                    onclick="return confirm('Approve this applicant and create a student record?');"
+                >
+                    Approve Applicant
+                </a>
+
+                {% endif %}
+
+                <a
+                    href="{% url 'applicant_delete' applicant.pk %}"
+                    class="btn btn-danger"
+                >
+                    Delete Applicant
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

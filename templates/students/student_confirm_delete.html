@@ -2,73 +2,74 @@
 
 {% block content %}
 
-<h2>Delete Student</h2>
+<div class="row justify-content-center">
 
-<hr>
+    <div class="col-md-7">
 
-<p>
-    You are about to permanently delete this student.
-</p>
+        <div class="card border-danger shadow">
 
-<table>
+            <div class="card-header bg-danger text-white">
 
-    <tr>
-        <th>Admission Number</th>
-        <td>{{ student.admission_no }}</td>
-    </tr>
+                <h3>
 
-    <tr>
-        <th>First Name</th>
-        <td>{{ student.first_name }}</td>
-    </tr>
+                    Delete Student
 
-    <tr>
-        <th>Last Name</th>
-        <td>{{ student.last_name }}</td>
-    </tr>
+                </h3>
 
-    <tr>
-        <th>Programme</th>
-        <td>{{ student.programme }}</td>
-    </tr>
+            </div>
 
-    <tr>
-        <th>Phone</th>
-        <td>{{ student.phone }}</td>
-    </tr>
+            <div class="card-body">
 
-</table>
+                <div class="alert alert-warning">
 
-<br>
+                    <strong>Warning!</strong>
 
-<p>
+                    This action cannot be undone.
 
-<strong style="color:red;">
+                </div>
 
-This action cannot be undone.
+                <p>
 
-</strong>
+                    Are you sure you want to delete
 
-</p>
+                    <strong>
 
-<form method="post">
+                        {{ student.first_name }}
 
-    {% csrf_token %}
+                        {{ student.last_name }}
 
-    <button type="submit">
+                    </strong>?
 
-        Confirm Delete
+                </p>
 
-    </button>
+                <form method="POST">
 
-</form>
+                    {% csrf_token %}
 
-<br>
+                    <button
+                        type="submit"
+                        class="btn btn-danger">
 
-<a href="{% url 'student_detail' student.id %}">
+                        Delete Student
 
-    Cancel
+                    </button>
 
-</a>
+                    <a
+                        href="{% url 'student_detail' student.id %}"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

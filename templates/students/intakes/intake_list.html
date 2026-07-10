@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<div class="card shadow-sm">
+
+<div class="card-header d-flex justify-content-between">
+
+<h3>
+Intakes
+</h3>
+
+<a href="{% url 'intake_create' %}"
+class="btn btn-primary">
+
+New Intake
+
+</a>
+
+</div>
+
+
+<div class="card-body">
+
+<table class="table table-bordered table-hover">
+
+
+<thead class="table-light">
+
+<tr>
+
+<th>#</th>
+
+<th>Name</th>
+
+<th>Academic Year</th>
+
+<th>Start Date</th>
+
+<th>Reporting Date</th>
+
+<th>Status</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+
+{% for intake in intakes %}
+
+
+<tr>
+
+<td>
+{{ forloop.counter }}
+</td>
+
+
+<td>
+{{ intake.name }}
+</td>
+
+
+<td>
+{{ intake.academic_year }}
+</td>
+
+
+<td>
+{{ intake.start_date }}
+</td>
+
+
+<td>
+{{ intake.reporting_date }}
+</td>
+
+
+<td>
+
+{% if intake.is_open %}
+
+<span class="badge bg-success">
+Open
+</span>
+
+{% else %}
+
+<span class="badge bg-danger">
+Closed
+</span>
+
+{% endif %}
+
+</td>
+
+
+<td>
+
+<a href="{% url 'intake_update' intake.pk %}"
+class="btn btn-sm btn-primary">
+
+Edit
+
+</a>
+
+
+<a href="{% url 'intake_delete' intake.pk %}"
+class="btn btn-sm btn-danger">
+
+Delete
+
+</a>
+
+
+</td>
+
+
+</tr>
+
+
+{% empty %}
+
+
+<tr>
+
+<td colspan="7"
+class="text-center">
+
+No intakes found.
+
+</td>
+
+</tr>
+
+
+{% endfor %}
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+{% endblock %}

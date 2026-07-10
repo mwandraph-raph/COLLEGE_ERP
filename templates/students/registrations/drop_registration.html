@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>
+
+        Drop Unit
+
+    </h2>
+
+    <p>
+
+        Are you sure you want to drop:
+
+    </p>
+
+    <div class="alert alert-warning">
+
+        <strong>
+
+            {{ registration.unit }}
+
+        </strong>
+
+    </div>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="btn btn-danger">
+
+            Confirm Drop
+
+        </button>
+
+        <a
+            href="{% url 'my_registrations' %}"
+            class="btn btn-secondary">
+
+            Cancel
+
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

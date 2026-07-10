@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+
+        <h3 class="mb-0">
+
+            User Details
+
+        </h3>
+
+        <a
+            href="{% url 'accounts:user_list' %}"
+            class="btn btn-light">
+
+            Back to Users
+
+        </a>
+
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-bordered">
+
+            <tr>
+                <th width="30%">Username</th>
+                <td>{{ user_account.username }}</td>
+            </tr>
+
+            <tr>
+                <th>First Name</th>
+                <td>{{ user_account.first_name }}</td>
+            </tr>
+
+            <tr>
+                <th>Last Name</th>
+                <td>{{ user_account.last_name }}</td>
+            </tr>
+
+            <tr>
+                <th>Full Name</th>
+                <td>{{ user_account.get_full_name }}</td>
+            </tr>
+
+            <tr>
+                <th>Email</th>
+                <td>{{ user_account.email }}</td>
+            </tr>
+<tr>
+
+    <th>
+
+        Roles
+
+    </th>
+
+    <td>
+
+        {% for group in user_account.groups.all %}
+
+            <span class="badge bg-primary">
+
+                {{ group.name }}
+
+            </span>
+
+        {% empty %}
+
+            No Roles Assigned
+
+        {% endfor %}
+
+    </td>
+
+</tr>
+            <tr>
+                <th>Staff User</th>
+                <td>
+                    {% if user_account.is_staff %}
+                        <span class="badge bg-success">Yes</span>
+                    {% else %}
+                        <span class="badge bg-secondary">No</span>
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Superuser</th>
+                <td>
+                    {% if user_account.is_superuser %}
+                        <span class="badge bg-success">Yes</span>
+                    {% else %}
+                        <span class="badge bg-secondary">No</span>
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Active</th>
+                <td>
+                    {% if user_account.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactive</span>
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Last Login</th>
+                <td>{{ user_account.last_login }}</td>
+            </tr>
+
+            <tr>
+                <th>Date Joined</th>
+                <td>{{ user_account.date_joined }}</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div class="card-footer">
+
+        <a
+            href="{% url 'accounts:user_update' user_account.pk %}"
+            class="btn btn-warning">
+
+            Edit
+
+        </a>
+
+        <a
+            href="{% url 'accounts:user_delete' user_account.pk %}"
+            class="btn btn-danger">
+
+            Delete
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

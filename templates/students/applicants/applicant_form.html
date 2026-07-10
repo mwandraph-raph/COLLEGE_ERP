@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h3 class="mb-0">
+
+                {% if form.instance.pk %}
+                    Edit Applicant
+                {% else %}
+                    New Applicant
+                {% endif %}
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {% if form.errors %}
+
+                <div class="alert alert-danger">
+
+                    <strong>
+                        Please correct the errors below.
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+                <h5 class="border-bottom pb-2 mb-3">
+
+                    Personal Information
+
+                </h5>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            First Name
+                        </label>
+
+                        {{ form.first_name }}
+
+                        {{ form.first_name.errors }}
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Middle Name
+                        </label>
+
+                        {{ form.middle_name }}
+
+                        {{ form.middle_name.errors }}
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Last Name
+                        </label>
+
+                        {{ form.last_name }}
+
+                        {{ form.last_name.errors }}
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Gender
+                        </label>
+
+                        {{ form.gender }}
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Date of Birth
+                        </label>
+
+                        {{ form.date_of_birth }}
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            National ID Number
+                        </label>
+
+                        {{ form.id_number }}
+
+                    </div>
+
+                </div>
+
+                <h5 class="border-bottom pb-2 mb-3 mt-4">
+
+                    Contact Information
+
+                </h5>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Phone Number
+                        </label>
+
+                        {{ form.phone_number }}
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Email Address
+                        </label>
+
+                        {{ form.email }}
+
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Address
+                    </label>
+
+                    {{ form.address }}
+
+                </div>
+
+                <h5 class="border-bottom pb-2 mb-3 mt-4">
+
+                    Academic Information
+
+                </h5>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Programme Applied For
+                        </label>
+
+                        {{ form.programme }}
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Academic Year
+                        </label>
+
+                        {{ form.academic_year }}
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Intake
+                        </label>
+
+                        {{ form.intake }}
+
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Remarks
+                    </label>
+
+                    {{ form.remarks }}
+
+                </div>
+
+                <hr>
+
+                <button
+                    type="submit"
+                    class="btn btn-success"
+                >
+                    Save Applicant
+                </button>
+
+                <a
+                    href="{% url 'applicant_list' %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

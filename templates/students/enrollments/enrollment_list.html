@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Semester Enrollments</h3>
+<form method="get" class="row g-3 mb-4">
+
+    <div class="col-md-3">
+
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Admission No or Name">
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <select
+            name="academic_year"
+            class="form-select">
+
+            <option value="">
+                Academic Year
+            </option>
+
+
+            {% for year in academic_years %}
+
+            <option value="{{ year.id }}">
+                {{ year }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <select
+            name="semester"
+            class="form-select">
+
+            <option value="">
+                Semester
+            </option>
+
+
+            {% for semester in semesters %}
+
+            <option value="{{ semester.id }}">
+                {{ semester }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <select
+            name="study_level"
+            class="form-select">
+
+            <option value="">
+                Study Level
+            </option>
+
+
+            {% for level in study_levels %}
+
+            <option value="{{ level.id }}">
+                {{ level }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <select
+            name="status"
+            class="form-select">
+
+            <option value="">
+                Status
+            </option>
+
+            <option value="enrolled">
+                Enrolled
+            </option>
+
+            <option value="deferred">
+                Deferred
+            </option>
+
+            <option value="suspended">
+                Suspended
+            </option>
+
+            <option value="completed">
+                Completed
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-1">
+
+        <button
+            class="btn btn-primary">
+            Filter
+        </button>
+
+    </div>
+
+
+</form>
+<a href="{% url 'enrollment_create' %}"
+   class="btn btn-primary mb-3">
+    New Enrollment
+</a>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Academic Year</th>
+            <th>Semester</th>
+            <th>Study Level</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for enrollment in enrollments %}
+
+        <tr>
+            <td>{{ enrollment.student }}</td>
+            <td>{{ enrollment.academic_year }}</td>
+            <td>{{ enrollment.semester }}</td>
+            <td>{{ enrollment.study_level }}</td>
+            <td>{{ enrollment.get_status_display }}</td>
+            <td>
+                <a
+                    href="{% url 'enrollment_detail' enrollment.pk %}"
+                    class="btn btn-sm btn-info">
+                    View
+                </a>
+
+                <a
+                    href="{% url 'enrollment_update' enrollment.pk %}"
+                    class="btn btn-sm btn-warning">
+                    Edit
+                </a>
+
+                <a
+                    href="{% url 'enrollment_delete' enrollment.pk %}"
+                    class="btn btn-sm btn-danger">
+                    Delete
+                </a>
+
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>
+        My Registered Units
+    </h2>
+
+    <table class="table table-bordered table-striped">
+
+        <thead>
+
+            <tr>
+
+                <th>Academic Year</th>
+
+                <th>Semester</th>
+
+                <th>Unit</th>
+
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for registration in registrations %}
+
+        <tr>
+
+            <td>
+                {{ registration.enrollment.academic_year }}
+            </td>
+
+            <td>
+                {{ registration.enrollment.semester }}
+            </td>
+
+            <td>
+                {{ registration.unit }}
+            </td>
+
+            <td>
+
+                {% if registration.enrollment.academic_year.registration_open %}
+
+                <a
+                    href="{% url 'drop_registration' registration.id %}"
+                    class="btn btn-danger btn-sm">
+
+                    Drop
+
+                </a>
+
+                {% else %}
+
+                <span class="badge bg-secondary">
+
+                    Locked
+
+                </span>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="4">
+
+                No registrations found.
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

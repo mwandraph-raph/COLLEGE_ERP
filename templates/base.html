@@ -1,83 +1,39 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>TVET ERP</title>
-
+    <title>College ERP</title>
+  {% load static %}
     <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
         rel="stylesheet"
-        href="{% static 'css/style.css' %}">
+    >
+    <link
+    rel="stylesheet"
+    href="{% static 'css/style.css' %}">
 
 </head>
 
 <body>
+    {% include "includes/navbar.html" %}
+    <div class="container mt-4">
 
-<header>
-
-    <div class="logo">
-
-        TVET ERP
-
-    </div>
-
-</header>
-
-<nav>
-
-    <a href="{% url 'home' %}">
-
-        Dashboard
-
-    </a>
-
-
-    <a href="{% url 'student_list' %}">
-
-    Students
-
-    </a>
-
-    <a href="#">
-
-        Programmes
-
-    </a>
-
-    <a href="#">
-
-        Departments
-
-    </a>
-
-    <a href="#">
-
-        Finance
-
-    </a>
-
-</nav>
-
-<main>
+    {% include "includes/messages.html" %}
 
 {% block content %}
-
 {% endblock %}
+    </div>
+    {% include "includes/footer.html" %}
 
-</main>
-
-<footer>
-
-© 2026 TVET ERP
-
-</footer>
-
-</body>
-
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+    </script>
+    
 </html>

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h3>Enrollment Details</h3>
+
+    <table class="table table-bordered">
+
+        <tr>
+            <th>Student</th>
+            <td>{{ enrollment.student }}</td>
+        </tr>
+
+        <tr>
+            <th>Academic Year</th>
+            <td>{{ enrollment.academic_year }}</td>
+        </tr>
+
+        <tr>
+            <th>Semester</th>
+            <td>{{ enrollment.semester }}</td>
+        </tr>
+
+        <tr>
+            <th>Study Level</th>
+            <td>{{ enrollment.study_level }}</td>
+        </tr>
+
+        <tr>
+            <th>Status</th>
+            <td>{{ enrollment.get_status_display }}</td>
+        </tr>
+
+    </table>
+
+</div>
+
+{% endblock %}

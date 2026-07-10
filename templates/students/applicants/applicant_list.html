@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h3 class="mb-0">
+                Applicants
+            </h3>
+
+            <a
+                href="{% url 'applicant_create' %}"
+                class="btn btn-primary"
+            >
+                New Applicant
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover table-bordered align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Application No</th>
+
+                            <th>Applicant Name</th>
+
+                            <th>Programme</th>
+
+                            <th>Academic Year</th>
+
+                            <th>Intake</th>
+
+                            <th>Status</th>
+
+                            <th>Application Date</th>
+
+                            <th width="250">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for applicant in applicants %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ applicant.application_no }}
+                                </strong>
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'applicant_detail' applicant.pk %}"
+                                    class="text-decoration-none"
+                                >
+
+                                    {{ applicant.first_name }}
+
+                                    {% if applicant.middle_name %}
+                                        {{ applicant.middle_name }}
+                                    {% endif %}
+
+                                    {{ applicant.last_name }}
+
+                                </a>
+
+                            </td>
+
+                            <td>
+                                {{ applicant.programme }}
+                            </td>
+
+                            <td>
+                                {{ applicant.academic_year }}
+                            </td>
+
+                            <td>
+                                {{ applicant.intake }}
+                            </td>
+
+                            <td>
+
+                                {% if applicant.status == "PENDING" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+
+                                {% elif applicant.status == "APPROVED" %}
+
+                                    <span class="badge bg-success">
+                                        Approved
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Rejected
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ applicant.application_date }}
+                            </td>
+
+                            <td>
+
+                                <div class="btn-group">
+
+                                    <a
+                                        href="{% url 'applicant_detail' applicant.pk %}"
+                                        class="btn btn-sm btn-info"
+                                    >
+                                        View
+                                    </a>
+
+                                    <a
+                                        href="{% url 'applicant_update' applicant.pk %}"
+                                        class="btn btn-sm btn-primary"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    {% if applicant.status == "PENDING" %}
+
+                                    <a
+                                        href="{% url 'approve_applicant' applicant.pk %}"
+                                        class="btn btn-sm btn-success"
+                                        onclick="return confirm('Approve this applicant and create a student record?');"
+                                    >
+                                        Approve
+                                    </a>
+
+                                    {% endif %}
+
+                                    <a
+                                        href="{% url 'applicant_delete' applicant.pk %}"
+                                        class="btn btn-sm btn-danger"
+                                    >
+                                        Delete
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                class="text-center"
+                            >
+
+                                No applicants found.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

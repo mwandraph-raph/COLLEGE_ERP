@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    {% if programme %}
+        <h2>Edit Programme</h2>
+    {% else %}
+        <h2>Create Programme</h2>
+    {% endif %}
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit"
+                        class="btn btn-success">
+                    Save
+                </button>
+
+                <a href="{% url 'programme_list' %}"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

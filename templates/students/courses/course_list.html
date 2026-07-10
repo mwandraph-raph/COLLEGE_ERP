@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h2>Courses</h2>
+
+    {% if perms.students.add_course %}
+    <a href="{% url 'course_create' %}"
+       class="btn btn-primary">
+        Add Course
+    </a>
+    {% endif %}
+
+</div>
+
+<form method="get" class="row mb-3">
+
+    <div class="col-md-3">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            class="form-control"
+            placeholder="Search course">
+
+    </div>
+
+    <div class="col-md-2">
+
+        <select
+            name="programme"
+            class="form-select">
+
+            <option value="">
+                All Programmes
+            </option>
+
+            {% for programme in programmes %}
+
+            <option
+                value="{{ programme.id }}"
+                {% if selected_programme == programme.id|stringformat:"s" %}
+                selected
+                {% endif %}>
+
+                {{ programme.programme_name }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+    <div class="col-md-2">
+
+        <select
+            name="study_level"
+            class="form-select">
+
+            <option value="">
+                All Levels
+            </option>
+
+            {% for level in study_levels %}
+
+            <option
+                value="{{ level.id }}"
+                {% if selected_level == level.id|stringformat:"s" %}
+                selected
+                {% endif %}>
+
+                {{ level.level_name }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <select
+            name="semester"
+            class="form-select">
+
+            <option value="">
+                All Semesters
+            </option>
+
+            {% for semester in semesters %}
+
+            <option
+                value="{{ semester.id }}"
+                {% if selected_semester == semester.id|stringformat:"s" %}
+                selected
+                {% endif %}>
+
+                {{ semester }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+    <div class="col-md-2">
+
+        <button
+            class="btn btn-success w-100">
+
+            Filter
+
+        </button>
+
+    </div>
+
+</form>
+
+<table class="table table-bordered table-striped">
+
+    <thead>
+
+        <tr>
+
+            <th>Code</th>
+            <th>Course Name</th>
+            <th>Programme</th>
+            <th>Study Level</th>
+            <th>Semester</th>
+            <th>Credits</th>
+            <th>Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for course in courses %}
+
+    <tr>
+
+        <td>{{ course.course_code }}</td>
+
+        <td>{{ course.course_name }}</td>
+
+        <td>{{ course.programme }}</td>
+
+        <td>{{ course.study_level }}</td>
+
+        <td>{{ course.semester }}</td>
+
+        <td>{{ course.credit_hours }}</td>
+
+        <td>
+
+            {% if perms.students.change_course %}
+            <a href="{% url 'course_update' course.id %}"
+               class="btn btn-warning btn-sm">
+                Edit
+            </a>
+            {% endif %}
+
+            {% if perms.students.delete_course %}
+            <a href="{% url 'course_delete' course.id %}"
+               class="btn btn-danger btn-sm">
+                Delete
+            </a>
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% empty %}
+
+    <tr>
+
+        <td colspan="7" class="text-center">
+
+            No courses found.
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+{% endblock %}

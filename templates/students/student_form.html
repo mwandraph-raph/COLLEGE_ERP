@@ -2,23 +2,217 @@
 
 {% block content %}
 
-{% if student %}
-<h2>Edit Student</h2>
-{% else %}
-<h2>Register Student</h2>
-{% endif %}
-<form method="post">
-    {% csrf_token %}
+<div class="row justify-content-center">
 
-    {{ form.as_p }}
-    <button type="submit">
-        Save Student
-    </button>
-</form>
-<p>
-    <a href="{% url 'student_list' %}">
-        Back to Student List
-    </a>
-</p>
+<div class="col-lg-8">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+
+            <h3 class="mb-0">
+
+                Student Registration
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        User Account
+
+                    </label>
+
+                    {{ form.user }}
+
+                    {% if form.user.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.user.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Admission Number
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.admission_no }}
+
+                    {% if form.admission_no.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.admission_no.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        First Name
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.first_name }}
+
+                    {% if form.first_name.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.first_name.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Last Name
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.last_name }}
+
+                    
+                    {% if form.last_name.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.last_name.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Phone Number
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.phone }}
+
+                    {% if form.phone.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.phone.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Programme
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.programme }}
+
+                    {% if form.programme.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.programme.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Study Level
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.study_level }}
+
+                    {% if form.study_level.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.study_level.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="mt-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+
+                        Save Student
+
+                    </button>
+
+                    <a
+                        href="{% url 'student_list' %}"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
 
 {% endblock %}

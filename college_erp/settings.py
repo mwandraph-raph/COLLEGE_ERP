@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "students",
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -124,3 +125,9 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 
 ]
+
+LOGIN_URL = "accounts:login"
+
+LOGIN_REDIRECT_URL = "home"
+
+LOGOUT_REDIRECT_URL = "accounts:login"

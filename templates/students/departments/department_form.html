@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    {% if department %}
+        <h2>Edit Department</h2>
+    {% else %}
+        <h2>Create Department</h2>
+    {% endif %}
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit"
+                        class="btn btn-success">
+                    Save
+                </button>
+
+                <a href="{% url 'department_list' %}"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

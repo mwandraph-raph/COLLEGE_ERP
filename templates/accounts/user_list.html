@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-header bg-primary text-white">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h3 class="mb-0">
+
+                User Management
+
+            </h3>
+
+            <a
+                href="{% url 'accounts:user_create' %}"
+                class="btn btn-light">
+
+                Add User
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        <form method="get" class="row g-3 mb-4">
+
+            <div class="col-md-10">
+
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search username, name or email..."
+                    value="{{ request.GET.search }}">
+
+            </div>
+
+            <div class="col-md-2 d-grid">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Search
+
+                </button>
+
+            </div>
+
+        </form>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover align-middle">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Username</th>
+
+                        <th>Full Name</th>
+
+                        <th>Email</th>
+
+                        <th>Roles</th>
+
+                        <th>Staff</th>
+
+                        <th>Status</th>
+
+                        <th width="220">
+
+                            Actions
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for user in users %}
+
+                    <tr>
+
+                        <td>{{ user.id }}</td>
+
+                        <td>{{ user.username }}</td>
+
+                        <td>{{ user.get_full_name|default:"-" }}</td>
+
+                        <td>{{ user.email|default:"-" }}</td>
+
+                        <!-- Roles -->
+                        <td>
+
+                            {% if user.groups.exists %}
+
+                                <div class="d-flex flex-wrap gap-1">
+
+                                    {% for group in user.groups.all %}
+
+                                        <span class="badge rounded-pill bg-primary">
+
+                                            {{ group.name }}
+
+                                        </span>
+
+                                    {% endfor %}
+
+                                </div>
+
+                                <small class="text-muted">
+
+                                    {{ user.groups.count }} Role{{ user.groups.count|pluralize }}
+
+                                </small>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+
+                                    No Role
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- Staff -->
+
+                        <td>
+
+                            {% if user.is_staff %}
+
+                                <span class="badge bg-success">
+
+                                    Yes
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+
+                                    No
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if user.is_active %}
+
+                                <span class="badge bg-success">
+
+                                    Active
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+
+                                    Inactive
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- Actions -->
+
+                        <td>
+
+                            <div class="btn-group" role="group">
+
+                                <a
+                                    href="{% url 'accounts:user_detail' user.pk %}"
+                                    class="btn btn-info btn-sm">
+
+                                    View
+
+                                </a>
+
+                                <a
+                                    href="{% url 'accounts:user_update' user.pk %}"
+                                    class="btn btn-warning btn-sm">
+
+                                    Edit
+
+                                </a>
+
+                                <a
+                                    href="{% url 'accounts:user_delete' user.pk %}"
+                                    class="btn btn-danger btn-sm">
+
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td colspan="8" class="text-center">
+
+                            No users found.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% if is_paginated %}
+
+        <nav>
+
+            <ul class="pagination justify-content-center">
+
+                {% if page_obj.has_previous %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}">
+
+                        Previous
+
+                    </a>
+
+                </li>
+
+                {% endif %}
+
+                <li class="page-item active">
+
+                    <span class="page-link">
+
+                        {{ page_obj.number }}
+
+                    </span>
+
+                </li>
+
+                {% if page_obj.has_next %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}">
+
+                        Next
+
+                    </a>
+
+                </li>
+
+                {% endif %}
+
+            </ul>
+
+        </nav>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
