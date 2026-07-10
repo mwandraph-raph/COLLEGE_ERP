@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Admissions Report</h2>
+
+    <div class="row">
+
+        <!-- By Intake -->
+        <div class="col-md-4">
+
+            <div class="card shadow mb-4">
+
+                <div class="card-header">
+                    Applicants by Intake
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-sm">
+
+                        <thead>
+                            <tr>
+                                <th>Intake</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in by_intake %}
+                            <tr>
+                                <td>{{ item.intake__name }}</td>
+                                <td>{{ item.total }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2">
+                                    No data available
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- By Programme -->
+        <div class="col-md-4">
+
+            <div class="card shadow mb-4">
+
+                <div class="card-header">
+                    Applicants by Programme
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-sm">
+
+                        <thead>
+                            <tr>
+                                <th>Programme</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in by_programme %}
+                            <tr>
+                                <td>
+                                    {{ item.programme__programme_name }}
+                                </td>
+                                <td>
+                                    {{ item.total }}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2">
+                                    No data available
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- By Department -->
+        <div class="col-md-4">
+
+            <div class="card shadow mb-4">
+
+                <div class="card-header">
+                    Applicants by Department
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-sm">
+
+                        <thead>
+                            <tr>
+                                <th>Department</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in by_department %}
+                            <tr>
+                                <td>
+                                    {{ item.programme__department__department_name }}
+                                </td>
+                                <td>
+                                    {{ item.total }}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2">
+                                    No data available
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

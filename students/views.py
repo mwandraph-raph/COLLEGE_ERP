@@ -18,6 +18,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from .utils import generate_admission_no
 from django.db import transaction
+from django.db.models import Count
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import (
     login_required,
@@ -2246,6 +2247,15 @@ def applicant_list(request):
 
     applicants = Applicant.objects.all()
 
+    q = request.GET.get("q")
+
+    if q:
+        applicants = applicants.filter(
+            Q(first_name__icontains=q) |
+            Q(last_name__icontains=q) |
+            Q(application_no__icontains=q)
+        )
+
     return render(
         request,
         "students/applicants/applicant_list.html",
@@ -2676,4 +2686,40 @@ def intake_delete(request, pk):
         }
     )
 
+#Create Report View
+@login_required
+def admissions_report(request):
+
+    by_intake = (
+        Applicant.objects
+        .values("intake__name")
+        .annotate(total=Count("id"))
+        .order_by("intake__name")
+    )
+
+    by_programme = (
+        Applicant.objects
+        .values("programme__programme_name")
+        .annotate(total=Count("id"))
+        .order_by("programme__programme_name")
+    )
+
+    by_department = (
+        Applicant.objects
+        .values("programme__department__department_name")
+        .annotate(total=Count("id"))
+        .order_by("programme__department__department_name")
+    )
+
+    context = {
+        "by_intake": by_intake,
+        "by_programme": by_programme,
+        "by_department": by_department,
+    }
+
+    return render(
+        request,
+        "students/admissions_report.html",
+        context,
+    )
 

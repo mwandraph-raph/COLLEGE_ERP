@@ -366,4 +366,9 @@ path(
     name="intake_delete"
 ),
 
+path(
+    "admissions-report/",
+    views.admissions_report,
+    name="admissions_report",
+),
 ]
