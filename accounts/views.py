@@ -29,23 +29,10 @@ from .forms import (
 # Authentication Views
 # ======================================================
 
-
-
 @login_required
 def dashboard_redirect(request):
-
-    user = request.user
-
-    if user.is_superuser:
-        return redirect("home")
-
-    if user.has_perm("auth.view_user"):
-        return redirect("home")
-
-    if user.has_perm("students.view_student"):
-        return redirect("student_list")
-
     return redirect("home")
+
 
 def login_view(request):
 

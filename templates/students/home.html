@@ -1,154 +1,341 @@
 {% extends "base.html" %}
 
-
 {% block content %}
+<div class="container mt-4">
 
+<div class="p-4 mb-4 bg-light rounded-3 shadow-sm">
 
-<div class="container">
+    <h1 class="display-6 fw-bold">
+        College ERP Dashboard
+    </h1>
 
-
-    <div class="p-5 mb-4 bg-light rounded-3">
-
-        <div class="container-fluid py-3">
-
-            <h1 class="display-5 fw-bold">
-                College ERP System
-            </h1>
-
-
-            <p class="lead">
-
-                Welcome to the College ERP dashboard.
-                Manage students, programmes and departments
-                from one centralized system.
-
-            </p>
-
-
-        </div>
-
-    </div>
-
-
-
-    <!-- Dashboard Cards -->
-
-    <div class="row">
-
-
-        <div class="col-md-4 mb-3">
-
-
-            <div class="card shadow">
-
-
-                <div class="card-body text-center">
-
-
-                    <h5 class="card-title">
-                        Total Students
-                    </h5>
-
-
-                    <h1 class="display-4">
-
-                        {{ student_count }}
-
-                    </h1>
-
-
-                    <a
-                    href="{% url 'student_list' %}"
-                    class="btn btn-primary">
-
-                        View Students
-
-                    </a>
-
-
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-
-
-
-        <div class="col-md-4 mb-3">
-
-
-            <div class="card shadow">
-
-
-                <div class="card-body text-center">
-
-
-                    <h5 class="card-title">
-
-                        Total Programmes
-
-                    </h5>
-
-
-                    <h1 class="display-4">
-
-                        {{ programme_count }}
-
-                    </h1>
-
-
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-
-
-
-
-        <div class="col-md-4 mb-3">
-
-
-            <div class="card shadow">
-
-
-                <div class="card-body text-center">
-
-
-                    <h5 class="card-title">
-
-                        Total Departments
-
-                    </h5>
-
-
-                    <h1 class="display-4">
-
-                        {{ department_count }}
-
-                    </h1>
-
-
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-
-
-    </div>
-
+    <p class="lead mb-0">
+        Welcome,
+        {{ user.get_full_name|default:user.username }}
+    </p>
 
 </div>
 
+{% if active_year or active_semester %}
+
+<div class="alert alert-info">
+
+    <strong>Academic Year:</strong>
+
+    {{ active_year|default:"Not Active" }}
+
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+
+    <strong>Semester:</strong>
+
+    {{ active_semester|default:"Not Active" }}
+
+</div>
+
+{% endif %}
+
+<!-- ADMIN DASHBOARD -->
+
+{% if dashboard_type == "admin" %}
+
+<div class="row">
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_students }}</h2>
+                <p>Students</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_applicants }}</h2>
+                <p>Applicants</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_enrollments }}</h2>
+                <p>Enrollments</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_registrations }}</h2>
+                <p>Registrations</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow">
+            <div class="card-header">
+                Administration
+            </div>
+
+            <div class="card-body">
+
+                <a href="{% url 'accounts:user_list' %}"
+                   class="btn btn-primary me-2 mb-2">
+                    Users
+                </a>
+
+                <a href="{% url 'accounts:group_list' %}"
+                   class="btn btn-secondary mb-2">
+                    Groups
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow">
+            <div class="card-header">
+                Academic Structure
+            </div>
+
+            <div class="card-body">
+
+                <a href="{% url 'programme_list' %}"
+                   class="btn btn-success me-2 mb-2">
+                    Programmes
+                </a>
+
+                <a href="{% url 'department_list' %}"
+                   class="btn btn-info mb-2">
+                    Departments
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endif %}
+
+<!-- ADMISSIONS DASHBOARD -->
+
+{% if dashboard_type == "admissions" %}
+
+<div class="row">
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_applicants }}</h2>
+                <p>Total Applicants</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ pending_applicants }}</h2>
+                <p>Pending</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ approved_applicants }}</h2>
+                <p>Approved</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_intakes }}</h2>
+                <p>Intakes</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card shadow">
+    <div class="card-header">
+        Quick Actions
+    </div>
+
+    <div class="card-body">
+
+        <a href="{% url 'applicant_create' %}"
+           class="btn btn-primary me-2">
+            New Applicant
+        </a>
+
+        <a href="{% url 'applicant_list' %}"
+           class="btn btn-success me-2">
+            Applicants
+        </a>
+
+        <a href="{% url 'intake_list' %}"
+           class="btn btn-info">
+            Intakes
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+<!-- REGISTRAR DASHBOARD -->
+
+{% if dashboard_type == "registrar" %}
+
+<div class="row">
+
+    <div class="col-md-4 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_students }}</h2>
+                <p>Students</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_enrollments }}</h2>
+                <p>Enrollments</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_registrations }}</h2>
+                <p>Registrations</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="card shadow">
+    <div class="card-header">
+        Quick Actions
+    </div>
+
+    <div class="card-body">
+
+        <a href="{% url 'student_list' %}"
+           class="btn btn-primary me-2">
+            Students
+        </a>
+
+        <a href="{% url 'enrollment_list' %}"
+           class="btn btn-success me-2">
+            Enrollments
+        </a>
+
+        <a href="{% url 'registration_list' %}"
+           class="btn btn-info">
+            Registrations
+        </a>
+
+    </div>
+
+</div>
+{% endif %}
+
+<!-- STUDENT DASHBOARD -->
+
+{% if dashboard_type == "student" %}
+
+<div class="row">
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow">
+            <div class="card-body">
+                <strong>Programme</strong>
+                <hr>
+                {{ student.programme }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow">
+            <div class="card-body">
+                <strong>Study Level</strong>
+                <hr>
+                {{ student.study_level }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow">
+            <div class="card-body">
+                <strong>Current Enrollment</strong>
+                <hr>
+                {{ enrollment }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow">
+            <div class="card-body">
+                <strong>Registered Units</strong>
+                <hr>
+                {{ registration_count }}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card shadow">
+
+    <div class="card-header">
+        Student Services
+    </div>
+
+    <div class="card-body">
+
+        <a href="{% url 'register_units' %}"
+           class="btn btn-primary me-2">
+            Register Units
+        </a>
+
+        <a href="{% url 'my_registrations' %}"
+           class="btn btn-success">
+            My Registrations
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+</div>
 
 {% endblock %}

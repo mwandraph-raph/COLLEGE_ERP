@@ -18,6 +18,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from .utils import generate_admission_no
 from django.db import transaction
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import (
     login_required,
     permission_required,
@@ -41,30 +42,92 @@ from .forms import (
 @login_required
 def home(request):
 
-    context = {
+    context = {}
 
-        "student_count":
+    active_year = AcademicYear.objects.filter(
+        is_active=True
+    ).first()
 
-            Student.objects.count(),
+    active_semester = Semester.objects.filter(
+        is_active=True
+    ).first()
 
-        "programme_count":
+    context["active_year"] = active_year
+    context["active_semester"] = active_semester
 
-            Programme.objects.count(),
+    # Student Dashboard
+    if hasattr(request.user, "student_profile"):
 
-        "department_count":
+        student = request.user.student_profile
 
-            Department.objects.count(),
+        enrollment = SemesterEnrollment.objects.filter(
+            student=student
+        ).order_by("-id").first()
 
-    }
+        registration_count = 0
+
+        if enrollment:
+            registration_count = Registration.objects.filter(
+                enrollment=enrollment
+            ).count()
+
+        context.update({
+            "dashboard_type": "student",
+            "student": student,
+            "enrollment": enrollment,
+            "registration_count": registration_count,
+        })
+
+    # Administrator Dashboard
+    elif request.user.is_superuser:
+
+        context.update({
+            "dashboard_type": "admin",
+            "total_students": Student.objects.count(),
+            "total_programmes": Programme.objects.count(),
+            "total_departments": Department.objects.count(),
+            "total_applicants": Applicant.objects.count(),
+            "total_enrollments": SemesterEnrollment.objects.count(),
+            "total_registrations": Registration.objects.count(),
+            "total_users": User.objects.count(),
+        })
+
+# Registrar Dashboard
+    elif request.user.has_perm("students.view_registration"):
+
+        context.update({
+            "dashboard_type": "registrar",
+            "total_students": Student.objects.count(),
+            "total_enrollments": SemesterEnrollment.objects.count(),
+            "total_registrations": Registration.objects.count(),
+        })
+
+    # Admissions Dashboard
+    elif request.user.has_perm("students.view_applicant"):
+
+        context.update({
+            "dashboard_type": "admissions",
+            "total_applicants": Applicant.objects.count(),
+            "pending_applicants": Applicant.objects.filter(
+                status="PENDING"
+            ).count(),
+            "approved_applicants": Applicant.objects.filter(
+                status="APPROVED"
+            ).count(),
+            "rejected_applicants": Applicant.objects.filter(
+                status="REJECTED"
+            ).count(),
+            "total_intakes": Intake.objects.count(),
+        })
+
+    else:
+
+        context["dashboard_type"] = "general"
 
     return render(
-
         request,
-
         "students/home.html",
-
         context,
-
     )
 
 @login_required
