@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header">
+
+            <h4>
+
+                Batch Details
+
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <p>
+
+                <strong>Unit:</strong>
+                {{ batch.unit }}
+
+            </p>
+
+            <p>
+
+                <strong>Academic Year:</strong>
+                {{ batch.academic_year }}
+
+            </p>
+
+            <p>
+
+                <strong>Semester:</strong>
+                {{ batch.semester }}
+
+            </p>
+
+            <p>
+
+                <strong>Status:</strong>
+                {{ batch.get_status_display }}
+
+            </p>
+
+            <p>
+
+                <strong>Submitted By:</strong>
+                {{ batch.submitted_by }}
+
+            </p>
+
+            <p>
+
+                <strong>Remarks:</strong>
+
+                {% if batch.remarks %}
+
+                    {{ batch.remarks }}
+
+                {% else %}
+
+                    -
+
+                {% endif %}
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow mt-3">
+
+        <div class="card-header">
+
+            <h5>
+
+                Student Results
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Admission No</th>
+                        <th>Student</th>
+                        <th>CAT 1</th>
+                        <th>CAT 2</th>
+                        <th>Exam</th>
+                        <th>Total</th>
+                        <th>Grade</th>
+                        <th>Remarks</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for result in results %}
+
+                    <tr>
+
+                        <td>
+                            {{ result.enrollment.student.admission_no }}
+                        </td>
+
+                        <td>
+                            {{ result.enrollment.student }}
+                        </td>
+
+                        <td>{{ result.cat1 }}</td>
+
+                        <td>{{ result.cat2 }}</td>
+
+                        <td>{{ result.exam }}</td>
+
+                        <td>{{ result.total }}</td>
+
+                        <td>{{ result.grade }}</td>
+
+                        <td>{{ result.remarks }}</td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="8">
+
+                            No results found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

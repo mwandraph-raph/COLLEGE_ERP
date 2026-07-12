@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.conf import settings
 # Create your models here.
 class Applicant(models.Model):
 
@@ -625,14 +626,20 @@ class SemesterEnrollment(models.Model):
             "semester",
         )
 
-
     def __str__(self):
-
+            return (
+                f"{self.student.admission_no} - "
+                f"{self.student.first_name} "
+                f"{self.student.last_name}"
+        )
+    """
+    def __str__(self):
+      
         return (
             f"{self.student} - "
             f"{self.academic_year} - "
             f"{self.semester}"
-        )
+        )"""
 
 class Registration(models.Model):
 
@@ -669,5 +676,308 @@ class Registration(models.Model):
             f"{self.enrollment.student} - "
             f"{self.unit}"
         )
+    
+class LecturerAssignment(models.Model):
+    lecturer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="teaching_assignments",
+    )
+
+    unit = models.ForeignKey(
+        "Unit",
+        on_delete=models.CASCADE,
+        related_name="lecturer_assignments",
+    )
+
+    academic_year = models.ForeignKey(
+        "AcademicYear",
+        on_delete=models.CASCADE,
+    )
+
+    semester = models.ForeignKey(
+        "Semester",
+        on_delete=models.CASCADE,
+    )
+
+    assigned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="unit_assignments_created",
+    )
+
+    assigned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = (
+            "lecturer",
+            "unit",
+            "academic_year",
+            "semester",
+        )
+
+    def __str__(self):
+        return f"{self.lecturer} - {self.unit}"
+    
+
+
+class ResultBatch(models.Model):
+
+    STATUS_CHOICES = [
+        ("draft", "Draft"),
+        ("submitted", "Submitted"),
+        ("approved", "Approved"),
+        ("returned", "Returned"),
+        ("unlocked", "Unlocked"),
+    ]
+
+    academic_year = models.ForeignKey(
+        AcademicYear,
+        on_delete=models.PROTECT
+    )
+
+    semester = models.ForeignKey(
+        Semester,
+        on_delete=models.PROTECT
+    )
+
+    unit = models.ForeignKey(
+        Unit,
+        on_delete=models.PROTECT
+    )
+
+    lecturer_assignment = models.ForeignKey(
+        LecturerAssignment,
+        on_delete=models.PROTECT,
+        related_name="result_batches"
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="draft"
+    )
+
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="submitted_batches"
+    )
+
+    submitted_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="approved_batches"
+    )
+
+    approved_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    remarks = models.TextField(
+        blank=True
+    )
+
+    class Meta:
+        ordering = [
+            "-submitted_at"
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.unit} - "
+            f"{self.academic_year} - "
+            f"{self.semester}"
+        )
+
+
+class Result(models.Model):
+
+    batch = models.ForeignKey(
+        "ResultBatch",
+        on_delete=models.PROTECT,
+        related_name="results",
+        null=True,
+        blank=True,
+    )
+    
+    enrollment = models.ForeignKey(
+        "SemesterEnrollment",
+        on_delete=models.CASCADE,
+        related_name="results",
+    )
+
+    unit = models.ForeignKey(
+        "Unit",
+        on_delete=models.CASCADE,
+        related_name="results",
+    )
+
+    cat1 = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+    )
+
+    cat2 = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+    )
+
+    exam = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+    )
+
+    total = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+    )
+
+    grade = models.CharField(
+        max_length=2,
+        blank=True
+    )
+
+    remarks = models.CharField(
+        max_length=20,
+        blank=True,
+    )
+
+    is_submitted = models.BooleanField(
+    default=False
+    )
+
+    is_approved = models.BooleanField(
+        default=False
+    )
+
+    submitted_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    approved_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    entered_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    batch = models.ForeignKey(
+        ResultBatch,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="results"
+        )
+
+    class Meta:
+        unique_together = (
+            "enrollment",
+            "unit",
+        )
+
+    def save(self, *args, **kwargs):
+
+        cat1 = self.cat1 or 0
+        cat2 = self.cat2 or 0
+        exam = self.exam or 0
+
+        self.total = cat1 + cat2 + exam
+
+        if self.total >= 70:
+
+            self.grade = "A"
+            self.remarks = "PASS"
+
+        elif self.total >= 60:
+
+            self.grade = "B"
+            self.remarks = "PASS"
+
+        elif self.total >= 50:
+
+            self.grade = "C"
+            self.remarks = "PASS"
+
+        elif self.total >= 40:
+
+            self.grade = "D"
+            self.remarks = "PASS"
+
+        else:
+
+            self.grade = "E"
+            self.remarks = "FAIL"
+
+        super().save(*args, **kwargs)
+
+
+class ResultBatchLog(models.Model):
+
+    batch = models.ForeignKey(
+        ResultBatch,
+        on_delete=models.CASCADE,
+        related_name="logs"
+    )
+
+    action = models.CharField(
+        max_length=50
+    )
+
+    performed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    remarks = models.TextField(
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    class Meta:
+
+        ordering = [
+            "-created_at"
+        ]
+
+
+    def __str__(self):
+
+        return f"{self.batch} - {self.action}"
     
 

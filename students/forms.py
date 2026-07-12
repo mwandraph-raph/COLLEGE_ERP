@@ -1,5 +1,5 @@
 from django import forms
-
+from django.contrib.auth.models import User
 from .models import (
     Student,
     Department,
@@ -13,6 +13,7 @@ from .models import (
     SemesterEnrollment,
     Applicant,
     Intake,
+    LecturerAssignment,
 )
 
 class ApplicantForm(forms.ModelForm):
@@ -651,3 +652,29 @@ class StudyLevelForm(forms.ModelForm):
             ),
 
         }
+
+class LecturerAssignmentForm(forms.ModelForm):
+
+    class Meta:
+
+        model = LecturerAssignment
+
+        fields = [
+            "lecturer",
+            "unit",
+            "academic_year",
+            "semester",
+        ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        # Show only lecturers
+        self.fields["lecturer"].queryset = User.objects.filter(
+            groups__name="Lecturer"
+        )
+
+        for field in self.fields.values():
+
+            field.widget.attrs["class"] = "form-select"

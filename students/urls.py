@@ -371,4 +371,97 @@ path(
     views.admissions_report,
     name="admissions_report",
 ),
+
+
+path(
+    "assignments/",
+    views.lecturer_assignment_list,
+    name="lecturer_assignment_list"
+),
+
+path(
+    "assignments/create/",
+    views.lecturer_assignment_create,
+    name="lecturer_assignment_create"
+),
+
+path(
+    "assignments/<int:pk>/edit/",
+    views.lecturer_assignment_update,
+    name="lecturer_assignment_update"
+),
+
+path(
+    "assignments/<int:pk>/delete/",
+    views.lecturer_assignment_delete,
+    name="lecturer_assignment_delete"
+),
+
+path(
+    "my-units/",
+    views.my_units,
+    name="my_units",
+),
+
+path(
+    "marks/<int:assignment_id>/",
+    views.enter_marks,
+    name="enter_marks",
+),
+
+path(
+    "marksheet/<int:assignment_id>/",
+    views.unit_marksheet,
+    name="unit_marksheet",
+),
+
+path(
+    "marksheet/<int:assignment_id>/excel/",
+    views.export_marksheet_excel,
+    name="export_marksheet_excel",
+),
+
+
+path(
+    "results/submit/<int:assignment_id>/",
+    views.submit_results,
+    name="submit_results"
+),
+
+path(
+    "results/approval-queue/",
+    views.approval_queue,
+    name="approval_queue"
+),
+
+path(
+    "approve-results/<int:batch_id>/",
+    views.approve_results,
+    name="approve_results",
+),
+
+path(
+    "return-results/<int:batch_id>/",
+    views.return_results,
+    name="return_results",
+),
+
+path(
+    "batch-details/<int:batch_id>/",
+    views.batch_details,
+    name="batch_details",
+),
+
+path(
+    "unlock-batch/<int:batch_id>/",
+    views.unlock_batch,
+    name="unlock_batch",
+),
+
+#student portal
+path(
+    "my-results/",
+    views.student_results,
+    name="student_results",
+),
 ]

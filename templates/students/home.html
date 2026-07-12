@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <div class="container mt-4">
 
 <div class="p-4 mb-4 bg-light rounded-3 shadow-sm">
@@ -21,13 +22,11 @@
 <div class="alert alert-info">
 
     <strong>Academic Year:</strong>
-
     {{ active_year|default:"Not Active" }}
 
     &nbsp;&nbsp;|&nbsp;&nbsp;
 
     <strong>Semester:</strong>
-
     {{ active_semester|default:"Not Active" }}
 
 </div>
@@ -78,61 +77,145 @@
 
 </div>
 
+{% elif dashboard_type == "exam" %}
+
+<!-- EXAM OFFICER DASHBOARD -->
+
 <div class="row">
 
-    <div class="col-md-6 mb-3">
-        <div class="card shadow">
-            <div class="card-header">
-                Administration
-            </div>
-
+    <div class="col-md-4 mb-3">
+        <div class="card shadow text-center">
             <div class="card-body">
-
-                <a href="{% url 'accounts:user_list' %}"
-                   class="btn btn-primary me-2 mb-2">
-                    Users
-                </a>
-
-                <a href="{% url 'accounts:group_list' %}"
-                   class="btn btn-secondary mb-2">
-                    Groups
-                </a>
-
+                <h2>{{ total_assignments }}</h2>
+                <p>Lecturer Assignments</p>
             </div>
-
         </div>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <div class="card shadow">
-            <div class="card-header">
-                Academic Structure
+    <div class="col-md-4 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ assigned_units }}</h2>
+                <p>Assigned Units</p>
             </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card shadow text-center">
+            <div class="card-body">
+                <h2>{{ total_registrations }}</h2>
+                <p>Registrations</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+
+        <div class="card shadow text-center">
 
             <div class="card-body">
 
-                <a href="{% url 'programme_list' %}"
-                   class="btn btn-success me-2 mb-2">
-                    Programmes
-                </a>
+                <h2>{{ pending_approvals }}</h2>
 
-                <a href="{% url 'department_list' %}"
-                   class="btn btn-info mb-2">
-                    Departments
-                </a>
+                <p>
+                    Pending Approvals
+                </p>
 
             </div>
 
         </div>
+
+    </div>
+</div>
+
+<div class="card shadow">
+
+    <div class="card-header">
+        Examination Management
+    </div>
+
+    <div class="card-body">
+
+        <a href="{% url 'lecturer_assignment_list' %}"
+           class="btn btn-primary">
+
+            Lecturer Assignments
+
+        </a>
+        <a href="{% url 'approval_queue' %}"
+        class="btn btn-success me-2">
+
+            Approval Queue
+
+        </a>
     </div>
 
 </div>
 
-{% endif %}
+{% elif dashboard_type == "lecturer" %}
+
+<!-- LECTURER DASHBOARD -->
+
+<div class="row">
+
+    <div class="col-md-6 mb-3">
+
+        <div class="card shadow text-center">
+
+            <div class="card-body">
+
+                <h2>{{ my_units }}</h2>
+
+                <p>
+                    My Units
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6 mb-3">
+
+        <div class="card shadow text-center">
+
+            <div class="card-body">
+
+                <h2>{{ my_students }}</h2>
+
+                <p>
+                    Students To Assess
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card shadow">
+
+    <div class="card-header">
+        Lecturer Services
+    </div>
+
+    <div class="card-body">
+
+        <a href="{% url 'my_units' %}"
+           class="btn btn-primary">
+            My Units
+        </a>
+
+    </div>
+
+</div>
+
+{% elif dashboard_type == "admissions" %}
 
 <!-- ADMISSIONS DASHBOARD -->
-
-{% if dashboard_type == "admissions" %}
 
 <div class="row">
 
@@ -171,9 +254,11 @@
             </div>
         </div>
     </div>
+
 </div>
 
 <div class="card shadow">
+
     <div class="card-header">
         Quick Actions
     </div>
@@ -199,11 +284,9 @@
 
 </div>
 
-{% endif %}
+{% elif dashboard_type == "registrar" %}
 
 <!-- REGISTRAR DASHBOARD -->
-
-{% if dashboard_type == "registrar" %}
 
 <div class="row">
 
@@ -235,7 +318,9 @@
     </div>
 
 </div>
+
 <div class="card shadow">
+
     <div class="card-header">
         Quick Actions
     </div>
@@ -260,11 +345,10 @@
     </div>
 
 </div>
-{% endif %}
+
+{% elif dashboard_type == "student" %}
 
 <!-- STUDENT DASHBOARD -->
-
-{% if dashboard_type == "student" %}
 
 <div class="row">
 
@@ -328,12 +412,23 @@
             My Registrations
         </a>
 
+        <a href="{% url 'student_results' %}"
+            class="btn btn-primary me-2">
+            My Results
+        </a>
     </div>
 
 </div>
 
-{% endif %}
+{% else %}
 
+<div class="alert alert-secondary">
+
+    No dashboard configured for your role.
+
+</div>
+
+{% endif %}
 
 </div>
 

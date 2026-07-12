@@ -20,6 +20,7 @@ from .models import (Programme,
                      StudyLevel,
                      SemesterEnrollment,
                      Applicant,
+                     LecturerAssignment,
                      )
 
 @admin.register(Applicant)
@@ -200,4 +201,25 @@ class StudyLevelAdmin(admin.ModelAdmin):
 
     search_fields = (
         "level_name",
+    )
+
+@admin.register(LecturerAssignment)
+class LecturerAssignmentAdmin(admin.ModelAdmin):
+    list_display = (
+        "lecturer",
+        "unit",
+        "academic_year",
+        "semester",
+        "assigned_at",
+    )
+
+    list_filter = (
+        "academic_year",
+        "semester",
+    )
+
+    search_fields = (
+        "lecturer__username",
+        "unit__unit_code",
+        "unit__unit_name",
     )

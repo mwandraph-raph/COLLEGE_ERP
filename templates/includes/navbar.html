@@ -33,6 +33,7 @@
                         Dashboard
                     </a>
                 </li>
+                
 
                 <!-- STUDENT PORTAL -->
 
@@ -285,6 +286,49 @@
 
                 {% endif %}
 
+                <!-- EXAMINATIONS -->
+
+                {% if perms.students.view_lecturerassignment %}
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown">
+                        Examinations
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% if perms.students.view_lecturerassignment %}
+                        <li>
+                            <a class="dropdown-item"
+                            href="{% url 'lecturer_assignment_list' %}">
+                                Lecturer Assignments
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if user.groups.all %}
+
+                        {% for group in user.groups.all %}
+
+                        {% if group.name == "Lecturer" %}
+
+                        <li>
+                            <a class="dropdown-item"
+                            href="{% url 'my_units' %}">
+                                My Units
+                            </a>
+                        </li>
+
+                        {% endif %}
+
+                        {% endfor %}
+
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+
                 <!-- ADMINISTRATION -->
 
                 {% if perms.auth.view_user or perms.auth.view_group %}
@@ -319,13 +363,14 @@
                             </a>
                         </li>
                         {% endif %}
-
+                
                     </ul>
 
                 </li>
 
-                {% endif %}
 
+                {% endif %}
+                
                 {% endif %}
 
             </ul>

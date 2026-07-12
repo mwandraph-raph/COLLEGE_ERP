@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header">
+
+            <h4>
+
+                Results Approval Queue
+
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Unit</th>
+                        <th>Academic Year</th>
+                        <th>Semester</th>
+                        <th>Status</th>
+                        <th>Submitted By</th>
+                        <th>Submitted At</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for batch in batches %}
+
+                    <tr>
+
+                        <td>
+                            {{ batch.unit }}
+                        </td>
+
+                        <td>
+                            {{ batch.academic_year }}
+                        </td>
+
+                        <td>
+                            {{ batch.semester }}
+                        </td>
+
+                        <td>
+
+                            <span class="badge bg-info">
+
+                                {{ batch.get_status_display }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+                            {{ batch.submitted_by }}
+                        </td>
+
+                        <td>
+                            {{ batch.submitted_at }}
+                        </td>
+
+                        <td>
+
+                            <a href="{% url 'batch_details' batch.id %}"
+                               class="btn btn-primary btn-sm">
+
+                                View
+
+                            </a>
+
+                            <a href="{% url 'approve_results' batch.id %}"
+                               class="btn btn-success btn-sm">
+
+                                Approve
+
+                            </a>
+
+                            <a href="{% url 'return_results' batch.id %}"
+                               class="btn btn-warning btn-sm">
+
+                                Return
+
+                            </a>
+                        
+                            <a href="{% url 'unlock_batch' batch.id %}"
+                            class="btn btn-secondary btn-sm">
+
+                            Unlock
+
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="7"
+                            class="text-center">
+
+                            No submitted result batches.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

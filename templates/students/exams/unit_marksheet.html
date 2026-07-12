@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header">
+
+            <h4>
+                Unit Marksheet
+            </h4>
+
+            <strong>
+                {{ assignment.unit }}
+            </strong>
+
+            <br>
+
+            Academic Year:
+            {{ assignment.academic_year }}
+
+            <br>
+
+            Semester:
+            {{ assignment.semester }}
+
+        </div>
+        <div class="mt-2">
+
+            {% if status == "Approved" %}
+
+                <span class="badge bg-success">
+                    Approved
+                </span>
+
+            {% elif status == "Submitted" %}
+
+                <span class="badge bg-warning text-dark">
+                    Submitted
+                </span>
+
+            {% else %}
+
+                <span class="badge bg-secondary">
+                    Draft
+                </span>
+
+            {% endif %}
+
+        </div>
+        <div class="card-body">
+
+            <div class="mb-3">
+                <a href="{% url 'submit_results' assignment.id %}"
+                 class="btn btn-warning">
+
+                    Submit Results
+
+                </a>
+                <button
+                    onclick="window.print()"
+                    class="btn btn-secondary">
+
+                    Print
+
+                </button>
+
+                <a href="{% url 'export_marksheet_excel' assignment.id %}"
+                   class="btn btn-success">
+
+                    Export Excel
+
+                </a>
+
+                <a href="{% url 'my_units' %}"
+                   class="btn btn-primary">
+
+                    Back
+
+                </a>
+
+            </div>
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Adm No</th>
+                        <th>Student Name</th>
+                        <th>CAT 1</th>
+                        <th>CAT 2</th>
+                        <th>Exam</th>
+                        <th>Total</th>
+                        <th>Grade</th>
+                        <th>Remarks</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for result in results %}
+
+                    <tr>
+
+                        <td>
+                            {{ result.enrollment.student.admission_no }}
+                        </td>
+
+                        <td>
+                            {{ result.enrollment.student }}
+                        </td>
+
+                        <td>
+                            {{ result.cat1 }}
+                        </td>
+
+                        <td>
+                            {{ result.cat2 }}
+                        </td>
+
+                        <td>
+                            {{ result.exam }}
+                        </td>
+
+                        <td>
+                            {{ result.total }}
+                        </td>
+
+                        <td>
+                            {{ result.grade }}
+                        </td>
+
+                        <td>
+                            {{ result.remarks }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="8"
+                            class="text-center">
+
+                            No marks entered.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

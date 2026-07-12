@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between mb-3">
+
+        <h4>My Teaching Units</h4>
+
+    </div>
+    <a href="{% url 'home' %}"
+        class="btn btn-secondary btn-sm">
+        Back to Dashboard
+    </a>
+</div>
+    <div class="card shadow">
+
+        <div class="card-body">
+
+            <table class="table table-bordered">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Unit</th>
+                        <th>Academic Year</th>
+                        <th>Semester</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in assignment_data %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.assignment.unit }}
+                        </td>
+
+                        <td>
+                            {{ item.assignment.academic_year }}
+                        </td>
+
+                        <td>
+                            {{ item.assignment.semester }}
+                        </td>
+
+                        <td>
+
+                            {% if item.batch %}
+
+                                {% if item.batch.status == "draft" %}
+
+                                    <span class="badge bg-secondary">
+                                        Draft
+                                    </span>
+
+                                {% elif item.batch.status == "submitted" %}
+
+                                    <span class="badge bg-info">
+                                        Submitted
+                                    </span>
+
+                                {% elif item.batch.status == "approved" %}
+
+                                    <span class="badge bg-success">
+                                        Approved
+                                    </span>
+
+                                {% elif item.batch.status == "returned" %}
+
+                                    <span class="badge bg-danger">
+                                        Returned
+                                    </span>
+
+                                {% elif item.batch.status == "unlocked" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Unlocked
+                                    </span>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Draft
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if item.batch and item.batch.remarks %}
+
+                                {{ item.batch.remarks }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a href="{% url 'enter_marks' item.assignment.id %}"
+                               class="btn btn-primary btn-sm">
+
+                                Enter Marks
+
+                            </a>
+
+                            <a href="{% url 'unit_marksheet' item.assignment.id %}"
+                               class="btn btn-success btn-sm">
+
+                                Marksheet
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="6"
+                            class="text-center">
+
+                            No units assigned.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

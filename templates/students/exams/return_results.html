@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+<div class="container mt-4">
+
+
+    <div class="card shadow">
+
+
+        <div class="card-header">
+
+            <h4>
+                Return Results For Correction
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <p>
+                <strong>Unit:</strong>
+                {{ batch.unit }}
+            </p>
+
+
+            <p>
+                <strong>Academic Year:</strong>
+                {{ batch.academic_year }}
+            </p>
+
+
+            <p>
+                <strong>Semester:</strong>
+                {{ batch.semester }}
+            </p>
+
+
+            <form method="post">
+
+                {% csrf_token %}
+
+
+                <div class="mb-3">
+
+
+                    <label class="form-label">
+
+                        Reason for Returning Results
+
+                    </label>
+
+
+                    <textarea
+                        name="remarks"
+                        class="form-control"
+                        rows="5"
+                        required></textarea>
+
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-warning">
+
+                    Return Results
+
+                </button>
+
+
+                <a href="{% url 'approval_queue' %}"
+                   class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+{% endblock %}

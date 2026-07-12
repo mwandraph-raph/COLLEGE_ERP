@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% load student_extras %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                Marks Entry
+
+                <br>
+
+                <small>
+                    {{ assignment.unit }}
+                </small>
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="alert alert-success">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-sm">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Adm No</th>
+                                <th>Student Name</th>
+                                <th>CAT 1</th>
+                                <th>CAT 2</th>
+                                <th>Exam</th>
+                                <th>Total</th>
+                                <th>Grade</th>
+                                <th>Remarks</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        {% for reg in registrations %}
+
+                            {% with result=result_map|get_item:reg.id %}
+
+                            <tr>
+
+                                <td>
+                                    {{ reg.enrollment.student.admission_no }}
+                                </td>
+
+                                <td>
+                                    {{ reg.enrollment.student }}
+                                </td>
+
+                                <td>
+
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        name="cat1_{{ reg.id }}"
+                                        value="{{ result.cat1|default:'' }}"
+                                        class="form-control">
+
+                                </td>
+
+                                <td>
+
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        name="cat2_{{ reg.id }}"
+                                        value="{{ result.cat2|default:'' }}"
+                                        class="form-control">
+
+                                </td>
+
+                                <td>
+
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        name="exam_{{ reg.id }}"
+                                        value="{{ result.exam|default:'' }}"
+                                        class="form-control">
+
+                                </td>
+
+                                <td>
+
+                                    {% if result %}
+                                        {{ result.total }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if result %}
+                                        {{ result.grade }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if result %}
+                                        {{ result.remarks }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% endwith %}
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between">
+
+                    <a href="{% url 'my_units' %}"
+                    class="btn btn-secondary">
+
+                        Back to My Units
+
+                    </a>
+
+                    {% if not locked %}
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+
+                        Save Marks
+
+                    </button>
+
+                    {% else %}
+
+                    <button
+                        class="btn btn-danger"
+                        disabled>
+
+                        Results Submitted
+
+                    </button>
+
+                    {% endif %}
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

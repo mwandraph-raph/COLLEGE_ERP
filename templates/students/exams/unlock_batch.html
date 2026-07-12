@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+<div class="container mt-4">
+
+
+<div class="card shadow">
+
+
+<div class="card-header">
+
+<h4>
+Unlock Result Batch
+</h4>
+
+</div>
+
+
+<div class="card-body">
+
+
+<p>
+<strong>Unit:</strong>
+{{ batch.unit }}
+</p>
+
+
+<p>
+<strong>Status:</strong>
+{{ batch.get_status_display }}
+</p>
+
+
+<form method="post">
+
+{% csrf_token %}
+
+
+<div class="mb-3">
+
+<label>
+Reason for Unlocking
+</label>
+
+
+<textarea
+name="remarks"
+class="form-control"
+rows="5"
+required></textarea>
+
+
+</div>
+
+
+<button
+class="btn btn-secondary">
+
+Unlock Batch
+
+</button>
+
+
+<a href="{% url 'approval_queue' %}"
+class="btn btn-danger">
+
+Cancel
+
+</a>
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+{% endblock %}
