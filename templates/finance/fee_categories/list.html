@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+   <div class="card shadow-sm">
+
+    <div class="card-header d-flex justify-content-between">
+
+        <h4 class="mb-0">
+
+            Fee Categories
+
+        </h4>
+
+        <a href="{% url 'finance:fee_category_create' %}"
+           class="btn btn-primary btn-sm">
+
+            Add Fee Category
+
+        </a>
+
+    </div>
+
+    <div class="card-body">
+
+    <table class="table table-striped table-bordered">
+
+        <thead>
+
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Active</th>
+                <th width="180">Actions</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for category in categories %}
+
+            <tr>
+
+                <td>{{ category.code }}</td>
+
+                <td>{{ category.name }}</td>
+
+                <td>{{ category.is_active }}</td>
+
+                <td>
+
+                    <a href="{% url 'finance:fee_category_update' category.pk %}"
+                       class="btn btn-warning btn-sm">
+
+                        Edit
+
+                    </a>
+
+                    <a href="{% url 'finance:fee_category_delete' category.pk %}"
+                       class="btn btn-danger btn-sm">
+
+                        Delete
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="4">
+                    No fee categories found.
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

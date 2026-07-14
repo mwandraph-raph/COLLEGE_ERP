@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h4 class="mb-0">
+
+                {% if form.instance.pk %}
+                    Edit Fee Category
+                {% else %}
+                    Add Fee Category
+                {% endif %}
+
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Code
+
+                    </label>
+
+                    {{ form.code }}
+
+                    {% if form.code.errors %}
+                        <div class="text-danger">
+                            {{ form.code.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Name
+
+                    </label>
+
+                    {{ form.name }}
+
+                    {% if form.name.errors %}
+                        <div class="text-danger">
+                            {{ form.name.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Description
+
+                    </label>
+
+                    {{ form.description }}
+
+                    {% if form.description.errors %}
+                        <div class="text-danger">
+                            {{ form.description.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="form-check mb-3">
+
+                    {{ form.is_active }}
+
+                    <label class="form-check-label">
+
+                        Active
+
+                    </label>
+
+                </div>
+
+                <button type="submit"
+                        class="btn btn-success">
+
+                    Save
+
+                </button>
+
+                <a href="{% url 'finance:fee_category_list' %}"
+                   class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
