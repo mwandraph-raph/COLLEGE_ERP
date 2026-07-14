@@ -373,6 +373,32 @@
                 
                 {% endif %}
 
+{% if perms.finance.view_feecategory %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       data-bs-toggle="dropdown">
+
+       Finance
+    </a>
+
+    <ul class="dropdown-menu">
+
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'finance:dashboard' %}">
+                Dashboard
+            </a>
+        </li>
+
+    </ul>
+
+</li>
+
+{% endif %}
+
             </ul>
 
             <ul class="navbar-nav ms-auto">
