@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h4 class="mb-0">
+                Fee Statement
+            </h4>
+
+            <a href="{% url 'finance:fee_statement_list' %}"
+               class="btn btn-secondary btn-sm">
+
+                Back
+
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <p>
+
+                        <strong>Admission No:</strong>
+
+                        {{ student.admission_no }}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Student:</strong>
+
+                        {{ student.first_name }}
+                        {{ student.last_name }}
+
+                    </p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <p>
+
+                        <strong>Programme:</strong>
+
+                        {{ student.programme }}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Study Level:</strong>
+
+                        {{ student.study_level }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Description
+                        </th>
+
+                        <th>
+                            Debit
+                        </th>
+
+                        <th>
+                            Credit
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in transactions %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.date }}
+                        </td>
+
+                        <td>
+                            {{ item.description }}
+                        </td>
+
+                        <td>
+
+                            {% if item.debit %}
+
+                                {{ item.debit }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if item.credit %}
+
+                                {{ item.credit }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+                <div class="card mt-4">
+
+                    <div class="card-body">
+
+                        <p>
+                            <strong>Total Invoiced</strong><br>
+                            {{ total_invoiced }}
+                        </p>
+
+                        <p>
+                            <strong>Total Paid</strong><br>
+                            {{ total_paid }}
+                        </p>
+
+<p>
+
+    {% if balance < 0 %}
+
+        <span class="badge bg-success">
+
+            Credit Balance
+
+        </span>
+
+        <br>
+
+        {{ balance|floatformat:2|cut:"-" }}
+
+    {% else %}
+
+        <span class="badge bg-danger">
+
+            Outstanding Balance
+
+        </span>
+
+        <br>
+
+        {{ balance|floatformat:2 }}
+
+    {% endif %}
+
+</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mt-2 mb-3 ms-4">
+
+                <button
+                    class="btn btn-primary"
+                    onclick="window.print()">
+
+                    Print Statement
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

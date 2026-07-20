@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h4>
+
+                Reverse Payment
+
+            </h4>
+
+            <a href="{% url 'finance:payment_detail' payment.pk %}"
+               class="btn btn-secondary btn-sm">
+
+                Back
+
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            <p>
+
+                <strong>Payment:</strong>
+
+                {{ payment.payment_number }}
+
+            </p>
+
+            <p>
+
+                <strong>Student:</strong>
+
+                {{ payment.invoice.student }}
+
+            </p>
+
+            <p>
+
+                <strong>Amount:</strong>
+
+                {{ payment.amount }}
+
+            </p>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button
+                    type="submit"
+                    class="btn btn-danger">
+
+                    Confirm Reversal
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

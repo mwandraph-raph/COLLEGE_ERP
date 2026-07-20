@@ -3881,3 +3881,102 @@ def student_results(request):
             "results": results,
         }
     )
+
+@login_required
+@permission_required(
+    "students.add_semesterenrollment",
+    raise_exception=True
+)
+def progress_student(request, enrollment_id):
+
+    current = get_object_or_404(
+        SemesterEnrollment,
+        pk=enrollment_id
+    )
+
+    student = current.student
+
+    semesters = list(
+        Semester.objects.filter(
+            academic_year=current.academic_year
+        ).order_by("id")
+    )
+
+    try:
+        current_index = semesters.index(
+            current.semester
+        )
+
+    except ValueError:
+
+        messages.error(
+            request,
+            "Current semester not found."
+        )
+
+        return redirect(
+            "enrollment_list"
+        )
+
+    # Find next semester
+
+    if current_index + 1 < len(semesters):
+
+        next_semester = semesters[
+            current_index + 1
+        ]
+
+        next_year = current.academic_year
+
+        next_level = current.study_level
+
+    else:
+
+        messages.error(
+            request,
+            "No next semester configured."
+        )
+
+        return redirect(
+            "enrollment_list"
+        )
+
+    # Prevent duplicates
+
+    exists = SemesterEnrollment.objects.filter(
+        student=student,
+        academic_year=next_year,
+        semester=next_semester
+    ).exists()
+
+    if exists:
+
+        messages.warning(
+            request,
+            "Student already progressed."
+        )
+
+        return redirect(
+            "enrollment_list"
+        )
+
+    SemesterEnrollment.objects.create(
+        student=student,
+        academic_year=next_year,
+        semester=next_semester,
+        study_level=next_level,
+        status="enrolled"
+    )
+
+    current.status = "completed"
+    current.save()
+
+    messages.success(
+        request,
+        f"{student} progressed to "
+        f"{next_semester}"
+    )
+
+    return redirect(
+        "enrollment_list"
+    )

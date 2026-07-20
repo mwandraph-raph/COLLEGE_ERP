@@ -107,6 +107,8 @@
                         </li>
                         {% endif %}
 
+
+
                         {% if perms.students.view_intake %}
                         <li>
                             <a class="dropdown-item"
@@ -379,9 +381,11 @@
 
     <a class="nav-link dropdown-toggle"
        href="#"
+       role="button"
        data-bs-toggle="dropdown">
 
-       Finance
+        Finance
+
     </a>
 
     <ul class="dropdown-menu">
@@ -392,10 +396,107 @@
                 Dashboard
             </a>
         </li>
+
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+
+        <li>
+            <h6 class="dropdown-header">
+                Setup
+            </h6>
+        </li>
+
         <li>
             <a class="dropdown-item"
                href="{% url 'finance:fee_category_list' %}">
                 Fee Categories
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'finance:fee_structure_list' %}">
+                Fee Structures
+            </a>
+        </li>
+
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+
+        <li>
+            <h6 class="dropdown-header">
+                Billing
+            </h6>
+        </li>
+
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'finance:invoice_list' %}">
+                Student Invoices
+            </a>
+        </li>
+
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+
+        <li>
+            <h6 class="dropdown-header">
+                Collections
+            </h6>
+        </li>
+
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'finance:payment_list' %}">
+                Payments
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'finance:receipt_list' %}">
+                Receipts
+            </a>
+        </li>
+         <li><hr class="dropdown-divider"></li>
+
+        <!-- Reports -->
+
+        <li>
+            <h6 class="dropdown-header">
+                Reports
+            </h6>
+        </li>
+
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'finance:fee_statement_list' %}">
+                Fee Statements
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item"
+            href="{% url 'finance:settings' %}">
+                Finance Settings
+            </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+
+        <!-- Clearance -->
+
+        <li>
+            <h6 class="dropdown-header">
+                Clearance
+            </h6>
+        </li>
+
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'finance:financial_clearance_list' %}">
+                Financial Clearance
             </a>
         </li>
     </ul>

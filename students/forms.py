@@ -653,6 +653,7 @@ class StudyLevelForm(forms.ModelForm):
 
         }
 
+
 class LecturerAssignmentForm(forms.ModelForm):
 
     class Meta:

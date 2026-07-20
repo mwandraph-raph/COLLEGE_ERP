@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h4>
+
+                Fee Structure Details
+
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row mb-3">
+
+                <div class="col-md-6">
+
+                    <strong>Programme:</strong><br>
+
+                    {{ structure.programme }}
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <strong>Academic Year:</strong><br>
+
+                    {{ structure.academic_year }}
+
+                </div>
+
+            </div>
+
+            <div class="row mb-3">
+
+                <div class="col-md-6">
+
+                    <strong>Semester:</strong><br>
+
+                    {{ structure.semester }}
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <strong>Study Level:</strong><br>
+
+                    {{ structure.study_level }}
+
+                </div>
+
+            </div>
+            <a href="{% url 'finance:fee_structure_list' %}"
+            class="btn btn-outline-secondary btn-sm">
+
+                ← Back to Fee Structures
+
+            </a>
+            <hr>
+
+            <div class="d-flex justify-content-between mb-3">
+
+                <h5>
+
+                    Fee Items
+
+                </h5>
+
+                <a href="{% url 'finance:fee_structure_item_create' structure.pk %}"
+                   class="btn btn-success btn-sm">
+
+                    Add Fee Item
+
+                </a>
+
+            </div>
+
+            <table class="table table-bordered">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Fee Category</th>
+                        <th>Amount</th>
+                        <th width="180">Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for item in items %}
+
+
+<tr>
+    <td>{{ item.fee_category }}</td>
+    <td>{{ item.amount }}</td>
+    <td>
+        <a href="{% url 'finance:fee_structure_item_update' item.pk %}"
+           class="btn btn-warning btn-sm">
+            Edit
+        </a>
+        <a href="{% url 'finance:fee_structure_item_delete' item.pk %}"
+           class="btn btn-danger btn-sm">
+
+            Delete
+
+        </a>
+
+    </td>
+
+</tr>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td colspan="2">
+
+                            No fee items added.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+                <tfoot>
+
+                    <tr>
+
+                        <th>Total</th>
+
+                        <th>
+
+                            {{ structure.total_amount }}
+
+                        </th>
+
+                    </tr>
+
+                </tfoot>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

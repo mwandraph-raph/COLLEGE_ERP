@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between">
+
+            <h4>
+
+                Payment Details
+
+            </h4>
+
+            {% if not payment.is_reversed %}
+
+                <a href="{% url 'finance:reverse_payment' payment.pk %}"
+                   class="btn btn-danger">
+
+                    Reverse Payment
+
+                </a>
+                    <a href="{% url 'finance:payment_list' %}"
+       class="btn btn-secondary">
+
+        Back to Payments
+
+    </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="card-body">
+
+            <table class="table">
+
+                <tr>
+                    <th>Payment Number</th>
+                    <td>{{ payment.payment_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Invoice</th>
+                    <td>{{ payment.invoice.invoice_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Student</th>
+                    <td>{{ payment.invoice.student }}</td>
+                </tr>
+
+                <tr>
+                    <th>Receipt</th>
+                    <td>
+
+                        {% if payment.receipt %}
+                            {{ payment.receipt.receipt_number }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Method</th>
+                    <td>{{ payment.payment_method }}</td>
+                </tr>
+
+                <tr>
+                    <th>Reference</th>
+                    <td>{{ payment.reference_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Amount</th>
+                    <td>{{ payment.amount }}</td>
+                </tr>
+
+                <tr>
+                    <th>Status</th>
+                    <td>
+
+                        {% if payment.is_reversed %}
+
+                            <span class="badge bg-danger">
+
+                                Reversed
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-success">
+
+                                Posted
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Received By</th>
+                    <td>{{ payment.received_by }}</td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

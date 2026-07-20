@@ -134,7 +134,6 @@
    class="btn btn-primary mb-3">
     New Enrollment
 </a>
-
 <table class="table table-bordered">
 
     <thead>
@@ -176,7 +175,12 @@
                     class="btn btn-sm btn-danger">
                     Delete
                 </a>
-
+            {% if perms.students.add_semesterenrollment %}
+                <a href="{% url 'progress_student' enrollment.id %}"
+                class="btn btn-success btn-sm">
+                    Progress
+                </a>
+            {% endif %}
             </td>
         </tr>
 

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between">
+
+            <h4>
+
+                Official Receipt
+
+            </h4>
+
+            <button
+                onclick="window.print();"
+                class="btn btn-success">
+
+                Print
+
+            </button>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table">
+
+                <tr>
+                    <th>Receipt Number</th>
+                    <td>{{ receipt.receipt_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Payment Number</th>
+                    <td>{{ receipt.payment.payment_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Invoice Number</th>
+                    <td>{{ receipt.payment.invoice.invoice_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Student</th>
+                    <td>{{ receipt.payment.invoice.student }}</td>
+                </tr>
+
+                <tr>
+                    <th>Admission Number</th>
+                    <td>
+                        {{ receipt.payment.invoice.student.admission_number }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Amount</th>
+                    <td>{{ receipt.payment.amount }}</td>
+                </tr>
+
+                <tr>
+                    <th>Method</th>
+                    <td>{{ receipt.payment.payment_method }}</td>
+                </tr>
+
+                <tr>
+                    <th>Reference</th>
+                    <td>{{ receipt.payment.reference_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Date</th>
+                    <td>{{ receipt.receipt_date }}</td>
+                </tr>
+
+                <tr>
+                    <th>Received By</th>
+                    <td>{{ receipt.payment.received_by }}</td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

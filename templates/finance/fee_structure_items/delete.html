@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-danger text-white">
+
+            Confirm Delete
+
+        </div>
+
+        <div class="card-body">
+
+            <p>
+
+                Are you sure you want to delete this fee item?
+
+            </p>
+
+            <table class="table table-bordered">
+
+                <tr>
+                    <th>Fee Category</th>
+                    <td>{{ item.fee_category }}</td>
+                </tr>
+
+                <tr>
+                    <th>Amount</th>
+                    <td>{{ item.amount }}</td>
+                </tr>
+
+            </table>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="btn btn-danger">
+
+                    Yes, Delete
+
+                </button>
+
+                <a href="{% url 'finance:fee_structure_detail' item.fee_structure.pk %}"
+                   class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

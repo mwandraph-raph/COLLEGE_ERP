@@ -464,4 +464,10 @@ path(
     views.student_results,
     name="student_results",
 ),
+
+path(
+    "enrollments/<int:enrollment_id>/progress/",
+    views.progress_student,
+    name="progress_student",
+),
 ]

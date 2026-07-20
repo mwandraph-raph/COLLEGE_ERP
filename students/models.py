@@ -312,7 +312,7 @@ class Intake(models.Model):
             f"({self.academic_year})"
         )
 
-from django.db import models
+
 class Semester(models.Model):
 
     academic_year = models.ForeignKey(
@@ -350,23 +350,21 @@ class Semester(models.Model):
             f"{self.semester_name}"
         )
 
+
 class StudyLevel(models.Model):
 
     level_name = models.CharField(
         max_length=50,
         unique=True
     )
-
     class Meta:
-
         ordering = ["id"]
 
         verbose_name = "Study Level"
         verbose_name_plural = "Study Levels"
-
     def __str__(self):
-
         return self.level_name
+
 
 class Course(models.Model):
 

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h4 class="mb-0">
+
+                Financial Clearance Dashboard
+
+            </h4>
+
+            <a href="{% url 'finance:dashboard' %}"
+               class="btn btn-secondary btn-sm">
+
+                Back
+
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Student</th>
+
+                        <th>% Paid</th>
+
+                        <th>Registration</th>
+
+                        <th>Exam</th>
+
+                        <th>Result Slip</th>
+
+                        <th>Transcript</th>
+
+                        <th>Graduation</th>
+
+                    </tr>
+
+                </thead>
+
+<tbody>
+
+    {% for clearance in clearances %}
+
+    <tr>
+
+        <td>
+            {{ clearance.invoice.student }}
+        </td>
+
+        <td>
+            {{ clearance.percentage }}%
+        </td>
+
+        <td>
+            {% if clearance.registration %}
+                <span class="badge bg-success">
+                    Cleared
+                </span>
+            {% else %}
+                <span class="badge bg-danger">
+                    Not Cleared
+                </span>
+            {% endif %}
+        </td>
+
+        <td>
+            {% if clearance.exam %}
+                <span class="badge bg-success">
+                    Cleared
+                </span>
+            {% else %}
+                <span class="badge bg-danger">
+                    Not Cleared
+                </span>
+            {% endif %}
+        </td>
+
+        <td>
+            {% if clearance.results %}
+                <span class="badge bg-success">
+                    Cleared
+                </span>
+            {% else %}
+                <span class="badge bg-danger">
+                    Not Cleared
+                </span>
+            {% endif %}
+        </td>
+
+        <td>
+            {% if clearance.transcript %}
+                <span class="badge bg-success">
+                    Cleared
+                </span>
+            {% else %}
+                <span class="badge bg-danger">
+                    Not Cleared
+                </span>
+            {% endif %}
+        </td>
+
+        <td>
+            {% if clearance.graduation %}
+                <span class="badge bg-success">
+                    Cleared
+                </span>
+            {% else %}
+                <span class="badge bg-danger">
+                    Not Cleared
+                </span>
+            {% endif %}
+        </td>
+
+    </tr>
+
+    {% empty %}
+
+    <tr>
+        <td colspan="7">
+            No financial clearance records found.
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

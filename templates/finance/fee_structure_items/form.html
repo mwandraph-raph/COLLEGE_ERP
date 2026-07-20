@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h4>
+                Add Fee Item
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <p>
+                <strong>Fee Structure:</strong>
+                {{ structure }}
+            </p>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit"
+                        class="btn btn-success">
+
+                    Save
+
+                </button>
+
+                <a href="{% url 'finance:fee_structure_detail' structure.pk %}"
+                   class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+    <h4 class="mb-0">
+        Finance Settings
+    </h4>
+
+    <a href="{% url 'finance:dashboard' %}"
+       class="btn btn-secondary btn-sm">
+
+        Back
+
+    </a>
+
+</div>
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Registration Clearance (%)
+                    </label>
+
+                    {{ form.minimum_registration_percentage }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Exam Clearance (%)
+                    </label>
+
+                    {{ form.minimum_exam_percentage }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Result Slip Clearance (%)
+                    </label>
+
+                    {{ form.minimum_result_slip_percentage }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Transcript Clearance (%)
+                    </label>
+
+                    {{ form.minimum_transcript_percentage }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Graduation Clearance (%)
+                    </label>
+
+                    {{ form.minimum_graduation_percentage }}
+
+                </div>
+
+                <div class="form-check mb-3">
+
+                    {{ form.allow_overpayment }}
+
+                    <label class="form-check-label">
+
+                        Allow Overpayment
+
+                    </label>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Save Settings
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
