@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+<div class="card shadow">
+
+
+    <div class="card-header bg-success text-white">
+
+
+        <h4 class="mb-0">
+
+            Graduation Eligibility Candidates
+
+        </h4>
+
+
+    </div>
+
+
+
+    <div class="card-body">
+
+
+
+        <form method="get" class="row mb-4">
+
+
+            <div class="col-md-6">
+
+
+                <label class="form-label">
+
+                    Programme
+
+                </label>
+
+
+                <select
+                    name="programme"
+                    class="form-select">
+
+
+                    <option value="">
+
+                        All Programmes
+
+                    </option>
+
+
+
+                    {% for programme in programmes %}
+
+
+                    <option
+
+                        value="{{ programme.id }}"
+
+                        {% if selected_programme == programme.id|stringformat:"s" %}
+
+                        selected
+
+                        {% endif %}
+
+                    >
+
+
+                        {{ programme.programme_name }}
+
+
+                    </option>
+
+
+                    {% endfor %}
+
+
+                </select>
+
+
+            </div>
+
+
+
+
+            <div class="col-md-2 d-flex align-items-end">
+
+
+                <button class="btn btn-success w-100">
+
+
+                    Filter
+
+
+                </button>
+
+
+            </div>
+
+
+
+        </form>
+
+
+
+
+
+        <table class="table table-bordered table-hover">
+
+
+            <thead class="table-light">
+
+
+                <tr>
+
+
+                    <th>
+
+                        Admission No
+
+                    </th>
+
+
+                    <th>
+
+                        Student
+
+                    </th>
+
+
+                    <th>
+
+                        Programme
+
+                    </th>
+
+
+                    <th>
+
+                        Current Level
+
+                    </th>
+
+
+                    <th>
+
+                        Status
+
+                    </th>
+
+
+                    <th>
+
+                        Action
+
+                    </th>
+
+
+                </tr>
+
+
+            </thead>
+
+
+
+
+            <tbody>
+
+
+
+            {% for candidate in candidates %}
+
+
+
+                <tr>
+
+
+                    <td>
+
+
+                        {{ candidate.student.admission_no }}
+
+
+                    </td>
+
+
+
+                    <td>
+
+
+                        {{ candidate.student.first_name }}
+
+                        {{ candidate.student.last_name }}
+
+
+                    </td>
+
+
+
+
+                    <td>
+
+
+                        {{ candidate.student.programme.programme_name }}
+
+
+                    </td>
+
+
+
+
+                    <td>
+
+
+                        {{ candidate.latest_enrollment.study_level.level_name }}
+
+
+                    </td>
+
+
+
+
+                    <td>
+
+
+                        <span class="badge bg-success">
+
+
+                            {{ candidate.latest_enrollment.status|title }}
+
+
+                        </span>
+
+
+                    </td>
+
+
+
+
+                    <td>
+
+
+                        <a
+
+                            href="{% url 'graduation:graduation_eligibility' candidate.student.id %}"
+
+                            class="btn btn-success btn-sm"
+
+
+                        >
+
+                            Check Eligibility
+
+
+                        </a>
+
+
+                    </td>
+
+
+                </tr>
+
+
+
+
+            {% empty %}
+
+
+
+                <tr>
+
+
+                    <td colspan="6" class="text-center">
+
+
+                        No graduation candidates found.
+
+
+                    </td>
+
+
+                </tr>
+
+
+
+            {% endfor %}
+
+
+
+            </tbody>
+
+
+        </table>
+
+
+
+    </div>
+
+
+</div>
+
+
+
+{% endblock %}

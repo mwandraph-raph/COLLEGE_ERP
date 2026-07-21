@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from .models import (
     Student,
     Department,
@@ -193,7 +193,139 @@ class ProgrammeForm(forms.ModelForm):
             ),
         }
 
+class StudentForm(forms.ModelForm):
 
+    class Meta:
+
+        model = Student
+
+        fields = [
+            "user",
+            "admission_no",
+            "first_name",
+            "last_name",
+            "phone",
+            "programme",
+            "study_level",
+        ]
+
+        widgets = {
+
+            "user": forms.Select(
+                attrs={
+                    "class": "form-select"
+                }
+            ),
+
+            "admission_no": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "readonly": "readonly",
+                }
+            ),
+
+            "first_name": forms.TextInput(
+                attrs={
+                    "class": "form-control"
+                }
+            ),
+
+            "last_name": forms.TextInput(
+                attrs={
+                    "class": "form-control"
+                }
+            ),
+
+            "phone": forms.TextInput(
+                attrs={
+                    "class": "form-control"
+                }
+            ),
+
+            "programme": forms.Select(
+                attrs={
+                    "class": "form-select"
+                }
+            ),
+
+            "study_level": forms.Select(
+                attrs={
+                    "class": "form-select"
+                }
+            ),
+
+        }
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["programme"].queryset = (
+            Programme.objects
+            .select_related("department")
+            .order_by("programme_name")
+        )
+
+        student_group = Group.objects.filter(
+            name="Student"
+        ).first()
+
+        if student_group:
+
+            available_users = (
+                User.objects.filter(
+                    groups=student_group,
+                    student_profile__isnull=True,
+                )
+                .order_by("username")
+            )
+
+            if self.instance.pk and self.instance.user:
+
+                available_users = (
+                    available_users
+                    | User.objects.filter(
+                        pk=self.instance.user.pk
+                    )
+                ).distinct()
+
+            self.fields["user"].queryset = available_users
+
+        self.fields["user"].label = (
+            "Linked User Account"
+        )
+
+        self.fields["user"].help_text = (
+            "Select the login account assigned to this student."
+        )
+
+    def clean_user(self):
+
+        user = self.cleaned_data.get("user")
+
+        if not user:
+            return user
+
+        existing = (
+            Student.objects.filter(
+                user=user
+            )
+            .exclude(
+                pk=self.instance.pk
+            )
+            .first()
+        )
+
+        if existing:
+
+            raise forms.ValidationError(
+                f"{user.username} is already linked to "
+                f"{existing.admission_no}."
+            )
+
+        return user
+    
+"""
 class StudentForm(forms.ModelForm):
 
     class Meta:
@@ -249,6 +381,7 @@ class StudentForm(forms.ModelForm):
             .select_related("department")
             .order_by("programme_name")
         )
+"""
 
 class SemesterEnrollmentForm(forms.ModelForm):
 

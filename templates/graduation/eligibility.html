@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-success text-white">
+
+            <h3 class="mb-0">
+                Graduation Eligibility Assessment
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <h4>
+
+                {{ student }}
+
+            </h4>
+
+            <p>
+
+                <strong>Admission No:</strong>
+
+                {{ student.admission_no }}
+
+            </p>
+
+            <p>
+
+                <strong>Programme:</strong>
+
+                {{ student.programme }}
+
+            </p>
+
+            <hr>
+
+            <h5>Overall Graduation Status</h5>
+
+            {% if assessment.eligible %}
+
+                <div class="alert alert-success">
+
+                    <h4 class="mb-0">
+
+                        ✅ ELIGIBLE FOR GRADUATION
+
+                    </h4>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-danger">
+
+                    <h4 class="mb-0">
+
+                        ❌ NOT ELIGIBLE FOR GRADUATION
+
+                    </h4>
+
+                </div>
+
+            {% endif %}
+
+            <hr>
+
+            <h5>Academic Assessment</h5>
+
+            <table class="table table-bordered">
+
+                <tr>
+
+                    <th>Required Units</th>
+
+                    <td>
+
+                        {{ assessment.academic.required_units }}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Passed Units</th>
+
+                    <td>
+
+                        {{ assessment.academic.passed_units }}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Failed Units</th>
+
+                    <td>
+
+                        {{ assessment.academic.failed_units }}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Missing Results</th>
+
+                    <td>
+
+                        {{ assessment.academic.missing_results }}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Missing Registrations</th>
+
+                    <td>
+
+                        {{ assessment.academic.missing_units }}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Status</th>
+
+                    <td>
+
+                        {% if assessment.academic.status %}
+
+                            <span class="badge bg-success">
+
+                                PASSED
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+
+                                FAILED
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+            <hr>
+
+            <h5>Financial Clearance</h5>
+
+            {% if assessment.finance.status %}
+
+                <div class="alert alert-success">
+
+                    Financial requirements satisfied.
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-danger">
+
+                    Financial requirements NOT satisfied.
+
+                </div>
+
+            {% endif %}
+
+            <hr>
+
+            <h5>Programme Completion</h5>
+
+            {% if assessment.progression.status %}
+
+                <div class="alert alert-success">
+
+                    Programme completed.
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-warning">
+
+                    Student has incomplete semester(s).
+
+                </div>
+
+            {% endif %}
+
+            <hr>
+
+            <h5>Outstanding Issues</h5>
+
+            {% if assessment.issues %}
+
+                <ul class="list-group">
+
+                    {% for issue in assessment.issues %}
+
+                        <li class="list-group-item list-group-item-danger">
+
+                            {{ issue }}
+
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <div class="alert alert-success">
+
+                    No outstanding issues.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

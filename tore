@@ -1,0 +1,8 @@
+[33m347d7cc[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Backup before renaming Course to ProgrammeStage
+[33m4e87d84[m[33m ([m[1;31morigin/main[m[33m)[m Phase 3D.2 fee category CRUD
+[33mdc841e2[m Phase 3D.1 finance module setup
+[33m69ef683[m[33m ([m[1;33mtag: [m[1;33mv3.6-examinations-complete[m[33m)[m Implement result batch workflow, approval process, unlock workflow and student result slips
+[33m19be9e7[m Phase 3B.12 admissions enhancements and reporting
+[33m0021889[m Phase 3B.11 role based dashboards implemented
+[33m5cd6022[m[33m ([m[1;33mtag: [m[1;33mv0.3.0[m[33m)[m academic module before dashboards
+[33m7cc97fd[m Initial commit

@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+<div class="card shadow">
+
+
+<div class="card-header bg-success text-white">
+
+
+<h4 class="mb-0">
+
+Graduation Eligibility Check
+
+</h4>
+
+
+</div>
+
+
+
+
+<div class="card-body">
+
+
+
+<h5>
+
+Student Details
+
+</h5>
+
+
+<hr>
+
+
+<div class="row">
+
+
+<div class="col-md-4">
+
+<strong>
+Admission No:
+</strong>
+
+{{ student.admission_no }}
+
+</div>
+
+
+
+<div class="col-md-4">
+
+<strong>
+Student:
+</strong>
+
+{{ student.first_name }}
+{{ student.last_name }}
+
+</div>
+
+
+
+<div class="col-md-4">
+
+<strong>
+Programme:
+</strong>
+
+{{ student.programme.programme_name }}
+
+</div>
+
+
+</div>
+
+
+
+<br>
+
+
+
+<h5>
+
+Academic Completion
+
+</h5>
+
+
+<hr>
+
+
+<table class="table table-bordered">
+
+
+<tr>
+
+<th>
+Latest Level
+</th>
+
+
+<td>
+
+{{ latest_enrollment.study_level.level_name }}
+
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<th>
+Enrollment Status
+</th>
+
+
+<td>
+
+
+<span class="badge bg-success">
+
+{{ latest_enrollment.status|title }}
+
+</span>
+
+
+</td>
+
+</tr>
+
+
+</table>
+
+
+
+
+<h5 class="mt-4">
+
+Eligibility Checks
+
+</h5>
+
+
+<hr>
+
+
+
+<table class="table table-bordered">
+
+
+<tr>
+
+<td>
+
+Academic Completion
+
+</td>
+
+
+<td>
+
+
+{% if latest_enrollment.status == "completed" %}
+
+<span class="text-success">
+
+✔ Completed
+
+</span>
+
+{% else %}
+
+<span class="text-danger">
+
+✖ Not Completed
+
+</span>
+
+{% endif %}
+
+
+</td>
+
+
+</tr>
+
+
+
+
+<tr>
+
+<td>
+
+Results Approval
+
+</td>
+
+
+<td>
+
+Pending
+
+</td>
+
+
+</tr>
+
+
+
+
+<tr>
+
+<td>
+
+Financial Clearance
+
+</td>
+
+
+<td>
+
+Pending
+
+</td>
+
+
+</tr>
+
+
+</table>
+
+
+
+
+<div class="text-end">
+
+
+<button class="btn btn-success">
+
+Approve Candidate
+
+</button>
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+{% endblock %}

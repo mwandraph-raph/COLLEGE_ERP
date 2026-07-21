@@ -675,6 +675,7 @@ class Registration(models.Model):
             f"{self.unit}"
         )
     
+
 class LecturerAssignment(models.Model):
     lecturer = models.ForeignKey(
         settings.AUTH_USER_MODEL,

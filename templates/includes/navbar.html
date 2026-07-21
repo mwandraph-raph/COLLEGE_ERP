@@ -505,6 +505,40 @@
 
 {% endif %}
 
+<!-- GRADUATION -->
+
+{% if perms.graduation.view_graduation %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        Graduation
+
+    </a>
+
+    <ul class="dropdown-menu">
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'graduation:eligibility_list' %}">
+
+                Eligibility
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</li>
+
+{% endif %}
+
             </ul>
 
             <ul class="navbar-nav ms-auto">
