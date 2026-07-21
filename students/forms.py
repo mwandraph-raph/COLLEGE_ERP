@@ -523,7 +523,7 @@ class CourseForm(forms.ModelForm):
             "course_name",
             "programme",
             "study_level",
-            "semester",
+            "curriculum_semester",
             "credit_hours",
         ]
 
@@ -553,9 +553,10 @@ class CourseForm(forms.ModelForm):
                 }
             ),
 
-            "semester": forms.Select(
+            "curriculum_semester": forms.NumberInput(
                 attrs={
-                    "class": "form-select"
+                    "class": "form-control",
+                    "min": 1
                 }
             ),
 

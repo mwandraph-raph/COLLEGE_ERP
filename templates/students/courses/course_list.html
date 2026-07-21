@@ -11,13 +11,17 @@
     {% if perms.students.add_course %}
     <a href="{% url 'course_create' %}"
        class="btn btn-primary">
+
         Add Course
+
     </a>
     {% endif %}
 
 </div>
 
+
 <form method="get" class="row mb-3">
+
 
     <div class="col-md-3">
 
@@ -30,15 +34,20 @@
 
     </div>
 
+
     <div class="col-md-2">
 
         <select
             name="programme"
             class="form-select">
 
+
             <option value="">
+
                 All Programmes
+
             </option>
+
 
             {% for programme in programmes %}
 
@@ -52,11 +61,15 @@
 
             </option>
 
+
             {% endfor %}
+
 
         </select>
 
     </div>
+
+
 
     <div class="col-md-2">
 
@@ -64,9 +77,13 @@
             name="study_level"
             class="form-select">
 
+
             <option value="">
+
                 All Levels
+
             </option>
+
 
             {% for level in study_levels %}
 
@@ -80,39 +97,51 @@
 
             </option>
 
+
             {% endfor %}
+
 
         </select>
 
     </div>
+
+
 
     <div class="col-md-3">
 
         <select
-            name="semester"
+            name="curriculum_semester"
             class="form-select">
 
+
             <option value="">
-                All Semesters
+
+                All Curriculum Semesters
+
             </option>
 
-            {% for semester in semesters %}
+
+            {% for semester in curriculum_semesters %}
 
             <option
-                value="{{ semester.id }}"
-                {% if selected_semester == semester.id|stringformat:"s" %}
+                value="{{ semester }}"
+                {% if selected_curriculum_semester == semester|stringformat:"s" %}
                 selected
                 {% endif %}>
 
-                {{ semester }}
+                Semester {{ semester }}
 
             </option>
 
+
             {% endfor %}
+
 
         </select>
 
     </div>
+
+
 
     <div class="col-md-2">
 
@@ -125,65 +154,130 @@
 
     </div>
 
+
 </form>
 
+
+
+
 <table class="table table-bordered table-striped">
+
 
     <thead>
 
         <tr>
 
             <th>Code</th>
+
             <th>Course Name</th>
+
             <th>Programme</th>
+
             <th>Study Level</th>
-            <th>Semester</th>
+
+            <th>Curriculum Semester</th>
+
             <th>Credits</th>
+
             <th>Actions</th>
+
 
         </tr>
 
+
     </thead>
+
+
 
     <tbody>
 
+
     {% for course in courses %}
+
 
     <tr>
 
-        <td>{{ course.course_code }}</td>
-
-        <td>{{ course.course_name }}</td>
-
-        <td>{{ course.programme }}</td>
-
-        <td>{{ course.study_level }}</td>
-
-        <td>{{ course.semester }}</td>
-
-        <td>{{ course.credit_hours }}</td>
 
         <td>
 
-            {% if perms.students.change_course %}
-            <a href="{% url 'course_update' course.id %}"
-               class="btn btn-warning btn-sm">
-                Edit
-            </a>
-            {% endif %}
-
-            {% if perms.students.delete_course %}
-            <a href="{% url 'course_delete' course.id %}"
-               class="btn btn-danger btn-sm">
-                Delete
-            </a>
-            {% endif %}
+            {{ course.course_code }}
 
         </td>
 
+
+        <td>
+
+            {{ course.course_name }}
+
+        </td>
+
+
+        <td>
+
+            {{ course.programme }}
+
+        </td>
+
+
+        <td>
+
+            {{ course.study_level }}
+
+        </td>
+
+
+        <td>
+
+            Semester {{ course.curriculum_semester }}
+
+        </td>
+
+
+        <td>
+
+            {{ course.credit_hours }}
+
+        </td>
+
+
+        <td>
+
+
+            {% if perms.students.change_course %}
+
+            <a
+                href="{% url 'course_update' course.id %}"
+                class="btn btn-warning btn-sm">
+
+                Edit
+
+            </a>
+
+            {% endif %}
+
+
+
+            {% if perms.students.delete_course %}
+
+            <a
+                href="{% url 'course_delete' course.id %}"
+                class="btn btn-danger btn-sm">
+
+                Delete
+
+            </a>
+
+            {% endif %}
+
+
+        </td>
+
+
     </tr>
 
+
     {% empty %}
+
 
     <tr>
 
@@ -195,12 +289,17 @@
 
     </tr>
 
+
     {% endfor %}
+
 
     </tbody>
 
+
 </table>
 
+
 </div>
+
 
 {% endblock %}

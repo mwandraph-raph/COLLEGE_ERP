@@ -1088,10 +1088,16 @@ def course_list(request):
         .select_related(
             "programme",
             "study_level",
-            "semester",
             "programme__department"
         )
+        .order_by(
+            "programme",
+            "study_level",
+            "curriculum_semester",
+            "course_code"
+        )
     )
+
 
     search = request.GET.get(
         "search"
@@ -1101,13 +1107,14 @@ def course_list(request):
         "programme"
     )
 
-    semester_id = request.GET.get(
-        "semester"
-    )
-
     level_id = request.GET.get(
         "study_level"
     )
+
+    curriculum_semester = request.GET.get(
+        "curriculum_semester"
+    )
+
 
     if search:
 
@@ -1115,11 +1122,13 @@ def course_list(request):
             course_name__icontains=search
         )
 
+
     if programme_id:
 
         courses = courses.filter(
             programme_id=programme_id
         )
+
 
     if level_id:
 
@@ -1127,42 +1136,54 @@ def course_list(request):
             study_level_id=level_id
         )
 
-    if semester_id:
+
+    if curriculum_semester:
 
         courses = courses.filter(
-            semester_id=semester_id
+            curriculum_semester=curriculum_semester
         )
+
 
     context = {
 
         "courses": courses,
 
+
         "programmes":
             Programme.objects.all(),
+
 
         "study_levels":
             StudyLevel.objects.all(),
 
-        "semesters":
-            Semester.objects.all(),
+
+        "curriculum_semesters":
+            range(1, 10),
+
 
         "search": search,
+
 
         "selected_programme":
             programme_id,
 
+
         "selected_level":
             level_id,
 
-        "selected_semester":
-            semester_id,
+
+        "selected_curriculum_semester":
+            curriculum_semester,
+
     }
+
 
     return render(
         request,
         "students/courses/course_list.html",
         context
     )
+
 
 @login_required
 @permission_required(

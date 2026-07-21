@@ -96,18 +96,22 @@ class CourseAdmin(admin.ModelAdmin):
         "course_code",
         "course_name",
         "programme",
-        "semester",
+        "study_level",
+        "curriculum_semester",
         "credit_hours",
     )
+
 
     search_fields = (
         "course_code",
         "course_name",
     )
 
+
     list_filter = (
         "programme",
-        "semester",
+        "study_level",
+        "curriculum_semester",
     )
 
 @admin.register(Unit)
