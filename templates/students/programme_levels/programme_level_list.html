@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h2>Programme Levels</h2>
+
+        {% if perms.students.add_programmelevel %}
+        <a href="{% url 'programme_level_create' %}"
+           class="btn btn-primary">
+            Add Programme Level
+        </a>
+        {% endif %}
+
+    </div>
+
+
+    <table class="table table-bordered table-striped">
+
+        <thead>
+
+            <tr>
+                <th>Programme</th>
+                <th>Level Name</th>
+                <th>Progression Order</th>
+                <th>Duration (Months)</th>
+                <th>Actions</th>
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        {% for level in programme_levels %}
+
+            <tr>
+
+                <td>
+                    {{ level.programme.programme_name }}
+                </td>
+
+
+                <td>
+                    {{ level.name }}
+                </td>
+
+
+                <td>
+                    {{ level.progression_order }}
+                </td>
+
+
+                <td>
+                    {{ level.duration_months }}
+                </td>
+
+
+                <td>
+
+                    {% if perms.students.change_programmelevel %}
+
+                    <a href="{% url 'programme_level_update' level.id %}"
+                       class="btn btn-warning btn-sm">
+                        Edit
+                    </a>
+
+                    {% endif %}
+
+
+
+                    {% if perms.students.delete_programmelevel %}
+
+                    <a href="{% url 'programme_level_delete' level.id %}"
+                       class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+
+        {% empty %}
+
+            <tr>
+                <td colspan="5" class="text-center">
+                    No programme levels found.
+                </td>
+            </tr>
+
+        {% endfor %}
+
+
+        </tbody>
+
+
+    </table>
+
+
+</div>
+
+
+{% endblock %}

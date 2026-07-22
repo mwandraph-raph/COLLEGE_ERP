@@ -163,16 +163,17 @@
                             </a>
                         </li>
                         {% endif %}
+                        {% if perms.students.view_programmelevel %}
 
-                        {% if perms.students.view_studylevel %}
                         <li>
                             <a class="dropdown-item"
-                               href="{% url 'study_level_list' %}">
-                                Study Levels
+                            href="{% url 'programme_level_list' %}">
+                                Programme Levels
                             </a>
                         </li>
-                        {% endif %}
 
+                        {% endif %}
+                        
                         {% if perms.students.view_course %}
                         <li>
                             <a class="dropdown-item"
@@ -190,7 +191,16 @@
                             </a>
                         </li>
                         {% endif %}
+                        {% if perms.students.view_semesterenrollment %}
 
+                        <li>
+                        <a class="dropdown-item"
+                        href="{% url 'progression_list' %}">
+                        Student Progression
+                        </a>
+                        </li>
+
+                        {% endif %}
                     </ul>
 
                 </li>

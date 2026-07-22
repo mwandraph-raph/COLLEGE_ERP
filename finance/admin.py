@@ -39,28 +39,25 @@ class FeeStructureItemInline(admin.TabularInline):
 class FeeStructureAdmin(admin.ModelAdmin):
 
     list_display = (
-        "programme",
+        "programme_level",
         "academic_year",
         "semester",
-        "study_level",
-        "total_amount",
         "is_active",
     )
 
     list_filter = (
-        "programme",
         "academic_year",
         "semester",
-        "study_level",
+        "is_active",
     )
 
     search_fields = (
-        "code",
+        "programme_level__programme__name",
+        "programme_level__programme__code",
     )
 
-    inlines = [
-        FeeStructureItemInline
-    ]
+    
+
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import openpyxl
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -17,7 +17,6 @@ from .models import (Student,
                      Course, 
                      Unit,
                      Registration,
-                     StudyLevel,
                      SemesterEnrollment,
                      Applicant,
                      Intake,
@@ -25,6 +24,7 @@ from .models import (Student,
                      Result,
                      ResultBatch,
                      ResultBatchLog,
+                     ProgrammeLevel,
                      )
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
@@ -48,11 +48,11 @@ from .forms import (
     CourseForm,
     UnitForm,
     RegistrationForm,
-    StudyLevelForm,
     SemesterEnrollmentForm,
     ApplicantForm,
     IntakeForm,
     LecturerAssignmentForm,
+    ProgrammeLevelForm,
 )
 
 # Create your views here.
@@ -226,63 +226,55 @@ def student_list(request):
 
     query = request.GET.get("q")
 
+
     students = (
-
         Student.objects
-
         .select_related(
-
             "programme",
-
-            "programme__department",
-
-            "study_level"
-
+            "programme__course",
+            "programme__course__department",
         )
-
+        .order_by(
+            "admission_no"
+        )
     )
+
 
     if query:
 
         students = students.filter(
-
-            Q(admission_no__icontains=query) |
-
-            Q(first_name__icontains=query) |
-
+            Q(admission_no__icontains=query)
+            |
+            Q(first_name__icontains=query)
+            |
             Q(last_name__icontains=query)
-
         )
+
 
     paginator = Paginator(
         students,
         10
     )
 
+
     page_number = request.GET.get(
         "page"
     )
+
 
     page_obj = paginator.get_page(
         page_number
     )
 
+
     return render(
-
         request,
-
         "students/student_list.html",
-
         {
-
             "page_obj": page_obj,
-
             "query": query,
-
             "total_students": students.count(),
-
-        },
-
+        }
     )
 
 @login_required
@@ -291,28 +283,37 @@ def student_list(request):
     raise_exception=True,
 )
 def student_create(request):
-    """
-    Register a new student.
-    """
+
     if request.method == "POST":
-        form = StudentForm(request.POST)
+
+        form = StudentForm(
+            request.POST
+        )
+
         if form.is_valid():
+
             form.save()
+
             messages.success(
-                  request,
-                     "Student created successfully."
-                     )
-            return redirect("student_list")
+                request,
+                "Student created successfully."
+            )
+
+            return redirect(
+                "student_list"
+            )
+
     else:
+
         form = StudentForm()
-    context = {
-        "form": form,
-    }
+
 
     return render(
         request,
         "students/student_form.html",
-        context,
+        {
+            "form": form
+        }
     )
 
 @login_required
@@ -327,14 +328,10 @@ def student_create(request):
     raise_exception=True
 )
 def student_detail(request, id):
-    """
-    Display details for a single student
-    including semester enrollment history.
-    """
 
     student = get_object_or_404(
         Student,
-        id=id,
+        id=id
     )
 
 
@@ -343,25 +340,23 @@ def student_detail(request, id):
         .select_related(
             "academic_year",
             "semester",
-            "study_level",
+            "programme",
+            "programme_level",
         )
-        .all()
+        .order_by(
+            "-academic_year",
+            "-semester"
+        )
     )
-
-
-    context = {
-
-        "student": student,
-
-        "enrollments": enrollments,
-
-    }
 
 
     return render(
         request,
         "students/student_detail.html",
-        context,
+        {
+            "student": student,
+            "enrollments": enrollments,
+        }
     )
 
 @login_required
@@ -370,45 +365,49 @@ def student_detail(request, id):
     raise_exception=True,
 )
 def student_update(request, id):
-    """
-    Update an existing student.
-    """
+
     student = get_object_or_404(
         Student,
-        id=id,
+        id=id
     )
 
+
     if request.method == "POST":
+
         form = StudentForm(
             request.POST,
-            instance=student,
+            instance=student
         )
+
+
         if form.is_valid():
 
             form.save()
+
             messages.success(
-                  request,
-                     "Student updated successfully."
-                     )
+                request,
+                "Student updated successfully."
+            )
+
             return redirect(
                 "student_detail",
-                id=student.id,
+                id=student.id
             )
 
     else:
+
         form = StudentForm(
-            instance=student,
+            instance=student
         )
 
-    context = {
-        "form": form,
-        "student": student,
-    }
 
     return render(
         request,
         "students/student_form.html",
-        context,
+        {
+            "form": form,
+            "student": student,
+        }
     )
 
 @login_required
@@ -416,30 +415,34 @@ def student_update(request, id):
     "students.delete_student",
     raise_exception=True,
 )
-def student_delete(request, id):
-    """
-    Delete an existing student.
-    """
+def student_delete(request,id):
 
     student = get_object_or_404(
         Student,
-        id=id,
+        id=id
     )
+
 
     if request.method == "POST":
 
         student.delete()
 
+        messages.success(
+            request,
+            "Student deleted successfully."
+        )
+
         return redirect(
             "student_list"
         )
+
 
     return render(
         request,
         "students/student_confirm_delete.html",
         {
-            "student": student,
-        },
+            "student":student
+        }
     )
 
 
@@ -450,16 +453,21 @@ def student_delete(request, id):
 )
 def department_list(request):
 
-    departments = Department.objects.all()
+    departments = (
+        Department.objects
+        .all()
+        .order_by(
+            "name"
+        )
+    )
 
-    context = {
-        "departments": departments
-    }
 
     return render(
         request,
         "students/departments/department_list.html",
-        context
+        {
+            "departments": departments
+        }
     )
 
 @login_required
@@ -585,8 +593,15 @@ def department_delete(request, pk):
 )
 def programme_list(request):
 
-    programmes = Programme.objects.select_related(
-        "department"
+    programmes = (
+        Programme.objects
+        .select_related(
+            "course",
+            "course__department",
+        )
+        .order_by(
+            "name"
+        )
     )
 
     context = {
@@ -1076,6 +1091,7 @@ def activate_semester(request, pk):
         "semester_list"
     )
 
+
 @login_required
 @permission_required(
     "students.view_course",
@@ -1086,15 +1102,10 @@ def course_list(request):
     courses = (
         Course.objects
         .select_related(
-            "programme",
-            "study_level",
-            "programme__department"
+            "department"
         )
         .order_by(
-            "programme",
-            "study_level",
-            "curriculum_semester",
-            "course_code"
+            "name"
         )
     )
 
@@ -1103,44 +1114,23 @@ def course_list(request):
         "search"
     )
 
-    programme_id = request.GET.get(
-        "programme"
-    )
 
-    level_id = request.GET.get(
-        "study_level"
-    )
-
-    curriculum_semester = request.GET.get(
-        "curriculum_semester"
+    department_id = request.GET.get(
+        "department"
     )
 
 
     if search:
 
         courses = courses.filter(
-            course_name__icontains=search
+            name__icontains=search
         )
 
 
-    if programme_id:
+    if department_id:
 
         courses = courses.filter(
-            programme_id=programme_id
-        )
-
-
-    if level_id:
-
-        courses = courses.filter(
-            study_level_id=level_id
-        )
-
-
-    if curriculum_semester:
-
-        courses = courses.filter(
-            curriculum_semester=curriculum_semester
+            department_id=department_id
         )
 
 
@@ -1148,32 +1138,16 @@ def course_list(request):
 
         "courses": courses,
 
-
-        "programmes":
-            Programme.objects.all(),
-
-
-        "study_levels":
-            StudyLevel.objects.all(),
-
-
-        "curriculum_semesters":
-            range(1, 10),
-
+        "departments": (
+            Department.objects
+            .order_by(
+                "name"
+            )
+        ),
 
         "search": search,
 
-
-        "selected_programme":
-            programme_id,
-
-
-        "selected_level":
-            level_id,
-
-
-        "selected_curriculum_semester":
-            curriculum_semester,
+        "selected_department": department_id,
 
     }
 
@@ -1313,43 +1287,69 @@ def unit_list(request):
     units = (
         Unit.objects
         .select_related(
-            "course",
-            "course__programme"
+            "programme_level",
+            "programme_level__programme",
+            "programme_level__programme__course",
+        )
+        .order_by(
+            "programme_level__programme__name",
+            "programme_level__progression_order",
+            "code",
         )
     )
+
 
     search = request.GET.get(
         "search"
     )
 
-    course_id = request.GET.get(
-        "course"
+
+    programme_level_id = request.GET.get(
+        "programme_level"
     )
+
 
     if search:
 
         units = units.filter(
-            unit_name__icontains=search
+            name__icontains=search
         )
 
-    if course_id:
+
+    if programme_level_id:
 
         units = units.filter(
-            course_id=course_id
+            programme_level_id=programme_level_id
         )
+
 
     context = {
 
         "units": units,
 
-        "courses":
-            Course.objects.all(),
+
+        "programme_levels": (
+            ProgrammeLevel.objects
+            .select_related(
+                "programme",
+            )
+            .filter(
+                is_active=True
+            )
+            .order_by(
+                "programme__name",
+                "progression_order",
+            )
+        ),
+
 
         "search": search,
 
-        "selected_course":
-            course_id,
+
+        "selected_programme_level":
+            programme_level_id,
     }
+
 
     return render(
         request,
@@ -1483,91 +1483,59 @@ def unit_delete(request, pk):
 def registration_list(request):
 
     registrations = (
-
         Registration.objects
-
         .select_related(
-
             "enrollment",
-
             "enrollment__student",
-
+            "enrollment__programme",
+            "enrollment__programme_level",
             "enrollment__academic_year",
-
             "enrollment__semester",
-
-            "unit"
-
+            "unit",
         )
-
+        .order_by(
+            "-enrollment__academic_year",
+            "-enrollment__semester",
+            "unit__code",
+        )
     )
+
 
     search = request.GET.get(
         "search"
     )
 
-    year_id = request.GET.get(
-        "academic_year"
-    )
-
-    semester_id = request.GET.get(
-        "semester"
-    )
 
     if search:
 
         registrations = registrations.filter(
-
-            enrollment__student__admission_no__icontains=search
-
+            Q(
+                enrollment__student__admission_no__icontains=search
+            )
+            |
+            Q(
+                enrollment__student__first_name__icontains=search
+            )
+            |
+            Q(
+                unit__code__icontains=search
+            )
         )
 
-    if year_id:
-
-        registrations = registrations.filter(
-
-            enrollment__academic_year_id=year_id
-
-        )
-
-    if semester_id:
-
-        registrations = registrations.filter(
-
-            enrollment__semester_id=semester_id
-
-        )
-
-    academic_years = AcademicYear.objects.all()
-
-    semesters = Semester.objects.select_related(
-        "academic_year"
-    )
 
     context = {
 
         "registrations": registrations,
 
-        "academic_years": academic_years,
-
-        "semesters": semesters,
-
         "search": search,
-
-        "selected_year": year_id,
-
-        "selected_semester": semester_id,
 
     }
 
+
     return render(
-
         request,
-
         "students/registrations/registration_list.html",
-
         context
-
     )
 
 @login_required
@@ -1585,11 +1553,11 @@ def registration_create(request):
 
         if form.is_valid():
 
-            form.save()
+            registration = form.save()
 
             messages.success(
                 request,
-                "Registration created successfully."
+                "Unit registered successfully."
             )
 
             return redirect(
@@ -1599,6 +1567,7 @@ def registration_create(request):
     else:
 
         form = RegistrationForm()
+
 
     return render(
         request,
@@ -1619,6 +1588,7 @@ def registration_update(request, pk):
         Registration,
         pk=pk
     )
+
 
     if request.method == "POST":
 
@@ -1646,12 +1616,13 @@ def registration_update(request, pk):
             instance=registration
         )
 
+
     return render(
         request,
         "students/registrations/registration_form.html",
         {
             "form": form,
-            "registration": registration
+            "registration": registration,
         }
     )
 
@@ -1667,6 +1638,7 @@ def registration_delete(request, pk):
         pk=pk
     )
 
+
     if request.method == "POST":
 
         registration.delete()
@@ -1680,6 +1652,7 @@ def registration_delete(request, pk):
             "registration_list"
         )
 
+
     return render(
         request,
         "students/registrations/registration_confirm_delete.html",
@@ -1692,58 +1665,43 @@ def registration_delete(request, pk):
 def my_registrations(request):
 
     student = get_object_or_404(
-
         Student,
-
         user=request.user
-
     )
+
 
     registrations = (
-
         Registration.objects
-
         .filter(
-
             enrollment__student=student
-
         )
-
         .select_related(
-
             "enrollment",
-
             "enrollment__academic_year",
-
             "enrollment__semester",
-
-            "unit"
-
+            "enrollment__programme",
+            "enrollment__programme_level",
+            "unit",
+            "unit__programme_level",
         )
-
         .order_by(
-
-            "-registration_date"
-
+            "-enrollment__academic_year",
+            "-enrollment__semester",
+            "unit__code"
         )
-
     )
+
 
     return render(
-
         request,
-
         "students/registrations/my_registrations.html",
-
         {
-
             "student": student,
-
-            "registrations": registrations
-
+            "registrations": registrations,
         }
-
     )
+
+
 
 @login_required
 def register_units(request):
@@ -1753,28 +1711,39 @@ def register_units(request):
         user=request.user
     )
 
-    enrollment = SemesterEnrollment.objects.filter(
-        student=student,
-        status="enrolled"
-    ).select_related(
-        "academic_year",
-        "semester",
-        "study_level"
-    ).first()
+
+    enrollment = (
+        SemesterEnrollment.objects
+        .filter(
+            student=student,
+            status=SemesterEnrollment.ENROLLED
+        )
+        .select_related(
+            "academic_year",
+            "semester",
+            "programme",
+            "programme_level",
+        )
+        .order_by(
+            "-enrollment_date"
+        )
+        .first()
+    )
+
 
     if not enrollment:
 
         messages.error(
             request,
-            (
-                "You are not enrolled in any "
-                "semester. Contact administration."
-            )
+            "You are not enrolled in any semester."
         )
 
         return redirect(
             "my_registrations"
         )
+
+
+    # Registration opening control
 
     if not enrollment.academic_year.registration_open:
 
@@ -1787,106 +1756,99 @@ def register_units(request):
             "my_registrations"
         )
 
+
+
     units = (
-
         Unit.objects
-
         .filter(
-
-            course__programme=student.programme,
-
-            course__study_level=enrollment.study_level,
-
-            course__semester=enrollment.semester
-
+            programme_level=enrollment.programme_level,
+            is_active=True,
         )
-
         .select_related(
-
-            "course",
-
-            "course__study_level",
-
-            "course__semester"
-
+            "programme_level",
+            "programme_level__programme",
         )
-
         .order_by(
-
-            "unit_code"
-
+            "code"
         )
-
     )
 
+
+
     if request.method == "POST":
+
 
         unit_ids = request.POST.getlist(
             "units"
         )
 
+
         count = 0
+
 
         for unit_id in unit_ids:
 
+
             unit = get_object_or_404(
-
                 Unit,
-
                 pk=unit_id,
-
-                course__programme=student.programme,
-
-                course__study_level=enrollment.study_level,
-
-                course__semester=enrollment.semester
-
+                programme_level=enrollment.programme_level,
             )
+
 
             registration, created = (
-
                 Registration.objects.get_or_create(
-
                     enrollment=enrollment,
-
-                    unit=unit
-
+                    unit=unit,
+                    defaults={
+                        "registration_type":
+                            Registration.NORMAL
+                    }
                 )
-
             )
+
 
             if created:
 
                 count += 1
 
-        messages.success(
-            request,
-            f"{count} unit(s) registered successfully."
-        )
+
+
+        # Duplicate protection message
+
+        if count:
+
+            messages.success(
+                request,
+                f"{count} unit(s) registered successfully."
+            )
+
+        else:
+
+            messages.info(
+                request,
+                "No new units were registered."
+            )
+
+
 
         return redirect(
             "my_registrations"
         )
 
-    context = {
 
-        "student": student,
-
-        "enrollment": enrollment,
-
-        "units": units,
-
-    }
 
     return render(
-
         request,
-
         "students/registrations/register_units.html",
-
-        context
-
+        {
+            "student": student,
+            "enrollment": enrollment,
+            "units": units,
+        }
     )
+
+
 
 @login_required
 def drop_registration(request, pk):
@@ -1896,11 +1858,16 @@ def drop_registration(request, pk):
         user=request.user
     )
 
+
     registration = get_object_or_404(
         Registration,
         pk=pk,
         enrollment__student=student
     )
+
+
+
+    # Registration lock
 
     if not registration.enrollment.academic_year.registration_open:
 
@@ -1913,18 +1880,25 @@ def drop_registration(request, pk):
             "my_registrations"
         )
 
+
+
     if request.method == "POST":
 
+
         registration.delete()
+
 
         messages.success(
             request,
             "Unit dropped successfully."
         )
 
+
         return redirect(
             "my_registrations"
         )
+
+
 
     return render(
         request,
@@ -1934,127 +1908,6 @@ def drop_registration(request, pk):
         }
     )
 
-@login_required
-@permission_required(
-    "students.view_studylevel",
-    raise_exception=True
-)
-def study_level_list(request):
-
-    levels = StudyLevel.objects.all()
-
-    return render(
-        request,
-        "students/study_levels/study_level_list.html",
-        {
-            "levels": levels
-        }
-    )
-
-@login_required
-@permission_required(
-    "students.add_studylevel",
-    raise_exception=True
-)
-def study_level_create(request):
-
-    form = StudyLevelForm(
-        request.POST or None
-    )
-
-    if form.is_valid():
-
-        form.save()
-
-        messages.success(
-            request,
-            "Study Level created successfully."
-        )
-
-        return redirect(
-            "study_level_list"
-        )
-
-    return render(
-        request,
-        "students/study_levels/study_level_form.html",
-        {
-            "form": form,
-            "title": "Add Study Level"
-        }
-    )
-
-@login_required
-@permission_required(
-    "students.change_studylevel",
-    raise_exception=True
-)
-def study_level_update(request, pk):
-
-    level = get_object_or_404(
-        StudyLevel,
-        pk=pk
-    )
-
-    form = StudyLevelForm(
-        request.POST or None,
-        instance=level
-    )
-
-    if form.is_valid():
-
-        form.save()
-
-        messages.success(
-            request,
-            "Study Level updated successfully."
-        )
-
-        return redirect(
-            "study_level_list"
-        )
-
-    return render(
-        request,
-        "students/study_levels/study_level_form.html",
-        {
-            "form": form,
-            "title": "Edit Study Level"
-        }
-    )
-
-@login_required
-@permission_required(
-    "students.delete_studylevel",
-    raise_exception=True
-)
-def study_level_delete(request, pk):
-
-    level = get_object_or_404(
-        StudyLevel,
-        pk=pk
-    )
-
-    if request.method == "POST":
-
-        level.delete()
-
-        messages.success(
-            request,
-            "Study Level deleted successfully."
-        )
-
-        return redirect(
-            "study_level_list"
-        )
-
-    return render(
-        request,
-        "students/study_levels/study_level_confirm_delete.html",
-        {
-            "level": level
-        }
-    )
 
 @login_required
 @permission_required(
@@ -2063,19 +1916,33 @@ def study_level_delete(request, pk):
 )
 def enrollment_list(request):
 
-    enrollments = SemesterEnrollment.objects.select_related(
-        "student",
-        "academic_year",
-        "semester",
-        "study_level"
+    enrollments = (
+        SemesterEnrollment.objects
+        .select_related(
+            "student",
+            "programme",
+            "programme_level",
+            "academic_year",
+            "semester",
+        )
+        .order_by(
+            "-academic_year",
+            "-semester",
+            "student__admission_no"
+        )
     )
 
+
     # Search
-    search = request.GET.get("search")
+
+    search = request.GET.get(
+        "search"
+    )
 
     if search:
 
         enrollments = enrollments.filter(
+
             Q(
                 student__admission_no__icontains=search
             )
@@ -2087,6 +1954,7 @@ def enrollment_list(request):
             Q(
                 student__last_name__icontains=search
             )
+
         )
 
 
@@ -2114,14 +1982,25 @@ def enrollment_list(request):
         )
 
 
-    study_level = request.GET.get(
-        "study_level"
+    programme = request.GET.get(
+        "programme"
     )
 
-    if study_level:
+    if programme:
 
         enrollments = enrollments.filter(
-            study_level_id=study_level
+            programme_id=programme
+        )
+
+
+    programme_level = request.GET.get(
+        "programme_level"
+    )
+
+    if programme_level:
+
+        enrollments = enrollments.filter(
+            programme_level_id=programme_level
         )
 
 
@@ -2146,16 +2025,25 @@ def enrollment_list(request):
         "semesters":
             Semester.objects.all(),
 
-        "study_levels":
-            StudyLevel.objects.all(),
+        "programmes":
+            Programme.objects.all(),
+
+        "programme_levels":
+            ProgrammeLevel.objects.all(),
+
+        "statuses":
+            SemesterEnrollment.STATUS_CHOICES,
 
     }
+
 
     return render(
         request,
         "students/enrollments/enrollment_list.html",
         context
     )
+
+
 
 @login_required
 @permission_required(
@@ -2164,13 +2052,41 @@ def enrollment_list(request):
 )
 def enrollment_create(request):
 
-    active_year = AcademicYear.objects.get(
-        is_active=True
+    active_year = (
+        AcademicYear.objects
+        .filter(is_active=True)
+        .first()
     )
 
-    active_semester = Semester.objects.get(
-        is_active=True
+    active_semester = (
+        Semester.objects
+        .filter(is_active=True)
+        .first()
     )
+
+
+    if not active_year:
+
+        messages.error(
+            request,
+            "No active academic year found."
+        )
+
+        return redirect(
+            "enrollment_list"
+        )
+
+
+    if not active_semester:
+
+        messages.error(
+            request,
+            "No active semester found."
+        )
+
+        return redirect(
+            "enrollment_list"
+        )
 
 
     if request.method == "POST":
@@ -2187,20 +2103,24 @@ def enrollment_create(request):
             )
 
 
-            # Check duplicate enrollment
+            # Prevent duplicate enrollment
 
-            exists = SemesterEnrollment.objects.filter(
-                student=enrollment.student,
-                academic_year=active_year,
-                semester=active_semester
-            ).exists()
+            exists = (
+                SemesterEnrollment.objects
+                .filter(
+                    student=enrollment.student,
+                    academic_year=active_year,
+                    semester=active_semester
+                )
+                .exists()
+            )
 
 
             if exists:
 
                 messages.error(
                     request,
-                    "This student is already enrolled in the current semester."
+                    "Student already has an enrollment for this semester."
                 )
 
                 return redirect(
@@ -2208,14 +2128,59 @@ def enrollment_create(request):
                 )
 
 
-            # Assign academic details
+            # Automatically assign current academic period
 
-            enrollment.academic_year = active_year
+            enrollment.academic_year = (
+                active_year
+            )
 
-            enrollment.semester = active_semester
+            enrollment.semester = (
+                active_semester
+            )
 
-            enrollment.study_level = (
-                enrollment.student.study_level
+
+            # Ensure programme comes from student
+
+            enrollment.programme = (
+                enrollment.student.programme
+            )
+
+
+            # Automatically pick first programme level
+            # (for new students)
+
+            first_level = (
+                ProgrammeLevel.objects
+                .filter(
+                    programme=enrollment.programme,
+                    is_active=True
+                )
+                .order_by(
+                    "progression_order"
+                )
+                .first()
+            )
+
+
+            if not first_level:
+
+                messages.error(
+                    request,
+                    "No programme level configured for this programme."
+                )
+
+                return redirect(
+                    "enrollment_create"
+                )
+
+
+            enrollment.programme_level = (
+                first_level
+            )
+
+
+            enrollment.status = (
+                SemesterEnrollment.ENROLLED
             )
 
 
@@ -2242,9 +2207,13 @@ def enrollment_create(request):
         request,
         "students/enrollments/enrollment_form.html",
         {
-            "form": form
+            "form": form,
+            "active_year": active_year,
+            "active_semester": active_semester,
         }
     )
+
+
 
 @login_required
 @permission_required(
@@ -2258,13 +2227,26 @@ def enrollment_detail(request, pk):
         pk=pk
     )
 
+
+    registrations = (
+        enrollment.registrations
+        .select_related(
+            "unit",
+            "unit__programme_level"
+        )
+    )
+
+
     return render(
         request,
         "students/enrollments/enrollment_detail.html",
         {
-            "enrollment": enrollment
+            "enrollment": enrollment,
+            "registrations": registrations,
         }
     )
+
+
 
 @login_required
 @permission_required(
@@ -2278,31 +2260,41 @@ def enrollment_update(request, pk):
         pk=pk
     )
 
+
     if request.method == "POST":
+
 
         form = SemesterEnrollmentForm(
             request.POST,
             instance=enrollment
         )
 
+
         if form.is_valid():
 
+
             form.save()
+
 
             messages.success(
                 request,
                 "Enrollment updated successfully."
             )
 
+
             return redirect(
                 "enrollment_list"
             )
 
+
     else:
+
 
         form = SemesterEnrollmentForm(
             instance=enrollment
         )
+
+
 
     return render(
         request,
@@ -2311,6 +2303,8 @@ def enrollment_update(request, pk):
             "form": form
         }
     )
+
+
 
 @login_required
 @permission_required(
@@ -2324,18 +2318,24 @@ def enrollment_delete(request, pk):
         pk=pk
     )
 
+
     if request.method == "POST":
 
+
         enrollment.delete()
+
 
         messages.success(
             request,
             "Enrollment deleted successfully."
         )
 
+
         return redirect(
             "enrollment_list"
         )
+
+
 
     return render(
         request,
@@ -2507,6 +2507,7 @@ def approve_applicant(request, pk):
         pk=pk
     )
 
+
     if applicant.student:
 
         messages.warning(
@@ -2519,53 +2520,43 @@ def approve_applicant(request, pk):
             pk=applicant.pk
         )
 
-    study_level = (
-        StudyLevel.objects
-        .order_by("id")
-        .first()
-    )
-
-    if not study_level:
-
-        messages.error(
-            request,
-            "No study level has been configured."
-        )
-
-        return redirect(
-            "applicant_detail",
-            pk=applicant.pk
-        )
 
     active_year = (
         AcademicYear.objects
-        .filter(is_active=True)
+        .filter(
+            is_active=True
+        )
         .first()
     )
 
+
     active_semester = (
         Semester.objects
-        .filter(is_active=True)
+        .filter(
+            is_active=True
+        )
         .first()
     )
+
 
     if not active_year:
 
         messages.error(
             request,
-            "No active academic year found."
+            "No active academic year configured."
         )
 
         return redirect(
             "applicant_detail",
             pk=applicant.pk
         )
+
 
     if not active_semester:
 
         messages.error(
             request,
-            "No active semester found."
+            "No active semester configured."
         )
 
         return redirect(
@@ -2573,22 +2564,66 @@ def approve_applicant(request, pk):
             pk=applicant.pk
         )
 
+
+    # First semester of the programme
+
+    first_level = (
+        ProgrammeLevel.objects
+        .filter(
+            programme=applicant.programme,
+            is_active=True
+        )
+        .order_by(
+            "progression_order"
+        )
+        .first()
+    )
+
+
+    if not first_level:
+
+        messages.error(
+            request,
+            "Programme levels have not been configured."
+        )
+
+        return redirect(
+            "applicant_detail",
+            pk=applicant.pk
+        )
+
+
     try:
 
         with transaction.atomic():
+
 
             student = Student.objects.create(
 
                 first_name=applicant.first_name,
 
+                middle_name=applicant.middle_name,
+
                 last_name=applicant.last_name,
+
+                gender=applicant.gender,
+
+                date_of_birth=applicant.date_of_birth,
+
+                id_number=applicant.id_number,
 
                 phone=applicant.phone_number,
 
+                email=applicant.email,
+
+                address=applicant.address,
+
                 programme=applicant.programme,
 
-                study_level=study_level,
+                admission_date=timezone.now().date(),
+
             )
+
 
             applicant.student = student
 
@@ -2596,28 +2631,33 @@ def approve_applicant(request, pk):
 
             applicant.save()
 
+
+
             SemesterEnrollment.objects.create(
 
                 student=student,
+
+                programme=applicant.programme,
+
+                programme_level=first_level,
 
                 academic_year=active_year,
 
                 semester=active_semester,
 
-                study_level=study_level,
+                status=SemesterEnrollment.ENROLLED,
 
-                status="enrolled"
             )
 
+
         messages.success(
-
             request,
-
             (
-                f"Applicant approved successfully. "
+                "Applicant approved successfully. "
                 f"Student {student.admission_no} created."
             )
         )
+
 
     except Exception as e:
 
@@ -2625,6 +2665,7 @@ def approve_applicant(request, pk):
             request,
             f"Approval failed: {e}"
         )
+
 
     return redirect(
         "applicant_detail",
@@ -3905,34 +3946,42 @@ def student_results(request):
 
 @login_required
 @permission_required(
-    "students.add_semesterenrollment",
+    "students.change_semesterenrollment",
     raise_exception=True
 )
 def progress_student(request, enrollment_id):
 
-    current = get_object_or_404(
+    current_enrollment = get_object_or_404(
         SemesterEnrollment,
-        pk=enrollment_id
+        id=enrollment_id
     )
 
-    student = current.student
 
-    semesters = list(
-        Semester.objects.filter(
-            academic_year=current.academic_year
-        ).order_by("id")
+    current_level = (
+        current_enrollment.programme_level
     )
 
-    try:
-        current_index = semesters.index(
-            current.semester
+
+    next_level = (
+        ProgrammeLevel.objects
+        .filter(
+            programme=current_enrollment.programme,
+            progression_order__gt=
+            current_level.progression_order,
+            is_active=True
         )
+        .order_by(
+            "progression_order"
+        )
+        .first()
+    )
 
-    except ValueError:
 
-        messages.error(
+    if not next_level:
+
+        messages.warning(
             request,
-            "Current semester not found."
+            "Student has reached the final programme level."
         )
 
         return redirect(
@@ -3941,63 +3990,335 @@ def progress_student(request, enrollment_id):
 
     # Find next semester
 
-    if current_index + 1 < len(semesters):
+    next_semester = (
+        Semester.objects
+        .filter(
+            academic_year=
+            current_enrollment.academic_year,
+            semester_name__icontains=
+            "Semester"
+        )
+        .first()
+    )
 
-        next_semester = semesters[
-            current_index + 1
-        ]
 
-        next_year = current.academic_year
-
-        next_level = current.study_level
-
-    else:
+    if not next_semester:
 
         messages.error(
             request,
-            "No next semester configured."
+            "Next semester configuration missing."
         )
 
         return redirect(
             "enrollment_list"
         )
 
-    # Prevent duplicates
 
-    exists = SemesterEnrollment.objects.filter(
-        student=student,
-        academic_year=next_year,
-        semester=next_semester
-    ).exists()
 
-    if exists:
+    try:
 
-        messages.warning(
+        with transaction.atomic():
+
+
+            current_enrollment.status = (
+                SemesterEnrollment.PROGRESSED
+            )
+
+            current_enrollment.save()
+
+
+
+            new_enrollment = (
+                SemesterEnrollment.objects.create(
+
+                    student=
+                    current_enrollment.student,
+
+                    programme=
+                    current_enrollment.programme,
+
+                    programme_level=
+                    next_level,
+
+                    academic_year=
+                    current_enrollment.academic_year,
+
+                    semester=
+                    next_semester,
+
+                    status=
+                    SemesterEnrollment.ENROLLED,
+
+                )
+            )
+
+
+        messages.success(
             request,
-            "Student already progressed."
+            (
+                f"Student progressed to "
+                f"{next_level.name}"
+            )
         )
 
-        return redirect(
-            "enrollment_list"
+
+    except Exception as e:
+
+        messages.error(
+            request,
+            f"Progression failed: {e}"
         )
 
-    SemesterEnrollment.objects.create(
-        student=student,
-        academic_year=next_year,
-        semester=next_semester,
-        study_level=next_level,
-        status="enrolled"
-    )
-
-    current.status = "completed"
-    current.save()
-
-    messages.success(
-        request,
-        f"{student} progressed to "
-        f"{next_semester}"
-    )
 
     return redirect(
         "enrollment_list"
+    )
+
+
+@login_required
+@permission_required(
+    "students.view_semesterenrollment",
+    raise_exception=True
+)
+def progression_list(request):
+
+    enrollments = (
+        SemesterEnrollment.objects
+        .filter(
+            status=SemesterEnrollment.ENROLLED
+        )
+        .select_related(
+            "student",
+            "programme",
+            "programme_level",
+            "academic_year",
+            "semester",
+        )
+        .order_by(
+            "programme",
+            "programme_level__progression_order",
+            "student__admission_no"
+        )
+    )
+
+
+    progression_data = []
+
+
+    for enrollment in enrollments:
+
+
+        next_level = (
+            ProgrammeLevel.objects
+            .filter(
+                programme=enrollment.programme,
+                progression_order__gt=
+                enrollment.programme_level.progression_order,
+                is_active=True
+            )
+            .order_by(
+                "progression_order"
+            )
+            .first()
+        )
+
+
+        progression_data.append(
+            {
+                "enrollment": enrollment,
+
+                "next_level": next_level
+            }
+        )
+
+
+    return render(
+        request,
+        "students/progression/progression_list.html",
+        {
+            "progression_data":
+            progression_data
+        }
+    )
+
+
+@login_required
+@permission_required(
+    "students.view_programmelevel",
+    raise_exception=True
+)
+def programme_level_list(request):
+
+    programme_levels = (
+        ProgrammeLevel.objects
+        .select_related(
+            "programme",
+            "programme__course",
+            "programme__course__department",
+        )
+        .order_by(
+            "programme__name",
+            "progression_order",
+        )
+    )
+
+    context = {
+        "programme_levels": programme_levels
+    }
+
+    return render(
+        request,
+        "students/programme_levels/programme_level_list.html",
+        context
+    )
+
+@login_required
+@permission_required(
+    "students.add_programmelevel",
+    raise_exception=True
+)
+def programme_level_create(request):
+
+    if request.method == "POST":
+
+        form = ProgrammeLevelForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Programme Level created successfully."
+            )
+
+            return redirect(
+                "programme_level_list"
+            )
+
+    else:
+
+        form = ProgrammeLevelForm()
+
+
+    return render(
+        request,
+        "students/programme_levels/programme_level_form.html",
+        {
+            "form": form
+        }
+    )
+
+
+@login_required
+@permission_required(
+    "students.change_programmelevel",
+    raise_exception=True
+)
+def programme_level_update(request, pk):
+
+    level = get_object_or_404(
+        ProgrammeLevel,
+        pk=pk
+    )
+
+
+    if request.method == "POST":
+
+        form = ProgrammeLevelForm(
+            request.POST,
+            instance=level
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Programme Level updated successfully."
+            )
+
+            return redirect(
+                "programme_level_list"
+            )
+
+
+    else:
+
+        form = ProgrammeLevelForm(
+            instance=level
+        )
+
+
+    return render(
+        request,
+        "students/programme_levels/programme_level_form.html",
+        {
+            "form": form,
+            "level": level,
+        }
+    )
+
+@login_required
+@permission_required(
+    "students.delete_programmelevel",
+    raise_exception=True
+)
+def programme_level_delete(request, pk):
+
+    level = get_object_or_404(
+        ProgrammeLevel,
+        pk=pk
+    )
+
+
+    if request.method == "POST":
+
+        level.delete()
+
+        messages.success(
+            request,
+            "Programme Level deleted"
+        )
+
+        return redirect(
+            "programme_level_list"
+        )
+
+
+    return render(
+        request,
+        "students/programme_levels/programme_level_confirm_delete.html",
+        {
+            "level": level
+        }
+    )
+
+
+@login_required
+def load_programme_levels(request):
+
+    programme_id = request.GET.get(
+        "programme_id"
+    )
+
+
+    levels = ProgrammeLevel.objects.filter(
+        programme_id=programme_id
+    ).order_by(
+        "progression_order"
+    )
+
+
+    return JsonResponse(
+        list(
+            levels.values(
+                "id",
+                "name"
+            )
+        ),
+        safe=False
     )

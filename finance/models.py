@@ -3,9 +3,9 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from students.models import (
     Programme,
+    ProgrammeLevel,
     AcademicYear,
     Semester,
-    StudyLevel,
     Student,
     SemesterEnrollment,
 )
@@ -39,24 +39,32 @@ class FeeCategory(models.Model):
 
 class FeeStructure(models.Model):
 
-    programme = models.ForeignKey(
-        Programme,
-        on_delete=models.CASCADE
+    programme_level = models.ForeignKey(
+        ProgrammeLevel,
+        on_delete=models.PROTECT,
+        related_name="fee_structures",
+        null=True,
+        blank=True,
     )
 
     academic_year = models.ForeignKey(
         AcademicYear,
-        on_delete=models.CASCADE
+        on_delete=models.PROTECT,
+        related_name="fee_structures",
+        null=True,
+        blank=True,
     )
 
     semester = models.ForeignKey(
         Semester,
-        on_delete=models.CASCADE
+        on_delete=models.PROTECT,
+        related_name="fee_structures",
     )
 
-    study_level = models.ForeignKey(
-        StudyLevel,
-        on_delete=models.CASCADE
+    name = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
     )
 
     is_active = models.BooleanField(
@@ -67,40 +75,39 @@ class FeeStructure(models.Model):
         auto_now_add=True
     )
 
+
     class Meta:
 
         ordering = [
-            "programme",
-            "study_level",
+            "programme_level",
+            "academic_year",
+            "semester",
         ]
 
-        constraints = [
-            models.UniqueConstraint(
-                fields=[
-                    "programme",
-                    "academic_year",
-                    "semester",
-                    "study_level",
-                ],
-                name="unique_fee_structure"
-            )
-        ]
-
-    @property
-    def total_amount(self):
-
-        return sum(
-            item.amount
-            for item in self.items.all()
+        unique_together = (
+            "programme_level",
+            "academic_year",
+            "semester",
         )
+
+
+    def save(self, *args, **kwargs):
+
+        if not self.name:
+
+            self.name = (
+                f"{self.programme_level} "
+                f"{self.academic_year} "
+                f"{self.semester}"
+            )
+
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
 
-        return (
-            f"{self.programme} - "
-            f"{self.study_level} - "
-            f"{self.semester}"
-        )
+        return self.name
+
     
 class FeeStructureItem(models.Model):
 

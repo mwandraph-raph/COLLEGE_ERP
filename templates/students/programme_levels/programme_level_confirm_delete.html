@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+<div class="container mt-4">
+
+
+<h3>
+    Delete Programme Level
+</h3>
+
+
+<p>
+
+Are you sure you want to delete:
+
+<strong>
+{{ level.name }}
+</strong>
+
+?
+
+</p>
+
+
+
+<form method="post">
+
+    {% csrf_token %}
+
+
+    <button class="btn btn-danger">
+
+        Confirm Delete
+
+    </button>
+
+
+    <a href="{% url 'programme_level_list' %}"
+       class="btn btn-secondary">
+
+        Cancel
+
+    </a>
+
+
+</form>
+
+
+</div>
+
+
+{% endblock %}

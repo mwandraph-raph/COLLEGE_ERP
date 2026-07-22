@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
+from django.core.exceptions import ValidationError
 # Create your models here.
 class Applicant(models.Model):
 
@@ -16,129 +17,104 @@ class Applicant(models.Model):
         ("Female", "Female"),
     ]
 
-
     application_no = models.CharField(
         max_length=20,
         unique=True,
         blank=True,
-        null=True
+        null=True,
     )
-
 
     first_name = models.CharField(
         max_length=100
     )
 
-
     middle_name = models.CharField(
         max_length=100,
-        blank=True
+        blank=True,
     )
-
 
     last_name = models.CharField(
         max_length=100
     )
 
-
     gender = models.CharField(
         max_length=10,
-        choices=GENDER_CHOICES
+        choices=GENDER_CHOICES,
     )
-
 
     date_of_birth = models.DateField()
 
-
     id_number = models.CharField(
         max_length=20,
-        unique=True
+        unique=True,
     )
-
 
     phone_number = models.CharField(
-        max_length=20
+        max_length=20,
     )
-
 
     email = models.EmailField(
-        blank=True
+        blank=True,
     )
-
 
     address = models.TextField(
-        blank=True
+        blank=True,
     )
-
 
     programme = models.ForeignKey(
         "Programme",
         on_delete=models.PROTECT,
-        related_name="applicants"
+        related_name="applicants",
     )
-
 
     academic_year = models.ForeignKey(
         "AcademicYear",
         on_delete=models.PROTECT,
-        related_name="applicants"
+        related_name="applicants",
     )
-
 
     intake = models.ForeignKey(
         "Intake",
         on_delete=models.PROTECT,
-        related_name="applicants"
+        related_name="applicants",
     )
-
 
     application_date = models.DateField(
-        auto_now_add=True
+        auto_now_add=True,
     )
-
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default="PENDING"
+        default="PENDING",
     )
-
 
     remarks = models.TextField(
-        blank=True
+        blank=True,
     )
-
 
     student = models.OneToOneField(
         "Student",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="applicant_record"
+        related_name="applicant_record",
     )
-
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
-
 
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
     )
-
 
     class Meta:
 
         ordering = [
             "-application_date",
-            "-id"
+            "-id",
         ]
-
-        verbose_name = "Applicant"
-
-        verbose_name_plural = "Applicants"
-
 
     def __str__(self):
 
@@ -148,7 +124,6 @@ class Applicant(models.Model):
             f"{self.last_name}"
         )
 
-
     def save(self, *args, **kwargs):
 
         if not self.application_no:
@@ -157,8 +132,7 @@ class Applicant(models.Model):
 
             prefix = f"APP/{year}/"
 
-
-            last_applicant = (
+            last = (
                 Applicant.objects
                 .filter(
                     application_no__startswith=prefix
@@ -167,68 +141,203 @@ class Applicant(models.Model):
                 .first()
             )
 
+            number = 0
 
-            if last_applicant:
+            if last:
 
                 try:
-
-                    last_number = int(
-                        last_applicant.application_no.split("/")[-1]
+                    number = int(
+                        last.application_no.split("/")[-1]
                     )
 
-                except:
-
-                    last_number = 0
-
-            else:
-
-                last_number = 0
-
+                except (ValueError, IndexError):
+                    number = 0
 
             self.application_no = (
-                f"{prefix}{last_number + 1:04d}"
+                f"{prefix}{number + 1:04d}"
             )
 
-
-        super().save(
-            *args,
-            **kwargs
-        )
+        super().save(*args, **kwargs)
     
 class Department(models.Model):
-    department_name = models.CharField(max_length=100)
-    def __str__(self):
-        return self.department_name
 
-class Programme(models.Model):
-
-    programme_name = models.CharField(
-        max_length=100,
-        unique=True
+    code = models.CharField(
+        max_length=20,
+        unique=True,
     )
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+    )
+
+    description = models.TextField(
+        blank=True,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+
+        ordering = [
+            "name",
+        ]
+
+        verbose_name = "Department"
+
+        verbose_name_plural = "Departments"
+
+    def __str__(self):
+
+        return f"{self.code} - {self.name}"
+    
+
+class Course(models.Model):
 
     department = models.ForeignKey(
         Department,
         on_delete=models.PROTECT,
-        related_name="programmes"
+        related_name="courses",
+    )
+
+    code = models.CharField(
+        max_length=20,
+        unique=True,
+    )
+
+    name = models.CharField(
+        max_length=200,
+    )
+
+    description = models.TextField(
+        blank=True,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
     )
 
     class Meta:
-        ordering = ["programme_name"]
+
+        ordering = [
+            "department",
+            "name",
+        ]
+
+        unique_together = (
+            "department",
+            "name",
+        )
 
     def __str__(self):
-     return (
-        f"{self.programme_name}"
-        f" ({self.department.department_name})"
+
+        return f"{self.code} - {self.name}"
+
+class Programme(models.Model):
+
+    ARTISAN = "ARTISAN"
+    CERTIFICATE = "CERTIFICATE"
+    DIPLOMA = "DIPLOMA"
+    HIGHER_DIPLOMA = "HIGHER_DIPLOMA"
+
+    AWARD_CHOICES = [
+
+        (ARTISAN, "Artisan"),
+
+        (CERTIFICATE, "Certificate"),
+
+        (DIPLOMA, "Diploma"),
+
+        (HIGHER_DIPLOMA, "Higher Diploma"),
+
+    ]
+
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.PROTECT,
+        related_name="programmes",
     )
+
+    code = models.CharField(
+        max_length=20,
+        unique=True,
+    )
+
+    name = models.CharField(
+        max_length=200,
+    )
+
+    award = models.CharField(
+        max_length=30,
+        choices=AWARD_CHOICES,
+    )
+
+    duration_semesters = models.PositiveSmallIntegerField(
+        default=2,
+    )
+
+    description = models.TextField(
+        blank=True,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+
+        ordering = [
+
+            "course",
+
+            "award",
+
+            "name",
+
+        ]
+
+        unique_together = (
+
+            "course",
+
+            "award",
+
+            "name",
+
+        )
+
+    def __str__(self):
+
+        return (
+            f"{self.name} "
+            f"({self.get_award_display()})"
+        )
 
 class AcademicYear(models.Model):
 
@@ -242,45 +351,7 @@ class AcademicYear(models.Model):
     )
 
     registration_open = models.BooleanField(
-        default=True
-    )
-
-    def __str__(self):
-        return self.year_name
-    
-    def save(self, *args, **kwargs):
-
-     if self.is_active:
-
-        AcademicYear.objects.exclude(
-            pk=self.pk
-        ).update(
-            is_active=False
-        )
-
-     super().save(
-         *args,
-        **kwargs
-    )
-
-class Intake(models.Model):
-
-    name = models.CharField(
-        max_length=100
-    )
-
-    academic_year = models.ForeignKey(
-        AcademicYear,
-        on_delete=models.PROTECT,
-        related_name="intakes"
-    )
-
-    start_date = models.DateField()
-
-    reporting_date = models.DateField()
-
-    is_open = models.BooleanField(
-        default=True
+        default=False
     )
 
     created_at = models.DateTimeField(
@@ -291,19 +362,50 @@ class Intake(models.Model):
         auto_now=True
     )
 
+class Intake(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+    )
+
+    academic_year = models.ForeignKey(
+        AcademicYear,
+        on_delete=models.PROTECT,
+        related_name="intakes",
+    )
+
+    start_date = models.DateField()
+
+    reporting_date = models.DateField()
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    is_open = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
 
     class Meta:
 
         ordering = [
             "-academic_year",
-            "start_date"
+            "start_date",
         ]
 
-        unique_together = [
+        unique_together = (
+            "academic_year",
             "name",
-            "academic_year"
-        ]
-
+        )
 
     def __str__(self):
 
@@ -316,21 +418,48 @@ class Intake(models.Model):
 class Semester(models.Model):
 
     academic_year = models.ForeignKey(
-        "AcademicYear",
+        AcademicYear,
         on_delete=models.CASCADE,
-        related_name="semesters"
+        related_name="semesters",
     )
 
     semester_name = models.CharField(
-        max_length=100
+        max_length=100,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    registration_open = models.BooleanField(
+        default=True,
+    )
+
+    results_open = models.BooleanField(
+        default=False,
     )
 
     is_active = models.BooleanField(
-        default=False
+        default=False,
     )
 
     class Meta:
-        ordering = ["academic_year", "semester_name"]
+
+        ordering = [
+            "academic_year",
+            "semester_name",
+        ]
+
+        unique_together = (
+            "academic_year",
+            "semester_name",
+        )
 
     def save(self, *args, **kwargs):
 
@@ -345,173 +474,251 @@ class Semester(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+
         return (
             f"{self.academic_year} - "
             f"{self.semester_name}"
         )
 
 
-class StudyLevel(models.Model):
 
-    level_name = models.CharField(
-        max_length=50,
-        unique=True
-    )
-    class Meta:
-        ordering = ["id"]
-
-        verbose_name = "Study Level"
-        verbose_name_plural = "Study Levels"
-    def __str__(self):
-        return self.level_name
-
-
-class Course(models.Model):
-
-    course_code = models.CharField(
-        max_length=20,
-        unique=True
-    )
-
-    course_name = models.CharField(
-        max_length=200
-    )
+class ProgrammeLevel(models.Model):
 
     programme = models.ForeignKey(
         Programme,
         on_delete=models.PROTECT,
-        related_name="courses"
+        related_name="levels",
     )
 
-    study_level = models.ForeignKey(
-        StudyLevel,
-        on_delete=models.PROTECT,
-        related_name="courses",
-        null=True,
-        blank=True
+    tvet_level = models.PositiveSmallIntegerField(
+        help_text="TVET Level e.g. 4, 5, 6"
     )
 
-    semester = models.ForeignKey(
-        Semester,
-        on_delete=models.PROTECT,
-        related_name="courses"
+    year = models.PositiveSmallIntegerField()
+
+    semester = models.PositiveSmallIntegerField()
+
+    name = models.CharField(
+        max_length=100,
+        editable=False,
     )
 
-    credit_hours = models.PositiveIntegerField(
-        default=0
+    progression_order = models.PositiveSmallIntegerField(
+        editable=False,
     )
+
+    duration_months = models.PositiveSmallIntegerField(
+        default=6,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
 
     class Meta:
 
         ordering = [
             "programme",
-            "study_level",
-            "semester",
-            "course_code"
+            "progression_order",
         ]
+
+        unique_together = (
+            "programme",
+            "year",
+            "semester",
+        )
+
+
+    def clean(self):
+
+        if self.semester not in [1, 2]:
+
+            raise ValidationError(
+                "Semester must be 1 or 2."
+            )
+
+
+    def save(self, *args, **kwargs):
+
+        self.name = (
+            f"Year {self.year} Semester {self.semester}"
+        )
+
+        self.progression_order = (
+            (self.year - 1) * 2
+        ) + self.semester
+
+        self.full_clean()
+
+        super().save(*args, **kwargs)
+
+
+    @property
+    def is_final_level(self):
+
+        return (
+            self.progression_order ==
+            self.programme.levels.count()
+        )
+
 
     def __str__(self):
 
         return (
-            f"{self.course_code} - "
-            f"{self.course_name}"
+            f"{self.programme.code} - "
+            f"{self.name}"
         )
+    
 
 class Unit(models.Model):
 
-    unit_code = models.CharField(
-        max_length=20,
-        unique=True
-    )
-
-    unit_name = models.CharField(
-        max_length=200
-    )
-
-    course = models.ForeignKey(
-        Course,
+    programme_level = models.ForeignKey(
+        ProgrammeLevel,
         on_delete=models.PROTECT,
-        related_name="units"
+        related_name="units",
     )
 
-    credit_hours = models.PositiveIntegerField(
-        default=0
+    code = models.CharField(
+        max_length=20,
+    )
+
+    name = models.CharField(
+        max_length=200,
+    )
+
+    credit_hours = models.PositiveSmallIntegerField(
+        default=0,
+    )
+
+    description = models.TextField(
+        blank=True,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
     )
 
     class Meta:
 
         ordering = [
-            "unit_code"
+            "programme_level",
+            "code",
         ]
+
+        unique_together = (
+            "programme_level",
+            "code",
+        )
 
     def __str__(self):
 
         return (
-            f"{self.unit_code} - "
-            f"{self.unit_name}"
+            f"{self.code} - "
+            f"{self.name}"
         )
+    
 
 class Student(models.Model):
 
     user = models.OneToOneField(
-
         User,
-
         on_delete=models.CASCADE,
-
         related_name="student_profile",
-
         null=True,
-
-        blank=True
-
+        blank=True,
     )
 
     admission_no = models.CharField(
         max_length=20,
         unique=True,
-        blank=True
+        blank=True,
     )
 
     first_name = models.CharField(
-        max_length=100
+        max_length=100,
+    )
+
+    middle_name = models.CharField(
+        max_length=100,
+        blank=True,
     )
 
     last_name = models.CharField(
-        max_length=100
+        max_length=100,
+    )
+
+    gender = models.CharField(
+        max_length=10,
+        choices=Applicant.GENDER_CHOICES,
+    )
+
+    date_of_birth = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    id_number = models.CharField(
+        max_length=20,
+        unique=True,
+        null=True,
+        blank=True,
     )
 
     phone = models.CharField(
-        max_length=20
+        max_length=20,
+    )
+
+    email = models.EmailField(
+        blank=True,
+    )
+
+    address = models.TextField(
+        blank=True,
     )
 
     programme = models.ForeignKey(
-
         Programme,
-
         on_delete=models.PROTECT,
-
-        related_name="students"
-
+        related_name="students",
     )
 
-    study_level = models.ForeignKey(
+    admission_date = models.DateField(
+        default=timezone.now,
+    )
 
-        StudyLevel,
+    is_active = models.BooleanField(
+        default=True,
+    )
 
-        on_delete=models.PROTECT,
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
 
-        related_name="students",
-
-        null=True,
-        blank=True
-
+    updated_at = models.DateTimeField(
+        auto_now=True,
     )
 
     class Meta:
 
         ordering = [
-            "admission_no"
+            "admission_no",
         ]
 
     def __str__(self):
@@ -522,6 +729,34 @@ class Student(models.Model):
             f"{self.last_name}"
         )
 
+    @property
+    def current_enrollment(self):
+
+        return (
+            self.enrollments
+            .select_related(
+                "programme_level",
+                "academic_year",
+                "semester",
+            )
+            .order_by(
+                "-enrollment_date",
+                "-id",
+            )
+            .first()
+        )
+
+    @property
+    def current_programme_level(self):
+
+        enrollment = self.current_enrollment
+
+        if enrollment:
+
+            return enrollment.programme_level
+
+        return None
+
     def save(self, *args, **kwargs):
 
         if not self.admission_no:
@@ -530,7 +765,7 @@ class Student(models.Model):
 
             prefix = f"TVET/{year}/"
 
-            last_student = (
+            last = (
                 Student.objects
                 .filter(
                     admission_no__startswith=prefix
@@ -539,84 +774,99 @@ class Student(models.Model):
                 .first()
             )
 
-            if last_student:
+            number = 0
+
+            if last:
 
                 try:
 
-                    last_number = int(
-                        last_student
-                        .admission_no
-                        .split("/")[-1]
+                    number = int(
+                        last.admission_no.split("/")[-1]
                     )
 
-                except (
-                    ValueError,
-                    IndexError
-                ):
+                except (ValueError, IndexError):
 
-                    last_number = 0
-
-            else:
-
-                last_number = 0
+                    number = 0
 
             self.admission_no = (
-                f"{prefix}{last_number + 1:04d}"
+                f"{prefix}{number+1:04d}"
             )
 
-        super().save(
-            *args,
-            **kwargs
-        )
+        super().save(*args, **kwargs)
 
 class SemesterEnrollment(models.Model):
 
-    STATUS_CHOICES = [
-        ("enrolled", "Enrolled"),
-        ("deferred", "Deferred"),
-        ("suspended", "Suspended"),
-        ("completed", "Completed"),
-    ]
+    ENROLLED = "ENROLLED"
+    PROGRESSED = "PROGRESSED"
+    COMPLETED = "COMPLETED"
+    DEFERRED = "DEFERRED"
+    DISCONTINUED = "DISCONTINUED"
 
+    STATUS_CHOICES = [
+
+        (ENROLLED, "Enrolled"),
+
+        (PROGRESSED, "Progressed"),
+
+        (COMPLETED, "Completed"),
+
+        (DEFERRED, "Deferred"),
+
+        (DISCONTINUED, "Discontinued"),
+
+    ]
 
     student = models.ForeignKey(
         Student,
         on_delete=models.CASCADE,
-        related_name="enrollments"
+        related_name="enrollments",
     )
 
+    programme = models.ForeignKey(
+        Programme,
+        on_delete=models.PROTECT,
+        related_name="enrollments",
+    )
+
+    programme_level = models.ForeignKey(
+        ProgrammeLevel,
+        on_delete=models.PROTECT,
+        related_name="enrollments",
+    )
 
     academic_year = models.ForeignKey(
         AcademicYear,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        related_name="enrollments",
     )
-
 
     semester = models.ForeignKey(
         Semester,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        related_name="enrollments",
     )
 
-
-    study_level = models.ForeignKey(
-        StudyLevel,
-        on_delete=models.PROTECT
+    enrollment_date = models.DateField(
+        auto_now_add=True,
     )
-
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default="enrolled"
+        default=ENROLLED,
     )
 
-
-    enrollment_date = models.DateField(
-        auto_now_add=True
+    remarks = models.TextField(
+        blank=True,
     )
-
 
     class Meta:
+
+        ordering = [
+            "-academic_year",
+            "-semester",
+            "-enrollment_date",
+        ]
 
         unique_together = (
             "student",
@@ -624,11 +874,37 @@ class SemesterEnrollment(models.Model):
             "semester",
         )
 
+    def clean(self):
+
+        if self.programme_level.programme != self.programme:
+
+            raise ValidationError(
+                "Programme Level does not belong to the selected Programme."
+            )
+
+        if self.student.programme != self.programme:
+
+            raise ValidationError(
+                "Student is not admitted under the selected Programme."
+            )
+
+    def save(self, *args, **kwargs):
+
+        if not self.programme_id:
+
+            self.programme = self.programme_level.programme
+
+        self.full_clean()
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-            return (
-                f"{self.student.admission_no} - "
-                f"{self.student.first_name} "
-                f"{self.student.last_name}"
+
+        return (
+            f"{self.student.admission_no} - "
+            f"{self.programme_level.name} "
+            f"({self.academic_year} / "
+            f"{self.semester.semester_name})"
         )
     """
     def __str__(self):
@@ -641,42 +917,81 @@ class SemesterEnrollment(models.Model):
 
 class Registration(models.Model):
 
+    NORMAL = "NORMAL"
+    RETAKE = "RETAKE"
+    SUPPLEMENTARY = "SUPPLEMENTARY"
+
+    REGISTRATION_TYPES = [
+        (NORMAL, "Normal"),
+        (RETAKE, "Retake"),
+        (SUPPLEMENTARY, "Supplementary"),
+    ]
+
     enrollment = models.ForeignKey(
         SemesterEnrollment,
         on_delete=models.PROTECT,
-        related_name="registrations"
+        related_name="registrations",
     )
 
     unit = models.ForeignKey(
         Unit,
         on_delete=models.PROTECT,
-        related_name="registrations"
+        related_name="registrations",
+    )
+
+    registration_type = models.CharField(
+        max_length=20,
+        choices=REGISTRATION_TYPES,
+        default=NORMAL,
     )
 
     registration_date = models.DateField(
-        auto_now_add=True
+        auto_now_add=True,
+    )
+
+    remarks = models.CharField(
+        max_length=255,
+        blank=True,
     )
 
     class Meta:
+
+        ordering = [
+            "unit__code",
+        ]
 
         unique_together = (
             "enrollment",
             "unit",
         )
 
-        ordering = [
-            "-registration_date"
-        ]
+    def clean(self):
+
+        # Normal registrations must belong to the student's programme level
+        if (
+            self.registration_type == self.NORMAL and
+            self.unit.programme_level != self.enrollment.programme_level
+        ):
+            raise ValidationError(
+                "Unit does not belong to the student's current programme level."
+            )
+
+    def save(self, *args, **kwargs):
+
+        self.full_clean()
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
 
         return (
-            f"{self.enrollment.student} - "
-            f"{self.unit}"
+            f"{self.enrollment.student.admission_no} - "
+            f"{self.unit.code}"
         )
     
 
 class LecturerAssignment(models.Model):
+
     lecturer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -684,18 +999,18 @@ class LecturerAssignment(models.Model):
     )
 
     unit = models.ForeignKey(
-        "Unit",
+        Unit,
         on_delete=models.CASCADE,
         related_name="lecturer_assignments",
     )
 
     academic_year = models.ForeignKey(
-        "AcademicYear",
+        AcademicYear,
         on_delete=models.CASCADE,
     )
 
     semester = models.ForeignKey(
-        "Semester",
+        Semester,
         on_delete=models.CASCADE,
     )
 
@@ -707,9 +1022,21 @@ class LecturerAssignment(models.Model):
         related_name="unit_assignments_created",
     )
 
-    assigned_at = models.DateTimeField(auto_now_add=True)
+    assigned_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
 
     class Meta:
+
+        ordering = [
+            "lecturer",
+            "unit__code",
+        ]
+
         unique_together = (
             "lecturer",
             "unit",
@@ -717,46 +1044,71 @@ class LecturerAssignment(models.Model):
             "semester",
         )
 
-    def __str__(self):
-        return f"{self.lecturer} - {self.unit}"
-    
+    def clean(self):
 
+        if self.semester.academic_year != self.academic_year:
+            raise ValidationError(
+                "Semester does not belong to the selected Academic Year."
+            )
+
+    def save(self, *args, **kwargs):
+
+        self.full_clean()
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+
+        return (
+            f"{self.lecturer.get_full_name() or self.lecturer.username} - "
+            f"{self.unit.code}"
+        )
+    
 
 class ResultBatch(models.Model):
 
+    DRAFT = "draft"
+    SUBMITTED = "submitted"
+    APPROVED = "approved"
+    RETURNED = "returned"
+    UNLOCKED = "unlocked"
+
     STATUS_CHOICES = [
-        ("draft", "Draft"),
-        ("submitted", "Submitted"),
-        ("approved", "Approved"),
-        ("returned", "Returned"),
-        ("unlocked", "Unlocked"),
+        (DRAFT, "Draft"),
+        (SUBMITTED, "Submitted"),
+        (APPROVED, "Approved"),
+        (RETURNED, "Returned"),
+        (UNLOCKED, "Unlocked"),
     ]
 
     academic_year = models.ForeignKey(
         AcademicYear,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        related_name="result_batches",
     )
 
     semester = models.ForeignKey(
         Semester,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        related_name="result_batches",
     )
 
     unit = models.ForeignKey(
         Unit,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        related_name="result_batches",
     )
 
     lecturer_assignment = models.ForeignKey(
         LecturerAssignment,
         on_delete=models.PROTECT,
-        related_name="result_batches"
+        related_name="result_batches",
     )
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default="draft"
+        default=DRAFT,
     )
 
     submitted_by = models.ForeignKey(
@@ -764,12 +1116,12 @@ class ResultBatch(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="submitted_batches"
+        related_name="submitted_result_batches",
     )
 
     submitted_at = models.DateTimeField(
         null=True,
-        blank=True
+        blank=True,
     )
 
     approved_by = models.ForeignKey(
@@ -777,49 +1129,85 @@ class ResultBatch(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="approved_batches"
+        related_name="approved_result_batches",
     )
 
     approved_at = models.DateTimeField(
         null=True,
-        blank=True
+        blank=True,
     )
 
     remarks = models.TextField(
-        blank=True
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
     )
 
     class Meta:
+
         ordering = [
-            "-submitted_at"
+            "-created_at",
         ]
 
+        unique_together = (
+            "academic_year",
+            "semester",
+            "unit",
+        )
+
+    def clean(self):
+
+        if self.semester.academic_year != self.academic_year:
+
+            raise ValidationError(
+                "Semester does not belong to the selected Academic Year."
+            )
+
+        if self.lecturer_assignment.unit != self.unit:
+
+            raise ValidationError(
+                "Lecturer Assignment does not match selected Unit."
+            )
+
+    def save(self, *args, **kwargs):
+
+        self.full_clean()
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
+
         return (
-            f"{self.unit} - "
+            f"{self.unit.code} - "
             f"{self.academic_year} - "
-            f"{self.semester}"
+            f"{self.semester.semester_name}"
         )
 
 
 class Result(models.Model):
 
     batch = models.ForeignKey(
-        "ResultBatch",
+        ResultBatch,
         on_delete=models.PROTECT,
         related_name="results",
         null=True,
         blank=True,
     )
-    
+
     enrollment = models.ForeignKey(
-        "SemesterEnrollment",
+        SemesterEnrollment,
         on_delete=models.CASCADE,
         related_name="results",
     )
 
     unit = models.ForeignKey(
-        "Unit",
+        Unit,
         on_delete=models.CASCADE,
         related_name="results",
     )
@@ -846,34 +1234,19 @@ class Result(models.Model):
         max_digits=5,
         decimal_places=2,
         default=0,
+        editable=False,
     )
 
     grade = models.CharField(
         max_length=2,
-        blank=True
+        blank=True,
+        editable=False,
     )
 
     remarks = models.CharField(
         max_length=20,
         blank=True,
-    )
-
-    is_submitted = models.BooleanField(
-    default=False
-    )
-
-    is_approved = models.BooleanField(
-        default=False
-    )
-
-    submitted_at = models.DateTimeField(
-        null=True,
-        blank=True
-    )
-
-    approved_at = models.DateTimeField(
-        null=True,
-        blank=True
+        editable=False,
     )
 
     entered_by = models.ForeignKey(
@@ -884,34 +1257,44 @@ class Result(models.Model):
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
     )
 
-    batch = models.ForeignKey(
-        ResultBatch,
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        related_name="results"
-        )
-
     class Meta:
+
+        ordering = [
+            "unit__code",
+        ]
+
         unique_together = (
             "enrollment",
             "unit",
         )
 
-    def save(self, *args, **kwargs):
+    def clean(self):
 
-        cat1 = self.cat1 or 0
-        cat2 = self.cat2 or 0
-        exam = self.exam or 0
+        registration_exists = Registration.objects.filter(
+            enrollment=self.enrollment,
+            unit=self.unit,
+        ).exists()
 
-        self.total = cat1 + cat2 + exam
+        if not registration_exists:
+
+            raise ValidationError(
+                "Student is not registered for this unit."
+            )
+
+    def calculate_grade(self):
+
+        self.total = (
+            (self.cat1 or 0)
+            + (self.cat2 or 0)
+            + (self.exam or 0)
+        )
 
         if self.total >= 70:
 
@@ -938,7 +1321,20 @@ class Result(models.Model):
             self.grade = "E"
             self.remarks = "FAIL"
 
+    def save(self, *args, **kwargs):
+
+        self.full_clean()
+
+        self.calculate_grade()
+
         super().save(*args, **kwargs)
+
+    def __str__(self):
+
+        return (
+            f"{self.enrollment.student.admission_no} - "
+            f"{self.unit.code}"
+        )
 
 
 class ResultBatchLog(models.Model):
@@ -946,37 +1342,36 @@ class ResultBatchLog(models.Model):
     batch = models.ForeignKey(
         ResultBatch,
         on_delete=models.CASCADE,
-        related_name="logs"
+        related_name="logs",
     )
 
     action = models.CharField(
-        max_length=50
+        max_length=50,
     )
 
     performed_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
     )
 
     remarks = models.TextField(
-        blank=True
+        blank=True,
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
-
 
     class Meta:
 
         ordering = [
-            "-created_at"
+            "-created_at",
         ]
-
 
     def __str__(self):
 
-        return f"{self.batch} - {self.action}"
-    
-
+        return (
+            f"{self.batch.unit.code} - "
+            f"{self.action}"
+        )

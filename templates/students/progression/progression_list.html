@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h3>
+    Student Progression
+</h3>
+
+
+<table class="table table-bordered table-striped">
+
+
+<thead>
+
+<tr>
+
+<th>Admission No</th>
+
+<th>Student</th>
+
+<th>Programme</th>
+
+<th>Current Level</th>
+
+<th>Next Level</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+
+{% for item in progression_data %}
+
+<tr>
+
+<td>
+{{ item.enrollment.student.admission_no }}
+</td>
+
+
+<td>
+{{ item.enrollment.student.first_name }}
+{{ item.enrollment.student.last_name }}
+</td>
+
+
+<td>
+{{ item.enrollment.programme.name }}
+</td>
+
+
+<td>
+{{ item.enrollment.programme_level.name }}
+</td>
+
+
+<td>
+
+{% if item.next_level %}
+
+{{ item.next_level.name }}
+
+{% else %}
+
+Completed
+
+{% endif %}
+
+
+</td>
+
+
+<td>
+
+
+{% if item.next_level %}
+
+<a href="{% url 'progress_student' item.enrollment.id %}"
+class="btn btn-success btn-sm">
+
+Progress
+
+</a>
+
+
+{% else %}
+
+<span class="badge bg-primary">
+Ready for Graduation
+</span>
+
+{% endif %}
+
+
+</td>
+
+
+</tr>
+
+
+{% empty %}
+
+<tr>
+
+<td colspan="6">
+
+No students available for progression.
+
+</td>
+
+</tr>
+
+
+{% endfor %}
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+{% endblock %}

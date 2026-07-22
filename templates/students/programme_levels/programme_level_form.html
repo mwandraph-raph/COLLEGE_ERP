@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+<div class="container mt-4">
+
+
+<h2>
+    {% if form.instance.pk %}
+        Edit Programme Level
+    {% else %}
+        Add Programme Level
+    {% endif %}
+</h2>
+
+
+
+<form method="post">
+
+    {% csrf_token %}
+
+
+    <div class="mb-3">
+
+        {{ form.as_p }}
+
+    </div>
+
+
+
+    <button class="btn btn-success">
+
+        Save
+
+    </button>
+
+
+    <a href="{% url 'programme_level_list' %}"
+       class="btn btn-secondary">
+
+        Cancel
+
+    </a>
+
+
+</form>
+
+
+</div>
+
+
+{% endblock %}

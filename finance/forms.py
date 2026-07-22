@@ -7,6 +7,12 @@ from .models import (
     FinanceSetting,
 )
 
+from students.models import (
+    ProgrammeLevel,
+    AcademicYear,
+    Semester,
+)
+
 class FeeCategoryForm(forms.ModelForm):
 
     class Meta:
@@ -49,33 +55,85 @@ class FeeCategoryForm(forms.ModelForm):
 class FeeStructureForm(forms.ModelForm):
 
     class Meta:
+
         model = FeeStructure
 
         fields = [
-            "programme",
+            "programme_level",
             "academic_year",
             "semester",
-            "study_level",
+            "name",
             "is_active",
         ]
 
         widgets = {
-            "programme": forms.Select(
-                attrs={"class": "form-select"}
+
+            "programme_level": forms.Select(
+                attrs={
+                    "class": "form-select"
+                }
             ),
+
             "academic_year": forms.Select(
-                attrs={"class": "form-select"}
+                attrs={
+                    "class": "form-select"
+                }
             ),
+
             "semester": forms.Select(
-                attrs={"class": "form-select"}
+                attrs={
+                    "class": "form-select"
+                }
             ),
-            "study_level": forms.Select(
-                attrs={"class": "form-select"}
+
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control"
+                }
             ),
+
             "is_active": forms.CheckboxInput(
-                attrs={"class": "form-check-input"}
+                attrs={
+                    "class": "form-check-input"
+                }
             ),
         }
+
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["programme_level"].queryset = (
+            ProgrammeLevel.objects
+            .filter(
+                is_active=True
+            )
+            .select_related(
+                "programme",
+                "programme__course",
+            )
+            .order_by(
+                "programme__name",
+                "progression_order",
+            )
+        )
+
+        self.fields["academic_year"].queryset = (
+            AcademicYear.objects
+            .order_by(
+                "-is_active",
+                "-year_name",
+            )
+        )
+
+        self.fields["semester"].queryset = (
+            Semester.objects
+            .order_by(
+                "-is_active",
+                "semester_name",
+            )
+        )
 
 class FeeStructureItemForm(forms.ModelForm):
 

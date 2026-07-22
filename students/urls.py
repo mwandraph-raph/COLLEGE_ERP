@@ -253,30 +253,6 @@ path(
 ),
 
 path(
-    "study-levels/",
-    views.study_level_list,
-    name="study_level_list"
-),
-
-path(
-    "study-levels/add/",
-    views.study_level_create,
-    name="study_level_create"
-),
-
-path(
-    "study-levels/<int:pk>/edit/",
-    views.study_level_update,
-    name="study_level_update"
-),
-
-path(
-    "study-levels/<int:pk>/delete/",
-    views.study_level_delete,
-    name="study_level_delete"
-),
-
-path(
     "enrollments/",
     views.enrollment_list,
     name="enrollment_list"
@@ -469,5 +445,41 @@ path(
     "enrollments/<int:enrollment_id>/progress/",
     views.progress_student,
     name="progress_student",
+),
+
+path(
+    "programme-levels/",
+    views.programme_level_list,
+    name="programme_level_list"
+),
+
+path(
+    "programme-levels/create/",
+    views.programme_level_create,
+    name="programme_level_create"
+),
+
+path(
+    "programme-levels/<int:pk>/edit/",
+    views.programme_level_update,
+    name="programme_level_update"
+),
+
+path(
+    "programme-levels/<int:pk>/delete/",
+    views.programme_level_delete,
+    name="programme_level_delete"
+),
+
+path(
+    "ajax/load-programme-levels/",
+    views.load_programme_levels,
+    name="load_programme_levels"
+),
+
+path(
+    "progression/",
+    views.progression_list,
+    name="progression_list"
 ),
 ]
