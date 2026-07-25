@@ -1,36 +1,130 @@
 {% extends "base.html" %}
 
+{% block title %}
+{% if form.instance.pk %}
+Edit Programme
+{% else %}
+Create Programme
+{% endif %}
+{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<div class="container">
 
-    {% if programme %}
-        <h2>Edit Programme</h2>
-    {% else %}
-        <h2>Create Programme</h2>
-    {% endif %}
+    <div class="row justify-content-center">
 
-    <div class="card">
+        <div class="col-lg-8">
 
-        <div class="card-body">
+            <div class="card shadow-sm">
 
-            <form method="post">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
 
-                {% csrf_token %}
+                        {% if form.instance.pk %}
+                            Edit Programme
+                        {% else %}
+                            Create Programme
+                        {% endif %}
 
-                {{ form.as_p }}
+                    </h4>
+                </div>
 
-                <button type="submit"
-                        class="btn btn-success">
-                    Save
-                </button>
+                <div class="card-body">
 
-                <a href="{% url 'programme_list' %}"
-                   class="btn btn-secondary">
-                    Cancel
-                </a>
+                    <form method="post">
 
-            </form>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        {% for field in form %}
+
+                            {% if field.name == "is_active" %}
+
+                                <div class="form-check mb-3">
+
+                                    {{ field }}
+
+                                    <label class="form-check-label"
+                                           for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                    </label>
+
+                                    {% for error in field.errors %}
+                                        <div class="text-danger small">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="mb-3">
+
+                                    <label class="form-label"
+                                           for="{{ field.id_for_label }}">
+
+                                        {{ field.label }}
+
+                                        {% if field.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+
+                                    </label>
+
+                                    {{ field }}
+
+                                    {% if field.help_text %}
+                                        <div class="form-text">
+                                            {{ field.help_text }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% for error in field.errors %}
+                                        <div class="text-danger small">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+
+                            <a href="{% url 'programme_list' %}"
+                               class="btn btn-secondary">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                {% if form.instance.pk %}
+                                    Update Programme
+                                {% else %}
+                                    Save Programme
+                                {% endif %}
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -39,3 +133,4 @@
 </div>
 
 {% endblock %}
+

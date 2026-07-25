@@ -60,7 +60,7 @@
 
                         <strong>Study Level:</strong>
 
-                        {{ student.study_level }}
+                       {{ student.current_programme_level }}
 
                     </p>
 
@@ -94,53 +94,53 @@
 
                 </thead>
 
-                <tbody>
+                    <tbody>
 
-                    {% for item in transactions %}
+                    {% for transaction in transactions %}
 
                     <tr>
 
-                        <td>
-                            {{ item.date }}
-                        </td>
+                        <td>{{ transaction.date }}</td>
 
                         <td>
-                            {{ item.description }}
-                        </td>
+                            {{ transaction.description }}
 
-                        <td>
-
-                            {% if item.debit %}
-
-                                {{ item.debit }}
-
-                            {% else %}
-
-                                -
-
+                            {% if transaction.is_reversed %}
+                                <span class="badge bg-danger ms-2">
+                                    Reversed
+                                </span>
                             {% endif %}
-
                         </td>
 
                         <td>
-
-                            {% if item.credit %}
-
-                                {{ item.credit }}
-
+                            {% if transaction.debit %}
+                                {{ transaction.debit }}
                             {% else %}
-
                                 -
-
                             {% endif %}
+                        </td>
 
+                        <td>
+                            {% if transaction.credit %}
+                                {{ transaction.credit }}
+                            {% else %}
+                                -
+                            {% endif %}
                         </td>
 
                     </tr>
 
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No transactions found.
+                        </td>
+                    </tr>
+
                     {% endfor %}
 
-                </tbody>
+                    </tbody>
 
             </table>
 

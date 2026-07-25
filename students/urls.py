@@ -47,6 +47,12 @@ urlpatterns = [
     ),
 
     path(
+    "students/<int:pk>/enroll/",
+    views.enroll_student,
+    name="enroll_student",
+    ),
+
+    path(
         "departments/",
         views.department_list,
         name="department_list"
@@ -238,12 +244,6 @@ path(
     "my-registrations/",
     views.my_registrations,
     name="my_registrations"
-),
-
-path(
-    "register-units/",
-    views.register_units,
-    name="register_units"
 ),
 
 path(
@@ -442,6 +442,12 @@ path(
 ),
 
 path(
+    "enrollments/<int:pk>/results/",
+    views.enrollment_results,
+    name="enrollment_results",
+),
+
+path(
     "enrollments/<int:enrollment_id>/progress/",
     views.progress_student,
     name="progress_student",
@@ -482,4 +488,54 @@ path(
     views.progression_list,
     name="progression_list"
 ),
+
+path(
+    "programme-levels/<int:pk>/units/",
+    views.programme_level_units,
+    name="programme_level_units"
+),
+
+path(
+    "programme-levels/<int:pk>/units/add/",
+    views.add_programme_level_unit,
+    name="add_programme_level_unit"
+),
+
+path(
+    "semester-enrollments/",
+    views.semester_enrollment_list,
+    name="semester_enrollment_list"
+),
+
+path(
+    "semester-enrollments/create/",
+    views.semester_enrollment_create,
+    name="semester_enrollment_create"
+),
+
+path(
+    "semester-enrollments/<int:pk>/",
+    views.semester_enrollment_detail,
+    name="semester_enrollment_detail"
+),
+
+path(
+    "semester-enrollments/<int:pk>/edit/",
+    views.semester_enrollment_edit,
+    name="semester_enrollment_edit"
+),
+
+path(
+    "semester-enrollments/<int:pk>/delete/",
+    views.semester_enrollment_delete,
+    name="semester_enrollment_delete"
+),
+
+path(
+    "semester-enrollments/<int:pk>/register-units/",
+    views.register_units,
+    name="register_units",
+),
+
+
 ]

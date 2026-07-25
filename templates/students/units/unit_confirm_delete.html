@@ -1,60 +1,133 @@
+```html
 {% extends "base.html" %}
+
+
+{% block title %}
+
+Delete Unit
+
+{% endblock %}
+
+
 
 {% block content %}
 
-<div class="container mt-4">
 
-    <div class="card border-danger">
 
-        <div class="card-header bg-danger text-white">
+<div class="row justify-content-center">
 
-            Delete Unit
 
-        </div>
+<div class="col-md-6">
 
-        <div class="card-body">
 
-            <p>
+<div class="card border-danger shadow-sm">
 
-                Are you sure you want to delete:
 
-                <strong>
+<div class="card-header bg-danger text-white">
 
-                    {{ unit.unit_code }}
+<h4 class="mb-0">
 
-                    -
+Delete Unit
 
-                    {{ unit.unit_name }}
-
-                </strong>
-
-            </p>
-
-            <form method="post">
-
-                {% csrf_token %}
-
-                <button
-                    type="submit"
-                    class="btn btn-danger">
-
-                    Delete
-
-                </button>
-
-                <a href="{% url 'unit_list' %}"
-                   class="btn btn-secondary">
-
-                    Cancel
-
-                </a>
-
-            </form>
-
-        </div>
-
-    </div>
+</h4>
 
 </div>
 
+
+
+<div class="card-body">
+
+
+<p>
+
+Are you sure you want to delete:
+
+<strong>
+{{ object.code }} - {{ object.name }}
+</strong>
+
+?
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+
+<strong>Programme:</strong>
+
+{{ object.programme_level.programme.name }}
+
+</li>
+
+
+
+<li>
+
+<strong>Level:</strong>
+
+{{ object.programme_level.name }}
+
+</li>
+
+
+
+<li>
+
+<strong>Credit Hours:</strong>
+
+{{ object.credit_hours }}
+
+</li>
+
+
+</ul>
+
+
+
+<form method="post">
+
+
+{% csrf_token %}
+
+
+
+<a href="{% url 'unit_list' %}"
+class="btn btn-secondary">
+
+Cancel
+
+</a>
+
+
+
+<button type="submit"
+class="btn btn-danger">
+
+Delete Unit
+
+</button>
+
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
 {% endblock %}
+

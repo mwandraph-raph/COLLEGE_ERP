@@ -1,42 +1,55 @@
 {% extends "base.html" %}
 
+{% block title %}Delete Programme{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<div class="row justify-content-center">
 
-    <div class="card border-danger">
+    <div class="col-md-6">
 
-        <div class="card-header bg-danger text-white">
-            Delete Programme
-        </div>
+        <div class="card border-danger shadow-sm">
 
-        <div class="card-body">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Delete Programme</h4>
+            </div>
 
-            <p>
+            <div class="card-body">
 
-                Are you sure you want to delete
+                <p>
 
-                <strong>
-                    {{ programme.programme_name }}
-                </strong>?
+                    Are you sure you want to delete
+                    <strong>{{ object.name }}</strong>?
 
-            </p>
+                </p>
 
-            <form method="post">
+                <ul class="mb-4">
 
-                {% csrf_token %}
+                    <li><strong>Code:</strong> {{ object.code }}</li>
 
-                <button type="submit"
-                        class="btn btn-danger">
-                    Delete
-                </button>
+                    <li><strong>Course:</strong> {{ object.course.name }}</li>
 
-                <a href="{% url 'programme_list' %}"
-                   class="btn btn-secondary">
-                    Cancel
-                </a>
+                    <li><strong>Award:</strong> {{ object.get_award_display }}</li>
 
-            </form>
+                </ul>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <a href="{% url 'programme_list' %}"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-danger">
+                        Delete Programme
+                    </button>
+
+                </form>
+
+            </div>
 
         </div>
 

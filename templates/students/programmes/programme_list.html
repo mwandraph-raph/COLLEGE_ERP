@@ -1,82 +1,128 @@
 {% extends "base.html" %}
 
+{% block title %}Programmes{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<div class="d-flex justify-content-between align-items-center mb-3">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Programmes</h2>
 
-        <h2>Programmes</h2>
+    <a href="{% url 'programme_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> New Programme
+    </a>
 
-        {% if perms.students.add_programme %}
-        <a href="{% url 'programme_create' %}"
-           class="btn btn-primary">
-            Add Programme
-        </a>
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        {% if programmes %}
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th width="70">ID</th>
+                        <th width="110">Code</th>
+                        <th>Programme</th>
+                        <th>Course</th>
+                        <th width="170">Award</th>
+                        <th width="120">Semesters</th>
+                        <th width="100">Status</th>
+                        <th width="170">Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for programme in programmes %}
+
+                    <tr>
+
+                        <td>{{ programme.id }}</td>
+
+                        <td>{{ programme.code }}</td>
+
+                        <td>
+                            <strong>{{ programme.name }}</strong>
+
+                            {% if programme.description %}
+                                <br>
+                                <small class="text-muted">
+                                    {{ programme.description|truncatechars:60 }}
+                                </small>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ programme.course.name }}</td>
+
+                        <td>
+                            <span class="badge bg-info text-dark">
+                                {{ programme.get_award_display }}
+                            </span>
+                        </td>
+
+                        <td class="text-center">
+                            {{ programme.duration_semesters }}
+                        </td>
+
+                        <td>
+
+                            {% if programme.is_active %}
+                                <span class="badge bg-success">
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    Inactive
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a href="{% url 'programme_update' programme.pk %}"
+                               class="btn btn-sm btn-warning">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'programme_delete' programme.pk %}"
+                               class="btn btn-sm btn-danger">
+                                Delete
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-info mb-0">
+
+            No programmes have been created.
+
+        </div>
+
         {% endif %}
 
     </div>
 
-    <table class="table table-bordered table-striped">
-
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Programme</th>
-                <th>Department</th>
-                <th>Students</th>
-                <th width="200">Actions</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-        {% for programme in programmes %}
-
-            <tr>
-
-                <td>{{ programme.id }}</td>
-
-                <td>{{ programme.programme_name }}</td>
-
-                <td>{{ programme.department.department_name }}</td>
-
-                <td>{{ programme.students.count }}</td>
-
-                <td>
-
-                    {% if perms.students.change_programme %}
-                    <a href="{% url 'programme_update' programme.id %}"
-                       class="btn btn-warning btn-sm">
-                        Edit
-                    </a>
-                    {% endif %}
-
-                    {% if perms.students.delete_programme %}
-                    <a href="{% url 'programme_delete' programme.id %}"
-                       class="btn btn-danger btn-sm">
-                        Delete
-                    </a>
-                    {% endif %}
-
-                </td>
-
-            </tr>
-
-        {% empty %}
-
-            <tr>
-                <td colspan="5">
-                    No programmes found.
-                </td>
-            </tr>
-
-        {% endfor %}
-
-        </tbody>
-
-    </table>
-
 </div>
 
 {% endblock %}
+

@@ -4,37 +4,385 @@
 
 <div class="container mt-4">
 
-    <h3>Enrollment Details</h3>
 
-    <table class="table table-bordered">
+<div class="card shadow">
 
-        <tr>
-            <th>Student</th>
-            <td>{{ enrollment.student }}</td>
-        </tr>
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
 
-        <tr>
-            <th>Academic Year</th>
-            <td>{{ enrollment.academic_year }}</td>
-        </tr>
+        <h3 class="mb-0">
+            Semester Enrollment
+        </h3>
 
-        <tr>
-            <th>Semester</th>
-            <td>{{ enrollment.semester }}</td>
-        </tr>
+        <span class="badge bg-light text-dark">
 
-        <tr>
-            <th>Study Level</th>
-            <td>{{ enrollment.study_level }}</td>
-        </tr>
+            {{ enrollment.student.admission_no }}
 
-        <tr>
-            <th>Status</th>
-            <td>{{ enrollment.get_status_display }}</td>
-        </tr>
+        </span>
 
-    </table>
+    </div>
+
+
+    <div class="card-body">
+
+
+        <table class="table table-bordered">
+
+
+            <tr>
+
+                <th width="30%">
+                    Student
+                </th>
+
+                <td>
+                    {{ enrollment.student }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <th>
+                    Programme
+                </th>
+
+                <td>
+                    {{ enrollment.programme }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <th>
+                    Programme Level
+                </th>
+
+                <td>
+                    {{ enrollment.programme_level }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <th>
+                    Academic Year
+                </th>
+
+                <td>
+                    {{ enrollment.academic_year }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <th>
+                    Semester
+                </th>
+
+                <td>
+                    {{ enrollment.semester }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <th>
+                    Status
+                </th>
+
+                <td>
+
+                    <span class="badge bg-success">
+
+                        {{ enrollment.get_status_display }}
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+
+        </table>
+
+
+    </div>
+
 
 </div>
+
+
+
+
+
+<div class="card shadow mt-4">
+
+
+<div class="card-header bg-dark text-white">
+
+    <h5 class="mb-0">
+        Student Semester Workflow
+    </h5>
+
+</div>
+
+
+
+<div class="card-body">
+
+
+<div class="row g-3">
+
+
+
+<!-- INVOICE -->
+
+<div class="col-md-4">
+
+
+{% if enrollment.invoice %}
+
+
+<a href="{% url 'finance:invoice_detail' enrollment.invoice.id %}"
+class="btn btn-outline-primary w-100">
+
+🧾 View Invoice
+
+</a>
+
+
+{% else %}
+
+
+<button class="btn btn-outline-secondary w-100"
+disabled>
+
+🧾 Invoice Not Generated
+
+</button>
+
+
+{% endif %}
+
+
+</div>
+
+
+
+
+
+<!-- PAYMENT -->
+
+
+<div class="col-md-4">
+
+
+{% if enrollment.invoice %}
+
+
+<a href="{% url 'finance:payment_create' enrollment.invoice.id %}"
+class="btn btn-outline-success w-100">
+
+
+💰 Record Payment
+
+
+</a>
+
+
+{% else %}
+
+
+<button class="btn btn-outline-secondary w-100"
+disabled>
+
+
+💰 Payment Locked
+
+
+</button>
+
+
+{% endif %}
+
+
+</div>
+
+
+
+
+
+
+<!-- FINANCIAL CLEARANCE -->
+
+
+<div class="col-md-4">
+
+
+<a href="{% url 'finance:financial_clearance_list' %}"
+class="btn btn-outline-warning w-100">
+
+
+📋 Financial Clearance
+
+
+</a>
+
+
+</div>
+
+
+
+
+
+
+<!-- UNIT REGISTRATION -->
+
+
+<div class="col-md-4">
+
+
+<a href="{% url 'register_units' enrollment.id %}"
+class="btn btn-outline-info w-100">
+
+
+📚 Register Units
+
+
+</a>
+
+
+</div>
+
+
+
+
+
+
+<!-- RESULTS -->
+
+
+<div class="col-md-4">
+<a href="{%  url 'enrollment_results' enrollment.id %}"
+   class="btn btn-outline-secondary w-100">
+    📊 Results
+</a>
+</div>
+
+<!-- PROGRESSION -->
+
+<div class="col-md-4">
+<a href="{% url 'progress_student' enrollment.id %}"
+class="btn btn-outline-danger w-100">
+⬆ Progress Student
+</a>
+
+
+</div>
+
+</div>
+</div>
+</div>
+
+
+<div class="card shadow mt-4">
+
+
+<div class="card-header bg-secondary text-white">
+
+Registered Units
+
+</div>
+
+
+<div class="card-body">
+
+
+<table class="table table-bordered">
+<thead>
+<tr>
+<th>
+Unit Code
+</th>
+<th>
+Unit Name
+</th>
+<th>
+Status
+</th>
+</tr>
+</thead>
+<tbody>
+{% for registration in registrations %}
+<tr>
+<td>
+
+{{ registration.unit.code }}
+</td>
+<td>
+{{ registration.unit.name }}
+</td>
+<td>
+
+{% if registration.is_active %}
+<span class="badge bg-success">
+Active
+</span>
+
+{% else %}
+
+<span class="badge bg-secondary">
+Dropped
+</span>
+
+{% endif %}
+</td>
+
+</tr>
+
+{% empty %}
+<tr>
+<td colspan="3"
+class="text-center">
+No units registered.
+</td>
+</tr>
+
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+<div class="mt-4">
+
+
+<a href="{% url 'semester_enrollment_list' %}"
+class="btn btn-secondary">
+
+
+Back
+
+
+</a>
+
+
+</div>
+
+
+
+</div>
+
 
 {% endblock %}

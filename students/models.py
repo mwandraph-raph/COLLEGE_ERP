@@ -343,24 +343,35 @@ class AcademicYear(models.Model):
 
     year_name = models.CharField(
         max_length=20,
-        unique=True
+        unique=True,
     )
 
     is_active = models.BooleanField(
-        default=False
+        default=False,
     )
 
     registration_open = models.BooleanField(
-        default=False
+        default=False,
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
     )
+
+    class Meta:
+        ordering = [
+            "-year_name",
+        ]
+        verbose_name = "Academic Year"
+        verbose_name_plural = "Academic Years"
+
+    def __str__(self):
+        return self.year_name
+
 
 class Intake(models.Model):
 
@@ -396,9 +407,8 @@ class Intake(models.Model):
     )
 
     class Meta:
-
         ordering = [
-            "-academic_year",
+            "-academic_year__year_name",
             "start_date",
         ]
 
@@ -407,13 +417,12 @@ class Intake(models.Model):
             "name",
         )
 
+        verbose_name = "Intake"
+        verbose_name_plural = "Intakes"
+
     def __str__(self):
-
-        return (
-            f"{self.name} "
-            f"({self.academic_year})"
-        )
-
+        return f"{self.name} ({self.academic_year})"
+    
 
 class Semester(models.Model):
 
@@ -479,7 +488,6 @@ class Semester(models.Model):
             f"{self.academic_year} - "
             f"{self.semester_name}"
         )
-
 
 
 class ProgrammeLevel(models.Model):
@@ -634,8 +642,15 @@ class Unit(models.Model):
             f"{self.name}"
         )
     
-
 class Student(models.Model):
+
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+
+    STATUS_CHOICES = [
+        (ACTIVE, "Active"),
+        (INACTIVE, "Inactive"),
+    ]
 
     user = models.OneToOneField(
         User,
@@ -703,8 +718,10 @@ class Student(models.Model):
         default=timezone.now,
     )
 
-    is_active = models.BooleanField(
-        default=True,
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default=ACTIVE,
     )
 
     created_at = models.DateTimeField(
@@ -734,13 +751,17 @@ class Student(models.Model):
 
         return (
             self.enrollments
+            .filter(
+                status=SemesterEnrollment.ENROLLED,
+            )
             .select_related(
                 "programme_level",
                 "academic_year",
                 "semester",
             )
             .order_by(
-                "-enrollment_date",
+                "-academic_year",
+                "-semester",
                 "-id",
             )
             .first()
@@ -757,6 +778,21 @@ class Student(models.Model):
 
         return None
 
+    @property
+    def is_enrolled(self):
+
+        return self.current_enrollment is not None
+
+    @property
+    def full_name(self):
+        return " ".join(
+            part for part in [
+                self.first_name,
+                self.middle_name,
+                self.last_name,
+            ] if part
+        )
+    
     def save(self, *args, **kwargs):
 
         if not self.admission_no:
@@ -768,7 +804,7 @@ class Student(models.Model):
             last = (
                 Student.objects
                 .filter(
-                    admission_no__startswith=prefix
+                    admission_no__startswith=prefix,
                 )
                 .order_by("-id")
                 .first()
@@ -789,10 +825,11 @@ class Student(models.Model):
                     number = 0
 
             self.admission_no = (
-                f"{prefix}{number+1:04d}"
+                f"{prefix}{number + 1:04d}"
             )
 
         super().save(*args, **kwargs)
+
 
 class SemesterEnrollment(models.Model):
 

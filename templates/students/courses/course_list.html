@@ -1,213 +1,81 @@
 {% extends "base.html" %}
 
+{% block title %}Courses{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Courses</h2>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="{% url 'course_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> New Course
+    </a>
+</div>
 
-        <h2>Courses</h2>
+<div class="card shadow-sm">
+    <div class="card-body">
 
-        {% if perms.students.add_course %}
-        <a href="{% url 'course_create' %}"
-           class="btn btn-primary">
+        {% if courses %}
 
-            Add Course
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th width="80">ID</th>
+                        <th width="120">Code</th>
+                        <th>Course</th>
+                        <th>Department</th>
+                        <th>Description</th>
+                        <th width="100">Status</th>
+                        <th width="170">Actions</th>
+                    </tr>
+                </thead>
 
-        </a>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ course.id }}</td>
+                        <td>{{ course.code }}</td>
+                        <td>{{ course.name }}</td>
+                        <td>{{ course.department.name }}</td>
+                        <td>{{ course.description|default:"-" }}</td>
+
+                        <td>
+                            {% if course.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'course_update' course.pk %}"
+                               class="btn btn-sm btn-warning">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'course_delete' course.pk %}"
+                               class="btn btn-sm btn-danger">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-info mb-0">
+            No courses have been created.
+        </div>
+
         {% endif %}
 
     </div>
-
-    <form method="get" class="row mb-3">
-
-        <div class="col-md-4">
-
-            <input
-                type="text"
-                name="search"
-                value="{{ search }}"
-                class="form-control"
-                placeholder="Search course">
-
-        </div>
-
-        <div class="col-md-3">
-
-            <select
-                name="programme"
-                class="form-select">
-
-                <option value="">
-
-                    All Programmes
-
-                </option>
-
-                {% for programme in programmes %}
-
-                <option
-                    value="{{ programme.id }}"
-                    {% if selected_programme == programme.id|stringformat:"s" %}
-                    selected
-                    {% endif %}>
-
-                    {{ programme.programme_name }}
-
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <select
-                name="programme_level"
-                class="form-select">
-
-                <option value="">
-
-                    All Programme Levels
-
-                </option>
-
-                {% for level in programme_levels %}
-
-                <option
-                    value="{{ level.id }}"
-                    {% if selected_programme_level == level.id|stringformat:"s" %}
-                    selected
-                    {% endif %}>
-
-                    {{ level.programme.programme_name }} -
-                    {{ level.name }}
-
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-        <div class="col-md-2">
-
-            <button
-                type="submit"
-                class="btn btn-success w-100">
-
-                Filter
-
-            </button>
-
-        </div>
-
-    </form>
-
-    <table class="table table-bordered table-striped">
-
-        <thead>
-
-            <tr>
-
-                <th>Code</th>
-                <th>Course Name</th>
-                <th>Programme</th>
-                <th>Programme Level</th>
-                <th>Credits</th>
-                <th>Actions</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            {% for course in courses %}
-
-            <tr>
-
-                <td>
-
-                    {{ course.course_code }}
-
-                </td>
-
-                <td>
-
-                    {{ course.course_name }}
-
-                </td>
-
-                <td>
-
-                    {{ course.programme }}
-
-                </td>
-
-                <td>
-
-                    {{ course.programme_level.name }}
-
-                </td>
-
-                <td>
-
-                    {{ course.credit_hours }}
-
-                </td>
-
-                <td>
-
-                    {% if perms.students.change_course %}
-
-                    <a
-                        href="{% url 'course_update' course.id %}"
-                        class="btn btn-warning btn-sm">
-
-                        Edit
-
-                    </a>
-
-                    {% endif %}
-
-                    {% if perms.students.delete_course %}
-
-                    <a
-                        href="{% url 'course_delete' course.id %}"
-                        class="btn btn-danger btn-sm">
-
-                        Delete
-
-                    </a>
-
-                    {% endif %}
-
-                </td>
-
-            </tr>
-
-            {% empty %}
-
-            <tr>
-
-                <td colspan="6" class="text-center">
-
-                    No courses found.
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-
 </div>
 
 {% endblock %}
+

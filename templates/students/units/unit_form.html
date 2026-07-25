@@ -1,84 +1,200 @@
 {% extends "base.html" %}
 
+
+{% block title %}
+
+{% if form.instance.pk %}
+
+Edit Unit
+
+{% else %}
+
+Create Unit
+
+{% endif %}
+
+{% endblock %}
+
+
+
 {% block content %}
 
-<div class="container mt-4">
 
-    {% if unit %}
-        <h2>Edit Unit</h2>
-    {% else %}
-        <h2>Create Unit</h2>
-    {% endif %}
+<div class="container">
 
-    <div class="card">
+<div class="row justify-content-center">
 
-        <div class="card-body">
+<div class="col-lg-8">
 
-            <form method="post">
 
-                {% csrf_token %}
+<div class="card shadow-sm">
 
-                <div class="mb-3">
 
-                    <label class="form-label">
-                        Unit Code
-                    </label>
+<div class="card-header bg-primary text-white">
 
-                    {{ form.unit_code }}
+<h4 class="mb-0">
 
-                </div>
+{% if form.instance.pk %}
 
-                <div class="mb-3">
+Edit Unit
 
-                    <label class="form-label">
-                        Unit Name
-                    </label>
+{% else %}
 
-                    {{ form.unit_name }}
+Create Unit
 
-                </div>
+{% endif %}
 
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Course
-                    </label>
-
-                    {{ form.course }}
-
-                </div>
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Credit Hours
-                    </label>
-
-                    {{ form.credit_hours }}
-
-                </div>
-
-                <button
-                    type="submit"
-                    class="btn btn-success">
-
-                    Save
-
-                </button>
-
-                <a href="{% url 'unit_list' %}"
-                   class="btn btn-secondary">
-
-                    Cancel
-
-                </a>
-
-            </form>
-
-        </div>
-
-    </div>
+</h4>
 
 </div>
 
+
+
+<div class="card-body">
+
+
+<form method="post">
+
+
+{% csrf_token %}
+
+
+{% if form.non_field_errors %}
+
+<div class="alert alert-danger">
+
+{{ form.non_field_errors }}
+
+</div>
+
+{% endif %}
+
+
+
+{% for field in form %}
+
+
+
+{% if field.name == "is_active" %}
+
+
+<div class="form-check mb-3">
+
+{{ field }}
+
+<label class="form-check-label">
+
+{{ field.label }}
+
+</label>
+
+
+</div>
+
+
+
+{% else %}
+
+
+
+<div class="mb-3">
+
+
+<label class="form-label">
+
+{{ field.label }}
+
+{% if field.field.required %}
+
+<span class="text-danger">*</span>
+
+{% endif %}
+
+</label>
+
+
+{{ field }}
+
+
+
+{% for error in field.errors %}
+
+<div class="text-danger small">
+
+{{ error }}
+
+</div>
+
+{% endfor %}
+
+
+</div>
+
+
+
+{% endif %}
+
+
+
+{% endfor %}
+
+
+
+<hr>
+
+
+
+<div class="d-flex justify-content-between">
+
+
+<a href="{% url 'unit_list' %}"
+class="btn btn-secondary">
+
+Cancel
+
+</a>
+
+
+
+<button type="submit"
+class="btn btn-primary">
+
+
+{% if form.instance.pk %}
+
+Update Unit
+
+{% else %}
+
+Save Unit
+
+{% endif %}
+
+
+</button>
+
+
+</div>
+
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
 {% endblock %}
+

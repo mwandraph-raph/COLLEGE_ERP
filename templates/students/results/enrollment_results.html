@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<div class="card shadow">
+
+    <div class="card-header d-flex justify-content-between align-items-center">
+
+        <h4 class="mb-0">
+
+            Semester Results
+
+        </h4>
+
+        <div>
+
+            <a href="{% url 'semester_enrollment_detail' enrollment.id %}"
+               class="btn btn-secondary btn-sm">
+
+                ← Back to Enrollment
+
+            </a>
+
+            {% if results %}
+            <button onclick="window.print();"
+                    class="btn btn-primary btn-sm">
+
+                Print Result Slip
+
+            </button>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        <h5 class="mb-3">
+
+            Student Information
+
+        </h5>
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <table class="table table-borderless">
+
+                    <tr>
+                        <th width="180">Admission No</th>
+                        <td>{{ student.admission_no }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Student Name</th>
+                        <td>{{ student.first_name }} {{ student.last_name }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Programme</th>
+                        <td>{{ enrollment.programme_level.programme }}</td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <table class="table table-borderless">
+
+                    <tr>
+                        <th width="180">Programme Level</th>
+                        <td>{{ enrollment.programme_level }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Academic Year</th>
+                        <td>{{ enrollment.academic_year }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Semester</th>
+                        <td>{{ enrollment.semester }}</td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        {% if results %}
+
+        <table class="table table-bordered table-striped">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>Unit Code</th>
+                    <th>Unit Name</th>
+                    <th class="text-end">CAT 1</th>
+                    <th class="text-end">CAT 2</th>
+                    <th class="text-end">Exam</th>
+                    <th class="text-end">Total</th>
+                    <th>Grade</th>
+                    <th>Remarks</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for result in results %}
+
+                <tr>
+
+                    <td>{{ result.unit.code }}</td>
+
+                    <td>{{ result.unit.name }}</td>
+
+                    <td class="text-end">{{ result.cat1 }}</td>
+
+                    <td class="text-end">{{ result.cat2 }}</td>
+
+                    <td class="text-end">{{ result.exam }}</td>
+
+                    <td class="text-end">
+
+                        <strong>{{ result.total }}</strong>
+
+                    </td>
+
+                    <td>{{ result.grade }}</td>
+
+                    <td>{{ result.remarks }}</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="alert alert-info text-center">
+
+            <h5>No Results Available</h5>
+
+            <p class="mb-0">
+
+                Results have not yet been entered or approved for this
+                semester enrollment.
+
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

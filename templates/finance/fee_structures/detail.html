@@ -24,7 +24,7 @@
 
                     <strong>Programme:</strong><br>
 
-                    {{ structure.programme }}
+             {{ structure.programme_level.programme.code }} - {{ structure.programme_level.programme.name }}
 
                 </div>
 
@@ -52,7 +52,7 @@
 
                     <strong>Study Level:</strong><br>
 
-                    {{ structure.study_level }}
+                   {{ structure.programme_level }}
 
                 </div>
 
@@ -118,13 +118,12 @@
     </td>
 
 </tr>
-                    </tr>
 
                 {% empty %}
 
                     <tr>
 
-                        <td colspan="2">
+                        <td colspan="3">
 
                             No fee items added.
 

@@ -1,194 +1,133 @@
+
 {% extends "base.html" %}
+
+{% block title %}
+{% if form.instance.pk %}
+Edit Course
+{% else %}
+Create Course
+{% endif %}
+{% endblock %}
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container">
 
-    <div class="card shadow">
+    <div class="row justify-content-center">
 
-        <div class="card-header bg-primary text-white">
+        <div class="col-lg-8">
 
-            <h4 class="mb-0">
-                {% if form.instance.pk %}
-                    Edit Course
-                {% else %}
-                    Add Course
-                {% endif %}
-            </h4>
+            <div class="card shadow-sm">
 
-        </div>
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        {% if form.instance.pk %}
+                            Edit Course
+                        {% else %}
+                            Create Course
+                        {% endif %}
+                    </h4>
+                </div>
 
+                <div class="card-body">
 
-        <div class="card-body">
+                    <form method="post" novalidate>
 
+                        {% csrf_token %}
 
-            <form method="post">
-
-                {% csrf_token %}
-
-
-                <div class="row">
-
-
-                    <!-- Course Code -->
-
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Course Code
-                        </label>
-
-                        {{ form.course_code }}
-
-                        {% if form.course_code.errors %}
-
-                            <div class="text-danger">
-
-                                {{ form.course_code.errors }}
-
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
                             </div>
-
                         {% endif %}
 
-                    </div>
+                        {% for field in form %}
 
+                            {% if field.name == "is_active" %}
 
+                                <div class="form-check mb-3">
 
-                    <!-- Course Name -->
+                                    {{ field }}
 
-                    <div class="col-md-6 mb-3">
+                                    <label class="form-check-label"
+                                           for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                    </label>
 
-                        <label class="form-label">
-                            Course Name
-                        </label>
+                                    {% if field.help_text %}
+                                        <div class="form-text">
+                                            {{ field.help_text }}
+                                        </div>
+                                    {% endif %}
 
-                        {{ form.course_name }}
+                                    {% for error in field.errors %}
+                                        <div class="text-danger small">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
 
-                        {% if form.course_name.errors %}
+                                </div>
 
-                            <div class="text-danger">
+                            {% else %}
 
-                                {{ form.course_name.errors }}
+                                <div class="mb-3">
 
-                            </div>
+                                    <label class="form-label"
+                                           for="{{ field.id_for_label }}">
+                                        {{ field.label }}
 
-                        {% endif %}
+                                        {% if field.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+                                    </label>
 
-                    </div>
+                                    {{ field }}
 
+                                    {% if field.help_text %}
+                                        <div class="form-text">
+                                            {{ field.help_text }}
+                                        </div>
+                                    {% endif %}
 
+                                    {% for error in field.errors %}
+                                        <div class="text-danger small">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
 
-                    <!-- Programme -->
+                                </div>
 
-                    <div class="col-md-6 mb-3">
+                            {% endif %}
 
-                        <label class="form-label">
-                            Programme
-                        </label>
+                        {% endfor %}
 
+                        <hr>
 
-                        {{ form.programme }}
+                        <div class="d-flex justify-content-between">
 
+                            <a href="{% url 'course_list' %}"
+                               class="btn btn-secondary">
+                                Cancel
+                            </a>
 
-                        {% if form.programme.errors %}
+                            <button type="submit"
+                                    class="btn btn-primary">
 
-                            <div class="text-danger">
+                                {% if form.instance.pk %}
+                                    Update Course
+                                {% else %}
+                                    Save Course
+                                {% endif %}
 
-                                {{ form.programme.errors }}
+                            </button>
 
-                            </div>
+                        </div>
 
-                        {% endif %}
-
-
-                    </div>
-
-
-
-
-                    <!-- Programme Level -->
-
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Programme Level
-                        </label>
-
-
-                        {{ form.programme_level }}
-
-
-                        {% if form.programme_level.errors %}
-
-                            <div class="text-danger">
-
-                                {{ form.programme_level.errors }}
-
-                            </div>
-
-                        {% endif %}
-
-
-                    </div>
-
-
-
-
-                    <!-- Credit Hours -->
-
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Credit Hours
-                        </label>
-
-
-                        {{ form.credit_hours }}
-
-
-                        {% if form.credit_hours.errors %}
-
-                            <div class="text-danger">
-
-                                {{ form.credit_hours.errors }}
-
-                            </div>
-
-                        {% endif %}
-
-
-                    </div>
-
+                    </form>
 
                 </div>
 
-
-
-                <div class="mt-3">
-
-
-                    <button type="submit"
-                            class="btn btn-success">
-
-                        <i class="bi bi-save"></i>
-                        Save
-
-                    </button>
-
-
-                    <a href="{% url 'course_list' %}"
-                       class="btn btn-secondary">
-
-                        Cancel
-
-                    </a>
-
-
-                </div>
-
-
-
-            </form>
+            </div>
 
         </div>
 
@@ -196,81 +135,5 @@
 
 </div>
 
-<script>
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-        const programmeSelect =
-            document.getElementById(
-                "id_programme"
-            );
-        const levelSelect =
-            document.getElementById(
-                "id_programme_level"
-            );
-
-        if (!programmeSelect || !levelSelect) {
-            return;
-        }
-
-        programmeSelect.addEventListener(
-            "change",
-            function () {
-                const programmeId =
-                    this.value;
-
-                // Clear existing levels
-                levelSelect.innerHTML =
-                    '<option value="">---------</option>';
-                if (!programmeId) {
-                    return;
-                }
-
-                fetch(
-                    "{% url 'load_programme_levels' %}?programme_id="
-                    + programmeId
-                )
-                .then(
-                    response => response.json()
-                )
-                .then(
-                    data => {
-
-                        data.forEach(
-                            function(level) {
-                                const option =
-                                    document.createElement(
-                                        "option"
-                                    );
-
-                                option.value =
-                                    level.id;
-                                option.textContent =
-                                    level.name;
-
-                                levelSelect.appendChild(
-                                    option
-                                );
-                            }
-                        );
-
-                    }
-                )
-                .catch(
-                    error => {
-                        console.error(
-                            "Error loading programme levels:",
-                            error
-                        );
-                    }
-                );
-            }
-        );
-
-    }
-);
-
-</script>
 {% endblock %}
 

@@ -4,112 +4,94 @@
 
 <div class="container mt-4">
 
-    <h2>
+<div class="card">
 
-        Unit Registration
+<div class="card-header">
 
-    </h2>
+<h4>Register Units</h4>
 
-    <p>
+<p class="mb-0">
 
-        Student:
+<strong>{{ enrollment.student }}</strong><br>
 
-        <strong>
+{{ enrollment.programme_level }}
 
-            {{ student }}
+</p>
 
-        </strong>
+</div>
 
-    </p>
+<div class="card-body">
 
-    <div class="alert alert-info">
+<form method="post">
 
-        <strong>Academic Year:</strong>
+{% csrf_token %}
 
-        {{ enrollment.academic_year }}
+<table class="table table-striped">
 
-        <br>
+<thead>
 
-        <strong>Semester:</strong>
+<tr>
 
-        {{ enrollment.semester }}
+<th></th>
 
-        <br>
+<th>Code</th>
 
-        <strong>Study Level:</strong>
+<th>Unit</th>
 
-        {{ enrollment.study_level }}
+<th>Credit Hours</th>
 
-    </div>
+</tr>
 
-    <form method="post">
+</thead>
 
-        {% csrf_token %}
+<tbody>
 
-        <div class="card">
+{% for unit in units %}
 
-            <div class="card-header">
+<tr>
 
-                Available Units
+<td>
 
-            </div>
+<input
+type="checkbox"
+name="units"
+value="{{ unit.id }}">
 
-            <div class="card-body">
+</td>
 
-                {% for unit in units %}
+<td>{{ unit.code }}</td>
 
-                <div class="form-check mb-2">
+<td>{{ unit.name }}</td>
 
-                    <input
-                        class="form-check-input"
-                        type="checkbox"
-                        name="units"
-                        value="{{ unit.id }}"
-                        id="unit{{ unit.id }}">
+<td>{{ unit.credit_hours }}</td>
 
-                    <label
-                        class="form-check-label"
-                        for="unit{{ unit.id }}">
+</tr>
 
-                        <strong>
+{% endfor %}
 
-                            {{ unit.unit_code }}
+</tbody>
 
-                        </strong>
+</table>
 
-                        -
+<button
+class="btn btn-success">
 
-                        {{ unit.unit_name }}
+Register Selected Units
 
-                    </label>
+</button>
 
-                </div>
+<a href="{% url 'semester_enrollment_detail' enrollment.id %}"
+class="btn btn-secondary">
 
-                {% empty %}
+Cancel
 
-                <div class="alert alert-warning">
+</a>
 
-                    No units available for your programme in the active semester.
+</form>
 
-                </div>
+</div>
 
-                {% endfor %}
-
-            </div>
-
-        </div>
-
-        <br>
-
-        <button
-            type="submit"
-            class="btn btn-primary">
-
-            Register Units
-
-        </button>
-
-    </form>
+</div>
 
 </div>
 

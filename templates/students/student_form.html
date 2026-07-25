@@ -12,7 +12,15 @@
 
             <h3 class="mb-0">
 
-                Student Registration
+                {% if form.instance.pk %}
+
+                    Edit Student
+
+                {% else %}
+
+                    Student Registration
+
+                {% endif %}
 
             </h3>
 
@@ -69,50 +77,61 @@
 
                 </div>
 
-                <div class="mb-3">
+                <div class="row">
 
-                    <label class="form-label">
+                    <div class="col-md-6">
 
-                        First Name
-                        <span class="text-danger">*</span>
+                        <div class="mb-3">
 
-                    </label>
+                            <label class="form-label">
 
-                    {{ form.first_name }}
+                                First Name
+                                <span class="text-danger">*</span>
 
-                    {% if form.first_name.errors %}
+                            </label>
 
-                        <div class="text-danger mt-1">
+                            {{ form.first_name }}
 
-                            {{ form.first_name.errors }}
+                            {% if form.first_name.errors %}
 
-                        </div>
+                                <div class="text-danger mt-1">
 
-                    {% endif %}
+                                    {{ form.first_name.errors }}
 
-                </div>
+                                </div>
 
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        Last Name
-                        <span class="text-danger">*</span>
-
-                    </label>
-
-                    {{ form.last_name }}
-
-                    
-                    {% if form.last_name.errors %}
-
-                        <div class="text-danger mt-1">
-
-                            {{ form.last_name.errors }}
+                            {% endif %}
 
                         </div>
 
-                    {% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Last Name
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            {{ form.last_name }}
+
+                            {% if form.last_name.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {{ form.last_name.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -162,26 +181,12 @@
 
                 </div>
 
-                <div class="mb-3">
+                <div class="alert alert-info">
 
-                    <label class="form-label">
+                    <strong>Note:</strong>
 
-                        Study Level
-                        <span class="text-danger">*</span>
-
-                    </label>
-
-                    {{ form.study_level }}
-
-                    {% if form.study_level.errors %}
-
-                        <div class="text-danger mt-1">
-
-                            {{ form.study_level.errors }}
-
-                        </div>
-
-                    {% endif %}
+                    Programme Level, Academic Year and Semester are assigned
+                    automatically when the student is enrolled.
 
                 </div>
 
@@ -212,6 +217,7 @@
     </div>
 
 </div>
+
 
 </div>
 

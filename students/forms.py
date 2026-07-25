@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.models import User, Group
-
 from .models import (
     Applicant,
     Department,
@@ -182,6 +181,7 @@ class DepartmentForm(forms.ModelForm):
             ),
         }
 
+
 class CourseForm(forms.ModelForm):
 
     class Meta:
@@ -193,25 +193,28 @@ class CourseForm(forms.ModelForm):
             "code",
             "name",
             "description",
+            "is_active",
         ]
 
         widgets = {
 
             "department": forms.Select(
                 attrs={
-                    "class": "form-select"
+                    "class": "form-select",
                 }
             ),
 
             "code": forms.TextInput(
                 attrs={
-                    "class": "form-control"
+                    "class": "form-control",
+                    "placeholder": "e.g. ICT",
                 }
             ),
 
             "name": forms.TextInput(
                 attrs={
-                    "class": "form-control"
+                    "class": "form-control",
+                    "placeholder": "e.g. Information Communication Technology",
                 }
             ),
 
@@ -219,9 +222,17 @@ class CourseForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "rows": 3,
+                    "placeholder": "Optional description",
+                }
+            ),
+
+            "is_active": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
                 }
             ),
         }
+
 
 class ProgrammeForm(forms.ModelForm):
 
@@ -285,6 +296,7 @@ class ProgrammeForm(forms.ModelForm):
             ),
         }
 
+
 class ProgrammeLevelForm(forms.ModelForm):
 
     class Meta:
@@ -304,13 +316,14 @@ class ProgrammeLevelForm(forms.ModelForm):
 
             "programme": forms.Select(
                 attrs={
-                    "class": "form-select"
+                    "class": "form-select",
                 }
             ),
 
             "tvet_level": forms.NumberInput(
                 attrs={
                     "class": "form-control",
+                    "placeholder": "e.g. 6",
                     "min": 1,
                 }
             ),
@@ -318,32 +331,35 @@ class ProgrammeLevelForm(forms.ModelForm):
             "year": forms.NumberInput(
                 attrs={
                     "class": "form-control",
+                    "placeholder": "e.g. 1",
                     "min": 1,
                 }
             ),
 
-            "semester": forms.NumberInput(
+            "semester": forms.Select(
+                choices=[
+                    (1, "Semester 1"),
+                    (2, "Semester 2"),
+                ],
                 attrs={
-                    "class": "form-control",
-                    "min": 1,
-                    "max": 2,
+                    "class": "form-select",
                 }
             ),
 
             "duration_months": forms.NumberInput(
                 attrs={
                     "class": "form-control",
+                    "placeholder": "e.g. 6",
                     "min": 1,
                 }
             ),
 
             "is_active": forms.CheckboxInput(
                 attrs={
-                    "class": "form-check-input"
+                    "class": "form-check-input",
                 }
             ),
         }
-
 
     def __init__(self, *args, **kwargs):
 
@@ -351,50 +367,56 @@ class ProgrammeLevelForm(forms.ModelForm):
 
         self.fields["programme"].queryset = (
             Programme.objects
-            .filter(
-                is_active=True
-            )
+            .filter(is_active=True)
             .select_related(
                 "course",
                 "course__department",
             )
             .order_by(
-                "name"
+                "course__name",
+                "award",
+                "name",
             )
         )
 
+        self.fields["programme"].empty_label = "Select Programme"
+
+        self.fields["programme"].label_from_instance = (
+            lambda obj: f"{obj.code} - {obj.name} ({obj.get_award_display()})"
+        )
 
     def clean(self):
 
         cleaned_data = super().clean()
 
-        programme = cleaned_data.get("programme")
         year = cleaned_data.get("year")
         semester = cleaned_data.get("semester")
+        duration = cleaned_data.get("duration_months")
+        tvet_level = cleaned_data.get("tvet_level")
 
-
-        if programme and year and semester:
-
-            exists = ProgrammeLevel.objects.filter(
-                programme=programme,
-                year=year,
-                semester=semester,
+        if year and year < 1:
+            self.add_error(
+                "year",
+                "Year must be at least 1."
             )
 
+        if semester and semester not in [1, 2]:
+            self.add_error(
+                "semester",
+                "Semester must be 1 or 2."
+            )
 
-            if self.instance.pk:
+        if duration and duration < 1:
+            self.add_error(
+                "duration_months",
+                "Duration must be greater than zero."
+            )
 
-                exists = exists.exclude(
-                    pk=self.instance.pk
-                )
-
-
-            if exists.exists():
-
-                raise forms.ValidationError(
-                    "This programme level already exists."
-                )
-
+        if tvet_level and tvet_level < 1:
+            self.add_error(
+                "tvet_level",
+                "TVET Level must be greater than zero."
+            )
 
         return cleaned_data
 
@@ -558,14 +580,13 @@ class StudentForm(forms.ModelForm):
             "address",
             "programme",
             "admission_date",
-            "is_active",
         ]
 
         widgets = {
 
             "user": forms.Select(
                 attrs={
-                    "class": "form-select"
+                    "class": "form-select",
                 }
             ),
 
@@ -578,50 +599,50 @@ class StudentForm(forms.ModelForm):
 
             "first_name": forms.TextInput(
                 attrs={
-                    "class": "form-control"
+                    "class": "form-control",
                 }
             ),
 
             "middle_name": forms.TextInput(
                 attrs={
-                    "class": "form-control"
+                    "class": "form-control",
                 }
             ),
 
             "last_name": forms.TextInput(
                 attrs={
-                    "class": "form-control"
+                    "class": "form-control",
                 }
             ),
 
             "gender": forms.Select(
                 attrs={
-                    "class": "form-select"
+                    "class": "form-select",
                 }
             ),
 
             "date_of_birth": forms.DateInput(
                 attrs={
                     "type": "date",
-                    "class": "form-control"
+                    "class": "form-control",
                 }
             ),
 
             "id_number": forms.TextInput(
                 attrs={
-                    "class": "form-control"
+                    "class": "form-control",
                 }
             ),
 
             "phone": forms.TextInput(
                 attrs={
-                    "class": "form-control"
+                    "class": "form-control",
                 }
             ),
 
             "email": forms.EmailInput(
                 attrs={
-                    "class": "form-control"
+                    "class": "form-control",
                 }
             ),
 
@@ -634,20 +655,14 @@ class StudentForm(forms.ModelForm):
 
             "programme": forms.Select(
                 attrs={
-                    "class": "form-select"
+                    "class": "form-select",
                 }
             ),
 
             "admission_date": forms.DateInput(
                 attrs={
                     "type": "date",
-                    "class": "form-control"
-                }
-            ),
-
-            "is_active": forms.CheckboxInput(
-                attrs={
-                    "class": "form-check-input"
+                    "class": "form-control",
                 }
             ),
         }
@@ -699,15 +714,13 @@ class StudentForm(forms.ModelForm):
         user = self.cleaned_data.get("user")
 
         if not user:
+
             return user
 
         existing = (
-            Student.objects.filter(
-                user=user
-            )
-            .exclude(
-                pk=self.instance.pk
-            )
+            Student.objects
+            .filter(user=user)
+            .exclude(pk=self.instance.pk)
             .first()
         )
 
@@ -840,129 +853,44 @@ class SemesterEnrollmentForm(forms.ModelForm):
         model = SemesterEnrollment
 
         fields = [
-            "student",
-            "programme",
             "programme_level",
-            "academic_year",
-            "semester",
             "status",
             "remarks",
         ]
 
         widgets = {
 
-            "student": forms.Select(
-                attrs={
-                    "class": "form-select"
-                }
-            ),
-
-            "programme": forms.Select(
-                attrs={
-                    "class": "form-select"
-                }
-            ),
-
             "programme_level": forms.Select(
                 attrs={
-                    "class": "form-select"
-                }
-            ),
-
-            "academic_year": forms.Select(
-                attrs={
-                    "class": "form-select"
-                }
-            ),
-
-            "semester": forms.Select(
-                attrs={
-                    "class": "form-select"
+                    "class": "form-select",
                 }
             ),
 
             "status": forms.Select(
                 attrs={
-                    "class": "form-select"
+                    "class": "form-select",
                 }
             ),
 
             "remarks": forms.Textarea(
                 attrs={
                     "class": "form-control",
-                    "rows": 2,
+                    "rows": 3,
                 }
             ),
         }
-
 
     def __init__(self, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
 
+        if self.instance.pk:
 
-        self.fields["programme"].queryset = (
-            Programme.objects
-            .filter(is_active=True)
-            .order_by("name")
-        )
-
-
-        self.fields["programme_level"].queryset = (
-            ProgrammeLevel.objects
-            .filter(is_active=True)
-            .select_related(
-                "programme"
+            self.fields["programme_level"].queryset = (
+                ProgrammeLevel.objects.filter(
+                    programme=self.instance.programme
+                ).order_by("progression_order")
             )
-            .order_by(
-                "programme__name",
-                "progression_order",
-            )
-        )
-
-
-        self.fields["academic_year"].queryset = (
-            AcademicYear.objects
-            .order_by(
-                "-is_active",
-                "-year_name",
-            )
-        )
-
-
-        self.fields["semester"].queryset = (
-            Semester.objects
-            .order_by(
-                "-is_active",
-                "semester_name",
-            )
-        )
-
-
-    def clean(self):
-
-        cleaned_data = super().clean()
-
-        programme = cleaned_data.get(
-            "programme"
-        )
-
-        programme_level = cleaned_data.get(
-            "programme_level"
-        )
-
-
-        if programme and programme_level:
-
-            if programme_level.programme != programme:
-
-                raise forms.ValidationError(
-                    "Selected programme level does not belong to the selected programme."
-                )
-
-
-        return cleaned_data
-
 
 class RegistrationForm(forms.ModelForm):
 
@@ -1203,3 +1131,27 @@ class LecturerAssignmentForm(forms.ModelForm):
 
         return cleaned_data
 
+
+class SemesterEnrollmentForm(forms.ModelForm):
+
+    class Meta:
+        model = SemesterEnrollment
+
+        fields = [
+            "student",
+            "programme",
+            "programme_level",
+            "academic_year",
+            "semester",
+            "status",
+            "remarks",
+        ]
+
+        widgets = {
+
+            "remarks": forms.Textarea(
+                attrs={
+                    "rows":3
+                }
+            )
+        }

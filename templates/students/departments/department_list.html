@@ -1,78 +1,79 @@
 {% extends "base.html" %}
 
+{% block title %}Departments{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Departments</h2>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="{% url 'department_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> New Department
+    </a>
+</div>
 
-        <h2>Departments</h2>
+<div class="card shadow-sm">
+    <div class="card-body">
 
-        {% if perms.students.add_department %}
-            <a href="{% url 'department_create' %}"
-               class="btn btn-primary">
-                Add Department
-            </a>
+        {% if departments %}
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th width="80">ID</th>
+                        <th width="120">Code</th>
+                        <th>Department Name</th>
+                        <th>Description</th>
+                        <th width="100">Status</th>
+                        <th width="170">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for department in departments %}
+                    <tr>
+                        <td>{{ department.id }}</td>
+                        <td>{{ department.code }}</td>
+                        <td>{{ department.name }}</td>
+                        <td>{{ department.description|default:"-" }}</td>
+
+                        <td>
+                            {% if department.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'department_update' department.pk %}"
+                               class="btn btn-sm btn-warning">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'department_delete' department.pk %}"
+                               class="btn btn-sm btn-danger">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-info mb-0">
+            No departments have been created.
+        </div>
+
         {% endif %}
 
     </div>
-
-    <table class="table table-bordered table-striped">
-
-        <thead>
-
-            <tr>
-                <th>ID</th>
-                <th>Department Name</th>
-                <th width="200">Actions</th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            {% for department in departments %}
-
-            <tr>
-
-                <td>{{ department.id }}</td>
-
-                <td>{{ department.department_name }}</td>
-
-                <td>
-
-                    {% if perms.students.change_department %}
-                    <a href="{% url 'department_update' department.id %}"
-                       class="btn btn-warning btn-sm">
-                        Edit
-                    </a>
-                    {% endif %}
-
-                    {% if perms.students.delete_department %}
-                    <a href="{% url 'department_delete' department.id %}"
-                       class="btn btn-danger btn-sm">
-                        Delete
-                    </a>
-                    {% endif %}
-
-                </td>
-
-            </tr>
-
-            {% empty %}
-
-            <tr>
-                <td colspan="3">
-                    No departments found.
-                </td>
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-
 </div>
 
 {% endblock %}
+

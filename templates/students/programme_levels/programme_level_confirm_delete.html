@@ -1,55 +1,81 @@
 {% extends "base.html" %}
 
+{% block title %}Delete Programme Level{% endblock %}
 
 {% block content %}
 
+<div class="row justify-content-center">
 
-<div class="container mt-4">
+<div class="col-md-6">
 
+<div class="card border-danger shadow-sm">
 
-<h3>
-    Delete Programme Level
-</h3>
+<div class="card-header bg-danger text-white">
 
+<h4 class="mb-0">
 
-<p>
+Delete Programme Level
 
-Are you sure you want to delete:
-
-<strong>
-{{ level.name }}
-</strong>
-
-?
-
-</p>
-
-
-
-<form method="post">
-
-    {% csrf_token %}
-
-
-    <button class="btn btn-danger">
-
-        Confirm Delete
-
-    </button>
-
-
-    <a href="{% url 'programme_level_list' %}"
-       class="btn btn-secondary">
-
-        Cancel
-
-    </a>
-
-
-</form>
-
+</h4>
 
 </div>
 
+<div class="card-body">
+
+<p>
+
+Are you sure you want to delete
+
+<strong>{{ object.name }}</strong>?
+
+</p>
+
+<ul>
+
+<li>
+<strong>Programme:</strong>
+{{ object.programme.name }}
+</li>
+
+<li>
+<strong>TVET Level:</strong>
+{{ object.tvet_level }}
+</li>
+
+<li>
+<strong>Duration:</strong>
+{{ object.duration_months }} Months
+</li>
+
+</ul>
+
+<form method="post">
+
+{% csrf_token %}
+
+<a href="{% url 'programme_level_list' %}"
+class="btn btn-secondary">
+
+Cancel
+
+</a>
+
+<button type="submit"
+class="btn btn-danger">
+
+Delete Programme Level
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 {% endblock %}
+

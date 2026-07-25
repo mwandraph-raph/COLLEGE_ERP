@@ -3,6 +3,8 @@ from django.shortcuts import (
     redirect,
     get_object_or_404,
 )
+from django.core.exceptions import ValidationError
+from django.conf import settings
 from finance.services import (
     update_financial_clearance,
 )
@@ -146,10 +148,9 @@ def fee_structure_list(request):
     fee_structures = (
         FeeStructure.objects
         .select_related(
-            "programme",
-            "academic_year",
-            "semester",
-            "study_level",
+        "programme_level",
+        "academic_year",
+        "semester",
         )
     )
 
@@ -353,7 +354,7 @@ def invoice_detail(request, pk):
             "enrollment",
             "enrollment__academic_year",
             "enrollment__semester",
-            "enrollment__study_level",
+            "enrollment__programme_level",
         ),
         pk=pk
     )
@@ -393,12 +394,14 @@ def payment_create(request, invoice_id):
         pk=invoice_id
     )
 
+
     if request.method == "POST":
 
         form = PaymentForm(
             request.POST,
             invoice=invoice
         )
+
 
         if form.is_valid():
 
@@ -412,53 +415,124 @@ def payment_create(request, invoice_id):
                 request.user
             )
 
-            payment.save()
-        if invoice.balance < 0:
 
-            StudentCredit.objects.get_or_create(
+            try:
 
-                source_payment=payment,
+                payment.save()
 
-                defaults={
 
-                    "student": invoice.student,
+            except ValidationError as e:
 
-                    "amount": abs(
-                        invoice.balance
-                    ),
 
-                }
-            )
+                messages.error(
+                    request,
+                    e.messages[0]
+                )
+
+
+                return render(
+                    request,
+                    "finance/payments/form.html",
+                    {
+                        "form": form,
+                        "invoice": invoice,
+                    }
+                )
+
+
+
+            # Create student credit if overpayment exists
+
+            if invoice.balance < 0:
+
+
+                StudentCredit.objects.get_or_create(
+
+                    source_payment=payment,
+
+                    defaults={
+
+                        "student": invoice.student,
+
+                        "amount": abs(
+                            invoice.balance
+                        ),
+
+                    }
+
+                )
+
+
+
+            # Generate receipt automatically
+
             Receipt.objects.get_or_create(
+
                 payment=payment,
+
                 defaults={
+
                     "created_by": request.user,
+
                 }
+
             )
+
+
+
+            # Update financial clearance
 
             update_financial_clearance(
+
                 invoice.enrollment,
+
                 request.user
+
             )
 
-            return redirect(
-                "finance:payment_detail",
-                pk=payment.pk
+
+
+            messages.success(
+
+                request,
+
+                "Payment recorded successfully."
+
             )
+
+
+            return redirect(
+
+                "finance:payment_detail",
+
+                pk=payment.pk
+
+            )
+
 
     else:
 
+
         form = PaymentForm(
+
             invoice=invoice
+
         )
 
+
     return render(
+
         request,
+
         "finance/payments/form.html",
+
         {
             "form": form,
+
             "invoice": invoice,
+
         }
+
     )
 
 @login_required
@@ -534,7 +608,7 @@ def reverse_payment(request, pk):
 
         messages.warning(
             request,
-            "Payment already reversed."
+            "This payment has already been reversed."
         )
 
         return redirect(
@@ -544,29 +618,34 @@ def reverse_payment(request, pk):
 
     if request.method == "POST":
 
-        form = ReversePaymentForm(
-            request.POST
-        )
+        form = ReversePaymentForm(request.POST)
 
         if form.is_valid():
 
             payment.is_reversed = True
 
-            payment.posting_status = (
-                "REVERSED"
-            )
+            payment.posting_status = "REVERSED"
 
-            payment.reversed_by = (
-                request.user
-            )
+            payment.reversed_by = request.user
 
-            payment.reversal_reason = (
-                form.cleaned_data[
-                    "reversal_reason"
-                ]
-            )
+            payment.reversal_reason = form.cleaned_data[
+                "reversal_reason"
+            ]
 
             payment.save()
+
+            # Reverse any credit created from this payment
+            StudentCredit.objects.filter(
+                source_payment=payment
+            ).update(
+                used_amount=0
+            )
+
+            # Recalculate financial clearance
+            update_financial_clearance(
+                payment.invoice.enrollment,
+                request.user,
+            )
 
             messages.success(
                 request,
@@ -705,10 +784,7 @@ def fee_statement_list(request):
 
 
 @login_required
-def fee_statement_detail(
-    request,
-    student_id
-):
+def fee_statement_detail(request, student_id):
 
     student = get_object_or_404(
         Student,
@@ -731,39 +807,39 @@ def fee_statement_detail(
 
         transactions.append({
             "date": invoice.invoice_date,
-            "description": (
-                f"Invoice {invoice.invoice_number}"
-            ),
+            "description": f"Invoice {invoice.invoice_number}",
+            "status": "POSTED",
             "debit": invoice.total_amount,
             "credit": 0,
+            "is_reversed": False,
         })
 
         total_invoiced += invoice.total_amount
 
-        for payment in invoice.payments.filter(
-            is_reversed=False
+        for payment in invoice.payments.all().order_by(
+            "payment_date",
+            "id",
         ):
 
             transactions.append({
                 "date": payment.payment_date,
-                "description": (
-                    f"Payment {payment.payment_number}"
-                ),
+                "description": f"Payment {payment.payment_number}",
+                "status": payment.posting_status,
                 "debit": 0,
                 "credit": payment.amount,
+                "is_reversed": payment.is_reversed,
             })
 
-            total_paid += payment.amount
+            # Only posted payments count toward totals
+            if not payment.is_reversed:
+                total_paid += payment.amount
 
     transactions = sorted(
         transactions,
-        key=lambda x: x["date"]
+        key=lambda x: (x["date"], x["description"])
     )
 
-    balance = (
-        total_invoiced
-        - total_paid
-    )
+    balance = total_invoiced - total_paid
 
     return render(
         request,
@@ -827,44 +903,5 @@ def financial_clearance_list(request):
         "finance/clearance/list.html",
         {
             "clearances": clearances,
-        }
-    )
-
-
-
-@login_required
-def reverse_payment(request, pk):
-
-    payment = get_object_or_404(
-        Payment,
-        pk=pk
-    )
-
-    if request.method == "POST":
-
-        reason = request.POST.get(
-            "reversal_reason",
-            ""
-        )
-
-        payment.is_reversed = True
-
-        payment.posting_status = "REVERSED"
-
-        payment.reversed_by = request.user
-
-        payment.reversal_reason = reason
-
-        payment.save()
-
-        return redirect(
-            "finance:financial_clearance_list"
-        )
-
-    return render(
-        request,
-        "finance/payments/reverse.html",
-        {
-            "payment": payment,
         }
     )

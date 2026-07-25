@@ -26,6 +26,16 @@ from .models import (Student,
                      ResultBatchLog,
                      ProgrammeLevel,
                      )
+from finance.models import (
+    FeeStructure,
+    StudentInvoice,
+    InvoiceItem,
+    FinancialClearance,
+)
+from finance.services import (
+    generate_student_invoice,
+    update_financial_clearance,
+)
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.db.models import Q
@@ -39,6 +49,9 @@ from django.contrib.auth.decorators import (
     login_required,
     permission_required,
 )
+
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView
 from .forms import (
     DepartmentForm,
     ProgrammeForm,
@@ -1702,49 +1715,39 @@ def my_registrations(request):
     )
 
 
-
 @login_required
-def register_units(request):
+def register_units(request, pk):
 
-    student = get_object_or_404(
-        Student,
-        user=request.user
-    )
-
-
-    enrollment = (
-        SemesterEnrollment.objects
-        .filter(
-            student=student,
-            status=SemesterEnrollment.ENROLLED
-        )
-        .select_related(
+    enrollment = get_object_or_404(
+        SemesterEnrollment.objects.select_related(
+            "student",
+            "programme_level",
             "academic_year",
             "semester",
-            "programme",
-            "programme_level",
-        )
-        .order_by(
-            "-enrollment_date"
-        )
-        .first()
+        ),
+        pk=pk,
     )
 
+    available_units = (
+        enrollment.programme_level.units
+        .filter(is_active=True)
+        .order_by("code")
+    )
 
-    if not enrollment:
+    # Student must be enrolled
+    if enrollment.status != SemesterEnrollment.ENROLLED:
 
         messages.error(
             request,
-            "You are not enrolled in any semester."
+            "Only enrolled students can register units."
         )
 
         return redirect(
-            "my_registrations"
+            "semester_enrollment_detail",
+            pk=enrollment.pk,
         )
 
-
-    # Registration opening control
-
+    # Registration window must be open
     if not enrollment.academic_year.registration_open:
 
         messages.error(
@@ -1753,101 +1756,124 @@ def register_units(request):
         )
 
         return redirect(
-            "my_registrations"
+            "semester_enrollment_detail",
+            pk=enrollment.pk,
         )
 
-
-
-    units = (
-        Unit.objects
-        .filter(
-            programme_level=enrollment.programme_level,
-            is_active=True,
-        )
-        .select_related(
-            "programme_level",
-            "programme_level__programme",
-        )
-        .order_by(
-            "code"
-        )
+    # -----------------------------
+    # Financial eligibility check
+    # -----------------------------
+    clearance = getattr(
+        enrollment,
+        "financial_clearance",
+        None,
     )
 
+    if not clearance:
 
+        messages.error(
+            request,
+            "Financial clearance has not been processed for this semester."
+        )
+
+        return redirect(
+            "semester_enrollment_detail",
+            pk=enrollment.pk,
+        )
+
+    if not clearance.registration_cleared:
+
+        messages.error(
+            request,
+            "You have not met the financial requirements for unit registration."
+        )
+
+        return redirect(
+            "semester_enrollment_detail",
+            pk=enrollment.pk,
+        )
 
     if request.method == "POST":
 
+        unit_ids = request.POST.getlist("units")
 
-        unit_ids = request.POST.getlist(
-            "units"
-        )
+        # Nothing selected
+        if not unit_ids:
 
-
-        count = 0
-
-
-        for unit_id in unit_ids:
-
-
-            unit = get_object_or_404(
-                Unit,
-                pk=unit_id,
-                programme_level=enrollment.programme_level,
+            messages.error(
+                request,
+                "Please select at least one unit before registering."
             )
 
+            return redirect(
+                "register_units",
+                pk=enrollment.pk,
+            )
 
-            registration, created = (
-                Registration.objects.get_or_create(
+        registered = 0
+        duplicates = 0
+
+        with transaction.atomic():
+
+            selected_units = available_units.filter(
+                id__in=unit_ids
+            )
+
+            for unit in selected_units:
+
+                _, created = Registration.objects.get_or_create(
                     enrollment=enrollment,
                     unit=unit,
                     defaults={
-                        "registration_type":
-                            Registration.NORMAL
-                    }
+                        "registration_type": Registration.NORMAL,
+                    },
                 )
-            )
 
+                if created:
 
-            if created:
+                    registered += 1
 
-                count += 1
+                else:
 
+                    duplicates += 1
 
+        if registered:
 
-        # Duplicate protection message
+            if duplicates:
 
-        if count:
+                messages.success(
+                    request,
+                    f"{registered} unit(s) registered successfully. "
+                    f"{duplicates} were already registered."
+                )
 
-            messages.success(
-                request,
-                f"{count} unit(s) registered successfully."
-            )
+            else:
+
+                messages.success(
+                    request,
+                    f"{registered} unit(s) registered successfully."
+                )
 
         else:
 
             messages.info(
                 request,
-                "No new units were registered."
+                "The selected units are already registered."
             )
 
-
-
         return redirect(
-            "my_registrations"
+            "semester_enrollment_detail",
+            pk=enrollment.pk,
         )
-
-
 
     return render(
         request,
         "students/registrations/register_units.html",
         {
-            "student": student,
             "enrollment": enrollment,
-            "units": units,
-        }
+            "units": available_units,
+        },
     )
-
 
 
 @login_required
@@ -3931,7 +3957,7 @@ def student_results(request):
         enrollment__student=student,
         batch__status="approved"
     ).order_by(
-        "unit__unit_code"
+        "unit__code"
     )
 
 
@@ -3943,6 +3969,39 @@ def student_results(request):
             "results": results,
         }
     )
+
+
+@login_required
+def enrollment_results(request, pk):
+
+    enrollment = get_object_or_404(
+        SemesterEnrollment.objects.select_related(
+            "student",
+            "programme_level__programme",
+            "academic_year",
+            "semester",
+        ),
+        pk=pk,
+    )
+
+    results = (
+        Result.objects.filter(
+            enrollment=enrollment,
+        )
+        .select_related("unit", "batch")
+        .order_by("unit__code")
+    )
+
+    return render(
+        request,
+        "students/results/enrollment_results.html",
+        {
+            "enrollment": enrollment,
+            "student": enrollment.student,
+            "results": results,
+        },
+    )
+
 
 @login_required
 @permission_required(
@@ -4322,3 +4381,397 @@ def load_programme_levels(request):
         ),
         safe=False
     )
+
+@login_required
+def programme_level_units(request, pk):
+
+    programme_level = get_object_or_404(
+        ProgrammeLevel,
+        pk=pk
+    )
+
+    units = programme_level.units.filter(
+        is_active=True
+    )
+
+    context = {
+        "programme_level": programme_level,
+        "units": units,
+    }
+
+    return render(
+        request,
+        "students/programme_levels/programme_level_units.html",
+        context
+    )
+
+
+def add_programme_level_unit(request, pk):
+
+    programme_level = get_object_or_404(
+        ProgrammeLevel,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        code = request.POST.get("code")
+        name = request.POST.get("name")
+        credit_hours = request.POST.get("credit_hours")
+
+
+        Unit.objects.create(
+
+            programme_level=programme_level,
+
+            code=code,
+
+            name=name,
+
+            credit_hours=credit_hours
+
+        )
+
+
+        return redirect(
+            "programme_level_units",
+            pk=programme_level.id
+        )
+
+
+    context = {
+        "programme_level": programme_level
+    }
+
+
+    return render(
+        request,
+        "students/programme_levels/add_unit.html",
+        context
+    )
+
+def semester_enrollment_list(request):
+
+    enrollments = SemesterEnrollment.objects.select_related(
+        "student",
+        "programme",
+        "programme_level",
+        "academic_year",
+        "semester",
+    )
+
+    return render(
+        request,
+        "students/enrollments/enrollment_list.html",
+        {
+            "enrollments": enrollments
+        }
+    )
+
+@transaction.atomic
+def semester_enrollment_create(request):
+
+    form = SemesterEnrollmentForm(
+        request.POST or None
+    )
+
+
+    if form.is_valid():
+
+
+        enrollment = form.save()
+
+
+
+        try:
+
+            generate_student_invoice(
+                enrollment
+            )
+
+
+            update_financial_clearance(
+                enrollment,
+                request.user
+            )
+
+
+            messages.success(
+
+                request,
+
+                "Semester enrollment created and invoice generated successfully."
+
+            )
+
+
+        except ValueError as e:
+
+
+            messages.warning(
+
+                request,
+
+                str(e)
+
+            )
+
+
+
+        return redirect(
+
+            "semester_enrollment_detail",
+
+            pk=enrollment.pk
+
+        )
+
+
+
+    return render(
+
+        request,
+
+        "students/enrollments/enrollment_form.html",
+
+        {
+
+            "form": form
+
+        }
+
+    )
+
+
+def semester_enrollment_detail(request, pk):
+
+    enrollment = get_object_or_404(
+        SemesterEnrollment,
+        pk=pk
+    )
+
+    registrations = enrollment.registrations.all()
+
+
+    return render(
+        request,
+        "students/enrollments/enrollment_detail.html",
+        {
+            "enrollment": enrollment,
+            "registrations": registrations
+        }
+    )
+
+def semester_enrollment_edit(request, pk):
+
+    enrollment = get_object_or_404(
+        SemesterEnrollment,
+        pk=pk
+    )
+
+
+    form = SemesterEnrollmentForm(
+        request.POST or None,
+        instance=enrollment
+    )
+
+
+    if form.is_valid():
+
+        form.save()
+
+        return redirect(
+            "semester_enrollment_list"
+        )
+
+
+    return render(
+        request,
+        "students/enrollments/enrollment_form.html",
+        {
+            "form":form
+        }
+    )
+
+
+def semester_enrollment_delete(request, pk):
+
+    enrollment = get_object_or_404(
+        SemesterEnrollment,
+        pk=pk
+    )
+
+
+    if request.method == "POST":
+
+        enrollment.delete()
+
+        return redirect(
+            "semester_enrollment_list"
+        )
+
+
+    return render(
+        request,
+        "students/enrollments/enrollment_confirm_delete.html",
+        {
+            "enrollment": enrollment
+        }
+    )
+
+
+@login_required
+@transaction.atomic
+def enroll_student(request, pk):
+    student = get_object_or_404(
+        Student.objects.select_related(
+            "programme"
+        ),
+        pk=pk
+
+    )
+    academic_year = AcademicYear.objects.filter(
+
+        is_active=True
+
+    ).first()
+
+    if not academic_year:
+        messages.error(
+
+            request,
+            "There is no active academic year."
+        )
+        return redirect(
+
+            "student_detail",
+
+            id=student.pk
+
+        )
+
+    semester = Semester.objects.filter(
+        is_active=True
+
+    ).first()
+
+    if not semester:
+        messages.error(
+            request,
+            "There is no active semester."
+        )
+        return redirect(
+
+            "student_detail",
+
+            id=student.pk
+
+        )
+    programme_level = ProgrammeLevel.objects.filter(
+
+        programme=student.programme,
+
+        is_active=True,
+
+    ).order_by(
+
+        "progression_order"
+
+    ).first()
+
+    if not programme_level:
+        messages.error(
+            request,
+
+            "No active programme level found."
+        )
+        return redirect(
+
+            "student_detail",
+
+            id=student.pk
+
+        )
+    enrollment, created = SemesterEnrollment.objects.get_or_create(
+        student=student,
+        academic_year=academic_year,
+        semester=semester,
+        defaults={
+            "programme": student.programme,
+
+            "programme_level": programme_level,
+
+            "status": SemesterEnrollment.ENROLLED,
+        }
+    )
+
+    if created:
+        try:
+            generate_student_invoice(
+                enrollment
+            )
+
+            update_financial_clearance(
+                enrollment,
+                request.user
+            )
+
+            messages.success(
+                request,
+                "Student enrolled and invoice generated successfully."
+            )
+
+        except ValueError as e:
+            messages.warning(
+                request,
+                str(e)
+
+            )
+
+    else:
+        messages.info(
+            request,
+            "Student is already enrolled for the active semester."
+        )
+    return redirect(
+        "semester_enrollment_detail",
+        pk=enrollment.pk
+
+    )
+
+class StudentDeleteView(DeleteView):
+
+    model = Student
+
+    template_name = "students/students/student_delete.html"
+
+    context_object_name = "student"
+
+    success_url = reverse_lazy("student_list")
+
+    def post(self, request, *args, **kwargs):
+
+        self.object = self.get_object()
+
+        if self.object.enrollments.exists():
+
+            messages.error(
+
+                request,
+
+                (
+                    "This student cannot be deleted because "
+                    "semester enrollment records exist."
+                ),
+
+            )
+
+            return redirect(
+
+                "student_detail",
+
+                self.object.pk,
+
+            )
+
+        return super().post(request, *args, **kwargs)

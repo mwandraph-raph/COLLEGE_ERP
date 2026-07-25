@@ -1,5 +1,7 @@
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from students.models import (
     Programme,
@@ -103,6 +105,14 @@ class FeeStructure(models.Model):
 
         super().save(*args, **kwargs)
 
+    @property
+    def total_amount(self):
+        return (
+            self.items.aggregate(
+                total=models.Sum("amount")
+            )["total"]
+            or 0
+        )
 
     def __str__(self):
 
@@ -334,6 +344,7 @@ class InvoiceItem(models.Model):
             f"{self.fee_category}"
         )
     
+
 class Payment(models.Model):
 
     PAYMENT_METHODS = [
@@ -350,67 +361,66 @@ class Payment(models.Model):
     payment_number = models.CharField(
         max_length=30,
         unique=True,
-        blank=True
+        blank=True,
     )
 
     invoice = models.ForeignKey(
         StudentInvoice,
         on_delete=models.PROTECT,
-        related_name="payments"
+        related_name="payments",
     )
 
     payment_date = models.DateField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     amount = models.DecimalField(
         max_digits=12,
-        decimal_places=2
+        decimal_places=2,
     )
 
     payment_method = models.CharField(
         max_length=20,
-        choices=PAYMENT_METHODS
+        choices=PAYMENT_METHODS,
     )
 
     reference_number = models.CharField(
         max_length=100,
-        blank=True
     )
 
     received_by = models.ForeignKey(
-        User,
-        on_delete=models.PROTECT
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
     )
 
     remarks = models.TextField(
-        blank=True
+        blank=True,
     )
 
     posting_status = models.CharField(
         max_length=20,
         choices=POSTING_STATUS,
-        default="POSTED"
+        default="POSTED",
     )
 
     is_reversed = models.BooleanField(
-        default=False
+        default=False,
     )
 
     reversed_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         null=True,
         blank=True,
-        related_name="reversed_payments"
+        related_name="reversed_payments",
     )
 
     reversal_reason = models.TextField(
-        blank=True
+        blank=True,
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     class Meta:
@@ -420,48 +430,64 @@ class Payment(models.Model):
             "-id",
         ]
 
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "invoice",
+                    "reference_number",
+                ],
+                name="unique_invoice_payment_reference",
+            )
+        ]
+
     def save(self, *args, **kwargs):
 
+        # Prevent duplicate payment reference
+        if Payment.objects.filter(
+            invoice=self.invoice,
+            reference_number=self.reference_number,
+        ).exclude(
+            pk=self.pk,
+        ).exists():
+
+            raise ValidationError(
+                "This payment reference has already been recorded."
+            )
+
+        # Generate payment number
         if not self.payment_number:
 
             year = timezone.now().year
 
             prefix = f"PAY/{year}/"
 
-            last_number = 0
-
-            payments = Payment.objects.filter(
-                payment_number__startswith=prefix
+            last_payment = (
+                Payment.objects.filter(
+                    payment_number__startswith=prefix
+                )
+                .order_by("-id")
+                .first()
             )
 
-            for payment in payments:
+            last_number = 0
+
+            if last_payment:
 
                 try:
 
-                    number = int(
-                        payment.payment_number
-                        .split("/")[-1]
+                    last_number = int(
+                        last_payment.payment_number.split("/")[-1]
                     )
 
-                    if number > last_number:
+                except (ValueError, IndexError):
 
-                        last_number = number
-
-                except (
-                    ValueError,
-                    IndexError
-                ):
-
-                    pass
+                    last_number = 0
 
             self.payment_number = (
                 f"{prefix}{last_number + 1:05d}"
             )
 
-        super().save(
-            *args,
-            **kwargs
-        )
+        super().save(*args, **kwargs)
 
     def __str__(self):
 
@@ -700,7 +726,9 @@ class FinancialClearance(models.Model):
 
     updated_by = models.ForeignKey(
         User,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
     )
 
     updated_at = models.DateTimeField(

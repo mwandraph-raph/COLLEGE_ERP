@@ -132,17 +132,6 @@ path(
     name="fee_statement_detail",
 ),
 
-path(
-    "fee-statements/<int:student_id>/",
-    views.fee_statement_detail,
-    name="fee_statement_detail",
-),
-
-path(
-    "financial-clearance/",
-    views.financial_clearance_list,
-    name="financial_clearance_list",
-),
 
 path(
     "financial-clearance/",

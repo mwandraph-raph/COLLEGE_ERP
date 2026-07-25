@@ -4,71 +4,138 @@
 
 <div class="row justify-content-center">
 
-    <div class="col-md-7">
+<div class="col-md-7">
 
-        <div class="card border-danger shadow">
+    <div class="card border-danger shadow">
 
-            <div class="card-header bg-danger text-white">
+        <div class="card-header bg-danger text-white">
 
-                <h3>
+            <h3 class="mb-0">
+
+                Delete Student
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="alert alert-warning">
+
+                <strong>Warning!</strong>
+
+                This action cannot be undone.
+
+            </div>
+
+            <p>
+
+                You are about to permanently delete the following student:
+
+            </p>
+
+            <table class="table table-bordered">
+
+                <tr>
+
+                    <th width="35%">
+
+                        Admission Number
+
+                    </th>
+
+                    <td>
+
+                        {{ student.admission_no }}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Student Name
+
+                    </th>
+
+                    <td>
+
+                        {{ student.first_name }}
+                        {{ student.last_name }}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Programme
+
+                    </th>
+
+                    <td>
+
+                        {{ student.programme }}
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+            {% if student.enrollments.exists %}
+
+            <div class="alert alert-danger">
+
+                <strong>Cannot Delete.</strong>
+
+                This student has one or more semester enrollments.
+                Remove the enrollments first before deleting the student.
+
+            </div>
+
+            <a href="{% url 'student_detail' student.id %}"
+               class="btn btn-secondary">
+
+                Back
+
+            </a>
+
+            {% else %}
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="btn btn-danger">
 
                     Delete Student
 
-                </h3>
+                </button>
 
-            </div>
+                <a href="{% url 'student_detail' student.id %}"
+                   class="btn btn-secondary">
 
-            <div class="card-body">
+                    Cancel
 
-                <div class="alert alert-warning">
+                </a>
 
-                    <strong>Warning!</strong>
+            </form>
 
-                    This action cannot be undone.
-
-                </div>
-
-                <p>
-
-                    Are you sure you want to delete
-
-                    <strong>
-
-                        {{ student.first_name }}
-
-                        {{ student.last_name }}
-
-                    </strong>?
-
-                </p>
-
-                <form method="POST">
-
-                    {% csrf_token %}
-
-                    <button
-                        type="submit"
-                        class="btn btn-danger">
-
-                        Delete Student
-
-                    </button>
-
-                    <a
-                        href="{% url 'student_detail' student.id %}"
-                        class="btn btn-secondary">
-
-                        Cancel
-
-                    </a>
-
-                </form>
-
-            </div>
+            {% endif %}
 
         </div>
 
     </div>
+
+</div>
+
 
 </div>
 

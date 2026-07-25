@@ -52,19 +52,34 @@
 
                     <ul class="dropdown-menu">
 
-                        <li>
-                            <a class="dropdown-item"
-                               href="{% url 'register_units' %}">
-                                Register Units
-                            </a>
-                        </li>
+                    {% if user.student_profile.enrollments.exists %}
 
-                        <li>
-                            <a class="dropdown-item"
-                               href="{% url 'my_registrations' %}">
-                                My Registrations
-                            </a>
-                        </li>
+                    <li>
+                        <a class="dropdown-item"
+                        href="{% url 'register_units' user.student_profile.enrollments.last.pk %}">
+                            Register Units
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a class="dropdown-item"
+                        href="{% url 'my_registrations' %}">
+                            My Registrations
+                        </a>
+                    </li>
+
+
+                    {% else %}
+
+                    <li>
+                        <span class="dropdown-item text-muted">
+                            No active enrollment
+                        </span>
+                    </li>
+
+                    {% endif %}
+
 
                     </ul>
 
@@ -207,100 +222,141 @@
 
                 {% endif %}
 
-                <!-- STUDENTS -->
 
-                {% if perms.students.view_student or perms.students.view_semesterenrollment or perms.students.view_registration %}
+ <!-- STUDENTS -->
 
-                <li class="nav-item dropdown">
+{% if perms.students.view_student or perms.students.view_semesterenrollment or perms.students.view_registration or user.is_superuser %}
 
-                    <a class="nav-link dropdown-toggle"
-                       href="#"
-                       role="button"
-                       data-bs-toggle="dropdown">
+<li class="nav-item dropdown">
 
-                        Students
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
 
-                    </a>
+        Students
 
-                    <ul class="dropdown-menu">
+    </a>
 
-                        {% if perms.students.view_student %}
-                        <li>
-                            <a class="dropdown-item"
-                               href="{% url 'student_list' %}">
-                                Students
-                            </a>
-                        </li>
-                        {% endif %}
 
-                        {% if perms.students.view_semesterenrollment %}
-                        <li>
-                            <a class="dropdown-item"
-                               href="{% url 'enrollment_list' %}">
-                                Semester Enrollments
-                            </a>
-                        </li>
-                        {% endif %}
+    <ul class="dropdown-menu">
 
-                        {% if perms.students.view_registration %}
-                        <li>
-                            <a class="dropdown-item"
-                               href="{% url 'registration_list' %}">
-                                Registrations
-                            </a>
-                        </li>
-                        {% endif %}
 
-                    </ul>
+        {% if perms.students.view_student or user.is_superuser %}
 
-                </li>
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'student_list' %}">
+                Students
+            </a>
+        </li>
 
-                {% endif %}
+        {% endif %}
 
-                <!-- ACADEMIC CALENDAR -->
 
-                {% if perms.students.view_academicyear or perms.students.view_semester %}
 
-                <li class="nav-item dropdown">
+        {% if perms.students.view_semesterenrollment or user.is_superuser %}
 
-                    <a class="nav-link dropdown-toggle"
-                       href="#"
-                       role="button"
-                       data-bs-toggle="dropdown">
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'semester_enrollment_list' %}">
+                Semester Enrollments
+            </a>
+        </li>
 
-                        Academic Calendar
+        {% endif %}
 
-                    </a>
 
-                    <ul class="dropdown-menu">
 
-                        {% if perms.students.view_academicyear %}
-                        <li>
-                            <a class="dropdown-item"
-                               href="{% url 'academic_year_list' %}">
-                                Academic Years
-                            </a>
-                        </li>
-                        {% endif %}
+        {% if perms.students.view_registration or user.is_superuser %}
 
-                        {% if perms.students.view_semester %}
-                        <li>
-                            <a class="dropdown-item"
-                               href="{% url 'semester_list' %}">
-                                Semesters
-                            </a>
-                        </li>
-                        {% endif %}
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'registration_list' %}">
+                Unit Registrations
+            </a>
+        </li>
 
-                    </ul>
+        {% endif %}
 
-                </li>
 
-                {% endif %}
+
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+
+
+        {% if user.student_profile.enrollments.last %}
+
+        <li>
+            <a class="dropdown-item"
+            href="{% url 'register_units' user.student_profile.enrollments.last.pk %}">
+                Register Units
+            </a>
+        </li>
+
+        {% endif %}
+
+
+    </ul>
+
+</li>
+
+{% endif %}
+
+              <!-- ACADEMIC CALENDAR -->
+
+{% if perms.students.view_academicyear or perms.students.view_intake or perms.students.view_semester %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        Academic Calendar
+
+    </a>
+
+    <ul class="dropdown-menu">
+
+        {% if perms.students.view_academicyear %}
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'academic_year_list' %}">
+                Academic Years
+            </a>
+        </li>
+        {% endif %}
+
+        {% if perms.students.view_intake %}
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'intake_list' %}">
+                Intakes
+            </a>
+        </li>
+        {% endif %}
+
+        {% if perms.students.view_semester %}
+        <li>
+            <a class="dropdown-item"
+               href="{% url 'semester_list' %}">
+                Semesters
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+
+</li>
+
+{% endif %}
 
                 <!-- EXAMINATIONS -->
 
-                {% if perms.students.view_lecturerassignment %}
+          {% if perms.students.view_lecturerassignment or user.groups.all %}
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle"
@@ -385,7 +441,7 @@
                 
                 {% endif %}
 
-{% if perms.finance.view_feecategory %}
+{% if perms.finance.view_feecategory or perms.finance.view_studentinvoice or perms.finance.view_payment or user.is_superuser %}
 
 <li class="nav-item dropdown">
 
