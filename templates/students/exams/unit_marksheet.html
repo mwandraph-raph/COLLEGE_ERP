@@ -12,21 +12,32 @@
                 Unit Marksheet
             </h4>
 
+
             <strong>
-                {{ assignment.unit }}
+                {{ assignment.unit_offering.unit.code }}
+                -
+                {{ assignment.unit_offering.unit.name }}
             </strong>
 
             <br>
 
+            Programme Level:
+            {{ assignment.unit_offering.programme_level }}
+
+            <br>
+
             Academic Year:
-            {{ assignment.academic_year }}
+            {{ assignment.unit_offering.academic_year }}
 
             <br>
 
             Semester:
-            {{ assignment.semester }}
+            {{ assignment.unit_offering.semester }}
+
 
         </div>
+
+
         <div class="mt-2">
 
             {% if status == "Approved" %}
@@ -35,11 +46,27 @@
                     Approved
                 </span>
 
+
             {% elif status == "Submitted" %}
 
                 <span class="badge bg-warning text-dark">
                     Submitted
                 </span>
+
+
+            {% elif status == "Returned" %}
+
+                <span class="badge bg-danger">
+                    Returned
+                </span>
+
+
+            {% elif status == "Unlocked" %}
+
+                <span class="badge bg-info">
+                    Unlocked
+                </span>
+
 
             {% else %}
 
@@ -47,18 +74,26 @@
                     Draft
                 </span>
 
+
             {% endif %}
 
         </div>
+
+
         <div class="card-body">
 
+
             <div class="mb-3">
+
+
                 <a href="{% url 'submit_results' assignment.id %}"
-                 class="btn btn-warning">
+                   class="btn btn-warning">
 
                     Submit Results
 
                 </a>
+
+
                 <button
                     onclick="window.print()"
                     class="btn btn-secondary">
@@ -67,12 +102,14 @@
 
                 </button>
 
+
                 <a href="{% url 'export_marksheet_excel' assignment.id %}"
                    class="btn btn-success">
 
                     Export Excel
 
                 </a>
+
 
                 <a href="{% url 'my_units' %}"
                    class="btn btn-primary">
@@ -81,9 +118,26 @@
 
                 </a>
 
+
             </div>
 
+
+            {% if examiner_remark %}
+
+            <div class="alert alert-info">
+
+                <strong>Examiner Remark:</strong>
+
+                {{ examiner_remark }}
+
+            </div>
+
+            {% endif %}
+
+
+
             <table class="table table-bordered table-striped">
+
 
                 <thead>
 
@@ -102,47 +156,62 @@
 
                 </thead>
 
+
+
                 <tbody>
+
 
                     {% for result in results %}
 
+
                     <tr>
+
 
                         <td>
                             {{ result.enrollment.student.admission_no }}
                         </td>
 
+
                         <td>
                             {{ result.enrollment.student }}
                         </td>
+
 
                         <td>
                             {{ result.cat1 }}
                         </td>
 
+
                         <td>
                             {{ result.cat2 }}
                         </td>
+
 
                         <td>
                             {{ result.exam }}
                         </td>
 
+
                         <td>
                             {{ result.total }}
                         </td>
+
 
                         <td>
                             {{ result.grade }}
                         </td>
 
+
                         <td>
                             {{ result.remarks }}
                         </td>
 
+
                     </tr>
 
+
                     {% empty %}
+
 
                     <tr>
 
@@ -155,16 +224,23 @@
 
                     </tr>
 
+
                     {% endfor %}
+
 
                 </tbody>
 
+
             </table>
+
 
         </div>
 
+
     </div>
 
+
 </div>
+
 
 {% endblock %}

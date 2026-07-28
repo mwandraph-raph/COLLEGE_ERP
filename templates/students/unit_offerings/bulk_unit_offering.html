@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Bulk Unit Offering{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                Bulk Unit Offering
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            <p class="text-muted">
+                Select an Academic Year, Semester and Programme Level.
+                The system will automatically create Unit Offerings for all
+                active Units belonging to the selected Programme Level.
+                Existing Unit Offerings will be skipped.
+            </p>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        {{ form.academic_year.label }}
+                    </label>
+                    {{ form.academic_year }}
+                    {% if form.academic_year.errors %}
+                        <div class="text-danger">
+                            {{ form.academic_year.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        {{ form.semester.label }}
+                    </label>
+                    {{ form.semester }}
+                    {% if form.semester.errors %}
+                        <div class="text-danger">
+                            {{ form.semester.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        {{ form.programme_level.label }}
+                    </label>
+                    {{ form.programme_level }}
+                    {% if form.programme_level.errors %}
+                        <div class="text-danger">
+                            {{ form.programme_level.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <hr>
+
+                <button
+                    type="submit"
+                    class="btn btn-success"
+                >
+                    <i class="bi bi-layers-fill"></i>
+                    Offer Units
+                </button>
+
+                <a
+                    href="{% url 'unit_offering_list' %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

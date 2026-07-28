@@ -1,0 +1,88 @@
+<!-- ADMISSIONS -->
+
+{% if perms.students.view_applicant or perms.students.view_intake %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        Admissions
+
+    </a>
+
+    <ul class="dropdown-menu">
+
+        {% if perms.students.view_applicant %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'applicant_list' %}">
+
+                Applicants
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.add_applicant %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'applicant_create' %}">
+
+                New Applicant
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_intake %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'intake_list' %}">
+
+                Intakes
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        <li>
+
+            <hr class="dropdown-divider">
+
+        </li>
+
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'admissions_report' %}">
+
+                Admissions Report
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</li>
+
+{% endif %}

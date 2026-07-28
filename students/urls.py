@@ -214,6 +214,29 @@ path(
     name="unit_delete"
 ),
 
+path(
+    "unit-offerings/",
+    views.unit_offering_list,
+    name="unit_offering_list"
+),
+
+path(
+    "unit-offerings/create/",
+    views.unit_offering_create,
+    name="unit_offering_create"
+),
+
+path(
+    "unit-offerings/<int:pk>/delete/",
+    views.unit_offering_delete,
+    name="unit_offering_delete"
+),
+
+path(
+    "unit-offerings/bulk/",
+    views.bulk_unit_offering,
+    name="bulk_unit_offering",
+),
 # Registration Management
 
 path(
@@ -417,6 +440,12 @@ path(
 ),
 
 path(
+    "publish-results/<int:batch_id>/",
+    views.publish_results,
+    name="publish_results",
+),
+
+path(
     "return-results/<int:batch_id>/",
     views.return_results,
     name="return_results",
@@ -432,6 +461,13 @@ path(
     "unlock-batch/<int:batch_id>/",
     views.unlock_batch,
     name="unlock_batch",
+),
+
+
+path(
+    "exam/dashboard/",
+    views.exam_dashboard,
+    name="exam_dashboard",
 ),
 
 #student portal

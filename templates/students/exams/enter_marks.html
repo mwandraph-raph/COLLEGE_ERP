@@ -1,201 +1,386 @@
 {% extends "base.html" %}
+
 {% load student_extras %}
+
 
 {% block content %}
 
+
 <div class="container-fluid mt-4">
 
-    <div class="card shadow">
 
-        <div class="card-header">
+<div class="card shadow">
 
-            <h5 class="mb-0">
 
-                Marks Entry
+<div class="card-header bg-primary text-white">
 
-                <br>
 
-                <small>
-                    {{ assignment.unit }}
-                </small>
+<h5 class="mb-0">
 
-            </h5>
+Marks Entry
 
-        </div>
+<br>
 
-        <div class="card-body">
+<small>
 
-            {% if messages %}
+{{ assignment.unit_offering.unit.code }}
 
-                {% for message in messages %}
+-
 
-                    <div class="alert alert-success">
+{{ assignment.unit_offering.unit.name }}
 
-                        {{ message }}
+</small>
 
-                    </div>
 
-                {% endfor %}
+<br>
 
-            {% endif %}
 
-            <form method="post">
+<small>
 
-                {% csrf_token %}
+{{ assignment.unit_offering.academic_year }}
 
-                <div class="table-responsive">
+|
 
-                    <table class="table table-bordered table-sm">
+{{ assignment.unit_offering.semester }}
 
-                        <thead>
+|
 
-                            <tr>
+{{ assignment.unit_offering.programme_level }}
 
-                                <th>Adm No</th>
-                                <th>Student Name</th>
-                                <th>CAT 1</th>
-                                <th>CAT 2</th>
-                                <th>Exam</th>
-                                <th>Total</th>
-                                <th>Grade</th>
-                                <th>Remarks</th>
+</small>
 
-                            </tr>
 
-                        </thead>
+</h5>
 
-                        <tbody>
-
-                        {% for reg in registrations %}
-
-                            {% with result=result_map|get_item:reg.id %}
-
-                            <tr>
-
-                                <td>
-                                    {{ reg.enrollment.student.admission_no }}
-                                </td>
-
-                                <td>
-                                    {{ reg.enrollment.student }}
-                                </td>
-
-                                <td>
-
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        name="cat1_{{ reg.id }}"
-                                        value="{{ result.cat1|default:'' }}"
-                                        class="form-control">
-
-                                </td>
-
-                                <td>
-
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        name="cat2_{{ reg.id }}"
-                                        value="{{ result.cat2|default:'' }}"
-                                        class="form-control">
-
-                                </td>
-
-                                <td>
-
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        name="exam_{{ reg.id }}"
-                                        value="{{ result.exam|default:'' }}"
-                                        class="form-control">
-
-                                </td>
-
-                                <td>
-
-                                    {% if result %}
-                                        {{ result.total }}
-                                    {% else %}
-                                        0
-                                    {% endif %}
-
-                                </td>
-
-                                <td>
-
-                                    {% if result %}
-                                        {{ result.grade }}
-                                    {% else %}
-                                        -
-                                    {% endif %}
-
-                                </td>
-
-                                <td>
-
-                                    {% if result %}
-                                        {{ result.remarks }}
-                                    {% else %}
-                                        -
-                                    {% endif %}
-
-                                </td>
-
-                            </tr>
-
-                            {% endwith %}
-
-                        {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-                <hr>
-
-                <div class="d-flex justify-content-between">
-
-                    <a href="{% url 'my_units' %}"
-                    class="btn btn-secondary">
-
-                        Back to My Units
-
-                    </a>
-
-                    {% if not locked %}
-
-                    <button
-                        type="submit"
-                        class="btn btn-success">
-
-                        Save Marks
-
-                    </button>
-
-                    {% else %}
-
-                    <button
-                        class="btn btn-danger"
-                        disabled>
-
-                        Results Submitted
-
-                    </button>
-
-                    {% endif %}
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
 
 </div>
+
+
+
+<div class="card-body">
+
+
+
+{% if messages %}
+
+{% for message in messages %}
+
+<div class="alert alert-success">
+
+{{ message }}
+
+</div>
+
+
+{% endfor %}
+
+{% endif %}
+
+
+
+
+
+<form method="post">
+
+
+{% csrf_token %}
+
+
+
+<div class="table-responsive">
+
+
+<table class="table table-bordered table-sm">
+
+
+<thead class="table-light">
+
+
+<tr>
+
+<th>
+Admission No
+</th>
+
+
+<th>
+Student Name
+</th>
+
+
+<th>
+CAT 1
+</th>
+
+
+<th>
+CAT 2
+</th>
+
+
+<th>
+Exam
+</th>
+
+
+<th>
+Total
+</th>
+
+
+<th>
+Grade
+</th>
+
+
+<th>
+Remarks
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody>
+
+
+
+{% for reg in registrations %}
+
+
+
+{% with result=result_map|get_item:reg.enrollment.id %}
+
+
+
+<tr>
+
+
+<td>
+
+{{ reg.enrollment.student.admission_no }}
+
+</td>
+
+
+
+<td>
+
+{{ reg.enrollment.student.first_name }}
+
+{{ reg.enrollment.student.last_name }}
+
+</td>
+
+
+
+
+<td>
+
+<input
+
+type="number"
+
+step="0.01"
+
+name="cat1_{{ reg.id }}"
+
+value="{{ result.cat1|default_if_none:'' }}"
+
+class="form-control"
+
+{% if locked %}disabled{% endif %}
+
+>
+
+</td>
+
+
+
+
+
+<td>
+
+<input
+
+type="number"
+
+step="0.01"
+
+name="cat2_{{ reg.id }}"
+
+value="{{ result.cat2|default_if_none:'' }}"
+
+class="form-control"
+
+{% if locked %}disabled{% endif %}
+
+>
+
+</td>
+
+
+
+
+
+<td>
+
+<input
+
+type="number"
+
+step="0.01"
+
+name="exam_{{ reg.id }}"
+
+value="{{ result.exam|default_if_none:'' }}"
+
+class="form-control"
+
+{% if locked %}disabled{% endif %}
+
+>
+
+</td>
+
+
+
+
+
+<td>
+
+{{ result.total|default:"0" }}
+
+</td>
+
+
+
+
+<td>
+
+{{ result.grade|default:"-" }}
+
+</td>
+
+
+
+
+<td>
+
+{{ result.remarks|default:"-" }}
+
+</td>
+
+
+
+</tr>
+
+
+
+{% endwith %}
+
+
+
+{% empty %}
+
+
+
+<tr>
+
+
+<td colspan="8" class="text-center">
+
+No registered students found.
+
+</td>
+
+
+</tr>
+
+
+
+{% endfor %}
+
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+
+
+<div class="d-flex justify-content-between">
+
+
+<a href="{% url 'my_units' %}"
+
+class="btn btn-secondary">
+
+Back
+
+</a>
+
+
+
+
+{% if not locked %}
+
+
+<button
+
+type="submit"
+
+class="btn btn-success">
+
+Save Marks
+
+</button>
+
+
+{% else %}
+
+
+<button
+
+class="btn btn-danger"
+
+disabled>
+
+Results Locked
+
+</button>
+
+
+{% endif %}
+
+
+
+</div>
+
+
+
+</form>
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
 
 {% endblock %}

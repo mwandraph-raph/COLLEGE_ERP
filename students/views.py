@@ -1,3 +1,4 @@
+from django.db import models
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 import openpyxl
@@ -9,6 +10,9 @@ from openpyxl.styles import (
                     Border,
                     Side
                 )
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from .models import (Student,
                      Programme,
                      Department, 
@@ -25,6 +29,7 @@ from .models import (Student,
                      ResultBatch,
                      ResultBatchLog,
                      ProgrammeLevel,
+                     UnitOffering,
                      )
 from finance.models import (
     FeeStructure,
@@ -36,8 +41,6 @@ from finance.services import (
     generate_student_invoice,
     update_financial_clearance,
 )
-from django.shortcuts import get_object_or_404
-from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .utils import generate_admission_no
@@ -66,6 +69,8 @@ from .forms import (
     IntakeForm,
     LecturerAssignmentForm,
     ProgrammeLevelForm,
+    UnitOfferingForm,
+    BulkUnitOfferingForm,
 )
 
 # Create your views here.
@@ -85,148 +90,335 @@ def home(request):
     context["active_year"] = active_year
     context["active_semester"] = active_semester
 
+    # ==============================
     # Student Dashboard
+    # ==============================
     if hasattr(request.user, "student_profile"):
 
         student = request.user.student_profile
 
-        enrollment = SemesterEnrollment.objects.filter(
-            student=student
-        ).order_by("-id").first()
+        enrollment = (
+            SemesterEnrollment.objects
+            .select_related(
+                "programme_level",
+                "programme_level__programme",
+                "academic_year",
+                "semester",
+            )
+            .filter(student=student)
+            .order_by("-academic_year__id", "-semester__id")
+            .first()
+        )
+
+        registrations = Registration.objects.none()
 
         registration_count = 0
 
         if enrollment:
 
-            registration_count = Registration.objects.filter(
-                enrollment=enrollment
-            ).count()
+            registrations = (
+                Registration.objects
+                .select_related("unit")
+                .filter(
+                    enrollment=enrollment,
+                    status=Registration.REGISTERED,
+                )
+                .order_by("unit__code")
+            )
+
+            registration_count = registrations.count()
 
         context.update({
+
             "dashboard_type": "student",
+
             "student": student,
+
             "enrollment": enrollment,
+
+            "registrations": registrations,
+
             "registration_count": registration_count,
+
         })
 
+    # ==============================
     # Administrator Dashboard
+    # ==============================
+
     elif request.user.is_superuser:
 
         context.update({
+
             "dashboard_type": "admin",
+
             "total_students": Student.objects.count(),
+
             "total_programmes": Programme.objects.count(),
+
             "total_departments": Department.objects.count(),
+
             "total_applicants": Applicant.objects.count(),
+
             "total_enrollments": SemesterEnrollment.objects.count(),
+
             "total_registrations": Registration.objects.count(),
+
             "total_users": User.objects.count(),
+
         })
 
+    # ==============================
     # Lecturer Dashboard
+    # ==============================
     elif request.user.groups.filter(
         name="Lecturer"
     ).exists():
+
+        assignments = LecturerAssignment.objects.filter(
+            lecturer=request.user,
+            unit_offering__is_active=True,
+            unit_offering__academic_year__is_active=True,
+            unit_offering__semester__is_active=True,
+        )
+
+        my_units = assignments.count()
+
+
+        my_students = Registration.objects.filter(
+            unit__in=assignments.values(
+                "unit_offering__unit"
+            ),
+            enrollment__academic_year__is_active=True,
+            enrollment__semester__is_active=True,
+            status=Registration.REGISTERED,
+        ).values(
+            "enrollment__student"
+        ).distinct().count()
+
+
+        pending_results = Result.objects.filter(
+            unit_offering__in=assignments.values(
+                "unit_offering"
+            ),
+            batch__status=ResultBatch.SUBMITTED,
+        ).count()
+
 
         context.update({
 
             "dashboard_type": "lecturer",
 
-            "my_units":
-                LecturerAssignment.objects.filter(
-                    lecturer=request.user,
-                    academic_year__is_active=True,
-                    semester__is_active=True,
-                ).values(
-                    "unit"
-                ).distinct().count(),
+            "my_units": my_units,
 
-            "my_students":
-                Registration.objects.filter(
-                    enrollment__academic_year__is_active=True,
-                    enrollment__semester__is_active=True,
-                    unit__lecturer_assignments__lecturer=request.user,
-                ).distinct().count(),
+            "my_students": my_students,
+
+            "pending_results": pending_results,
+
         })
-
+    # ==============================
     # Exam Officer Dashboard
+    # ==============================
     elif request.user.has_perm(
         "students.view_lecturerassignment"
     ):
+
+        submitted_batches = ResultBatch.objects.filter(
+            status=ResultBatch.SUBMITTED
+        )
+
+        returned_batches = ResultBatch.objects.filter(
+            status=ResultBatch.RETURNED
+        )
+
+        approved_batches = ResultBatch.objects.filter(
+            status=ResultBatch.APPROVED
+        )
+
+        unlocked_batches = ResultBatch.objects.filter(
+            status=ResultBatch.UNLOCKED
+        )
 
         context.update({
 
             "dashboard_type": "exam",
 
-            "total_assignments":
-                LecturerAssignment.objects.count(),
+            "submitted_batches": submitted_batches.count(),
 
-            "assigned_units":
-                LecturerAssignment.objects.values(
-                    "unit"
-                ).distinct().count(),
+            "returned_batches": returned_batches.count(),
 
-            "total_registrations":
-                Registration.objects.count(),
+            "approved_batches": approved_batches.count(),
 
-            "pending_approvals":
-                Result.objects.filter(
-                    is_submitted=True,
-                    is_approved=False
-                ).values(
-                    "unit"
-                ).distinct().count(),
+            "unlocked_batches": unlocked_batches.count(),
+
+            "total_batches": ResultBatch.objects.count(),
+
+            "total_results": Result.objects.count(),
+
+            "total_assignments": LecturerAssignment.objects.count(),
+
+            "total_unit_offerings": UnitOffering.objects.count(),
+
         })
 
+    # ==============================
     # Registrar Dashboard
+    # ==============================
+
     elif request.user.has_perm(
         "students.view_registration"
     ):
 
         context.update({
+
             "dashboard_type": "registrar",
+
             "total_students": Student.objects.count(),
+
             "total_enrollments": SemesterEnrollment.objects.count(),
+
             "total_registrations": Registration.objects.count(),
+
         })
 
+    # ==============================
     # Admissions Dashboard
+    # ==============================
+
     elif request.user.has_perm(
         "students.view_applicant"
     ):
 
         context.update({
+
             "dashboard_type": "admissions",
 
             "total_applicants":
+
                 Applicant.objects.count(),
 
             "pending_applicants":
+
                 Applicant.objects.filter(
                     status="PENDING"
                 ).count(),
 
             "approved_applicants":
+
                 Applicant.objects.filter(
                     status="APPROVED"
                 ).count(),
 
             "rejected_applicants":
+
                 Applicant.objects.filter(
                     status="REJECTED"
                 ).count(),
 
             "total_intakes":
+
                 Intake.objects.count(),
+
         })
 
     else:
 
         context["dashboard_type"] = "general"
 
+    latest_enrollment = None
+
+    if hasattr(request.user, "student_profile"):
+        latest_enrollment = (
+            request.user.student_profile.enrollments
+            .select_related("academic_year", "semester")
+            .order_by("-academic_year__id", "-semester__id")
+            .first()
+        )
+
+    context["latest_enrollment"] = latest_enrollment
+
     return render(
         request,
         "students/home.html",
+        context,
+    )
+
+
+@login_required
+@permission_required(
+    "students.view_lecturerassignment",
+    raise_exception=True,
+)
+def exam_dashboard(request):
+
+    submitted_batches = (
+        ResultBatch.objects
+        .select_related(
+            "unit_offering",
+            "unit_offering__unit",
+            "unit_offering__programme_level",
+            "lecturer_assignment",
+            "lecturer_assignment__lecturer",
+        )
+        .filter(
+            status=ResultBatch.SUBMITTED
+        )
+        .order_by(
+            "-submitted_at"
+        )
+    )
+
+    returned_batches = (
+        ResultBatch.objects.filter(
+            status=ResultBatch.RETURNED
+        ).count()
+    )
+
+    approved_batches = (
+        ResultBatch.objects.filter(
+            status=ResultBatch.APPROVED
+        ).count()
+    )
+
+    unlocked_batches = (
+        ResultBatch.objects.filter(
+            status=ResultBatch.UNLOCKED
+        ).count()
+    )
+
+    draft_batches = (
+        ResultBatch.objects.filter(
+            status=ResultBatch.DRAFT
+        ).count()
+    )
+
+    context = {
+
+        "submitted_batches": submitted_batches,
+
+        "submitted_count": submitted_batches.count(),
+
+        "returned_count": returned_batches,
+
+        "approved_count": approved_batches,
+
+        "unlocked_count": unlocked_batches,
+
+        "draft_count": draft_batches,
+
+        "total_batches": ResultBatch.objects.count(),
+
+        "total_results": Result.objects.count(),
+
+        "total_assignments": LecturerAssignment.objects.count(),
+
+        "total_unit_offerings": UnitOffering.objects.count(),
+
+    }
+
+    return render(
+        request,
+        "students/exams/exam_dashboard.html",
         context,
     )
 
@@ -1488,6 +1680,179 @@ def unit_delete(request, pk):
         }
     )
 
+
+@login_required
+@permission_required(
+    "students.view_unitoffering",
+    raise_exception=True
+)
+def unit_offering_list(request):
+
+    offerings = (
+        UnitOffering.objects
+        .select_related(
+            "academic_year",
+            "semester",
+            "programme_level",
+            "programme_level__programme",
+            "unit",
+        )
+        .order_by(
+            "-academic_year__year_name",
+            "semester__semester_name",
+            "programme_level__programme__name",
+            "programme_level__progression_order",
+            "unit__code",
+        )
+    )
+
+
+    return render(
+        request,
+        "students/unit_offerings/unit_offering_list.html",
+        {
+            "offerings": offerings
+        }
+    )
+
+
+@login_required
+@permission_required(
+    "students.add_unitoffering",
+    raise_exception=True
+)
+def unit_offering_create(request):
+
+    if request.method == "POST":
+
+        form = UnitOfferingForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Unit offering created successfully."
+            )
+
+            return redirect(
+                "unit_offering_list"
+            )
+
+    else:
+
+        form = UnitOfferingForm()
+
+
+    return render(
+        request,
+        "students/unit_offerings/unit_offering_form.html",
+        {
+            "form": form,
+            "title": "Create Unit Offering",
+        }
+    )
+
+
+@login_required
+@permission_required(
+    "students.delete_unitoffering",
+    raise_exception=True
+)
+def unit_offering_delete(request, pk):
+
+    offering = get_object_or_404(
+        UnitOffering,
+        pk=pk
+    )
+
+
+    if request.method == "POST":
+
+        offering.delete()
+
+        messages.success(
+            request,
+            "Unit offering deleted successfully."
+        )
+
+        return redirect(
+            "unit_offering_list"
+        )
+
+
+    return render(
+        request,
+        "students/unit_offerings/unit_offering_confirm_delete.html",
+        {
+            "offering": offering
+        }
+    )
+
+
+@login_required
+@permission_required(
+    "students.add_unitoffering",
+    raise_exception=True,
+)
+def bulk_unit_offering(request):
+
+    if request.method == "POST":
+
+        form = BulkUnitOfferingForm(request.POST)
+
+        if form.is_valid():
+
+            academic_year = form.cleaned_data["academic_year"]
+            semester = form.cleaned_data["semester"]
+            programme_level = form.cleaned_data["programme_level"]
+
+            units = Unit.objects.filter(
+                programme_level=programme_level,
+                is_active=True,
+            )
+
+            created = 0
+            skipped = 0
+
+            for unit in units:
+
+                _, was_created = UnitOffering.objects.get_or_create(
+                    academic_year=academic_year,
+                    semester=semester,
+                    programme_level=programme_level,
+                    unit=unit,
+                )
+
+                if was_created:
+                    created += 1
+                else:
+                    skipped += 1
+
+            messages.success(
+                request,
+                f"{created} unit offering(s) created. "
+                f"{skipped} already existed.",
+            )
+
+            return redirect("unit_offering_list")
+
+    else:
+
+        form = BulkUnitOfferingForm()
+
+    return render(
+        request,
+        "students/unit_offerings/bulk_unit_offering.html",
+        {
+            "form": form,
+            "title": "Bulk Unit Offering",
+        },
+    )
+
 @login_required
 @permission_required(
     "students.view_registration",
@@ -1682,7 +2047,6 @@ def my_registrations(request):
         user=request.user
     )
 
-
     registrations = (
         Registration.objects
         .filter(
@@ -1692,18 +2056,22 @@ def my_registrations(request):
             "enrollment",
             "enrollment__academic_year",
             "enrollment__semester",
-            "enrollment__programme",
-            "enrollment__programme_level",
             "unit",
-            "unit__programme_level",
         )
         .order_by(
             "-enrollment__academic_year",
             "-enrollment__semester",
-            "unit__code"
+            "unit__code",
         )
     )
 
+    active_count = registrations.filter(
+        status=Registration.REGISTERED
+    ).count()
+
+    dropped_count = registrations.filter(
+        status=Registration.DROPPED
+    ).count()
 
     return render(
         request,
@@ -1711,6 +2079,8 @@ def my_registrations(request):
         {
             "student": student,
             "registrations": registrations,
+            "active_count": active_count,
+            "dropped_count": dropped_count,
         }
     )
 
@@ -1728,13 +2098,12 @@ def register_units(request, pk):
         pk=pk,
     )
 
-    available_units = (
-        enrollment.programme_level.units
-        .filter(is_active=True)
-        .order_by("code")
-    )
+    is_student = hasattr(request.user, "student_profile")
 
+    # ----------------------------------------
     # Student must be enrolled
+    # ----------------------------------------
+
     if enrollment.status != SemesterEnrollment.ENROLLED:
 
         messages.error(
@@ -1742,12 +2111,18 @@ def register_units(request, pk):
             "Only enrolled students can register units."
         )
 
+        if is_student:
+            return redirect("home")
+
         return redirect(
             "semester_enrollment_detail",
             pk=enrollment.pk,
         )
 
+    # ----------------------------------------
     # Registration window must be open
+    # ----------------------------------------
+
     if not enrollment.academic_year.registration_open:
 
         messages.error(
@@ -1755,14 +2130,18 @@ def register_units(request, pk):
             "Unit registration is currently closed."
         )
 
+        if is_student:
+            return redirect("home")
+
         return redirect(
             "semester_enrollment_detail",
             pk=enrollment.pk,
         )
 
-    # -----------------------------
-    # Financial eligibility check
-    # -----------------------------
+    # ----------------------------------------
+    # Financial eligibility
+    # ----------------------------------------
+
     clearance = getattr(
         enrollment,
         "financial_clearance",
@@ -1776,6 +2155,9 @@ def register_units(request, pk):
             "Financial clearance has not been processed for this semester."
         )
 
+        if is_student:
+            return redirect("home")
+
         return redirect(
             "semester_enrollment_detail",
             pk=enrollment.pk,
@@ -1788,16 +2170,41 @@ def register_units(request, pk):
             "You have not met the financial requirements for unit registration."
         )
 
+        if is_student:
+            return redirect("home")
+
         return redirect(
             "semester_enrollment_detail",
             pk=enrollment.pk,
         )
 
+    # ----------------------------------------
+    # Units offered
+    # ----------------------------------------
+
+    available_units = (
+        UnitOffering.objects.filter(
+            academic_year=enrollment.academic_year,
+            semester=enrollment.semester,
+            programme_level=enrollment.programme_level,
+            is_active=True,
+        )
+        .select_related(
+            "unit",
+        )
+        .order_by(
+            "unit__code",
+        )
+    )
+
+    # ----------------------------------------
+    # Save Registration
+    # ----------------------------------------
+
     if request.method == "POST":
 
         unit_ids = request.POST.getlist("units")
 
-        # Nothing selected
         if not unit_ids:
 
             messages.error(
@@ -1815,56 +2222,54 @@ def register_units(request, pk):
 
         with transaction.atomic():
 
-            selected_units = available_units.filter(
-                id__in=unit_ids
+            selected_offerings = available_units.filter(
+                unit_id__in=unit_ids
             )
 
-            for unit in selected_units:
+            for offering in selected_offerings:
 
                 _, created = Registration.objects.get_or_create(
                     enrollment=enrollment,
-                    unit=unit,
+                    unit=offering.unit,
                     defaults={
                         "registration_type": Registration.NORMAL,
                     },
                 )
 
                 if created:
-
                     registered += 1
-
                 else:
-
                     duplicates += 1
 
         if registered:
 
-            if duplicates:
+            messages.success(
+                request,
+                f"{registered} unit(s) registered successfully."
+            )
 
-                messages.success(
-                    request,
-                    f"{registered} unit(s) registered successfully. "
-                    f"{duplicates} were already registered."
-                )
-
-            else:
-
-                messages.success(
-                    request,
-                    f"{registered} unit(s) registered successfully."
-                )
-
-        else:
+        elif duplicates:
 
             messages.info(
                 request,
                 "The selected units are already registered."
             )
 
+        # ----------------------------------------
+        # Redirect after registration
+        # ----------------------------------------
+
+        if is_student:
+            return redirect("my_registrations")
+
         return redirect(
             "semester_enrollment_detail",
             pk=enrollment.pk,
         )
+
+    # ----------------------------------------
+    # Display registration page
+    # ----------------------------------------
 
     return render(
         request,
@@ -1884,17 +2289,25 @@ def drop_registration(request, pk):
         user=request.user
     )
 
-
     registration = get_object_or_404(
         Registration,
         pk=pk,
-        enrollment__student=student
+        enrollment__student=student,
     )
 
+    # Registration already dropped
+    if registration.status == Registration.DROPPED:
 
+        messages.warning(
+            request,
+            "This unit has already been dropped."
+        )
+
+        return redirect(
+            "my_registrations"
+        )
 
     # Registration lock
-
     if not registration.enrollment.academic_year.registration_open:
 
         messages.error(
@@ -1906,25 +2319,28 @@ def drop_registration(request, pk):
             "my_registrations"
         )
 
-
-
     if request.method == "POST":
 
+        reason = request.POST.get(
+            "reason",
+            ""
+        ).strip()
 
-        registration.delete()
+        registration.status = Registration.DROPPED
+        registration.dropped_by = request.user
+        registration.dropped_at = timezone.now()
+        registration.drop_reason = reason
 
+        registration.save()
 
         messages.success(
             request,
             "Unit dropped successfully."
         )
 
-
         return redirect(
             "my_registrations"
         )
-
-
 
     return render(
         request,
@@ -2172,38 +2588,22 @@ def enrollment_create(request):
             )
 
 
-            # Automatically pick first programme level
-            # (for new students)
+            # Ensure the selected programme level belongs
+            # to the student's programme.
 
-            first_level = (
-                ProgrammeLevel.objects
-                .filter(
-                    programme=enrollment.programme,
-                    is_active=True
-                )
-                .order_by(
-                    "progression_order"
-                )
-                .first()
-            )
-
-
-            if not first_level:
+            if (
+                enrollment.programme_level.programme
+                != enrollment.programme
+            ):
 
                 messages.error(
                     request,
-                    "No programme level configured for this programme."
+                    "Selected programme level does not belong to the student's programme."
                 )
 
                 return redirect(
                     "enrollment_create"
                 )
-
-
-            enrollment.programme_level = (
-                first_level
-            )
-
 
             enrollment.status = (
                 SemesterEnrollment.ENROLLED
@@ -2957,10 +3357,12 @@ def lecturer_assignment_list(request):
 
     assignments = LecturerAssignment.objects.select_related(
         "lecturer",
-        "unit",
-        "academic_year",
-        "semester",
-        "assigned_by",
+        "unit_offering",
+        "unit_offering__academic_year",
+        "unit_offering__semester",
+        "unit_offering__programme_level",
+        "unit_offering__programme_level__programme",
+        "unit_offering__unit",
     )
 
     return render(
@@ -3097,13 +3499,16 @@ def my_units(request):
         }
     )"""
 
+
 @login_required
 def my_units(request):
 
     assignments = LecturerAssignment.objects.select_related(
-        "unit",
-        "academic_year",
-        "semester",
+        "unit_offering",
+        "unit_offering__unit",
+        "unit_offering__academic_year",
+        "unit_offering__semester",
+        "unit_offering__programme_level",
     ).filter(
         lecturer=request.user
     )
@@ -3116,12 +3521,22 @@ def my_units(request):
             lecturer_assignment=assignment
         ).first()
 
+        registered_students = Registration.objects.filter(
+            enrollment__academic_year=assignment.unit_offering.academic_year,
+            enrollment__semester=assignment.unit_offering.semester,
+            unit=assignment.unit_offering.unit,
+            status=Registration.REGISTERED,
+        ).count()
+
+
         assignment_data.append(
             {
                 "assignment": assignment,
                 "batch": batch,
+                "registered_students": registered_students,
             }
         )
+
 
     return render(
         request,
@@ -3131,99 +3546,124 @@ def my_units(request):
         }
     )
 
+from decimal import Decimal
+
 @login_required
 def enter_marks(request, assignment_id):
 
     assignment = get_object_or_404(
         LecturerAssignment,
         id=assignment_id,
-        lecturer=request.user
+        lecturer=request.user,
     )
 
-    batch = ResultBatch.objects.filter(
-        lecturer_assignment=assignment
-    ).first()
+    offering = assignment.unit_offering
 
-    locked = False
-
-    if batch and batch.status in [
-        "submitted",
-        "approved"
-    ]:
-        locked = True
-
-    registrations = Registration.objects.select_related(
-        "enrollment__student"
-    ).filter(
-        unit=assignment.unit,
-        enrollment__academic_year=assignment.academic_year,
-        enrollment__semester=assignment.semester,
-    )
-
-    if locked:
-
-        messages.error(
-            request,
-            "Results have already been submitted and cannot be edited."
+    registrations = (
+        Registration.objects
+        .select_related(
+            "enrollment",
+            "enrollment__student",
+            "unit",
         )
+        .filter(
+            enrollment__academic_year=offering.academic_year,
+            enrollment__semester=offering.semester,
+            unit=offering.unit,
+            status=Registration.REGISTERED,
+        )
+        .order_by(
+            "enrollment__student__admission_no"
+        )
+    )
 
-    elif request.method == "POST":
+    batch, created = ResultBatch.objects.get_or_create(
+        lecturer_assignment=assignment,
+        defaults={
+            "unit_offering": offering,
+        },
+    )
+
+    locked = batch.status in [
+        ResultBatch.SUBMITTED,
+        ResultBatch.APPROVED,
+    ]
+
+    # Load ONLY existing results
+    result_map = {
+        result.enrollment_id: result
+        for result in Result.objects.filter(
+            unit_offering=offering
+        )
+    }
+
+    if request.method == "POST" and not locked:
 
         for registration in registrations:
 
-            cat1 = float(
-                request.POST.get(
-                    f"cat1_{registration.id}"
-                ) or 0
+            cat1 = request.POST.get(
+                f"cat1_{registration.id}",
+                "",
+            ).strip()
+
+            cat2 = request.POST.get(
+                f"cat2_{registration.id}",
+                "",
+            ).strip()
+
+            exam = request.POST.get(
+                f"exam_{registration.id}",
+                "",
+            ).strip()
+
+            # Ignore completely blank rows
+            if not cat1 and not cat2 and not exam:
+                continue
+
+            result = result_map.get(
+                registration.enrollment.id
             )
 
-            cat2 = float(
-                request.POST.get(
-                    f"cat2_{registration.id}"
-                ) or 0
-            )
+            if result is None:
 
-            exam = float(
-                request.POST.get(
-                    f"exam_{registration.id}"
-                ) or 0
-            )
+                result = Result(
+                    enrollment=registration.enrollment,
+                    unit_offering=offering,
+                )
 
-            result, created = Result.objects.get_or_create(
-                enrollment=registration.enrollment,
-                unit=registration.unit,
-            )
+            result.cat1 = Decimal(cat1) if cat1 else None
+            result.cat2 = Decimal(cat2) if cat2 else None
+            result.exam = Decimal(exam) if exam else None
 
-            result.cat1 = cat1
-            result.cat2 = cat2
-            result.exam = exam
             result.entered_by = request.user
+            result.batch = batch
 
             result.save()
 
+            result_map[registration.enrollment.id] = result
+
         messages.success(
             request,
-            "Marks saved successfully."
+            "Marks saved successfully.",
         )
 
-    result_map = {}
+        return redirect(
+            "enter_marks",
+            assignment_id=assignment.id,
+        )
 
-    for registration in registrations:
-
-        result_map[registration.id] = Result.objects.filter(
-            enrollment=registration.enrollment,
-            unit=registration.unit
-        ).first()
+    context = {
+        "assignment": assignment,
+        "offering": offering,
+        "registrations": registrations,
+        "result_map": result_map,
+        "locked": locked,
+    }
 
     return render(
         request,
         "students/exams/enter_marks.html",
-        {
-            "assignment": assignment,
-            "registrations": registrations,
-            "result_map": result_map,
-            "locked": locked,
-        }
+        context,
     )
 
 @login_required
@@ -3231,41 +3671,72 @@ def unit_marksheet(request, assignment_id):
 
     assignment = get_object_or_404(
         LecturerAssignment,
-        id=assignment_id
+        id=assignment_id,
     )
 
-    results = Result.objects.select_related(
-        "enrollment__student"
-    ).filter(
-        unit=assignment.unit,
-        enrollment__academic_year=assignment.academic_year,
-        enrollment__semester=assignment.semester,
-    ).order_by(
-        "enrollment__student__admission_no"
+    offering = assignment.unit_offering
+
+    batch = (
+        ResultBatch.objects
+        .filter(
+            lecturer_assignment=assignment,
+        )
+        .first()
+    )
+
+    results = (
+        Result.objects
+        .select_related(
+            "enrollment",
+            "enrollment__student",
+            "unit_offering",
+            "unit_offering__unit",
+            "entered_by",
+        )
+        .filter(
+            unit_offering=offering,
+            enrollment__registrations__unit=offering.unit,
+            enrollment__registrations__status=Registration.REGISTERED,
+        )
+        .distinct()
+        .order_by(
+            "enrollment__student__admission_no",
+        )
     )
 
     status = "Draft"
+    examiner_remark = ""
 
-    if results.exists():
+    if batch:
 
-        first_result = results.first()
+        examiner_remark = batch.remarks or ""
 
-        if first_result.is_approved:
+        if batch.status == ResultBatch.DRAFT:
+            status = "Draft"
 
+        elif batch.status == ResultBatch.SUBMITTED:
+            status = "Submitted"
+
+        elif batch.status == ResultBatch.APPROVED:
             status = "Approved"
 
-        elif first_result.is_submitted:
+        elif batch.status == ResultBatch.RETURNED:
+            status = "Returned"
 
-            status = "Submitted"
+        elif batch.status == ResultBatch.UNLOCKED:
+            status = "Unlocked"
 
     return render(
         request,
         "students/exams/unit_marksheet.html",
         {
             "assignment": assignment,
+            "offering": offering,
+            "batch": batch,
             "results": results,
             "status": status,
-        }
+            "examiner_remark": examiner_remark,
+        },
     )
 
 @login_required
@@ -3276,97 +3747,104 @@ def export_marksheet_excel(request, assignment_id):
         Font,
         Alignment,
         Border,
-        Side
+        Side,
     )
     from openpyxl.utils import get_column_letter
 
     assignment = get_object_or_404(
         LecturerAssignment,
-        id=assignment_id
+        id=assignment_id,
     )
 
-    results = Result.objects.select_related(
-        "enrollment__student"
-    ).filter(
-        unit=assignment.unit,
-        enrollment__academic_year=assignment.academic_year,
-        enrollment__semester=assignment.semester,
-    ).order_by(
-        "enrollment__student__admission_no"
+    offering = assignment.unit_offering
+
+    batch = (
+        ResultBatch.objects
+        .filter(
+            lecturer_assignment=assignment,
+            unit_offering=offering,
+        )
+        .first()
+    )
+
+    results = (
+        Result.objects
+        .select_related(
+            "enrollment",
+            "enrollment__student",
+            "unit_offering",
+            "unit_offering__unit",
+            "unit_offering__programme_level",
+        )
+        .filter(
+            unit_offering=offering,
+            enrollment__registrations__unit=offering.unit,
+            enrollment__registrations__status=Registration.REGISTERED,
+        )
+        .distinct()
+        .order_by(
+            "enrollment__student__admission_no",
+        )
     )
 
     workbook = Workbook()
 
     sheet = workbook.active
-
     sheet.title = "Marksheet"
 
     thin_border = Border(
         left=Side(style="thin"),
         right=Side(style="thin"),
         top=Side(style="thin"),
-        bottom=Side(style="thin")
+        bottom=Side(style="thin"),
     )
 
-    # ==================================================
+    # ==========================
     # HEADER
-    # ==================================================
+    # ==========================
 
     sheet.merge_cells("A1:H1")
-    sheet["A1"] = (
-        "SANFIELDS INSTITUTE OF BUSINESS & TECHNOLOGY"
-    )
-
+    sheet["A1"] = "SANFIELDS INSTITUTE OF BUSINESS & TECHNOLOGY"
     sheet["A1"].font = Font(
         bold=True,
-        size=16
+        size=16,
     )
-
     sheet["A1"].alignment = Alignment(
         horizontal="center",
-        vertical="center"
+        vertical="center",
     )
 
     sheet.merge_cells("A2:H2")
-
-    sheet["A2"] = (
-        "OFFICIAL UNIT MARKSHEET"
-    )
-
+    sheet["A2"] = "OFFICIAL UNIT MARKSHEET"
     sheet["A2"].font = Font(
         bold=True,
-        size=12
+        size=12,
     )
-
     sheet["A2"].alignment = Alignment(
         horizontal="center",
-        vertical="center"
+        vertical="center",
     )
+
+    sheet["A3"] = "Workflow Status"
+    sheet["B3"] = batch.get_status_display() if batch else "Draft"
+
+    sheet["E3"] = "Generated"
+    sheet["F3"] = timezone.now().strftime("%d %b %Y %H:%M")
 
     sheet["A4"] = "Unit"
-    sheet["B4"] = str(
-        assignment.unit
-    )
+    sheet["B4"] = f"{offering.unit.code} - {offering.unit.name}"
 
-    sheet["E4"] = "Programme"
-    sheet["F4"] = str(
-        assignment.unit.course.programme
-    )
+    sheet["E4"] = "Programme Level"
+    sheet["F4"] = str(offering.programme_level)
 
-    sheet["A5"] = "Department"
-    sheet["B5"] = str(
-        assignment.unit.course.programme.department
-    )
+    sheet["A5"] = "Programme"
+    sheet["B5"] = str(offering.programme_level.programme)
 
     sheet["E5"] = "Academic Year"
-    sheet["F5"] = str(
-        assignment.academic_year
-    )
+    sheet["F5"] = str(offering.academic_year)
 
     sheet["A6"] = "Semester"
-    sheet["B6"] = str(
-        assignment.semester
-    )
+    sheet["B6"] = str(offering.semester)
 
     sheet["E6"] = "Lecturer"
     sheet["F6"] = (
@@ -3374,9 +3852,19 @@ def export_marksheet_excel(request, assignment_id):
         or assignment.lecturer.username
     )
 
-    # ==================================================
+    if batch and batch.remarks:
+        sheet.merge_cells("A7:H7")
+        sheet["A7"] = (
+            f"Exam Officer Remarks: {batch.remarks}"
+        )
+        sheet["A7"].font = Font(
+            italic=True,
+            color="AA0000",
+        )
+
+    # ==========================
     # TABLE HEADERS
-    # ==================================================
+    # ==========================
 
     headers = [
         "Admission No",
@@ -3389,201 +3877,127 @@ def export_marksheet_excel(request, assignment_id):
         "Remarks",
     ]
 
-    header_row = 8
+    header_row = 9
 
-    for col_num, header in enumerate(
-        headers,
-        start=1
-    ):
+    for col_num, header in enumerate(headers, start=1):
 
         cell = sheet.cell(
             row=header_row,
-            column=col_num
+            column=col_num,
         )
 
         cell.value = header
-
-        cell.font = Font(
-            bold=True
-        )
-
+        cell.font = Font(bold=True)
         cell.alignment = Alignment(
             horizontal="center",
             vertical="center",
-            wrap_text=True
+            wrap_text=True,
         )
-
         cell.border = thin_border
 
-    # ==================================================
+    # ==========================
     # RESULTS
-    # ==================================================
+    # ==========================
 
-    row_num = 9
+    row_num = 10
 
     for result in results:
 
-        sheet.cell(
-            row=row_num,
-            column=1
-        ).value = (
-            result.enrollment.student.admission_no
-        )
+        values = [
+            result.enrollment.student.admission_no,
+            str(result.enrollment.student),
+            result.cat1,
+            result.cat2,
+            result.exam,
+            result.total,
+            result.grade,
+            result.remarks,
+        ]
 
-        sheet.cell(
-            row=row_num,
-            column=2
-        ).value = str(
-            result.enrollment.student
-        )
+        for col_num, value in enumerate(values, start=1):
 
-        sheet.cell(
-            row=row_num,
-            column=3
-        ).value = result.cat1
-
-        sheet.cell(
-            row=row_num,
-            column=4
-        ).value = result.cat2
-
-        sheet.cell(
-            row=row_num,
-            column=5
-        ).value = result.exam
-
-        sheet.cell(
-            row=row_num,
-            column=6
-        ).value = result.total
-
-        sheet.cell(
-            row=row_num,
-            column=7
-        ).value = result.grade
-
-        sheet.cell(
-            row=row_num,
-            column=8
-        ).value = result.remarks
-
-        for col in range(1, 9):
-
-            current_cell = sheet.cell(
+            cell = sheet.cell(
                 row=row_num,
-                column=col
+                column=col_num,
             )
 
-            current_cell.border = thin_border
-
-            current_cell.alignment = Alignment(
+            cell.value = value
+            cell.border = thin_border
+            cell.alignment = Alignment(
                 vertical="center",
-                wrap_text=True
+                wrap_text=True,
             )
 
         row_num += 1
 
-    # ==================================================
-    # ROW HEIGHTS
-    # ==================================================
-
-    for row in range(
-        8,
-        sheet.max_row + 1
-    ):
-
-        sheet.row_dimensions[
-            row
-        ].height = 25
-
-    # ==================================================
-    # COLUMN WIDTHS
-    # ==================================================
+    # ==========================
+    # AUTO WIDTH
+    # ==========================
 
     for col in range(1, 9):
 
-        max_length = 0
+        letter = get_column_letter(col)
+        longest = 0
 
-        column_letter = get_column_letter(
-            col
-        )
+        for row in range(1, sheet.max_row + 1):
 
-        for row in range(
-            1,
-            sheet.max_row + 1
-        ):
-
-            cell = sheet.cell(
+            value = sheet.cell(
                 row=row,
-                column=col
-            )
+                column=col,
+            ).value
 
-            if cell.value:
-
-                max_length = max(
-                    max_length,
-                    len(str(cell.value))
+            if value:
+                longest = max(
+                    longest,
+                    len(str(value)),
                 )
 
-        sheet.column_dimensions[
-            column_letter
-        ].width = max_length + 5
+        sheet.column_dimensions[letter].width = longest + 5
 
     sheet.column_dimensions["B"].width = 35
-    sheet.column_dimensions["H"].width = 20
+    sheet.column_dimensions["H"].width = 25
 
-    # ==================================================
+    # ==========================
     # SIGNATURES
-    # ==================================================
+    # ==========================
 
     row_num += 3
 
     sheet.cell(
         row=row_num,
-        column=1
+        column=1,
     ).value = "Lecturer Signature"
 
     sheet.cell(
         row=row_num,
-        column=4
+        column=4,
     ).value = "HOD Signature"
 
     sheet.cell(
         row=row_num,
-        column=7
+        column=7,
     ).value = "Exam Officer Signature"
 
-    # ==================================================
+    # ==========================
     # DOWNLOAD
-    # ==================================================
+    # ==========================
 
     response = HttpResponse(
         content_type=(
-            "application/vnd.openxmlformats-"
-            "officedocument.spreadsheetml.sheet"
+            "application/vnd.openxmlformats-officedocument."
+            "spreadsheetml.sheet"
         )
-    )
-
-    filename = (
-        f"{assignment.unit.unit_code}_marksheet.xlsx"
     )
 
     response[
         "Content-Disposition"
     ] = (
-        f'attachment; filename="{filename}"'
+        f'attachment; filename="{offering.unit.code}_marksheet.xlsx"'
     )
 
     workbook.save(response)
 
     return response
-
-
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
-from django.utils import timezone
-
 
 @login_required
 def submit_results(request, assignment_id):
@@ -3591,78 +4005,110 @@ def submit_results(request, assignment_id):
     assignment = get_object_or_404(
         LecturerAssignment,
         id=assignment_id,
-        lecturer=request.user
+        lecturer=request.user,
     )
+
+    offering = assignment.unit_offering
 
     batch, created = ResultBatch.objects.get_or_create(
         lecturer_assignment=assignment,
-        defaults={
-            "unit": assignment.unit,
-            "academic_year": assignment.academic_year,
-            "semester": assignment.semester,
-        }
+        unit_offering=offering,
     )
 
-    # Prevent duplicate submission
-    if batch.status == "submitted":
+    # Prevent duplicate submissions
+
+    if batch.status == ResultBatch.SUBMITTED:
+
         messages.warning(
             request,
-            "Results have already been submitted."
+            "These results have already been submitted and are awaiting approval.",
         )
 
         return redirect(
             "enter_marks",
-            assignment_id=assignment.id
+            assignment_id=assignment.id,
         )
 
-    # Prevent submission after approval
-    if batch.status == "approved":
+    if batch.status == ResultBatch.APPROVED:
+
         messages.error(
             request,
-            "Results have already been approved."
+            "These results have already been approved.",
         )
 
         return redirect(
             "enter_marks",
-            assignment_id=assignment.id
+            assignment_id=assignment.id,
         )
+
+    # Get all results for this offering
 
     results = Result.objects.filter(
-        enrollment__academic_year=assignment.academic_year,
-        enrollment__semester=assignment.semester,
-        unit=assignment.unit,
-        batch__isnull=True,
+        unit_offering=offering,
     )
 
-    if not results.exists():
+    # Ensure result records exist
+
+    registered_count = Registration.objects.filter(
+        enrollment__academic_year=offering.academic_year,
+        enrollment__semester=offering.semester,
+        unit=offering.unit,
+        status=Registration.REGISTERED,
+    ).count()
+
+    if results.count() < registered_count:
+
         messages.error(
             request,
-            "No results available for submission."
+            "Some registered students do not yet have result records."
         )
 
         return redirect(
             "enter_marks",
-            assignment_id=assignment.id
+            assignment_id=assignment.id,
         )
+
+    # Attach all results to this batch
 
     results.update(
         batch=batch,
-        is_submitted=True,
-        submitted_at=timezone.now()
     )
 
-    batch.status = "submitted"
+    # Submit batch regardless of blank marks
+
+    batch.status = ResultBatch.SUBMITTED
     batch.submitted_by = request.user
     batch.submitted_at = timezone.now()
+    batch.approved_by = None
+    batch.approved_at = None
+    batch.remarks = ""
     batch.save()
 
-    messages.success(
-        request,
-        "Results submitted successfully."
+    blank_results = results.filter(
+        cat1__isnull=True,
+        cat2__isnull=True,
+        exam__isnull=True,
+    ).count()
+
+    if blank_results:
+
+        messages.warning(
+            request,
+            f"Results submitted successfully. "
+            f"{blank_results} student(s) have no marks entered. "
+            f"The Examination Office should verify before approval."
+        )
+
+    else:
+
+        messages.success(
+            request,
+            "Results submitted successfully and forwarded to the Examination Office."
+        )
+
+    return redirect(
+        "my_units",
     )
-
-    return redirect("my_units")
-
 
 @login_required
 @permission_required(
@@ -3672,13 +4118,17 @@ def submit_results(request, assignment_id):
 def approval_queue(request):
 
     batches = ResultBatch.objects.select_related(
-        "unit",
-        "academic_year",
-        "semester",
+        "unit_offering",
+        "unit_offering__unit",
+        "unit_offering__academic_year",
+        "unit_offering__semester",
         "submitted_by",
+        "approved_by",
     ).exclude(
         status="draft"
     )
+
+
     return render(
         request,
         "students/exams/approval_queue.html",
@@ -3686,7 +4136,6 @@ def approval_queue(request):
             "batches": batches
         }
     )
-
 
 @login_required
 @permission_required(
@@ -3753,6 +4202,52 @@ def approve_results(request, batch_id):
     "students.change_resultbatch",
     raise_exception=True
 )
+
+
+@login_required
+@transaction.atomic
+def publish_results(request, batch_id):
+
+    batch = get_object_or_404(
+        ResultBatch,
+        pk=batch_id,
+    )
+
+    if batch.status != ResultBatch.APPROVED:
+
+        messages.error(
+            request,
+            "Only approved result batches can be published."
+        )
+
+        return redirect(
+            "approval_queue"
+        )
+
+    batch.status = ResultBatch.PUBLISHED
+
+    batch.published_by = request.user
+
+    batch.published_at = timezone.now()
+
+    batch.save()
+
+    ResultBatchLog.objects.create(
+        batch=batch,
+        action="Published",
+        performed_by=request.user,
+        remarks="Results published for student access.",
+    )
+
+    messages.success(
+        request,
+        "Results published successfully."
+    )
+
+    return redirect(
+        "approval_queue"
+    )
+
 def return_results(request, batch_id):
 
     batch = get_object_or_404(
@@ -3836,36 +4331,58 @@ def view_batch(request, batch_id):
 @login_required
 @permission_required(
     "students.view_resultbatch",
-    raise_exception=True
+    raise_exception=True,
 )
 def batch_details(request, batch_id):
 
     batch = get_object_or_404(
         ResultBatch.objects.select_related(
-            "unit",
-            "academic_year",
-            "semester",
+            "unit_offering",
+            "unit_offering__unit",
+            "unit_offering__academic_year",
+            "unit_offering__semester",
+            "unit_offering__programme_level",
+            "lecturer_assignment",
+            "lecturer_assignment__lecturer",
             "submitted_by",
             "approved_by",
         ),
-        id=batch_id
+        id=batch_id,
     )
 
-    results = Result.objects.select_related(
-        "enrollment__student"
-    ).filter(
-        batch=batch
-    ).order_by(
-        "enrollment__student__admission_no"
+    offering = batch.unit_offering
+
+    results = (
+        Result.objects.select_related(
+            "enrollment__student",
+            "unit_offering",
+            "unit_offering__unit",
+        )
+        .filter(
+            batch=batch,
+        )
+        .order_by(
+            "enrollment__student__admission_no",
+        )
     )
+
+    registered_students = Registration.objects.filter(
+        unit=batch.unit_offering.unit,
+        enrollment__academic_year=batch.unit_offering.academic_year,
+        enrollment__semester=batch.unit_offering.semester,
+        status=Registration.REGISTERED,
+    ).count()
 
     return render(
         request,
         "students/exams/batch_details.html",
         {
             "batch": batch,
+            "offering": offering,
             "results": results,
-        }
+            "registered_students": registered_students,
+            "submitted_students": results.count(),
+        },
     )
 
 
@@ -3939,27 +4456,54 @@ def unlock_batch(request, batch_id):
         }
     )
 
-#student portal
 @login_required
 def student_results(request):
 
     student = get_object_or_404(
         Student,
-        user=request.user
+        user=request.user,
     )
 
-
-    results = Result.objects.select_related(
-        "batch",
-        "unit",
-        "enrollment__student"
-    ).filter(
-        enrollment__student=student,
-        batch__status="approved"
-    ).order_by(
-        "unit__code"
+    enrollments = (
+        SemesterEnrollment.objects
+        .filter(student=student)
+        .select_related(
+            "academic_year",
+            "semester",
+            "programme_level",
+        )
+        .order_by(
+            "academic_year",
+            "semester",
+        )
     )
 
+    results = (
+        Result.objects
+        .select_related(
+            "batch",
+            "unit_offering",
+            "unit_offering__unit",
+            "unit_offering__programme_level",
+            "enrollment",
+            "enrollment__academic_year",
+            "enrollment__semester",
+        )
+        .filter(
+            enrollment__student=student,
+            batch__status=ResultBatch.PUBLISHED,
+            enrollment__registrations__unit=models.F(
+                "unit_offering__unit"
+            ),
+            enrollment__registrations__status=Registration.REGISTERED,
+        )
+        .distinct()
+        .order_by(
+            "enrollment__academic_year",
+            "enrollment__semester",
+            "unit_offering__unit__code",
+        )
+    )
 
     return render(
         request,
@@ -3967,9 +4511,9 @@ def student_results(request):
         {
             "student": student,
             "results": results,
-        }
+            "enrollments": enrollments,
+        },
     )
-
 
 @login_required
 def enrollment_results(request, pk):
@@ -3977,6 +4521,7 @@ def enrollment_results(request, pk):
     enrollment = get_object_or_404(
         SemesterEnrollment.objects.select_related(
             "student",
+            "programme_level",
             "programme_level__programme",
             "academic_year",
             "semester",
@@ -3987,9 +4532,19 @@ def enrollment_results(request, pk):
     results = (
         Result.objects.filter(
             enrollment=enrollment,
+            batch__status=ResultBatch.APPROVED,
         )
-        .select_related("unit", "batch")
-        .order_by("unit__code")
+        .select_related(
+            "batch",
+            "unit_offering",
+            "unit_offering__unit",
+            "unit_offering__academic_year",
+            "unit_offering__semester",
+            "unit_offering__programme_level",
+        )
+        .order_by(
+            "unit_offering__unit__code",
+        )
     )
 
     return render(

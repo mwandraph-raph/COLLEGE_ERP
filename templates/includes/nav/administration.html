@@ -1,0 +1,95 @@
+<!-- ADMINISTRATION -->
+
+{% if perms.auth.view_user or perms.auth.view_group or user.is_superuser %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        Administration
+
+    </a>
+
+    <ul class="dropdown-menu">
+
+        {% if perms.auth.view_user or user.is_superuser %}
+
+        <li>
+
+            <h6 class="dropdown-header">
+
+                Security
+
+            </h6>
+
+        </li>
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'accounts:user_list' %}">
+
+                Users
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.auth.view_group or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'accounts:group_list' %}">
+
+                Roles
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if user.is_superuser %}
+
+        <li>
+
+            <hr class="dropdown-divider">
+
+        </li>
+
+        <li>
+
+            <h6 class="dropdown-header">
+
+                System
+
+            </h6>
+
+        </li>
+
+        <li>
+
+            <a class="dropdown-item"
+               href="/admin/">
+
+                Django Admin
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+
+</li>
+
+{% endif %}

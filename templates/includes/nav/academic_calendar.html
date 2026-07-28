@@ -1,0 +1,91 @@
+<!-- ACADEMIC CALENDAR -->
+
+{% if perms.students.view_academicyear or perms.students.view_semester or perms.students.view_intake %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        Academic Calendar
+
+    </a>
+
+    <ul class="dropdown-menu">
+
+        {% if perms.students.view_academicyear %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'academic_year_list' %}">
+
+                Academic Years
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_semester %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'semester_list' %}">
+
+                Semesters
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_intake %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'intake_list' %}">
+
+                Intakes
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if user.is_superuser %}
+
+        <li>
+
+            <hr class="dropdown-divider">
+
+        </li>
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'bulk_unit_offering' %}">
+
+                Bulk Unit Offering
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+
+</li>
+
+{% endif %}

@@ -1,0 +1,57 @@
+<!-- ACCOUNT MENU -->
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false">
+
+        {{ user.get_full_name|default:user.username }}
+
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+
+        <li>
+
+            <h6 class="dropdown-header">
+
+                My Account
+
+            </h6>
+
+        </li>
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'accounts:profile' %}">
+
+                My Profile
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <hr class="dropdown-divider">
+
+        </li>
+
+        <li>
+
+            <a class="dropdown-item text-danger"
+               href="{% url 'accounts:logout' %}">
+
+                Logout
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</li>

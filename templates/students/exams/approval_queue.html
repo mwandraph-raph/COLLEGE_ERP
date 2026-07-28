@@ -6,21 +6,19 @@
 
     <div class="card shadow">
 
-        <div class="card-header">
+        <div class="card-header bg-dark text-white">
 
-            <h4>
-
+            <h4 class="mb-0">
                 Results Approval Queue
-
             </h4>
 
         </div>
 
         <div class="card-body">
 
-            <table class="table table-bordered">
+            <table class="table table-bordered table-striped align-middle">
 
-                <thead>
+                <thead class="table-light">
 
                     <tr>
 
@@ -30,7 +28,7 @@
                         <th>Status</th>
                         <th>Submitted By</th>
                         <th>Submitted At</th>
-                        <th>Actions</th>
+                        <th width="330">Actions</th>
 
                     </tr>
 
@@ -43,33 +41,81 @@
                     <tr>
 
                         <td>
-                            {{ batch.unit }}
-                        </td>
 
-                        <td>
-                            {{ batch.academic_year }}
-                        </td>
+                            <strong>
+                                {{ batch.unit_offering.unit.code }}
+                            </strong>
 
-                        <td>
-                            {{ batch.semester }}
-                        </td>
+                            <br>
 
-                        <td>
-
-                            <span class="badge bg-info">
-
-                                {{ batch.get_status_display }}
-
-                            </span>
+                            {{ batch.unit_offering.unit.name }}
 
                         </td>
 
                         <td>
+
+                            {{ batch.unit_offering.academic_year }}
+
+                        </td>
+
+                        <td>
+
+                            {{ batch.unit_offering.semester.semester_name }}
+
+                        </td>
+
+                        <td>
+
+                            {% if batch.status == "draft" %}
+
+                                <span class="badge bg-secondary">
+                                    Draft
+                                </span>
+
+                            {% elif batch.status == "submitted" %}
+
+                                <span class="badge bg-primary">
+                                    Submitted
+                                </span>
+
+                            {% elif batch.status == "approved" %}
+
+                                <span class="badge bg-success">
+                                    Approved
+                                </span>
+
+                            {% elif batch.status == "published" %}
+
+                                <span class="badge bg-dark">
+                                    Published
+                                </span>
+
+                            {% elif batch.status == "returned" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Returned
+                                </span>
+
+                            {% elif batch.status == "unlocked" %}
+
+                                <span class="badge bg-info text-dark">
+                                    Unlocked
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
                             {{ batch.submitted_by }}
+
                         </td>
 
                         <td>
+
                             {{ batch.submitted_at }}
+
                         </td>
 
                         <td>
@@ -81,26 +127,46 @@
 
                             </a>
 
-                            <a href="{% url 'approve_results' batch.id %}"
-                               class="btn btn-success btn-sm">
+                            {% if batch.status == "submitted" %}
 
-                                Approve
+                                <a href="{% url 'approve_results' batch.id %}"
+                                   class="btn btn-success btn-sm">
 
-                            </a>
+                                    Approve
 
-                            <a href="{% url 'return_results' batch.id %}"
-                               class="btn btn-warning btn-sm">
+                                </a>
 
-                                Return
+                                <a href="{% url 'return_results' batch.id %}"
+                                   class="btn btn-warning btn-sm">
 
-                            </a>
-                        
-                            <a href="{% url 'unlock_batch' batch.id %}"
-                            class="btn btn-secondary btn-sm">
+                                    Return
 
-                            Unlock
+                                </a>
 
-                            </a>
+                            {% endif %}
+
+                            {% if batch.status == "approved" %}
+
+                                <a href="{% url 'publish_results' batch.id %}"
+                                   class="btn btn-dark btn-sm">
+
+                                    Publish
+
+                                </a>
+
+                            {% endif %}
+
+                            {% if batch.status == "returned" %}
+
+                                <a href="{% url 'unlock_batch' batch.id %}"
+                                   class="btn btn-secondary btn-sm">
+
+                                    Unlock
+
+                                </a>
+
+                            {% endif %}
+
                         </td>
 
                     </tr>
@@ -109,10 +175,9 @@
 
                     <tr>
 
-                        <td colspan="7"
-                            class="text-center">
+                        <td colspan="7" class="text-center">
 
-                            No submitted result batches.
+                            No result batches available.
 
                         </td>
 

@@ -1,0 +1,175 @@
+<!-- ACADEMIC STRUCTURE -->
+
+{% if perms.students.view_department or perms.students.view_programme or perms.students.view_programmelevel or perms.students.view_course or perms.students.view_unit or perms.students.view_unitoffering %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        Academic Structure
+
+    </a>
+
+    <ul class="dropdown-menu">
+
+        {% if perms.students.view_department %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'department_list' %}">
+
+                Departments
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_programme %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'programme_list' %}">
+
+                Programmes
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_programmelevel %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'programme_level_list' %}">
+
+                Programme Levels
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_course %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'course_list' %}">
+
+                Courses
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_unit %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'unit_list' %}">
+
+                Units
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        {% if user.is_superuser or perms.students.view_unitoffering or perms.students.add_unitoffering %}
+
+        <li>
+
+            <hr class="dropdown-divider">
+
+        </li>
+
+        {% endif %}
+
+        {% if user.is_superuser or perms.students.view_unitoffering %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'unit_offering_list' %}">
+
+                Unit Offerings
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if user.is_superuser or perms.students.add_unitoffering %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'unit_offering_create' %}">
+
+                Create Unit Offering
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'bulk_unit_offering' %}">
+
+                Bulk Unit Offering
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_semesterenrollment %}
+
+        <li>
+
+            <hr class="dropdown-divider">
+
+        </li>
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'progression_list' %}">
+
+                Student Progression
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+
+</li>
+
+{% endif %}

@@ -17,6 +17,7 @@
 
 </div>
 
+
 {% if active_year or active_semester %}
 
 <div class="alert alert-info">
@@ -80,61 +81,140 @@
 {% elif dashboard_type == "exam" %}
 
 <!-- EXAM OFFICER DASHBOARD -->
+<div class="card shadow mt-4">
 
-<div class="row">
+    <div class="card-header bg-dark text-white">
 
-    <div class="col-md-4 mb-3">
-        <div class="card shadow text-center">
-            <div class="card-body">
-                <h2>{{ total_assignments }}</h2>
-                <p>Lecturer Assignments</p>
-            </div>
-        </div>
-    </div>
+        <h5 class="mb-0">
 
-    <div class="col-md-4 mb-3">
-        <div class="card shadow text-center">
-            <div class="card-body">
-                <h2>{{ assigned_units }}</h2>
-                <p>Assigned Units</p>
-            </div>
-        </div>
-    </div>
+            Examination Workflow
 
-    <div class="col-md-4 mb-3">
-        <div class="card shadow text-center">
-            <div class="card-body">
-                <h2>{{ total_registrations }}</h2>
-                <p>Registrations</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
+        </h5>
 
-        <div class="card shadow text-center">
-
-            <div class="card-body">
-
-                <h2>{{ pending_approvals }}</h2>
-
-                <p>
-                    Pending Approvals
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-</div>
-
-<div class="card shadow">
-
-    <div class="card-header">
-        Examination Management
     </div>
 
     <div class="card-body">
+
+        <div class="row text-center">
+
+            <div class="col-md-2">
+
+                <div class="card border-primary">
+
+                    <div class="card-body">
+
+                        <h3>{{ submitted_batches }}</h3>
+
+                        <p class="mb-0">
+                            Submitted
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <div class="card border-success">
+
+                    <div class="card-body">
+
+                        <h3>{{ approved_batches }}</h3>
+
+                        <p class="mb-0">
+                            Approved
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <div class="card border-warning">
+
+                    <div class="card-body">
+
+                        <h3>{{ returned_batches }}</h3>
+
+                        <p class="mb-0">
+                            Returned
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <div class="card border-danger">
+
+                    <div class="card-body">
+
+                        <h3>{{ unlocked_batches }}</h3>
+
+                        <p class="mb-0">
+                            Unlocked
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <div class="card border-info">
+
+                    <div class="card-body">
+
+                        <h3>{{ published_batches }}</h3>
+
+                        <p class="mb-0">
+                            Published
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <div class="card border-secondary">
+
+                    <div class="card-body">
+
+                        <h3>{{ total_batches }}</h3>
+
+                        <p class="mb-0">
+                            Total
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <a href="{% url 'approval_queue' %}"
+           class="btn btn-success">
+
+            Approval Queue
+
+        </a>
 
         <a href="{% url 'lecturer_assignment_list' %}"
            class="btn btn-primary">
@@ -142,15 +222,11 @@
             Lecturer Assignments
 
         </a>
-        <a href="{% url 'approval_queue' %}"
-        class="btn btn-success me-2">
 
-            Approval Queue
-
-        </a>
     </div>
 
 </div>
+
 
 {% elif dashboard_type == "lecturer" %}
 
@@ -332,7 +408,7 @@
             Students
         </a>
 
-        <a href="{% url 'enrollment_list' %}"
+        <a href="{% url 'semester_enrollment_list' %}'"
            class="btn btn-success me-2">
             Enrollments
         </a>
@@ -367,7 +443,7 @@
             <div class="card-body">
                 <strong>Study Level</strong>
                 <hr>
-                {{ student.study_level }}
+                {{ enrollment.programme_level }}
             </div>
         </div>
     </div>
@@ -375,9 +451,19 @@
     <div class="col-md-3 mb-3">
         <div class="card shadow">
             <div class="card-body">
-                <strong>Current Enrollment</strong>
+                <strong>Academic Year</strong>
                 <hr>
-                {{ enrollment }}
+                {{ enrollment.academic_year }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow">
+            <div class="card-body">
+                <strong>Semester</strong>
+                <hr>
+                {{ enrollment.semester }}
             </div>
         </div>
     </div>
@@ -402,20 +488,31 @@
 
     <div class="card-body">
 
-        <a href="{% url 'register_units' %}"
+        {% if latest_enrollment %}
+
+        <a href="{% url 'register_units' latest_enrollment.pk %}"
            class="btn btn-primary me-2">
             Register Units
         </a>
 
+        {% else %}
+
+        <button class="btn btn-primary me-2" disabled>
+            Register Units
+        </button>
+
+        {% endif %}
+
         <a href="{% url 'my_registrations' %}"
            class="btn btn-success">
-            My Registrations
+            My Registred Units
         </a>
 
         <a href="{% url 'student_results' %}"
-            class="btn btn-primary me-2">
-            My Results
+           class="btn btn-primary me-2">
+            My Result Slip
         </a>
+
     </div>
 
 </div>

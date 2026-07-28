@@ -121,178 +121,203 @@
 </div>
 
 
-
-
+{% if not user.student_profile %}
 
 <div class="card shadow mt-4">
 
+    <div class="card-header bg-dark text-white">
 
-<div class="card-header bg-dark text-white">
+        <h5 class="mb-0">
 
-    <h5 class="mb-0">
-        Student Semester Workflow
-    </h5>
+            Student Semester Workflow
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row g-3">
+
+            <!-- Invoice -->
+
+            <div class="col-md-4">
+
+                {% if enrollment.invoice %}
+
+                <a href="{% url 'finance:invoice_detail' enrollment.invoice.id %}"
+                   class="btn btn-outline-primary w-100">
+
+                    🧾 View Invoice
+
+                </a>
+
+                {% else %}
+
+                <button class="btn btn-outline-secondary w-100" disabled>
+
+                    🧾 Invoice Not Generated
+
+                </button>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Payment -->
+
+            <div class="col-md-4">
+
+                {% if enrollment.invoice %}
+
+                <a href="{% url 'finance:payment_create' enrollment.invoice.id %}"
+                   class="btn btn-outline-success w-100">
+
+                    💰 Record Payment
+
+                </a>
+
+                {% else %}
+
+                <button class="btn btn-outline-secondary w-100" disabled>
+
+                    💰 Payment Locked
+
+                </button>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Financial Clearance -->
+
+            <div class="col-md-4">
+
+                <a href="{% url 'finance:financial_clearance_list' %}"
+                   class="btn btn-outline-warning w-100">
+
+                    📋 Financial Clearance
+
+                </a>
+
+            </div>
+
+            <!-- Unit Registration -->
+
+            <div class="col-md-4">
+
+                <a href="{% url 'register_units' enrollment.id %}"
+                   class="btn btn-outline-info w-100">
+
+                    📚 Register Units
+
+                </a>
+
+            </div>
+
+            <!-- Results -->
+
+            <div class="col-md-4">
+
+                <a href="{% url 'enrollment_results' enrollment.id %}"
+                   class="btn btn-outline-secondary w-100">
+
+                    📊 Results
+
+                </a>
+
+            </div>
+
+            <!-- Progression -->
+
+            <div class="col-md-4">
+
+                <a href="{% url 'progress_student' enrollment.id %}"
+                   class="btn btn-outline-danger w-100">
+
+                    ⬆ Progress Student
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
-
-
-
-<div class="card-body">
-
-
-<div class="row g-3">
-
-
-
-<!-- INVOICE -->
-
-<div class="col-md-4">
-
-
-{% if enrollment.invoice %}
-
-
-<a href="{% url 'finance:invoice_detail' enrollment.invoice.id %}"
-class="btn btn-outline-primary w-100">
-
-🧾 View Invoice
-
-</a>
-
-
-{% else %}
-
-
-<button class="btn btn-outline-secondary w-100"
-disabled>
-
-🧾 Invoice Not Generated
-
-</button>
-
 
 {% endif %}
 
+{% if user.student_profile %}
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-primary text-white">
+
+        <h5 class="mb-0">
+
+            Student Services
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row g-3">
+
+            <div class="col-md-3">
+
+                <a href="{% url 'my_registrations' %}"
+                   class="btn btn-primary w-100">
+
+                    📚 My Registrations
+
+                </a>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <a href="{% url 'student_results' %}"
+                   class="btn btn-success w-100">
+
+                    📊 My Results
+
+                </a>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <a href="{% url 'finance:fee_statement_list' %}"
+                   class="btn btn-warning w-100">
+
+                    💰 Fee Statement
+
+                </a>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <button onclick="window.print()"
+                        class="btn btn-secondary w-100">
+
+                    🖨 Print
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
-
-
-
-
-
-<!-- PAYMENT -->
-
-
-<div class="col-md-4">
-
-
-{% if enrollment.invoice %}
-
-
-<a href="{% url 'finance:payment_create' enrollment.invoice.id %}"
-class="btn btn-outline-success w-100">
-
-
-💰 Record Payment
-
-
-</a>
-
-
-{% else %}
-
-
-<button class="btn btn-outline-secondary w-100"
-disabled>
-
-
-💰 Payment Locked
-
-
-</button>
-
 
 {% endif %}
-
-
-</div>
-
-
-
-
-
-
-<!-- FINANCIAL CLEARANCE -->
-
-
-<div class="col-md-4">
-
-
-<a href="{% url 'finance:financial_clearance_list' %}"
-class="btn btn-outline-warning w-100">
-
-
-📋 Financial Clearance
-
-
-</a>
-
-
-</div>
-
-
-
-
-
-
-<!-- UNIT REGISTRATION -->
-
-
-<div class="col-md-4">
-
-
-<a href="{% url 'register_units' enrollment.id %}"
-class="btn btn-outline-info w-100">
-
-
-📚 Register Units
-
-
-</a>
-
-
-</div>
-
-
-
-
-
-
-<!-- RESULTS -->
-
-
-<div class="col-md-4">
-<a href="{%  url 'enrollment_results' enrollment.id %}"
-   class="btn btn-outline-secondary w-100">
-    📊 Results
-</a>
-</div>
-
-<!-- PROGRESSION -->
-
-<div class="col-md-4">
-<a href="{% url 'progress_student' enrollment.id %}"
-class="btn btn-outline-danger w-100">
-⬆ Progress Student
-</a>
-
-
-</div>
-
-</div>
-</div>
-</div>
-
 
 <div class="card shadow mt-4">
 
@@ -331,20 +356,29 @@ Status
 <td>
 {{ registration.unit.name }}
 </td>
+
 <td>
 
-{% if registration.is_active %}
+{% if registration.status == registration.REGISTERED %}
+
 <span class="badge bg-success">
-Active
+{{ registration.get_status_display }}
+</span>
+
+{% elif registration.status == registration.DROPPED %}
+
+<span class="badge bg-danger">
+{{ registration.get_status_display }}
 </span>
 
 {% else %}
 
 <span class="badge bg-secondary">
-Dropped
+{{ registration.get_status_display }}
 </span>
 
 {% endif %}
+
 </td>
 
 </tr>

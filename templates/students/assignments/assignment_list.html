@@ -43,59 +43,60 @@
 
                 <tbody>
 
-                    {% for item in assignments %}
+    {% for item in assignments %}
 
-                    <tr>
+    <tr>
 
-                        <td>
-                            {{ item.lecturer.get_full_name|default:item.lecturer.username }}
-                        </td>
+        <td>
+            {{ item.lecturer.get_full_name|default:item.lecturer.username }}
+        </td>
 
-                        <td>
-                            {{ item.unit }}
-                        </td>
+        <td>
+            <strong>{{ item.unit_offering.unit.code }}</strong><br>
+            {{ item.unit_offering.unit.name }}
+        </td>
 
-                        <td>
-                            {{ item.academic_year }}
-                        </td>
+        <td>
+            {{ item.unit_offering.academic_year }}
+        </td>
 
-                        <td>
-                            {{ item.semester }}
-                        </td>
+        <td>
+            {{ item.unit_offering.semester }}
+        </td>
 
-                        <td>
-                            {{ item.assigned_by }}
-                        </td>
+        <td>
+            {{ item.assigned_by }}
+        </td>
 
-                        <td>
+        <td>
 
-                            <a href="{% url 'lecturer_assignment_update' item.pk %}"
-                               class="btn btn-sm btn-warning">
-                                Edit
-                            </a>
+            <a href="{% url 'lecturer_assignment_update' item.pk %}"
+               class="btn btn-sm btn-warning">
+                Edit
+            </a>
 
-                            <a href="{% url 'lecturer_assignment_delete' item.pk %}"
-                               class="btn btn-sm btn-danger">
-                                Delete
-                            </a>
+            <a href="{% url 'lecturer_assignment_delete' item.pk %}"
+               class="btn btn-sm btn-danger">
+                Delete
+            </a>
 
-                        </td>
+        </td>
 
-                    </tr>
+    </tr>
 
-                    {% empty %}
+    {% empty %}
 
-                    <tr>
+    <tr>
 
-                        <td colspan="6" class="text-center">
-                            No assignments found.
-                        </td>
+        <td colspan="6" class="text-center">
+            No assignments found.
+        </td>
 
-                    </tr>
+    </tr>
 
-                    {% endfor %}
+    {% endfor %}
 
-                </tbody>
+</tbody>
 
             </table>
 

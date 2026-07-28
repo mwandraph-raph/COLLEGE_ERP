@@ -1,0 +1,81 @@
+{% load student_extras %}
+<!-- EXAMINATIONS -->
+
+{% if user.is_superuser or user|has_group:"Exam Officer" or user|has_group:"Lecturer" or perms.students.view_lecturerassignment %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        Examinations
+
+    </a>
+
+
+    <ul class="dropdown-menu">
+
+
+        {% if user.is_superuser or perms.students.view_lecturerassignment %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'lecturer_assignment_list' %}">
+
+                Lecturer Assignments
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+
+        {% if user|has_group:"Lecturer" %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'my_units' %}">
+
+                My Units
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+
+        {% if user.is_superuser or user|has_group:"Exam Officer" %}
+
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'approval_queue' %}">
+
+                Approval Queue
+
+            </a>
+
+        </li>
+
+
+        {% endif %}
+
+
+    </ul>
+
+</li>
+
+{% endif %}

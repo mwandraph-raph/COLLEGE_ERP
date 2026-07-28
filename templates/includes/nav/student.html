@@ -1,0 +1,67 @@
+<!-- STUDENT PORTAL -->
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        My Academics
+
+    </a>
+
+    <ul class="dropdown-menu">
+
+        {% if user.student_profile.enrollments.exists %}
+
+            <li>
+
+                <a class="dropdown-item"
+                   href="{% url 'register_units' user.student_profile.enrollments.last.pk %}">
+
+                    Register Units
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a class="dropdown-item"
+                   href="{% url 'my_registrations' %}">
+
+                    My Registrations
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a class="dropdown-item"
+                   href="{% url 'student_results' %}">
+
+                    My Results
+
+                </a>
+
+            </li>
+
+        {% else %}
+
+            <li>
+
+                <span class="dropdown-item text-muted">
+
+                    No Active Enrollment
+
+                </span>
+
+            </li>
+
+        {% endif %}
+
+    </ul>
+
+</li>

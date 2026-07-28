@@ -6,97 +6,222 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
 
-    <h2 class="mb-0">
-        My Registered Units
-    </h2>
+        <h2 class="mb-0">
+            My Registered Units
+        </h2>
 
-    <a href="{% url 'home' %}"
-       class="btn btn-secondary">
+        <a href="{% url 'home' %}"
+           class="btn btn-secondary">
 
-        Back to Dashboard
+            Back to Dashboard
 
-    </a>
+        </a>
 
-</div>
-    <table class="table table-bordered table-striped">
+    </div>
 
-        <thead>
+    <div class="row mb-3">
 
-            <tr>
+        <div class="col-md-6">
 
-                <th>Academic Year</th>
+            <div class="card border-success">
 
-                <th>Semester</th>
+                <div class="card-body text-center">
 
-                <th>Unit</th>
+                    <h6 class="text-success">
+                        Active Registrations
+                    </h6>
 
-                <th>Action</th>
+                    <h3>
+                        {{ active_count }}
+                    </h3>
 
-            </tr>
+                </div>
 
-        </thead>
+            </div>
 
-        <tbody>
+        </div>
 
-        {% for registration in registrations %}
+        <div class="col-md-6">
 
-        <tr>
+            <div class="card border-danger">
 
-            <td>
-                {{ registration.enrollment.academic_year }}
-            </td>
+                <div class="card-body text-center">
 
-            <td>
-                {{ registration.enrollment.semester }}
-            </td>
+                    <h6 class="text-danger">
+                        Dropped Units
+                    </h6>
 
-            <td>
-                {{ registration.unit }}
-            </td>
+                    <h3>
+                        {{ dropped_count }}
+                    </h3>
 
-            <td>
+                </div>
 
-                {% if registration.enrollment.academic_year.registration_open %}
+            </div>
 
-                <a
-                    href="{% url 'drop_registration' registration.id %}"
-                    class="btn btn-danger btn-sm">
+        </div>
 
-                    Drop
+    </div>
 
-                </a>
+    <div class="card shadow">
 
-                {% else %}
+        <div class="card-body">
 
-                <span class="badge bg-secondary">
+            <table class="table table-bordered table-striped align-middle">
 
-                    Locked
+                <thead>
 
-                </span>
+                    <tr>
 
-                {% endif %}
+                        <th>Academic Year</th>
 
-            </td>
+                        <th>Semester</th>
 
-        </tr>
+                        <th>Unit</th>
 
-        {% empty %}
+                        <th>Status</th>
 
-        <tr>
+                        <th>Action</th>
 
-            <td colspan="4">
+                    </tr>
 
-                No registrations found.
+                </thead>
 
-            </td>
+                <tbody>
 
-        </tr>
+                {% for registration in registrations %}
 
-        {% endfor %}
+                <tr>
 
-        </tbody>
+                    <td>
 
-    </table>
+                        {{ registration.enrollment.academic_year }}
+
+                    </td>
+
+                    <td>
+
+                        {{ registration.enrollment.semester }}
+
+                    </td>
+
+                    <td>
+
+                        <strong>
+
+                            {{ registration.unit }}
+
+                        </strong>
+
+                        {% if registration.status == "DROPPED" %}
+
+                            <br>
+
+                            <small class="text-muted">
+
+                                Dropped:
+                                {{ registration.dropped_at|date:"d M Y H:i" }}
+
+                            </small>
+
+                            {% if registration.drop_reason %}
+
+                                <br>
+
+                                <small class="text-danger">
+
+                                    Reason:
+                                    {{ registration.drop_reason }}
+
+                                </small>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if registration.status == "REGISTERED" %}
+
+                            <span class="badge bg-success">
+
+                                Registered
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+
+                                Dropped
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if registration.status == "REGISTERED" %}
+
+                            {% if registration.enrollment.academic_year.registration_open %}
+
+                                <a href="{% url 'drop_registration' registration.id %}"
+                                   class="btn btn-danger btn-sm">
+
+                                    Drop
+
+                                </a>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+
+                                    Registration Locked
+
+                                </span>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            <span class="text-muted">
+
+                                No Action
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="5"
+                        class="text-center">
+
+                        No registrations found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>
 

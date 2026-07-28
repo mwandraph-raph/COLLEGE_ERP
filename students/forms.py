@@ -14,6 +14,7 @@ from .models import (
     SemesterEnrollment,
     Registration,
     LecturerAssignment,
+    UnitOffering,
 )
 
 class ApplicantForm(forms.ModelForm):
@@ -853,12 +854,19 @@ class SemesterEnrollmentForm(forms.ModelForm):
         model = SemesterEnrollment
 
         fields = [
+            "student",
             "programme_level",
             "status",
             "remarks",
         ]
 
         widgets = {
+
+            "student": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
 
             "programme_level": forms.Select(
                 attrs={
@@ -884,12 +892,43 @@ class SemesterEnrollmentForm(forms.ModelForm):
 
         super().__init__(*args, **kwargs)
 
-        if self.instance.pk:
+        self.fields["programme_level"].queryset = (
+            ProgrammeLevel.objects.none()
+        )
+
+        if "student" in self.data:
+
+            try:
+
+                student = Student.objects.get(
+                    pk=self.data.get("student")
+                )
+
+                self.fields["programme_level"].queryset = (
+                    ProgrammeLevel.objects.filter(
+                        programme=student.programme,
+                        is_active=True,
+                    ).order_by(
+                        "progression_order"
+                    )
+                )
+
+            except (
+                Student.DoesNotExist,
+                ValueError,
+                TypeError,
+            ):
+                pass
+
+        elif self.instance.pk:
 
             self.fields["programme_level"].queryset = (
                 ProgrammeLevel.objects.filter(
-                    programme=self.instance.programme
-                ).order_by("progression_order")
+                    programme=self.instance.programme,
+                    is_active=True,
+                ).order_by(
+                    "progression_order"
+                )
             )
 
 class RegistrationForm(forms.ModelForm):
@@ -1021,9 +1060,7 @@ class LecturerAssignmentForm(forms.ModelForm):
 
         fields = [
             "lecturer",
-            "unit",
-            "academic_year",
-            "semester",
+            "unit_offering",
         ]
 
         widgets = {
@@ -1034,19 +1071,7 @@ class LecturerAssignmentForm(forms.ModelForm):
                 }
             ),
 
-            "unit": forms.Select(
-                attrs={
-                    "class": "form-select"
-                }
-            ),
-
-            "academic_year": forms.Select(
-                attrs={
-                    "class": "form-select"
-                }
-            ),
-
-            "semester": forms.Select(
+            "unit_offering": forms.Select(
                 attrs={
                     "class": "form-select"
                 }
@@ -1069,36 +1094,20 @@ class LecturerAssignmentForm(forms.ModelForm):
             )
         )
 
-        # Active units only
-        self.fields["unit"].queryset = (
-            Unit.objects.filter(
-                is_active=True
-            )
-            .select_related(
+        # Active Unit Offerings
+        self.fields["unit_offering"].queryset = (
+            UnitOffering.objects.select_related(
+                "academic_year",
+                "semester",
                 "programme_level",
                 "programme_level__programme",
-                "programme_level__programme__course",
+                "unit",
             )
             .order_by(
-                "programme_level__programme__name",
+                "-academic_year__year_name",
+                "semester__semester_name",
                 "programme_level__progression_order",
-                "code",
-            )
-        )
-
-        # Active academic years first
-        self.fields["academic_year"].queryset = (
-            AcademicYear.objects.order_by(
-                "-is_active",
-                "-year_name",
-            )
-        )
-
-        # Active semester first
-        self.fields["semester"].queryset = (
-            Semester.objects.order_by(
-                "-is_active",
-                "semester_name",
+                "unit__code",
             )
         )
 
@@ -1107,17 +1116,13 @@ class LecturerAssignmentForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         lecturer = cleaned_data.get("lecturer")
-        unit = cleaned_data.get("unit")
-        academic_year = cleaned_data.get("academic_year")
-        semester = cleaned_data.get("semester")
+        unit_offering = cleaned_data.get("unit_offering")
 
-        if all([lecturer, unit, academic_year, semester]):
+        if lecturer and unit_offering:
 
             exists = LecturerAssignment.objects.filter(
                 lecturer=lecturer,
-                unit=unit,
-                academic_year=academic_year,
-                semester=semester,
+                unit_offering=unit_offering,
             )
 
             if self.instance.pk:
@@ -1126,32 +1131,95 @@ class LecturerAssignmentForm(forms.ModelForm):
             if exists.exists():
 
                 raise forms.ValidationError(
-                    "This lecturer has already been assigned to this unit for the selected academic year and semester."
+                    "This lecturer has already been assigned to this unit offering."
                 )
 
         return cleaned_data
 
-
-class SemesterEnrollmentForm(forms.ModelForm):
+class UnitOfferingForm(forms.ModelForm):
 
     class Meta:
-        model = SemesterEnrollment
+
+        model = UnitOffering
 
         fields = [
-            "student",
-            "programme",
-            "programme_level",
             "academic_year",
             "semester",
-            "status",
-            "remarks",
+            "programme_level",
+            "unit",
+            "is_active",
         ]
 
         widgets = {
 
-            "remarks": forms.Textarea(
+            "academic_year": forms.Select(
                 attrs={
-                    "rows":3
+                    "class": "form-select"
                 }
-            )
+            ),
+
+            "semester": forms.Select(
+                attrs={
+                    "class": "form-select"
+                }
+            ),
+
+            "programme_level": forms.Select(
+                attrs={
+                    "class": "form-select"
+                }
+            ),
+
+            "unit": forms.Select(
+                attrs={
+                    "class": "form-select"
+                }
+            ),
+
+            "is_active": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input"
+                }
+            ),
         }
+
+class BulkUnitOfferingForm(forms.Form):
+    academic_year = forms.ModelChoiceField(
+        queryset=AcademicYear.objects.all().order_by("-year_name"),
+        label="Academic Year",
+    )
+
+    semester = forms.ModelChoiceField(
+        queryset=Semester.objects.select_related("academic_year").order_by(
+            "academic_year__year_name",
+            "semester_name",
+        ),
+        label="Semester",
+    )
+
+    programme_level = forms.ModelChoiceField(
+        queryset=ProgrammeLevel.objects.select_related(
+            "programme",
+        ).order_by(
+            "programme__name",
+            "progression_order",
+        ),
+        label="Programme Level",
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        academic_year = cleaned_data.get("academic_year")
+        semester = cleaned_data.get("semester")
+
+        if (
+            academic_year
+            and semester
+            and semester.academic_year != academic_year
+        ):
+            raise forms.ValidationError(
+                "The selected semester does not belong to the selected academic year."
+            )
+
+        return cleaned_data

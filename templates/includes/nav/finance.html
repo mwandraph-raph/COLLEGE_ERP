@@ -1,0 +1,209 @@
+<!-- FINANCE -->
+
+{% if perms.finance.view_feecategory or perms.finance.view_studentinvoice or perms.finance.view_payment or user.is_superuser %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        Finance
+
+    </a>
+
+    <ul class="dropdown-menu">
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'finance:dashboard' %}">
+
+                Dashboard
+
+            </a>
+
+        </li>
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+
+            <h6 class="dropdown-header">
+
+                Setup
+
+            </h6>
+
+        </li>
+
+        {% if perms.finance.view_feecategory or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'finance:fee_category_list' %}">
+
+                Fee Categories
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        {% if perms.finance.view_feestructure or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'finance:fee_structure_list' %}">
+
+                Fee Structures
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+
+            <h6 class="dropdown-header">
+
+                Billing
+
+            </h6>
+
+        </li>
+
+        {% if perms.finance.view_studentinvoice or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'finance:invoice_list' %}">
+
+                Student Invoices
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+
+            <h6 class="dropdown-header">
+
+                Collections
+
+            </h6>
+
+        </li>
+
+        {% if perms.finance.view_payment or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'finance:payment_list' %}">
+
+                Payments
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        {% if perms.finance.view_receipt or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'finance:receipt_list' %}">
+
+                Receipts
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+
+            <h6 class="dropdown-header">
+
+                Reports
+
+            </h6>
+
+        </li>
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'finance:fee_statement_list' %}">
+
+                Fee Statements
+
+            </a>
+
+        </li>
+
+        {% if perms.finance.change_financesetting or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'finance:settings' %}">
+
+                Finance Settings
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+
+            <h6 class="dropdown-header">
+
+                Clearance
+
+            </h6>
+
+        </li>
+
+        {% if perms.finance.view_financialclearance or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'finance:financial_clearance_list' %}">
+
+                Financial Clearance
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+
+</li>
+
+{% endif %}

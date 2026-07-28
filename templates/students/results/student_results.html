@@ -16,17 +16,13 @@
 
                 <a href="{% url 'home' %}"
                    class="btn btn-secondary btn-sm">
-
                     Back to Dashboard
-
                 </a>
 
                 <button
                     onclick="window.print();"
                     class="btn btn-primary btn-sm">
-
                     Print Result Slip
-
                 </button>
 
             </div>
@@ -35,46 +31,83 @@
 
         <div class="card-body">
 
-            <h5>
-                Student Details
-            </h5>
+            <h5>Student Details</h5>
 
             <hr>
+
+            {% if results %}
+
+            {% with enrollment=results.0.enrollment %}
 
             <div class="row">
 
                 <div class="col-md-6">
 
-                    <p>
-                        <strong>Name:</strong>
-                        {{ student.first_name }}
-                        {{ student.last_name }}
-                    </p>
+                    <table class="table table-borderless table-sm">
+
+                        <tr>
+                            <th width="40%">Name</th>
+                            <td>
+                                {{ student.first_name }}
+                                {{ student.last_name }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Admission No</th>
+                            <td>{{ student.admission_no }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Programme</th>
+                            <td>
+                                {{ enrollment.programme_level.programme.name }}
+                            </td>
+                        </tr>
+
+                    </table>
 
                 </div>
 
                 <div class="col-md-6">
 
-                    <p>
-                        <strong>Admission No:</strong>
-                        {{ student.admission_no }}
-                    </p>
+                    <table class="table table-borderless table-sm">
+
+                        <tr>
+                            <th width="40%">Programme Level</th>
+                            <td>
+                                {{ enrollment.programme_level }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Semester</th>
+                            <td>
+                                {{ enrollment.semester }}
+                            </td>
+                        </tr>
+
+                    </table>
 
                 </div>
 
             </div>
 
+            {% endwith %}
+
+            {% endif %}
+
             <table class="table table-bordered table-striped mt-4">
 
-                <thead>
+                <thead class="table-dark">
 
                     <tr>
 
-                        <th>Unit Code</th>
+                        <th width="15%">Unit Code</th>
                         <th>Unit Name</th>
-                        <th>Score</th>
-                        <th>Grade</th>
-                        <th>Remarks</th>
+                        <th width="12%">Score</th>
+                        <th width="10%">Grade</th>
+                        <th width="15%">Remarks</th>
 
                     </tr>
 
@@ -87,11 +120,11 @@
                     <tr>
 
                         <td>
-                            {{ result.unit.code }}
+                            {{ result.unit_offering.unit.code }}
                         </td>
 
                         <td>
-                            {{ result.unit.name }}
+                            {{ result.unit_offering.unit.name }}
                         </td>
 
                         <td>
@@ -99,7 +132,7 @@
                         </td>
 
                         <td>
-                            {{ result.grade }}
+                            <strong>{{ result.grade }}</strong>
                         </td>
 
                         <td>
@@ -112,10 +145,9 @@
 
                     <tr>
 
-                        <td colspan="5"
-                            class="text-center">
+                        <td colspan="5" class="text-center">
 
-                            No approved results available.
+                            No Published results available.
 
                         </td>
 
@@ -127,9 +159,51 @@
 
             </table>
 
+            {% if results %}
+
+            <div class="row mt-4">
+
+                <div class="col-md-6">
+
+                    <strong>Total Units:</strong>
+                    {{ results|length }}
+
+                </div>
+
+                <div class="col-md-6 text-end">
+
+                    <strong>Date Printed:</strong>
+                    {% now "d M Y H:i" %}
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div class="row mt-5">
+
+                <div class="col-md-6 text-center">
+
+                    ___________________________<br>
+
+                    Examination Officer
+
+                </div>
+
+                <div class="col-md-6 text-center">
+
+                    ___________________________<br>
+
+                    Official Stamp
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
         </div>
-
-
 
     </div>
 

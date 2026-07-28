@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 from django.core.exceptions import ValidationError
+
 # Create your models here.
 class Applicant(models.Model):
 
@@ -964,11 +965,22 @@ class Registration(models.Model):
         (SUPPLEMENTARY, "Supplementary"),
     ]
 
+
+    REGISTERED = "REGISTERED"
+    DROPPED = "DROPPED"
+
+    STATUS_CHOICES = [
+        (REGISTERED, "Registered"),
+        (DROPPED, "Dropped"),
+    ]
+
+
     enrollment = models.ForeignKey(
         SemesterEnrollment,
         on_delete=models.PROTECT,
         related_name="registrations",
     )
+
 
     unit = models.ForeignKey(
         Unit,
@@ -976,20 +988,51 @@ class Registration(models.Model):
         related_name="registrations",
     )
 
+
     registration_type = models.CharField(
         max_length=20,
         choices=REGISTRATION_TYPES,
         default=NORMAL,
     )
 
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=REGISTERED,
+    )
+
+
     registration_date = models.DateField(
         auto_now_add=True,
     )
+
+
+    dropped_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+
+    dropped_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="dropped_registrations",
+    )
+
+
+    drop_reason = models.TextField(
+        blank=True,
+    )
+
 
     remarks = models.CharField(
         max_length=255,
         blank=True,
     )
+
 
     class Meta:
 
@@ -1000,24 +1043,9 @@ class Registration(models.Model):
         unique_together = (
             "enrollment",
             "unit",
+            "registration_type",
         )
 
-    def clean(self):
-
-        # Normal registrations must belong to the student's programme level
-        if (
-            self.registration_type == self.NORMAL and
-            self.unit.programme_level != self.enrollment.programme_level
-        ):
-            raise ValidationError(
-                "Unit does not belong to the student's current programme level."
-            )
-
-    def save(self, *args, **kwargs):
-
-        self.full_clean()
-
-        super().save(*args, **kwargs)
 
     def __str__(self):
 
@@ -1025,88 +1053,126 @@ class Registration(models.Model):
             f"{self.enrollment.student.admission_no} - "
             f"{self.unit.code}"
         )
-    
+
+class UnitOffering(models.Model):
+
+    academic_year = models.ForeignKey(
+        AcademicYear,
+        on_delete=models.PROTECT,
+        related_name="unit_offerings",
+    )
+
+    semester = models.ForeignKey(
+        Semester,
+        on_delete=models.PROTECT,
+        related_name="unit_offerings",
+    )
+
+    unit = models.ForeignKey(
+        Unit,
+        on_delete=models.PROTECT,
+        related_name="offerings",
+    )
+
+    programme_level = models.ForeignKey(
+        ProgrammeLevel,
+        on_delete=models.PROTECT,
+        related_name="unit_offerings",
+    )
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+
+        unique_together = (
+            "academic_year",
+            "semester",
+            "unit",
+            "programme_level",
+        )
+
+        ordering = [
+            "unit__code"
+        ]
+
+    def __str__(self):
+
+        return (
+            f"{self.unit} - "
+            f"{self.academic_year} - "
+            f"{self.semester}"
+        )
 
 class LecturerAssignment(models.Model):
 
     lecturer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="teaching_assignments",
-    )
-
-    unit = models.ForeignKey(
-        Unit,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="lecturer_assignments",
+        limit_choices_to={"groups__name": "Lecturer"},
     )
 
-    academic_year = models.ForeignKey(
-        AcademicYear,
-        on_delete=models.CASCADE,
-    )
-
-    semester = models.ForeignKey(
-        Semester,
-        on_delete=models.CASCADE,
+    unit_offering = models.ForeignKey(
+         "UnitOffering",
+        on_delete=models.PROTECT,
+        related_name="lecturer_assignments",
+        null=True,
+        blank=True,
     )
 
     assigned_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="unit_assignments_created",
+        on_delete=models.PROTECT,
+        related_name="created_lecturer_assignments",
     )
 
     assigned_at = models.DateTimeField(
         auto_now_add=True,
     )
 
-    is_active = models.BooleanField(
-        default=True,
-    )
-
     class Meta:
 
         ordering = [
-            "lecturer",
-            "unit__code",
+            "-unit_offering__academic_year__year_name",
+            "unit_offering__semester__semester_name",
+            "unit_offering__programme_level__progression_order",
+            "unit_offering__unit__code",
         ]
 
-        unique_together = (
-            "lecturer",
-            "unit",
-            "academic_year",
-            "semester",
-        )
-
-    def clean(self):
-
-        if self.semester.academic_year != self.academic_year:
-            raise ValidationError(
-                "Semester does not belong to the selected Academic Year."
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "lecturer",
+                    "unit_offering",
+                ],
+                name="unique_lecturer_unit_offering",
             )
+        ]
 
-    def save(self, *args, **kwargs):
-
-        self.full_clean()
-
-        super().save(*args, **kwargs)
+        verbose_name = "Lecturer Assignment"
+        verbose_name_plural = "Lecturer Assignments"
 
     def __str__(self):
 
         return (
-            f"{self.lecturer.get_full_name() or self.lecturer.username} - "
-            f"{self.unit.code}"
+            f"{self.lecturer.get_full_name()} - "
+            f"{self.unit_offering.unit.code} "
+            f"({self.unit_offering.academic_year} - "
+            f"{self.unit_offering.semester})"
         )
-    
 
 class ResultBatch(models.Model):
 
     DRAFT = "draft"
     SUBMITTED = "submitted"
     APPROVED = "approved"
+    PUBLISHED = "published"
     RETURNED = "returned"
     UNLOCKED = "unlocked"
 
@@ -1114,24 +1180,13 @@ class ResultBatch(models.Model):
         (DRAFT, "Draft"),
         (SUBMITTED, "Submitted"),
         (APPROVED, "Approved"),
+        (PUBLISHED, "Published"),
         (RETURNED, "Returned"),
         (UNLOCKED, "Unlocked"),
     ]
 
-    academic_year = models.ForeignKey(
-        AcademicYear,
-        on_delete=models.PROTECT,
-        related_name="result_batches",
-    )
-
-    semester = models.ForeignKey(
-        Semester,
-        on_delete=models.PROTECT,
-        related_name="result_batches",
-    )
-
-    unit = models.ForeignKey(
-        Unit,
+    unit_offering = models.ForeignKey(
+        UnitOffering,
         on_delete=models.PROTECT,
         related_name="result_batches",
     )
@@ -1174,6 +1229,19 @@ class ResultBatch(models.Model):
         blank=True,
     )
 
+    published_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="published_result_batches",
+    )
+
+    published_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
     remarks = models.TextField(
         blank=True,
     )
@@ -1193,23 +1261,16 @@ class ResultBatch(models.Model):
         ]
 
         unique_together = (
-            "academic_year",
-            "semester",
-            "unit",
+            "unit_offering",
+            "lecturer_assignment",
         )
 
     def clean(self):
 
-        if self.semester.academic_year != self.academic_year:
+        if self.lecturer_assignment.unit_offering != self.unit_offering:
 
             raise ValidationError(
-                "Semester does not belong to the selected Academic Year."
-            )
-
-        if self.lecturer_assignment.unit != self.unit:
-
-            raise ValidationError(
-                "Lecturer Assignment does not match selected Unit."
+                "Lecturer Assignment does not match selected Unit Offering."
             )
 
     def save(self, *args, **kwargs):
@@ -1221,21 +1282,13 @@ class ResultBatch(models.Model):
     def __str__(self):
 
         return (
-            f"{self.unit.code} - "
-            f"{self.academic_year} - "
-            f"{self.semester.semester_name}"
+            f"{self.unit_offering.unit.code} - "
+            f"{self.unit_offering.academic_year} - "
+            f"{self.unit_offering.semester.semester_name}"
         )
 
 
 class Result(models.Model):
-
-    batch = models.ForeignKey(
-        ResultBatch,
-        on_delete=models.PROTECT,
-        related_name="results",
-        null=True,
-        blank=True,
-    )
 
     enrollment = models.ForeignKey(
         SemesterEnrollment,
@@ -1243,32 +1296,59 @@ class Result(models.Model):
         related_name="results",
     )
 
-    unit = models.ForeignKey(
-        Unit,
-        on_delete=models.CASCADE,
+    unit_offering = models.ForeignKey(
+        UnitOffering,
+        on_delete=models.PROTECT,
         related_name="results",
     )
+
+    batch = models.ForeignKey(
+        ResultBatch,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="results",
+    )
+
+    entered_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="entered_results",
+    )
+
+    # ==========================
+    # Assessment Marks
+    # ==========================
 
     cat1 = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        default=0,
+        null=True,
+        blank=True,
     )
 
     cat2 = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        default=0,
+        null=True,
+        blank=True,
     )
 
     exam = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        default=0,
+        null=True,
+        blank=True,
     )
 
+    # ==========================
+    # Computed Fields
+    # ==========================
+
     total = models.DecimalField(
-        max_digits=5,
+        max_digits=6,
         decimal_places=2,
         default=0,
         editable=False,
@@ -1286,13 +1366,6 @@ class Result(models.Model):
         editable=False,
     )
 
-    entered_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-
     created_at = models.DateTimeField(
         auto_now_add=True,
     )
@@ -1304,28 +1377,73 @@ class Result(models.Model):
     class Meta:
 
         ordering = [
-            "unit__code",
+            "enrollment__student__admission_no",
+            "unit_offering__unit__code",
         ]
 
         unique_together = (
             "enrollment",
-            "unit",
+            "unit_offering",
         )
+
+    def calculate_grade(self):
+
+        total = (
+            (self.cat1 or 0)
+            + (self.cat2 or 0)
+            + (self.exam or 0)
+        )
+
+        if total >= 70:
+            return "A"
+
+        elif total >= 60:
+            return "B"
+
+        elif total >= 50:
+            return "C"
+
+        elif total >= 40:
+            return "D"
+
+        elif total >= 30:
+            return "E"
+
+        return "F"
+
+    def calculate_remarks(self):
+
+        if self.grade in ["A", "B", "C", "D", "E"]:
+            return "PASS"
+
+        return "FAIL"
 
     def clean(self):
 
-        registration_exists = Registration.objects.filter(
-            enrollment=self.enrollment,
-            unit=self.unit,
-        ).exists()
+        for field in ["cat1", "cat2", "exam"]:
 
-        if not registration_exists:
+            value = getattr(self, field)
 
-            raise ValidationError(
-                "Student is not registered for this unit."
-            )
+            if value is None:
+                continue
 
-    def calculate_grade(self):
+            if value < 0:
+                raise ValidationError(
+                    {
+                        field: "Marks cannot be less than zero."
+                    }
+                )
+
+            if value > 100:
+                raise ValidationError(
+                    {
+                        field: "Marks cannot exceed 100."
+                    }
+                )
+
+    def save(self, *args, **kwargs):
+
+        self.full_clean()
 
         self.total = (
             (self.cat1 or 0)
@@ -1333,36 +1451,9 @@ class Result(models.Model):
             + (self.exam or 0)
         )
 
-        if self.total >= 70:
+        self.grade = self.calculate_grade()
 
-            self.grade = "A"
-            self.remarks = "PASS"
-
-        elif self.total >= 60:
-
-            self.grade = "B"
-            self.remarks = "PASS"
-
-        elif self.total >= 50:
-
-            self.grade = "C"
-            self.remarks = "PASS"
-
-        elif self.total >= 40:
-
-            self.grade = "D"
-            self.remarks = "PASS"
-
-        else:
-
-            self.grade = "E"
-            self.remarks = "FAIL"
-
-    def save(self, *args, **kwargs):
-
-        self.full_clean()
-
-        self.calculate_grade()
+        self.remarks = self.calculate_remarks()
 
         super().save(*args, **kwargs)
 
@@ -1370,7 +1461,7 @@ class Result(models.Model):
 
         return (
             f"{self.enrollment.student.admission_no} - "
-            f"{self.unit.code}"
+            f"{self.unit_offering.unit.code}"
         )
 
 
@@ -1410,5 +1501,79 @@ class ResultBatchLog(models.Model):
 
         return (
             f"{self.batch.unit.code} - "
+            f"{self.action}"
+        )
+class ProgressionLog(models.Model):
+
+    PROMOTED = "PROMOTED"
+    COMPLETED = "COMPLETED"
+    BLOCKED = "BLOCKED"
+
+    ACTION_CHOICES = [
+        (PROMOTED, "Promoted"),
+        (COMPLETED, "Completed Programme"),
+        (BLOCKED, "Blocked"),
+    ]
+
+
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.PROTECT,
+        related_name="progression_logs",
+    )
+
+
+    from_enrollment = models.ForeignKey(
+        SemesterEnrollment,
+        on_delete=models.PROTECT,
+        related_name="progression_from_logs",
+    )
+
+
+    to_enrollment = models.ForeignKey(
+        SemesterEnrollment,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="progression_to_logs",
+    )
+
+
+    action = models.CharField(
+        max_length=20,
+        choices=ACTION_CHOICES,
+    )
+
+
+    reason = models.TextField(
+        blank=True,
+    )
+
+
+    performed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="progression_actions",
+    )
+
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+
+    class Meta:
+
+        ordering = [
+            "-created_at",
+        ]
+
+
+    def __str__(self):
+
+        return (
+            f"{self.student.admission_no} - "
             f"{self.action}"
         )

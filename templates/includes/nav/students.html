@@ -1,0 +1,85 @@
+<!-- STUDENTS -->
+
+{% if perms.students.view_student or perms.students.view_semesterenrollment or perms.students.view_registration or user.is_superuser %}
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown">
+
+        Students
+
+    </a>
+
+    <ul class="dropdown-menu">
+
+        {% if perms.students.view_student or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'student_list' %}">
+
+                Students
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_semesterenrollment or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'semester_enrollment_list' %}">
+
+                Semester Enrollments
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_registration or user.is_superuser %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'registration_list' %}">
+
+                Unit Registrations
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        {% if perms.students.view_semesterenrollment %}
+
+        <li>
+
+            <a class="dropdown-item"
+               href="{% url 'progression_list' %}">
+
+                Student Progression
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+
+</li>
+
+{% endif %}
