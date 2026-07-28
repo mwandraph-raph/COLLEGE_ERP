@@ -3,7 +3,7 @@ Student academic services.
 """
 
 from django.db import transaction
-
+from students.models import Result
 from students.models import (
     Semester,
     SemesterEnrollment,
@@ -83,6 +83,77 @@ def get_next_academic_period(enrollment):
     )
 
 
+def validate_results_exist(enrollment):
+    """
+    Ensure every registered unit has a result.
+    """
+
+    registrations = (
+        enrollment.registrations
+        .filter(
+            status="REGISTERED",
+        )
+    )
+
+    total_registered = registrations.count()
+
+    total_results = Result.objects.filter(
+        enrollment=enrollment,
+    ).count()
+
+    if total_registered != total_results:
+
+        raise ValueError(
+            "Some registered units do not have results."
+        )
+
+
+def validate_results_published(enrollment):
+    """
+    Ensure all results have been published.
+    """
+
+    unpublished = Result.objects.filter(
+        enrollment=enrollment,
+    ).exclude(
+        batch__status="published",
+    )
+
+    if unpublished.exists():
+
+        raise ValueError(
+            "Results have not yet been published."
+        )
+
+
+def validate_passed_units(enrollment):
+    """
+    Ensure the student has passed every registered unit.
+    """
+
+    failed_results = Result.objects.filter(
+        enrollment=enrollment,
+        remarks="FAIL",
+    )
+
+    if failed_results.exists():
+
+        failed_units = ", ".join(
+            failed_results.values_list(
+                "unit_offering__unit__code",
+                flat=True,
+            )
+        )
+
+        raise ValueError(
+            (
+                "Student cannot progress. "
+                "Failed units: "
+                f"{failed_units}."
+            )
+        )
+
+
 @transaction.atomic
 def progress_student(
     enrollment,
@@ -93,6 +164,25 @@ def progress_student(
 
     Validation will be added later.
     """
+    validate_results_exist(
+        enrollment
+    )
+
+    validate_results_published(
+    enrollment
+    )
+
+    validate_results_exist(
+    enrollment
+    )
+
+    validate_results_published(
+        enrollment
+    )
+
+    validate_passed_units(
+        enrollment
+    )
 
     current_level = (
         enrollment.programme_level
