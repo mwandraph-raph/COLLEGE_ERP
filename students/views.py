@@ -72,7 +72,11 @@ from .forms import (
     UnitOfferingForm,
     BulkUnitOfferingForm,
 )
-from students.services import progress_student as progress_student_service
+from students.services import (
+    progress_student as progress_student_service,
+    get_outstanding_supplementary_units,
+)
+
 
 # Create your views here.
 @login_required
@@ -2099,7 +2103,10 @@ def register_units(request, pk):
         pk=pk,
     )
 
-    is_student = hasattr(request.user, "student_profile")
+    is_student = hasattr(
+        request.user,
+        "student_profile",
+    )
 
     # ----------------------------------------
     # Student must be enrolled
@@ -2109,7 +2116,7 @@ def register_units(request, pk):
 
         messages.error(
             request,
-            "Only enrolled students can register units."
+            "Only enrolled students can register units.",
         )
 
         if is_student:
@@ -2121,14 +2128,14 @@ def register_units(request, pk):
         )
 
     # ----------------------------------------
-    # Registration window must be open
+    # Registration window
     # ----------------------------------------
 
     if not enrollment.academic_year.registration_open:
 
         messages.error(
             request,
-            "Unit registration is currently closed."
+            "Unit registration is currently closed.",
         )
 
         if is_student:
@@ -2140,7 +2147,7 @@ def register_units(request, pk):
         )
 
     # ----------------------------------------
-    # Financial eligibility
+    # Financial Clearance
     # ----------------------------------------
 
     clearance = getattr(
@@ -2149,11 +2156,11 @@ def register_units(request, pk):
         None,
     )
 
-    if not clearance:
+    if clearance is None:
 
         messages.error(
             request,
-            "Financial clearance has not been processed for this semester."
+            "Financial clearance has not been processed.",
         )
 
         if is_student:
@@ -2168,7 +2175,7 @@ def register_units(request, pk):
 
         messages.error(
             request,
-            "You have not met the financial requirements for unit registration."
+            "You have not met the financial requirements for registration.",
         )
 
         if is_student:
@@ -2180,7 +2187,7 @@ def register_units(request, pk):
         )
 
     # ----------------------------------------
-    # Units offered
+    # Normal Units Offered
     # ----------------------------------------
 
     available_units = (
@@ -2199,18 +2206,31 @@ def register_units(request, pk):
     )
 
     # ----------------------------------------
+    # Outstanding Supplementary Units
+    # (Only if offered this semester)
+    # ----------------------------------------
+
+    supplementary_units = (
+        get_outstanding_supplementary_units(
+            enrollment
+        )
+    )
+
+    # ----------------------------------------
     # Save Registration
     # ----------------------------------------
 
     if request.method == "POST":
 
-        unit_ids = request.POST.getlist("units")
+        unit_ids = request.POST.getlist(
+            "units"
+        )
 
         if not unit_ids:
 
             messages.error(
                 request,
-                "Please select at least one unit before registering."
+                "Please select at least one normal unit.",
             )
 
             return redirect(
@@ -2223,45 +2243,92 @@ def register_units(request, pk):
 
         with transaction.atomic():
 
-            selected_offerings = available_units.filter(
-                unit_id__in=unit_ids
+            # -----------------------------
+            # NORMAL UNITS
+            # -----------------------------
+
+            selected_offerings = (
+                available_units.filter(
+                    unit_id__in=unit_ids,
+                )
             )
 
             for offering in selected_offerings:
 
-                _, created = Registration.objects.get_or_create(
-                    enrollment=enrollment,
-                    unit=offering.unit,
-                    defaults={
-                        "registration_type": Registration.NORMAL,
-                    },
+                _, created = (
+                    Registration.objects.get_or_create(
+                        enrollment=enrollment,
+                        unit=offering.unit,
+                        registration_type=Registration.NORMAL,
+                        defaults={
+                            "status": Registration.REGISTERED,
+                        },
+                    )
                 )
 
                 if created:
+
                     registered += 1
+
                 else:
+
+                    duplicates += 1
+
+            # -----------------------------
+            # AUTOMATIC SUPPLEMENTARIES
+            # -----------------------------
+
+            for unit in supplementary_units:
+
+                _, created = (
+                    Registration.objects.get_or_create(
+                        enrollment=enrollment,
+                        unit=unit,
+                        registration_type=Registration.SUPPLEMENTARY,
+                        defaults={
+                            "status": Registration.REGISTERED,
+                        },
+                    )
+                )
+
+                if created:
+
+                    registered += 1
+
+                else:
+
                     duplicates += 1
 
         if registered:
 
-            messages.success(
-                request,
-                f"{registered} unit(s) registered successfully."
-            )
+            if supplementary_units:
+
+                messages.success(
+                    request,
+                    f"{registered} unit(s) registered successfully. "
+                    f"{len(supplementary_units)} supplementary unit(s) "
+                    f"were added automatically.",
+                )
+
+            else:
+
+                messages.success(
+                    request,
+                    f"{registered} unit(s) registered successfully.",
+                )
 
         elif duplicates:
 
             messages.info(
                 request,
-                "The selected units are already registered."
+                "Selected units have already been registered.",
             )
 
-        # ----------------------------------------
-        # Redirect after registration
-        # ----------------------------------------
-
         if is_student:
-            return redirect("my_registrations")
+
+            return redirect(
+                "my_registrations",
+            )
 
         return redirect(
             "semester_enrollment_detail",
@@ -2269,7 +2336,7 @@ def register_units(request, pk):
         )
 
     # ----------------------------------------
-    # Display registration page
+    # Display Page
     # ----------------------------------------
 
     return render(
@@ -2278,6 +2345,7 @@ def register_units(request, pk):
         {
             "enrollment": enrollment,
             "units": available_units,
+            "supplementary_units": supplementary_units,
         },
     )
 

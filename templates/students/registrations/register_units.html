@@ -4,94 +4,208 @@
 
 <div class="container mt-4">
 
-<div class="card">
+    <div class="card shadow">
 
-<div class="card-header">
+        <div class="card-header bg-primary text-white">
 
-<h4>Register Units</h4>
+            <h4 class="mb-1">
+                Register Units
+            </h4>
 
-<p class="mb-0">
+            <p class="mb-0">
+                <strong>{{ enrollment.student }}</strong><br>
+                {{ enrollment.programme_level }}<br>
+                {{ enrollment.academic_year }} -
+                {{ enrollment.semester }}
+            </p>
 
-<strong>{{ enrollment.student }}</strong><br>
+        </div>
 
-{{ enrollment.programme_level }}
+        <div class="card-body">
 
-</p>
+            <form method="post">
 
-</div>
+                {% csrf_token %}
 
-<div class="card-body">
+                <!-- ================================= -->
+                <!-- Normal Units -->
+                <!-- ================================= -->
 
-<form method="post">
+                <h5 class="mb-3">
+                    Normal Units
+                </h5>
 
-{% csrf_token %}
+                {% if units %}
 
-<table class="table table-striped">
+                <table class="table table-bordered table-striped">
 
-<thead>
+                    <thead class="table-light">
 
-<tr>
+                        <tr>
 
-<th></th>
+                            <th width="40"></th>
 
-<th>Code</th>
+                            <th>Code</th>
 
-<th>Unit</th>
+                            <th>Unit</th>
 
-<th>Credit Hours</th>
+                            <th width="150">
+                                Credit Hours
+                            </th>
 
-</tr>
+                        </tr>
 
-</thead>
+                    </thead>
 
-<tbody>
+                    <tbody>
 
-{% for unit in units %}
+                        {% for offering in units %}
 
-<tr>
+                        <tr>
 
-<td>
+                            <td>
 
-<input
-type="checkbox"
-name="units"
-value="{{ unit.unit.id }}">
+                                <input
+                                    type="checkbox"
+                                    name="units"
+                                    value="{{ offering.unit.id }}">
 
-</td>
+                            </td>
 
-<td>{{ unit.unit.code }}</td>
+                            <td>
 
-<td>{{ unit.unit.name }}</td>
+                                {{ offering.unit.code }}
 
-<td>{{ unit.unit.credit_hours }}</td>
+                            </td>
 
-</tr>
+                            <td>
 
-{% endfor %}
+                                {{ offering.unit.name }}
 
-</tbody>
+                            </td>
 
-</table>
+                            <td>
 
-<button
-class="btn btn-success">
+                                {{ offering.unit.credit_hours }}
 
-Register Selected Units
+                            </td>
 
-</button>
+                        </tr>
 
-<a href="{% url 'semester_enrollment_detail' enrollment.id %}"
-class="btn btn-secondary">
+                        {% endfor %}
 
-Cancel
+                    </tbody>
 
-</a>
+                </table>
 
-</form>
+                {% else %}
 
-</div>
+                <div class="alert alert-warning">
 
-</div>
+                    No normal units are available.
+
+                </div>
+
+                {% endif %}
+
+                <!-- ================================= -->
+                <!-- Supplementary Units -->
+                <!-- ================================= -->
+
+                {% if supplementary_units %}
+
+                    <hr>
+
+                    <h5 class="text-danger">
+
+                    Outstanding Supplementary Units
+                    </h5>
+
+                    {% if supplementary_units %}
+
+                    <div class="alert alert-warning">
+
+                    These units were carried forward automatically because
+                    they were previously failed. They will be registered as
+                    <strong>Supplementary</strong>.
+
+                    </div>
+
+                    <table class="table table-bordered">
+
+                        <thead class="table-danger">
+
+                            <tr>
+
+                                <th>Code</th>
+
+                                <th>Unit</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for unit in supplementary_units %}
+
+                            <tr>
+
+                                <td>
+
+                                    {{ unit.code }}
+
+                                </td>
+
+                                <td>
+
+                                    {{ unit.name }}
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                    {% else %}
+
+                    <div class="alert alert-success">
+
+                    No outstanding supplementary units.
+
+                    </div>
+
+                    {% endif %}
+
+                <div class="mt-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+
+                        Register Selected Units
+
+                    </button>
+
+                    <a
+                        href="{% url 'semester_enrollment_detail' enrollment.id %}"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </div>
 

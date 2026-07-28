@@ -3,7 +3,7 @@ Student academic services.
 """
 
 from django.db import transaction
-from students.models import Result
+from students.models import Result, ResultBatch, Registration
 from students.models import (
     Semester,
     SemesterEnrollment,
@@ -126,32 +126,175 @@ def validate_results_published(enrollment):
         )
 
 
-def validate_passed_units(enrollment):
+def student_has_passed_unit(student, unit):
     """
-    Ensure the student has passed every registered unit.
+    Returns True if the student has a published PASS
+    for the given unit.
     """
 
-    failed_results = Result.objects.filter(
-        enrollment=enrollment,
-        remarks="FAIL",
+    return Result.objects.filter(
+        enrollment__student=student,
+        unit_offering__unit=unit,
+        remarks="PASS",
+        batch__status=ResultBatch.PUBLISHED,
+    ).exists()
+
+
+def get_outstanding_supplementary_units(enrollment):
+    """
+    Returns all failed published units that
+    have not yet been passed.
+
+    These units will automatically be
+    registered as SUPPLEMENTARY in the
+    student's next semester.
+    """
+
+    failed_results = (
+        Result.objects.filter(
+            enrollment__student=enrollment.student,
+            remarks="FAIL",
+            batch__status=ResultBatch.PUBLISHED,
+        )
+        .select_related(
+            "unit_offering__unit",
+        )
+        .order_by(
+            "unit_offering__unit__code",
+        )
     )
 
-    if failed_results.exists():
+    outstanding = []
 
-        failed_units = ", ".join(
-            failed_results.values_list(
-                "unit_offering__unit__code",
-                flat=True,
-            )
-        )
+    processed = set()
 
-        raise ValueError(
-            (
-                "Student cannot progress. "
-                "Failed units: "
-                f"{failed_units}."
-            )
+    for result in failed_results:
+
+        unit = result.unit_offering.unit
+
+        # Prevent duplicate units
+        if unit.id in processed:
+            continue
+
+        processed.add(unit.id)
+
+        # Ignore units already passed later
+        if Result.objects.filter(
+            enrollment__student=enrollment.student,
+            unit_offering__unit=unit,
+            remarks="PASS",
+            batch__status=ResultBatch.PUBLISHED,
+        ).exists():
+            continue
+
+        # Ignore units already registered
+        if Registration.objects.filter(
+            enrollment=enrollment,
+            unit=unit,
+        ).exists():
+            continue
+
+        outstanding.append(unit)
+
+    return outstanding
+
+def get_failed_units(enrollment):
+    """
+    Return all failed published results
+    for one semester enrollment.
+    """
+
+    return (
+        Result.objects.filter(
+            enrollment=enrollment,
+            remarks="FAIL",
+            batch__status=ResultBatch.PUBLISHED,
         )
+        .select_related(
+            "unit_offering__unit",
+        )
+    )
+
+def get_outstanding_units_for_programme_year(student, programme, year):
+    """
+    Returns all units from a programme year that
+    the student has never passed.
+    """
+
+    registrations = (
+        Registration.objects
+        .filter(
+            enrollment__student=student,
+            enrollment__programme=programme,
+            enrollment__programme_level__year=year,
+            status=Registration.REGISTERED,
+        )
+        .select_related("unit")
+        .distinct()
+    )
+
+    outstanding = []
+
+    for registration in registrations:
+
+        if not student_has_passed_unit(
+            student,
+            registration.unit,
+        ):
+            outstanding.append(
+                registration.unit
+            )
+
+    return outstanding
+
+
+def validate_year_boundary_progression(
+    enrollment,
+    next_level,
+):
+    """
+    A student may carry failed units within the
+    same programme year.
+
+    However, before entering the next programme
+    year, every unit from the previous year must
+    have been passed.
+    """
+
+    current_year = (
+        enrollment.programme_level.year
+    )
+
+    if next_level.year == current_year:
+
+        return
+
+    outstanding = (
+        get_outstanding_units_for_programme_year(
+            enrollment.student,
+            enrollment.programme,
+            current_year,
+        )
+    )
+
+    if not outstanding:
+
+        return
+
+    codes = ", ".join(
+        unit.code
+        for unit in outstanding
+    )
+
+    raise ValueError(
+        (
+            f"Cannot progress to "
+            f"Year {next_level.year}. "
+            f"The following programme year "
+            f"units are still outstanding: "
+            f"units: {codes}."
+        )
+    )
 
 
 @transaction.atomic
@@ -172,18 +315,6 @@ def progress_student(
     enrollment
     )
 
-    validate_results_exist(
-    enrollment
-    )
-
-    validate_results_published(
-        enrollment
-    )
-
-    validate_passed_units(
-        enrollment
-    )
-
     current_level = (
         enrollment.programme_level
     )
@@ -199,6 +330,11 @@ def progress_student(
             "progression_order",
         )
         .first()
+    )
+
+    validate_year_boundary_progression(
+    enrollment,
+    next_level,
     )
 
     # -----------------------------
