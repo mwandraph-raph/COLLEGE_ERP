@@ -72,6 +72,7 @@ from .forms import (
     UnitOfferingForm,
     BulkUnitOfferingForm,
 )
+from students.services import progress_student as progress_student_service
 
 # Create your views here.
 @login_required
@@ -4565,128 +4566,43 @@ def enrollment_results(request, pk):
 )
 def progress_student(request, enrollment_id):
 
-    current_enrollment = get_object_or_404(
+    enrollment = get_object_or_404(
         SemesterEnrollment,
         id=enrollment_id
     )
 
-
-    current_level = (
-        current_enrollment.programme_level
-    )
-
-
-    next_level = (
-        ProgrammeLevel.objects
-        .filter(
-            programme=current_enrollment.programme,
-            progression_order__gt=
-            current_level.progression_order,
-            is_active=True
-        )
-        .order_by(
-            "progression_order"
-        )
-        .first()
-    )
-
-
-    if not next_level:
-
-        messages.warning(
-            request,
-            "Student has reached the final programme level."
-        )
-
-        return redirect(
-            "enrollment_list"
-        )
-
-    # Find next semester
-
-    next_semester = (
-        Semester.objects
-        .filter(
-            academic_year=
-            current_enrollment.academic_year,
-            semester_name__icontains=
-            "Semester"
-        )
-        .first()
-    )
-
-
-    if not next_semester:
-
-        messages.error(
-            request,
-            "Next semester configuration missing."
-        )
-
-        return redirect(
-            "enrollment_list"
-        )
-
-
-
     try:
 
-        with transaction.atomic():
-
-
-            current_enrollment.status = (
-                SemesterEnrollment.PROGRESSED
-            )
-
-            current_enrollment.save()
-
-
-
-            new_enrollment = (
-                SemesterEnrollment.objects.create(
-
-                    student=
-                    current_enrollment.student,
-
-                    programme=
-                    current_enrollment.programme,
-
-                    programme_level=
-                    next_level,
-
-                    academic_year=
-                    current_enrollment.academic_year,
-
-                    semester=
-                    next_semester,
-
-                    status=
-                    SemesterEnrollment.ENROLLED,
-
-                )
-            )
-
-
-        messages.success(
-            request,
-            (
-                f"Student progressed to "
-                f"{next_level.name}"
-            )
+        result = progress_student_service(
+            enrollment=enrollment,
+            user=request.user,
         )
 
+        if result == enrollment:
+
+            messages.success(
+                request,
+                "Student has completed the programme successfully."
+            )
+
+        else:
+
+            messages.success(
+                request,
+                (
+                    "Student progressed successfully to "
+                    f"{result.programme_level.name}."
+                )
+            )
 
     except Exception as e:
 
         messages.error(
             request,
-            f"Progression failed: {e}"
+            str(e)
         )
 
-
-    return redirect(
-        "enrollment_list"
-    )
+    return redirect("enrollment_list")
 
 
 @login_required
