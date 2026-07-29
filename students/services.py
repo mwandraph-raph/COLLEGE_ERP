@@ -237,13 +237,14 @@ def get_outstanding_units_for_programme_year(student, programme, year):
 
     for registration in registrations:
 
-        if not student_has_passed_unit(
+        unit = registration.registered_unit
+
+        if unit and not student_has_passed_unit(
             student,
-            registration.unit,
+            unit,
         ):
-            outstanding.append(
-                registration.unit
-            )
+
+            outstanding.append(unit)
 
     return outstanding
 

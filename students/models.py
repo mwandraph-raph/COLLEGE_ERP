@@ -953,107 +953,6 @@ class SemesterEnrollment(models.Model):
             f"{self.semester}"
         )"""
 
-class Registration(models.Model):
-
-    NORMAL = "NORMAL"
-    RETAKE = "RETAKE"
-    SUPPLEMENTARY = "SUPPLEMENTARY"
-
-    REGISTRATION_TYPES = [
-        (NORMAL, "Normal"),
-        (RETAKE, "Retake"),
-        (SUPPLEMENTARY, "Supplementary"),
-    ]
-
-
-    REGISTERED = "REGISTERED"
-    DROPPED = "DROPPED"
-
-    STATUS_CHOICES = [
-        (REGISTERED, "Registered"),
-        (DROPPED, "Dropped"),
-    ]
-
-
-    enrollment = models.ForeignKey(
-        SemesterEnrollment,
-        on_delete=models.PROTECT,
-        related_name="registrations",
-    )
-
-
-    unit = models.ForeignKey(
-        Unit,
-        on_delete=models.PROTECT,
-        related_name="registrations",
-    )
-
-
-    registration_type = models.CharField(
-        max_length=20,
-        choices=REGISTRATION_TYPES,
-        default=NORMAL,
-    )
-
-
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default=REGISTERED,
-    )
-
-
-    registration_date = models.DateField(
-        auto_now_add=True,
-    )
-
-
-    dropped_at = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-
-    dropped_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="dropped_registrations",
-    )
-
-
-    drop_reason = models.TextField(
-        blank=True,
-    )
-
-
-    remarks = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-
-    class Meta:
-
-        ordering = [
-            "unit__code",
-        ]
-
-        unique_together = (
-            "enrollment",
-            "unit",
-            "registration_type",
-        )
-
-
-    def __str__(self):
-
-        return (
-            f"{self.enrollment.student.admission_no} - "
-            f"{self.unit.code}"
-        )
-
 class UnitOffering(models.Model):
 
     academic_year = models.ForeignKey(
@@ -1108,6 +1007,185 @@ class UnitOffering(models.Model):
             f"{self.academic_year} - "
             f"{self.semester}"
         )
+
+class Registration(models.Model):
+
+    NORMAL = "NORMAL"
+    SUPPLEMENTARY = "SUPPLEMENTARY"
+
+    REGISTRATION_TYPES = [
+        (NORMAL, "Normal"),
+        (SUPPLEMENTARY, "Supplementary"),
+    ]
+
+    REGISTERED = "REGISTERED"
+    DROPPED = "DROPPED"
+
+    STATUS_CHOICES = [
+        (REGISTERED, "Registered"),
+        (DROPPED, "Dropped"),
+    ]
+
+    enrollment = models.ForeignKey(
+        SemesterEnrollment,
+        on_delete=models.CASCADE,
+        related_name="registrations",
+    )
+
+    # ------------------------------------
+    # Normal registration
+    # ------------------------------------
+
+    unit_offering = models.ForeignKey(
+        UnitOffering,
+        on_delete=models.PROTECT,
+        related_name="registrations",
+        null=True,
+        blank=True,
+    )
+
+    # ------------------------------------
+    # Supplementary registration
+    # ------------------------------------
+
+    unit = models.ForeignKey(
+        Unit,
+        on_delete=models.PROTECT,
+        related_name="supplementary_registrations",
+        null=True,
+        blank=True,
+    )
+
+    registration_type = models.CharField(
+        max_length=20,
+        choices=REGISTRATION_TYPES,
+        default=NORMAL,
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=REGISTERED,
+    )
+
+    remarks = models.TextField(
+        blank=True,
+    )
+
+    registered_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+
+        ordering = [
+            "-registered_at",
+        ]
+
+        constraints = [
+
+            models.UniqueConstraint(
+                fields=[
+                    "enrollment",
+                    "unit_offering",
+                ],
+                name="unique_normal_registration",
+            ),
+
+            models.UniqueConstraint(
+                fields=[
+                    "enrollment",
+                    "unit",
+                ],
+                name="unique_supp_registration",
+            ),
+
+        ]
+
+    def clean(self):
+
+        super().clean()
+
+        # -------------------------------
+        # NORMAL
+        # -------------------------------
+
+        if self.registration_type == self.NORMAL:
+
+            if self.unit_offering is None:
+
+                raise ValidationError(
+                    "Normal registration requires a Unit Offering."
+                )
+
+            self.unit = None
+
+            if (
+                self.unit_offering.programme_level
+                != self.enrollment.programme_level
+            ):
+
+                raise ValidationError(
+                    "Unit Offering does not belong to the student's programme level."
+                )
+
+            if (
+                self.unit_offering.academic_year
+                != self.enrollment.academic_year
+            ):
+
+                raise ValidationError(
+                    "Unit Offering does not belong to the student's academic year."
+                )
+
+            if (
+                self.unit_offering.semester
+                != self.enrollment.semester
+            ):
+
+                raise ValidationError(
+                    "Unit Offering does not belong to the student's semester."
+                )
+
+        # -------------------------------
+        # SUPPLEMENTARY
+        # -------------------------------
+
+        else:
+
+            if self.unit is None:
+
+                raise ValidationError(
+                    "Supplementary registration requires a Unit."
+                )
+
+            self.unit_offering = None
+
+    @property
+    def registered_unit(self):
+
+        if self.unit_offering:
+
+            return self.unit_offering.unit
+
+        return None
+
+    def __str__(self):
+
+        if self.registered_unit:
+
+            return (
+                f"{self.enrollment.student} - "
+                f"{self.registered_unit.code} "
+                f"({self.registration_type})"
+            )
+
+        return (
+            f"{self.enrollment.student} - "
+            f"Unassigned Unit "
+            f"({self.registration_type})"
+        )
+
 
 class LecturerAssignment(models.Model):
 
@@ -1176,14 +1254,23 @@ class ResultBatch(models.Model):
     RETURNED = "returned"
     UNLOCKED = "unlocked"
 
+
     STATUS_CHOICES = [
+
         (DRAFT, "Draft"),
+
         (SUBMITTED, "Submitted"),
+
         (APPROVED, "Approved"),
+
         (PUBLISHED, "Published"),
+
         (RETURNED, "Returned"),
+
         (UNLOCKED, "Unlocked"),
+
     ]
+
 
     unit_offering = models.ForeignKey(
         UnitOffering,
@@ -1191,17 +1278,20 @@ class ResultBatch(models.Model):
         related_name="result_batches",
     )
 
+
     lecturer_assignment = models.ForeignKey(
         LecturerAssignment,
         on_delete=models.PROTECT,
         related_name="result_batches",
     )
 
+
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default=DRAFT,
     )
+
 
     submitted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -1211,10 +1301,12 @@ class ResultBatch(models.Model):
         related_name="submitted_result_batches",
     )
 
+
     submitted_at = models.DateTimeField(
         null=True,
         blank=True,
     )
+
 
     approved_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -1224,10 +1316,12 @@ class ResultBatch(models.Model):
         related_name="approved_result_batches",
     )
 
+
     approved_at = models.DateTimeField(
         null=True,
         blank=True,
     )
+
 
     published_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -1237,22 +1331,27 @@ class ResultBatch(models.Model):
         related_name="published_result_batches",
     )
 
+
     published_at = models.DateTimeField(
         null=True,
         blank=True,
     )
 
+
     remarks = models.TextField(
         blank=True,
     )
+
 
     created_at = models.DateTimeField(
         auto_now_add=True,
     )
 
+
     updated_at = models.DateTimeField(
         auto_now=True,
     )
+
 
     class Meta:
 
@@ -1260,24 +1359,61 @@ class ResultBatch(models.Model):
             "-created_at",
         ]
 
-        unique_together = (
-            "unit_offering",
-            "lecturer_assignment",
-        )
+        constraints = [
+
+            models.UniqueConstraint(
+                fields=[
+                    "unit_offering",
+                    "lecturer_assignment",
+                ],
+                name="unique_result_batch_offering_assignment",
+            )
+
+        ]
+
 
     def clean(self):
 
-        if self.lecturer_assignment.unit_offering != self.unit_offering:
+        if (
+            self.lecturer_assignment.unit_offering
+            !=
+            self.unit_offering
+        ):
 
             raise ValidationError(
                 "Lecturer Assignment does not match selected Unit Offering."
             )
 
+
+    @property
+    def is_locked(self):
+
+        return self.status in [
+
+            self.SUBMITTED,
+
+            self.APPROVED,
+
+            self.PUBLISHED,
+
+        ]
+
+
+    @property
+    def can_edit(self):
+
+        return not self.is_locked
+
+
     def save(self, *args, **kwargs):
 
         self.full_clean()
 
-        super().save(*args, **kwargs)
+        super().save(
+            *args,
+            **kwargs
+        )
+
 
     def __str__(self):
 
@@ -1296,10 +1432,20 @@ class Result(models.Model):
         related_name="results",
     )
 
+    registration = models.OneToOneField(
+        Registration,
+        on_delete=models.CASCADE,
+        related_name="result",
+        null=True,
+        blank=True,
+    )
+
     unit_offering = models.ForeignKey(
         UnitOffering,
         on_delete=models.PROTECT,
         related_name="results",
+        null=True,
+        blank=True,
     )
 
     batch = models.ForeignKey(
@@ -1317,6 +1463,7 @@ class Result(models.Model):
         blank=True,
         related_name="entered_results",
     )
+
 
     # ==========================
     # Assessment Marks
@@ -1343,6 +1490,7 @@ class Result(models.Model):
         blank=True,
     )
 
+
     # ==========================
     # Computed Fields
     # ==========================
@@ -1366,6 +1514,7 @@ class Result(models.Model):
         editable=False,
     )
 
+
     created_at = models.DateTimeField(
         auto_now_add=True,
     )
@@ -1374,25 +1523,126 @@ class Result(models.Model):
         auto_now=True,
     )
 
+
     class Meta:
 
         ordering = [
             "enrollment__student__admission_no",
-            "unit_offering__unit__code",
+            "registration__unit_offering__unit__code",
         ]
 
-        unique_together = (
-            "enrollment",
-            "unit_offering",
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "registration",
+                ],
+                name="unique_result_per_registration",
+            )
+        ]
+
+
+    def clean(self):
+
+        # -----------------------------
+        # Validate marks
+        # -----------------------------
+
+        for field in [
+            "cat1",
+            "cat2",
+            "exam",
+        ]:
+
+            value = getattr(
+                self,
+                field,
+            )
+
+            if value is None:
+                continue
+
+
+            if value < 0:
+
+                raise ValidationError(
+                    {
+                        field:
+                        "Marks cannot be less than zero."
+                    }
+                )
+
+
+            if value > 100:
+
+                raise ValidationError(
+                    {
+                        field:
+                        "Marks cannot exceed 100."
+                    }
+                )
+
+
+        # -----------------------------
+        # Registration validation
+        # -----------------------------
+
+        if self.registration:
+
+
+            # =========================
+            # NORMAL REGISTRATION
+            # =========================
+
+            if self.registration.registration_type == Registration.NORMAL:
+
+
+                if not self.unit_offering:
+
+                    raise ValidationError(
+                        "Normal results must have a Unit Offering."
+                    )
+
+
+                if (
+                    self.unit_offering
+                    !=
+                    self.registration.unit_offering
+                ):
+
+                    raise ValidationError(
+                        "Result Unit Offering must match registration Unit Offering."
+                    )
+
+
+            # =========================
+            # SUPPLEMENTARY
+            # =========================
+
+            elif (
+                self.registration.registration_type
+                ==
+                Registration.SUPPLEMENTARY
+            ):
+
+
+                if self.unit_offering:
+
+                    raise ValidationError(
+                        "Supplementary results cannot have Unit Offering."
+                    )
+
+
 
     def calculate_grade(self):
 
         total = (
             (self.cat1 or 0)
-            + (self.cat2 or 0)
-            + (self.exam or 0)
+            +
+            (self.cat2 or 0)
+            +
+            (self.exam or 0)
         )
+
 
         if total >= 70:
             return "A"
@@ -1411,57 +1661,86 @@ class Result(models.Model):
 
         return "F"
 
+
+
     def calculate_remarks(self):
 
-        if self.grade in ["A", "B", "C", "D", "E"]:
+        if self.grade in [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+        ]:
+
             return "PASS"
+
 
         return "FAIL"
 
-    def clean(self):
 
-        for field in ["cat1", "cat2", "exam"]:
 
-            value = getattr(self, field)
+    @property
+    def registered_unit(self):
 
-            if value is None:
-                continue
+        if self.registration:
 
-            if value < 0:
-                raise ValidationError(
-                    {
-                        field: "Marks cannot be less than zero."
-                    }
-                )
+            return self.registration.registered_unit
 
-            if value > 100:
-                raise ValidationError(
-                    {
-                        field: "Marks cannot exceed 100."
-                    }
-                )
+
+        if self.unit_offering:
+
+            return self.unit_offering.unit
+
+
+        return None
+
+
 
     def save(self, *args, **kwargs):
 
         self.full_clean()
 
+
         self.total = (
             (self.cat1 or 0)
-            + (self.cat2 or 0)
-            + (self.exam or 0)
+            +
+            (self.cat2 or 0)
+            +
+            (self.exam or 0)
         )
 
-        self.grade = self.calculate_grade()
 
-        self.remarks = self.calculate_remarks()
+        self.grade = (
+            self.calculate_grade()
+        )
 
-        super().save(*args, **kwargs)
+
+        self.remarks = (
+            self.calculate_remarks()
+        )
+
+
+        super().save(
+            *args,
+            **kwargs
+        )
+
+
 
     def __str__(self):
 
+        if self.registered_unit:
+
+            return (
+                f"{self.enrollment.student.admission_no} - "
+                f"{self.registered_unit.code}"
+            )
+
+
         return (
             f"{self.enrollment.student.admission_no} - "
-            f"{self.unit_offering.unit.code}"
+            "Unknown Unit"
         )
 
 

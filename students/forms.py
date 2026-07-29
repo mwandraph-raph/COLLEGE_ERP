@@ -939,8 +939,9 @@ class RegistrationForm(forms.ModelForm):
 
         fields = [
             "enrollment",
-            "unit",
             "registration_type",
+            "unit_offering",
+            "unit",
             "remarks",
         ]
 
@@ -948,25 +949,31 @@ class RegistrationForm(forms.ModelForm):
 
             "enrollment": forms.Select(
                 attrs={
-                    "class": "form-select"
-                }
-            ),
-
-            "unit": forms.Select(
-                attrs={
-                    "class": "form-select"
+                    "class": "form-select",
                 }
             ),
 
             "registration_type": forms.Select(
                 attrs={
-                    "class": "form-select"
+                    "class": "form-select",
+                }
+            ),
+
+            "unit_offering": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+
+            "unit": forms.Select(
+                attrs={
+                    "class": "form-select",
                 }
             ),
 
             "remarks": forms.TextInput(
                 attrs={
-                    "class": "form-control"
+                    "class": "form-control",
                 }
             ),
         }
@@ -993,17 +1000,35 @@ class RegistrationForm(forms.ModelForm):
         )
 
 
+        self.fields["unit_offering"].queryset = (
+            UnitOffering.objects
+            .filter(
+                is_active=True,
+            )
+            .select_related(
+                "unit",
+                "programme_level",
+                "academic_year",
+                "semester",
+            )
+            .order_by(
+                "academic_year",
+                "semester",
+                "unit__code",
+            )
+        )
+
+
         self.fields["unit"].queryset = (
             Unit.objects
             .filter(
-                is_active=True
+                is_active=True,
             )
             .select_related(
                 "programme_level",
-                "programme_level__programme",
             )
             .order_by(
-                "code"
+                "code",
             )
         )
 
@@ -1012,8 +1037,17 @@ class RegistrationForm(forms.ModelForm):
 
         cleaned_data = super().clean()
 
+
         enrollment = cleaned_data.get(
             "enrollment"
+        )
+
+        registration_type = cleaned_data.get(
+            "registration_type"
+        )
+
+        unit_offering = cleaned_data.get(
+            "unit_offering"
         )
 
         unit = cleaned_data.get(
@@ -1021,32 +1055,100 @@ class RegistrationForm(forms.ModelForm):
         )
 
 
-        if enrollment and unit:
+        if not enrollment:
 
-            if unit.programme_level != enrollment.programme_level:
+            return cleaned_data
+
+
+
+        # ====================================
+        # NORMAL REGISTRATION
+        # ====================================
+
+        if registration_type == Registration.NORMAL:
+
+
+            if not unit_offering:
 
                 raise forms.ValidationError(
-                    "Selected unit does not belong to the student's current programme level."
+                    "Please select a Unit Offering."
+                )
+
+
+            if unit_offering.programme_level != enrollment.programme_level:
+
+                raise forms.ValidationError(
+                    "The selected Unit Offering does not belong to the student's programme level."
+                )
+
+
+            if unit_offering.academic_year != enrollment.academic_year:
+
+                raise forms.ValidationError(
+                    "The selected Unit Offering does not belong to the student's academic year."
+                )
+
+
+            if unit_offering.semester != enrollment.semester:
+
+                raise forms.ValidationError(
+                    "The selected Unit Offering does not belong to the student's semester."
                 )
 
 
             exists = Registration.objects.filter(
                 enrollment=enrollment,
-                unit=unit,
+                unit_offering=unit_offering,
             )
 
 
             if self.instance.pk:
 
                 exists = exists.exclude(
-                    pk=self.instance.pk
+                    pk=self.instance.pk,
                 )
 
 
             if exists.exists():
 
                 raise forms.ValidationError(
-                    "This unit has already been registered."
+                    "This Unit Offering has already been registered."
+                )
+
+
+
+        # ====================================
+        # SUPPLEMENTARY REGISTRATION
+        # ====================================
+
+        elif registration_type == Registration.SUPPLEMENTARY:
+
+
+            if not unit:
+
+                raise forms.ValidationError(
+                    "Please select a supplementary unit."
+                )
+
+
+            exists = Registration.objects.filter(
+                enrollment=enrollment,
+                unit=unit,
+                registration_type=Registration.SUPPLEMENTARY,
+            )
+
+
+            if self.instance.pk:
+
+                exists = exists.exclude(
+                    pk=self.instance.pk,
+                )
+
+
+            if exists.exists():
+
+                raise forms.ValidationError(
+                    "This supplementary unit has already been registered."
                 )
 
 

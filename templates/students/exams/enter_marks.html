@@ -1,386 +1,234 @@
 {% extends "base.html" %}
 
-{% load student_extras %}
-
+{% block title %}
+Enter Marks
+{% endblock %}
 
 {% block content %}
 
+<div class="container mt-4">
 
-<div class="container-fluid mt-4">
+    <div class="card shadow-sm">
 
+        <div class="card-header bg-primary text-white">
 
-<div class="card shadow">
+            <h4 class="mb-0">
+                Enter Marks
+            </h4>
 
+            <p class="mb-0">
+                <strong>
+                    {{ offering.unit.code }} -
+                    {{ offering.unit.name }}
+                </strong>
+                <br>
+                {{ offering.academic_year }}
+                |
+                {{ offering.semester.semester_name }}
+            </p>
 
-<div class="card-header bg-primary text-white">
+        </div>
 
+        <div class="card-body">
 
-<h5 class="mb-0">
+            {% if locked %}
 
-Marks Entry
+                <div class="alert alert-warning">
 
-<br>
+                    <strong>
+                        This result batch is locked.
+                    </strong>
 
-<small>
+                    <br>
 
-{{ assignment.unit_offering.unit.code }}
+                    Marks cannot be edited after submission,
+                    approval or publication.
 
--
+                </div>
 
-{{ assignment.unit_offering.unit.name }}
+            {% endif %}
 
-</small>
+            <form method="post">
 
+                {% csrf_token %}
 
-<br>
+                <table class="table table-bordered table-striped">
 
+                    <thead class="table-dark">
 
-<small>
+                        <tr>
 
-{{ assignment.unit_offering.academic_year }}
+                            <th>Admission No</th>
 
-|
+                            <th>Student</th>
 
-{{ assignment.unit_offering.semester }}
+                            <th>CAT 1</th>
 
-|
+                            <th>CAT 2</th>
 
-{{ assignment.unit_offering.programme_level }}
+                            <th>Exam</th>
 
-</small>
+                            <th>Total</th>
 
+                            <th>Grade</th>
 
-</h5>
+                            <th>Remarks</th>
 
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for registration in registrations %}
+
+                        <tr>
+
+                            <td>
+
+                                {{ registration.enrollment.student.admission_no }}
+
+                            </td>
+
+                            <td>
+
+                                {{ registration.enrollment.student }}
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    class="form-control"
+                                    name="cat1_{{ registration.id }}"
+                                    value="{% if registration.current_result %}{{ registration.current_result.cat1 }}{% endif %}"
+                                    {% if locked %}disabled{% endif %}
+                                >
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    class="form-control"
+                                    name="cat2_{{ registration.id }}"
+                                    value="{% if registration.current_result %}{{ registration.current_result.cat2 }}{% endif %}"
+                                    {% if locked %}disabled{% endif %}
+                                >
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    class="form-control"
+                                    name="exam_{{ registration.id }}"
+                                    value="{% if registration.current_result %}{{ registration.current_result.exam }}{% endif %}"
+                                    {% if locked %}disabled{% endif %}
+                                >
+
+                            </td>
+
+                            <td>
+
+                                {% if registration.current_result %}
+
+                                    {{ registration.current_result.total }}
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if registration.current_result %}
+
+                                    {{ registration.current_result.grade }}
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if registration.current_result %}
+
+                                    {{ registration.current_result.remarks }}
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="8" class="text-center text-danger">
+
+                                No students registered for this Unit Offering.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+                {% if not locked %}
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+
+                        Save Marks
+
+                    </button>
+
+                {% endif %}
+
+                <a
+                    href="{% url 'lecturer_assignment_list' %}"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </div>
-
-
-
-<div class="card-body">
-
-
-
-{% if messages %}
-
-{% for message in messages %}
-
-<div class="alert alert-success">
-
-{{ message }}
-
-</div>
-
-
-{% endfor %}
-
-{% endif %}
-
-
-
-
-
-<form method="post">
-
-
-{% csrf_token %}
-
-
-
-<div class="table-responsive">
-
-
-<table class="table table-bordered table-sm">
-
-
-<thead class="table-light">
-
-
-<tr>
-
-<th>
-Admission No
-</th>
-
-
-<th>
-Student Name
-</th>
-
-
-<th>
-CAT 1
-</th>
-
-
-<th>
-CAT 2
-</th>
-
-
-<th>
-Exam
-</th>
-
-
-<th>
-Total
-</th>
-
-
-<th>
-Grade
-</th>
-
-
-<th>
-Remarks
-</th>
-
-
-</tr>
-
-
-</thead>
-
-
-
-<tbody>
-
-
-
-{% for reg in registrations %}
-
-
-
-{% with result=result_map|get_item:reg.enrollment.id %}
-
-
-
-<tr>
-
-
-<td>
-
-{{ reg.enrollment.student.admission_no }}
-
-</td>
-
-
-
-<td>
-
-{{ reg.enrollment.student.first_name }}
-
-{{ reg.enrollment.student.last_name }}
-
-</td>
-
-
-
-
-<td>
-
-<input
-
-type="number"
-
-step="0.01"
-
-name="cat1_{{ reg.id }}"
-
-value="{{ result.cat1|default_if_none:'' }}"
-
-class="form-control"
-
-{% if locked %}disabled{% endif %}
-
->
-
-</td>
-
-
-
-
-
-<td>
-
-<input
-
-type="number"
-
-step="0.01"
-
-name="cat2_{{ reg.id }}"
-
-value="{{ result.cat2|default_if_none:'' }}"
-
-class="form-control"
-
-{% if locked %}disabled{% endif %}
-
->
-
-</td>
-
-
-
-
-
-<td>
-
-<input
-
-type="number"
-
-step="0.01"
-
-name="exam_{{ reg.id }}"
-
-value="{{ result.exam|default_if_none:'' }}"
-
-class="form-control"
-
-{% if locked %}disabled{% endif %}
-
->
-
-</td>
-
-
-
-
-
-<td>
-
-{{ result.total|default:"0" }}
-
-</td>
-
-
-
-
-<td>
-
-{{ result.grade|default:"-" }}
-
-</td>
-
-
-
-
-<td>
-
-{{ result.remarks|default:"-" }}
-
-</td>
-
-
-
-</tr>
-
-
-
-{% endwith %}
-
-
-
-{% empty %}
-
-
-
-<tr>
-
-
-<td colspan="8" class="text-center">
-
-No registered students found.
-
-</td>
-
-
-</tr>
-
-
-
-{% endfor %}
-
-
-
-</tbody>
-
-
-</table>
-
-
-</div>
-
-
-
-
-
-<div class="d-flex justify-content-between">
-
-
-<a href="{% url 'my_units' %}"
-
-class="btn btn-secondary">
-
-Back
-
-</a>
-
-
-
-
-{% if not locked %}
-
-
-<button
-
-type="submit"
-
-class="btn btn-success">
-
-Save Marks
-
-</button>
-
-
-{% else %}
-
-
-<button
-
-class="btn btn-danger"
-
-disabled>
-
-Results Locked
-
-</button>
-
-
-{% endif %}
-
-
-
-</div>
-
-
-
-</form>
-
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
 
 {% endblock %}
