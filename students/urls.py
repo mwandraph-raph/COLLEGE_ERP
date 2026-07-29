@@ -452,6 +452,12 @@ path(
 ),
 
 path(
+    "results/<int:result_id>/reopen/",
+    views.reopen_result,
+    name="reopen_result",
+),
+
+path(
     "batch-details/<int:batch_id>/",
     views.batch_details,
     name="batch_details",

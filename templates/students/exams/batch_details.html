@@ -9,9 +9,7 @@
         <div class="card-header">
 
             <h4>
-
                 Batch Details
-
             </h4>
 
         </div>
@@ -21,13 +19,15 @@
             <p>
 
                 <strong>Unit:</strong>
-               {{ batch.unit_offering.unit }}
+
+                {{ batch.unit_offering.unit }}
 
             </p>
 
             <p>
 
                 <strong>Academic Year:</strong>
+
                 {{ batch.unit_offering.academic_year }}
 
             </p>
@@ -35,6 +35,7 @@
             <p>
 
                 <strong>Semester:</strong>
+
                 {{ batch.unit_offering.semester }}
 
             </p>
@@ -42,6 +43,7 @@
             <p>
 
                 <strong>Status:</strong>
+
                 {{ batch.get_status_display }}
 
             </p>
@@ -49,6 +51,7 @@
             <p>
 
                 <strong>Submitted By:</strong>
+
                 {{ batch.submitted_by }}
 
             </p>
@@ -73,6 +76,7 @@
 
     </div>
 
+
     <div class="card shadow mt-3">
 
         <div class="card-header">
@@ -87,20 +91,31 @@
 
         <div class="card-body">
 
-            <table class="table table-bordered">
+            <table class="table table-bordered table-striped">
 
                 <thead>
 
                     <tr>
 
                         <th>Admission No</th>
+
                         <th>Student</th>
+
                         <th>CAT 1</th>
+
                         <th>CAT 2</th>
+
                         <th>Exam</th>
+
                         <th>Total</th>
+
                         <th>Grade</th>
+
                         <th>Remarks</th>
+
+                        <th width="180">
+                            Action
+                        </th>
 
                     </tr>
 
@@ -113,24 +128,84 @@
                     <tr>
 
                         <td>
+
                             {{ result.enrollment.student.admission_no }}
+
                         </td>
 
                         <td>
+
                             {{ result.enrollment.student }}
+
                         </td>
 
-                        <td>{{ result.cat1 }}</td>
+                        <td>
 
-                        <td>{{ result.cat2 }}</td>
+                            {{ result.cat1 }}
 
-                        <td>{{ result.exam }}</td>
+                        </td>
 
-                        <td>{{ result.total }}</td>
+                        <td>
 
-                        <td>{{ result.grade }}</td>
+                            {{ result.cat2 }}
 
-                        <td>{{ result.remarks }}</td>
+                        </td>
+
+                        <td>
+
+                            {{ result.exam }}
+
+                        </td>
+
+                        <td>
+
+                            {{ result.total }}
+
+                        </td>
+
+                        <td>
+
+                            {{ result.grade }}
+
+                        </td>
+
+                        <td>
+
+                            {{ result.remarks }}
+
+                        </td>
+
+                        <td>
+
+                            {% if batch.status == "published" %}
+
+                                {% if result.is_reopened %}
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        Reopened
+
+                                    </span>
+
+                                {% else %}
+
+                                    <a
+                                        href="{% url 'reopen_result' result.id %}"
+                                        class="btn btn-danger btn-sm">
+
+                                        Reopen
+
+                                    </a>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
 
                     </tr>
 
@@ -138,7 +213,7 @@
 
                     <tr>
 
-                        <td colspan="8">
+                        <td colspan="9" class="text-center">
 
                             No results found.
 

@@ -1,28 +1,14 @@
 {% extends "base.html" %}
-
-
 {% block content %}
-
-
 <div class="container mt-4">
-
-
 <div class="card shadow-sm">
-
-
 <div class="card-header bg-primary text-white">
-
 <h4 class="mb-0">
 Register Units
 </h4>
 
 </div>
-
-
-
 <div class="card-body">
-
-
 <p>
 
 <strong>Student:</strong>
@@ -48,16 +34,11 @@ Register Units
 
 {% csrf_token %}
 
-
-
 <h5 class="mb-3">
 Units Offered This Semester
 </h5>
 
-
-
 <table class="table table-bordered table-striped">
-
 
 <thead>
 
@@ -78,13 +59,8 @@ Units Offered This Semester
 
 <tbody>
 
-
 {% for offering in units %}
-
-
 <tr>
-
-
 <td>
 
 <input
@@ -94,29 +70,17 @@ value="{{ offering.unit.id }}"
 >
 
 </td>
-
-
 <td>
 {{ offering.unit.code }}
 </td>
-
-
 <td>
 {{ offering.unit.name }}
 </td>
-
-
 <td>
 {{ offering.unit.credit_hours }}
 </td>
-
-
 </tr>
-
-
 {% empty %}
-
-
 <tr>
 
 <td colspan="4"
@@ -127,24 +91,12 @@ No units are currently offered.
 </td>
 
 </tr>
-
-
 {% endfor %}
-
-
 </tbody>
-
-
 </table>
 
-
-
 {% if supplementary_units %}
-
-
 <hr>
-
-
 <h5 class="text-danger">
 
 Supplementary Units
@@ -158,11 +110,7 @@ The following failed units will be registered
 automatically as supplementary.
 
 </p>
-
-
 <table class="table table-warning">
-
-
 <thead>
 
 <tr>
@@ -174,13 +122,9 @@ automatically as supplementary.
 </tr>
 
 </thead>
-
-
 <tbody>
 
-
 {% for unit in supplementary_units %}
-
 
 <tr>
 
@@ -188,28 +132,17 @@ automatically as supplementary.
 {{ unit.code }}
 </td>
 
-
 <td>
 {{ unit.name }}
 </td>
-
 
 </tr>
 
 
 {% endfor %}
-
-
 </tbody>
-
-
 </table>
-
-
 {% endif %}
-
-
-
 
 <button
 type="submit"
@@ -219,28 +152,18 @@ Register Selected Units
 
 </button>
 
-
-
-<a href="{% url 'semester_enrollment_detail' enrollment.id %}"
+<a href="{% url 'my_registrations' %}"
 class="btn btn-secondary">
 
 Cancel
 
 </a>
 
-
-
 </form>
 
-
+</div>
 
 </div>
 
-
 </div>
-
-
-</div>
-
-
 {% endblock %}

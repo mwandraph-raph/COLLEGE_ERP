@@ -1464,6 +1464,30 @@ class Result(models.Model):
         related_name="entered_results",
     )
 
+    # ==========================
+    # Result Reopening
+    # ==========================
+
+    is_reopened = models.BooleanField(
+        default=False,
+    )
+
+    reopened_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reopened_results",
+    )
+
+    reopened_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    reopen_reason = models.TextField(
+        blank=True,
+    )
 
     # ==========================
     # Assessment Marks
@@ -1490,7 +1514,6 @@ class Result(models.Model):
         blank=True,
     )
 
-
     # ==========================
     # Computed Fields
     # ==========================
@@ -1514,7 +1537,6 @@ class Result(models.Model):
         editable=False,
     )
 
-
     created_at = models.DateTimeField(
         auto_now_add=True,
     )
@@ -1522,7 +1544,6 @@ class Result(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True,
     )
-
 
     class Meta:
 
@@ -1539,7 +1560,6 @@ class Result(models.Model):
                 name="unique_result_per_registration",
             )
         ]
-
 
     def clean(self):
 
@@ -1561,7 +1581,6 @@ class Result(models.Model):
             if value is None:
                 continue
 
-
             if value < 0:
 
                 raise ValidationError(
@@ -1570,7 +1589,6 @@ class Result(models.Model):
                         "Marks cannot be less than zero."
                     }
                 )
-
 
             if value > 100:
 
@@ -1581,27 +1599,19 @@ class Result(models.Model):
                     }
                 )
 
-
         # -----------------------------
         # Registration validation
         # -----------------------------
 
         if self.registration:
 
-
-            # =========================
-            # NORMAL REGISTRATION
-            # =========================
-
             if self.registration.registration_type == Registration.NORMAL:
-
 
                 if not self.unit_offering:
 
                     raise ValidationError(
                         "Normal results must have a Unit Offering."
                     )
-
 
                 if (
                     self.unit_offering
@@ -1613,25 +1623,17 @@ class Result(models.Model):
                         "Result Unit Offering must match registration Unit Offering."
                     )
 
-
-            # =========================
-            # SUPPLEMENTARY
-            # =========================
-
             elif (
                 self.registration.registration_type
                 ==
                 Registration.SUPPLEMENTARY
             ):
 
-
                 if self.unit_offering:
 
                     raise ValidationError(
                         "Supplementary results cannot have Unit Offering."
                     )
-
-
 
     def calculate_grade(self):
 
@@ -1642,7 +1644,6 @@ class Result(models.Model):
             +
             (self.exam or 0)
         )
-
 
         if total >= 70:
             return "A"
@@ -1661,8 +1662,6 @@ class Result(models.Model):
 
         return "F"
 
-
-
     def calculate_remarks(self):
 
         if self.grade in [
@@ -1672,35 +1671,77 @@ class Result(models.Model):
             "D",
             "E",
         ]:
-
             return "PASS"
 
-
         return "FAIL"
-
-
 
     @property
     def registered_unit(self):
 
         if self.registration:
-
             return self.registration.registered_unit
 
-
         if self.unit_offering:
-
             return self.unit_offering.unit
-
 
         return None
 
+    @property
+    def is_editable(self):
 
+        if self.is_reopened:
+            return True
+
+        if self.batch is None:
+            return True
+
+        if self.batch.status in [
+            ResultBatch.DRAFT,
+            ResultBatch.RETURNED,
+            ResultBatch.UNLOCKED,
+        ]:
+            return True
+
+        return False
+
+    def reopen(
+        self,
+        user,
+        reason="",
+    ):
+
+        self.is_reopened = True
+        self.reopened_by = user
+        self.reopened_at = timezone.now()
+        self.reopen_reason = reason
+        self.save(
+            update_fields=[
+                "is_reopened",
+                "reopened_by",
+                "reopened_at",
+                "reopen_reason",
+            ]
+        )
+
+    def close_reopening(self):
+
+        self.is_reopened = False
+        self.reopened_by = None
+        self.reopened_at = None
+        self.reopen_reason = ""
+
+        self.save(
+            update_fields=[
+                "is_reopened",
+                "reopened_by",
+                "reopened_at",
+                "reopen_reason",
+            ]
+        )
 
     def save(self, *args, **kwargs):
 
         self.full_clean()
-
 
         self.total = (
             (self.cat1 or 0)
@@ -1710,23 +1751,18 @@ class Result(models.Model):
             (self.exam or 0)
         )
 
-
         self.grade = (
             self.calculate_grade()
         )
-
 
         self.remarks = (
             self.calculate_remarks()
         )
 
-
         super().save(
             *args,
             **kwargs
         )
-
-
 
     def __str__(self):
 
@@ -1736,7 +1772,6 @@ class Result(models.Model):
                 f"{self.enrollment.student.admission_no} - "
                 f"{self.registered_unit.code}"
             )
-
 
         return (
             f"{self.enrollment.student.admission_no} - "

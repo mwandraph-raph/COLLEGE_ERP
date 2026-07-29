@@ -3602,31 +3602,48 @@ def my_units(request):
 @login_required
 def my_units(request):
 
-    assignments = LecturerAssignment.objects.select_related(
-        "unit_offering",
-        "unit_offering__unit",
-        "unit_offering__academic_year",
-        "unit_offering__semester",
-        "unit_offering__programme_level",
-    ).filter(
-        lecturer=request.user
+    assignments = (
+        LecturerAssignment.objects.select_related(
+            "unit_offering",
+            "unit_offering__unit",
+            "unit_offering__academic_year",
+            "unit_offering__semester",
+            "unit_offering__programme_level",
+        )
+        .filter(
+            lecturer=request.user
+        )
+        .order_by(
+            "unit_offering__academic_year",
+            "unit_offering__semester",
+            "unit_offering__programme_level__progression_order",
+            "unit_offering__unit__code",
+        )
     )
 
     assignment_data = []
 
     for assignment in assignments:
 
-        batch = ResultBatch.objects.filter(
-            lecturer_assignment=assignment
-        ).first()
+        batch = (
+            ResultBatch.objects.filter(
+                lecturer_assignment=assignment
+            )
+            .select_related(
+                "submitted_by",
+                "approved_by",
+                "published_by",
+            )
+            .first()
+        )
 
-        registered_students = Registration.objects.filter(
-            enrollment__academic_year=assignment.unit_offering.academic_year,
-            enrollment__semester=assignment.unit_offering.semester,
-            unit=assignment.unit_offering.unit,
-            status=Registration.REGISTERED,
-        ).count()
-
+        registered_students = (
+            Registration.objects.filter(
+                unit_offering=assignment.unit_offering,
+                status=Registration.REGISTERED,
+            )
+            .count()
+        )
 
         assignment_data.append(
             {
@@ -3636,13 +3653,12 @@ def my_units(request):
             }
         )
 
-
     return render(
         request,
         "students/exams/my_units.html",
         {
             "assignment_data": assignment_data,
-        }
+        },
     )
 
 from decimal import Decimal
@@ -3733,22 +3749,33 @@ def enter_marks(request, assignment_id):
             },
         )
 
-        # Keep batch synchronized
         if result.batch != batch:
+
             result.batch = batch
-            result.save(update_fields=["batch"])
+            result.save(
+                update_fields=[
+                    "batch",
+                ]
+            )
 
         registration.current_result = result
+
+        registration.can_edit = result.is_editable
 
     # ----------------------------------------
     # Save Marks
     # ----------------------------------------
 
-    if request.method == "POST" and not locked:
+    if request.method == "POST":
+
+        saved = False
 
         for registration in registrations:
 
             result = registration.current_result
+
+            if not registration.can_edit:
+                continue
 
             cat1 = request.POST.get(
                 f"cat1_{registration.id}",
@@ -3765,7 +3792,6 @@ def enter_marks(request, assignment_id):
                 "",
             ).strip()
 
-            # Ignore completely blank rows
             if not cat1 and not cat2 and not exam:
                 continue
 
@@ -3788,18 +3814,59 @@ def enter_marks(request, assignment_id):
             )
 
             result.entered_by = request.user
+
             result.batch = batch
 
             result.save()
 
-        messages.success(
-            request,
-            "Marks saved successfully.",
-        )
+            # ----------------------------------------
+            # If this student had been reopened,
+            # close reopening and resubmit batch
+            # ----------------------------------------
+
+            if result.is_reopened:
+
+                result.close_reopening()
+
+                batch.status = ResultBatch.SUBMITTED
+                batch.submitted_by = request.user
+                batch.submitted_at = timezone.now()
+
+                batch.save(
+                    update_fields=[
+                        "status",
+                        "submitted_by",
+                        "submitted_at",
+                    ]
+                )
+
+            saved = True
+
+        if saved:
+
+            messages.success(
+                request,
+                "Marks saved successfully.",
+            )
+
+        else:
+
+            messages.info(
+                request,
+                "No editable student results were found.",
+            )
 
         return redirect(
             "enter_marks",
             assignment_id=assignment.id,
+        )
+
+    for r in registrations:
+        print(
+            r.id,
+            r.enrollment.student.admission_no,
+            r.can_edit,
+            r.current_result.is_reopened,
         )
 
     return render(
@@ -4680,12 +4747,29 @@ def student_results(request):
             "semester",
             "programme_level",
             "programme_level__programme",
+            "financial_clearance",
         )
         .order_by(
             "academic_year",
             "semester",
         )
     )
+
+    cleared_enrollments = []
+
+    for enrollment in enrollments:
+
+        try:
+
+            if enrollment.financial_clearance.result_slip_cleared:
+
+                cleared_enrollments.append(
+                    enrollment.id
+                )
+
+        except FinancialClearance.DoesNotExist:
+
+            pass
 
     results = (
         Result.objects
@@ -4702,6 +4786,7 @@ def student_results(request):
             "enrollment__semester",
         )
         .filter(
+            enrollment__in=cleared_enrollments,
             enrollment__student=student,
             batch__status=ResultBatch.PUBLISHED,
             registration__status=Registration.REGISTERED,
@@ -4712,6 +4797,16 @@ def student_results(request):
             "unit_offering__unit__code",
         )
     )
+
+    if not cleared_enrollments:
+
+        messages.warning(
+            request,
+            (
+                "You have not attained the required financial "
+                "clearance to view your result slip."
+            ),
+        )
 
     return render(
         request,
@@ -4733,9 +4828,37 @@ def enrollment_results(request, pk):
             "programme_level__programme",
             "academic_year",
             "semester",
+            "financial_clearance",
         ),
         pk=pk,
     )
+
+    try:
+
+        if not enrollment.financial_clearance.result_slip_cleared:
+
+            messages.warning(
+                request,
+                (
+                    "You have not attained the required financial "
+                    "clearance to view this result slip."
+                ),
+            )
+
+            return redirect(
+                "student_results",
+            )
+
+    except FinancialClearance.DoesNotExist:
+
+        messages.warning(
+            request,
+            "Financial clearance has not been processed.",
+        )
+
+        return redirect(
+            "student_results",
+        )
 
     results = (
         Result.objects
@@ -5456,3 +5579,79 @@ class StudentDeleteView(DeleteView):
             )
 
         return super().post(request, *args, **kwargs)
+
+@login_required
+@permission_required(
+    "students.change_result",
+    raise_exception=True,
+)
+def reopen_result(request, result_id):
+
+    result = get_object_or_404(
+        Result.objects.select_related(
+            "batch",
+            "registration",
+            "registration__enrollment",
+            "registration__enrollment__student",
+            "unit_offering",
+            "unit_offering__unit",
+        ),
+        pk=result_id,
+    )
+
+    if result.batch is None:
+
+        messages.error(
+            request,
+            "This result has no examination batch.",
+        )
+
+        return redirect(
+            "exam_dashboard",
+        )
+
+    if result.batch.status != ResultBatch.PUBLISHED:
+
+        messages.error(
+            request,
+            "Only published results can be reopened.",
+        )
+
+        return redirect(
+            "batch_details",
+            result.batch.id,
+        )
+
+    if request.method == "POST":
+
+        reason = request.POST.get(
+            "reason",
+            "",
+        ).strip()
+
+        result.reopen(
+            user=request.user,
+            reason=reason,
+        )
+
+        messages.success(
+            request,
+            (
+                f"{result.enrollment.student.admission_no} "
+                f"({result.registered_unit.code}) "
+                "has been reopened successfully."
+            ),
+        )
+
+        return redirect(
+            "batch_details",
+            result.batch.id,
+        )
+
+    return render(
+        request,
+        "students/exams/reopen_result.html",
+        {
+            "result": result,
+        },
+    )

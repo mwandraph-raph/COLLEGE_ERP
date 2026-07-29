@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-danger text-white">
+
+                    <h4 class="mb-0">
+
+                        Reopen Student Result
+
+                    </h4>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="alert alert-warning">
+
+                        You are reopening the published result for this student only.
+
+                        <br>
+
+                        The remaining students in this batch will remain published.
+
+                    </div>
+
+                    <table class="table table-bordered">
+
+                        <tr>
+
+                            <th width="220">
+
+                                Admission No
+
+                            </th>
+
+                            <td>
+
+                                {{ result.enrollment.student.admission_no }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Student
+
+                            </th>
+
+                            <td>
+
+                                {{ result.enrollment.student }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Unit
+
+                            </th>
+
+                            <td>
+
+                                {{ result.unit_offering.unit.code }}
+                                -
+                                {{ result.unit_offering.unit.name }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Current Grade
+
+                            </th>
+
+                            <td>
+
+                                {{ result.grade }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Total
+
+                            </th>
+
+                            <td>
+
+                                {{ result.total }}
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Reason for reopening
+
+                            </label>
+
+                            <textarea
+                                name="reason"
+                                rows="4"
+                                class="form-control"
+                                required></textarea>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger">
+
+                            Reopen Result
+
+                        </button>
+
+                        <a
+                            href="{% url 'batch_details' result.batch.id %}"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

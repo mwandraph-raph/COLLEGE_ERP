@@ -17,32 +17,43 @@ Enter Marks
             </h4>
 
             <p class="mb-0">
+
                 <strong>
-                    {{ offering.unit.code }} -
+
+                    {{ offering.unit.code }}
+                    -
                     {{ offering.unit.name }}
+
                 </strong>
+
                 <br>
+
                 {{ offering.academic_year }}
+
                 |
+
                 {{ offering.semester.semester_name }}
+
             </p>
 
         </div>
 
         <div class="card-body">
 
-            {% if locked %}
+            {% if batch.is_locked %}
 
                 <div class="alert alert-warning">
 
                     <strong>
-                        This result batch is locked.
+
+                        This batch has already been published.
+
                     </strong>
 
                     <br>
 
-                    Marks cannot be edited after submission,
-                    approval or publication.
+                    Only students whose results have been reopened by the
+                    Examination Office can be edited.
 
                 </div>
 
@@ -73,6 +84,8 @@ Enter Marks
                             <th>Grade</th>
 
                             <th>Remarks</th>
+
+                            <th>Status</th>
 
                         </tr>
 
@@ -105,8 +118,8 @@ Enter Marks
                                     max="100"
                                     class="form-control"
                                     name="cat1_{{ registration.id }}"
-                                    value="{% if registration.current_result %}{{ registration.current_result.cat1 }}{% endif %}"
-                                    {% if locked %}disabled{% endif %}
+                                    value="{{ registration.current_result.cat1|default_if_none:'' }}"
+                                    {% if not registration.can_edit %}disabled{% endif %}
                                 >
 
                             </td>
@@ -120,8 +133,8 @@ Enter Marks
                                     max="100"
                                     class="form-control"
                                     name="cat2_{{ registration.id }}"
-                                    value="{% if registration.current_result %}{{ registration.current_result.cat2 }}{% endif %}"
-                                    {% if locked %}disabled{% endif %}
+                                    value="{{ registration.current_result.cat2|default_if_none:'' }}"
+                                    {% if not registration.can_edit %}disabled{% endif %}
                                 >
 
                             </td>
@@ -135,49 +148,55 @@ Enter Marks
                                     max="100"
                                     class="form-control"
                                     name="exam_{{ registration.id }}"
-                                    value="{% if registration.current_result %}{{ registration.current_result.exam }}{% endif %}"
-                                    {% if locked %}disabled{% endif %}
+                                    value="{{ registration.current_result.exam|default_if_none:'' }}"
+                                    {% if not registration.can_edit %}disabled{% endif %}
                                 >
 
                             </td>
 
                             <td>
 
-                                {% if registration.current_result %}
-
-                                    {{ registration.current_result.total }}
-
-                                {% else %}
-
-                                    -
-
-                                {% endif %}
+                                {{ registration.current_result.total }}
 
                             </td>
 
                             <td>
 
-                                {% if registration.current_result %}
-
-                                    {{ registration.current_result.grade }}
-
-                                {% else %}
-
-                                    -
-
-                                {% endif %}
+                                {{ registration.current_result.grade }}
 
                             </td>
 
                             <td>
 
-                                {% if registration.current_result %}
+                                {{ registration.current_result.remarks }}
 
-                                    {{ registration.current_result.remarks }}
+                            </td>
+
+                            <td>
+
+                                {% if registration.current_result.is_reopened %}
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        Reopened
+
+                                    </span>
+
+                                {% elif registration.can_edit %}
+
+                                    <span class="badge bg-success">
+
+                                        Editable
+
+                                    </span>
 
                                 {% else %}
 
-                                    -
+                                    <span class="badge bg-secondary">
+
+                                        Locked
+
+                                    </span>
 
                                 {% endif %}
 
@@ -189,7 +208,7 @@ Enter Marks
 
                         <tr>
 
-                            <td colspan="8" class="text-center text-danger">
+                            <td colspan="9" class="text-center text-danger">
 
                                 No students registered for this Unit Offering.
 
@@ -203,7 +222,7 @@ Enter Marks
 
                 </table>
 
-                {% if not locked %}
+                {% if registrations %}
 
                     <button
                         type="submit"
@@ -216,10 +235,10 @@ Enter Marks
                 {% endif %}
 
                 <a
-                    href="{% url 'lecturer_assignment_list' %}"
+                    href="{% url 'my_units' %}"
                     class="btn btn-secondary">
 
-                    Cancel
+                    Back
 
                 </a>
 

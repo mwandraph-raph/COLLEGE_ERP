@@ -8,6 +8,7 @@ from django.conf import settings
 from finance.services import (
     update_financial_clearance,
 )
+from students.models import SemesterEnrollment
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import (
@@ -709,26 +710,45 @@ def finance_settings(request):
 
         form = FinanceSettingForm(
             request.POST,
-            instance=settings_obj
+            instance=settings_obj,
         )
 
         if form.is_valid():
 
-            form.save()
+            settings_obj = form.save()
+
+            # ----------------------------------------
+            # Recalculate ALL student financial
+            # clearances using the new settings
+            # ----------------------------------------
+
+            enrollments = (
+                SemesterEnrollment.objects.select_related(
+                    "student",
+                )
+            )
+
+            for enrollment in enrollments:
+
+                update_financial_clearance(
+                    enrollment,
+                    request.user,
+                )
 
             messages.success(
                 request,
-                "Finance settings updated successfully."
+                "Finance settings updated successfully. "
+                "All financial clearances have been recalculated.",
             )
 
             return redirect(
-                "finance:settings"
+                "finance:settings",
             )
 
     else:
 
         form = FinanceSettingForm(
-            instance=settings_obj
+            instance=settings_obj,
         )
 
     return render(
@@ -736,7 +756,7 @@ def finance_settings(request):
         "finance/settings.html",
         {
             "form": form,
-        }
+        },
     )
 
 @login_required
