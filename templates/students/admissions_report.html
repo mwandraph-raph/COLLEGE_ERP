@@ -75,22 +75,22 @@
 
                         <tbody>
 
-                            {% for item in by_programme %}
-                            <tr>
-                                <td>
-                                    {{ item.programme__programme_name }}
-                                </td>
-                                <td>
-                                    {{ item.total }}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="2">
-                                    No data available
-                                </td>
-                            </tr>
-                            {% endfor %}
+                    {% for item in by_programme %}
+                        <tr>
+                            <td>
+                                {{ item.programme__name }}
+                            </td>
+                            <td>
+                                {{ item.total }}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2">
+                                No data available
+                            </td>
+                        </tr>
+                        {% endfor %}
 
                         </tbody>
 

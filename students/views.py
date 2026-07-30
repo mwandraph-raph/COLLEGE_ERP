@@ -3372,16 +3372,16 @@ def admissions_report(request):
 
     by_programme = (
         Applicant.objects
-        .values("programme__programme_name")
+        .values("programme__name")
         .annotate(total=Count("id"))
-        .order_by("programme__programme_name")
+        .order_by("programme__name")
     )
 
     by_department = (
         Applicant.objects
-        .values("programme__department__department_name")
+        .values("programme__course__department__name")
         .annotate(total=Count("id"))
-        .order_by("programme__department__department_name")
+        .order_by("programme__course__department__name")
     )
 
     context = {

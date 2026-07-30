@@ -1,0 +1,912 @@
+/*====================================================
+    TVET ERP PROFESSIONAL THEME
+====================================================*/
+
+:root{
+
+    /* Brand */
+    --navy:#012169;
+    --blue:#003087;
+    --blue-dark:#001F5C;
+    --gold:#FFC107;
+
+
+    /* Layout */
+    --sidebar:#012169;
+    --topbar:#e3caca;
+    --background:rgb(240, 231, 241);
+    --card:#FFFFFF;
+    --footer:#001233;
+    --sidebar-alt-color:#69013f;
+
+    /* Text */
+    --text:#212529;
+    --muted:#6C757D;
+    --light-text:#D9E2EC;
+
+
+    /* Borders */
+    --border:#DEE2E6;
+
+
+    /* Effects */
+    --shadow:0 4px 15px rgba(0,0,0,.08);
+
+}
+
+
+
+/*====================================================
+    GLOBAL
+====================================================*/
+
+
+html,
+body{
+
+    height:100%;
+
+}
+
+
+body{
+
+    margin:0;
+
+    background:var(--background);
+
+    color:var(--text);
+
+    font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+}
+
+
+
+/*====================================================
+    MAIN WRAPPER
+====================================================*/
+
+
+.erp-wrapper{
+
+    display:flex;
+
+    min-height:100vh;
+
+}
+
+
+
+/*====================================================
+    SIDEBAR
+====================================================*/
+
+
+.erp-sidebar{
+
+    width:260px;
+
+    background:var(--sidebar);
+
+    color:var(--light-text);
+
+    display:flex;
+
+    flex-direction:column;
+
+    min-height:100vh;
+
+    box-shadow:2px 0 12px rgba(0,0,0,.15);
+
+    transition:.3s;
+
+}
+
+
+
+.sidebar-brand{
+
+    padding:20px;
+    border-bottom:
+    1px solid rgba(255,255,255,.15);
+
+}
+
+
+.sidebar-brand a{
+
+    color:#FFFFFF;
+
+    text-decoration:none;
+
+    font-size:22px;
+
+    font-weight:700;
+
+}
+
+.brand-link{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:white;
+}
+
+.brand-logo{
+    width:45px;
+    height:45px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.brand-logo i{
+    font-size:28px;
+}
+
+.brand-name{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    line-height:1;
+}
+
+.brand-name h5{
+    margin:0;
+    font-size:22px;
+    font-weight:700;
+}
+
+.brand-name small{
+    font-size:21px;
+    opacity:.8;
+    margin-top:4px;
+}
+
+.sidebar-user{
+
+    padding:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    border-bottom:
+    1px solid rgba(255,255,255,.15);
+
+}
+
+
+
+.avatar{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    background:#FFFFFF;
+
+    color:var(--blue);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:bold;
+
+}
+
+
+
+.sidebar-user h6{
+
+    color:#FFFFFF;
+
+    margin:0;
+
+}
+
+
+.sidebar-user small{
+
+    color:#C0C0C0;
+
+}
+
+
+
+/*====================================================
+    MENU
+====================================================*/
+
+
+.sidebar-menu{
+
+    list-style:none;
+
+    padding:15px 0;
+
+    margin:0;
+
+    flex:1;
+
+}
+
+
+
+.sidebar-menu li{
+
+    list-style:none;
+
+}
+
+
+
+.menu-title{
+
+    padding:15px 25px 8px;
+
+    color:#FFD700;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    font-weight:700;
+
+}
+
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    padding: 8px 20px;
+    text-decoration: none;
+}
+
+.sidebar-menu a i {
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+
+
+.sidebar-menu a:hover{
+
+    background:rgba(255,255,255,.10);
+
+    color:#FFFFFF;
+
+}
+
+
+
+.sidebar-menu a.active{
+
+    background:var(--blue);
+
+    color:#FFFFFF;
+
+    border-left:4px solid var(--gold);
+
+}
+
+.sidebar-submenu{
+
+    list-style:none;
+
+    margin:0;
+
+    padding:8px 0 8px 30px;
+
+}
+
+.sidebar-submenu li{
+
+    margin:0;
+
+}
+
+.sidebar-submenu a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:#dbeafe;
+
+    text-decoration:none;
+
+    padding:8px 15px;
+
+    border-radius:6px;
+
+    font-size:14px;
+
+}
+
+.sidebar-submenu a:hover{
+
+    background:rgba(255,255,255,.12);
+
+}
+
+.sidebar-submenu i{
+
+    width:18px;
+
+    text-align:center;
+
+}
+
+/*====================================================
+    COLLAPSE
+====================================================*/
+
+
+.erp-sidebar.collapsed{
+
+    width:70px;
+
+}
+
+
+.erp-sidebar.collapsed span,
+.erp-sidebar.collapsed small,
+.erp-sidebar.collapsed h6,
+.erp-sidebar.collapsed .menu-title{
+
+    display:none;
+
+}
+
+
+.erp-sidebar.collapsed .sidebar-menu a{
+
+    justify-content:center;
+
+}
+
+
+
+/*====================================================
+    MAIN AREA
+====================================================*/
+
+
+.erp-main{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+/*====================================================
+    TOPBAR
+====================================================*/
+
+
+.topbar{
+
+    height:65px;
+
+    background:var(--topbar);
+
+    border-bottom:1px solid var(--border);
+
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+
+}
+
+
+
+.topbar .nav-link,
+.topbar .navbar-brand,
+.topbar i{
+
+    color:var(--navy)!important;
+
+    font-weight:600;
+
+}
+
+
+
+/*====================================================
+    CONTENT
+====================================================*/
+
+
+.erp-content{
+    flex:1;
+    padding:20px 24px;
+    background:var(--background);
+}
+
+
+/*====================================================
+    CARDS
+====================================================*/
+
+
+/*====================================================
+    CARDS
+====================================================*/
+
+.card{
+
+    background:#FFFFFF;
+
+    border:1px solid #b8c7dc;
+
+    border-radius:12px;
+
+    box-shadow:0 4px 12px rgba(1, 24, 78, 0.08);
+
+    margin-bottom:25px;
+
+    overflow:hidden;
+
+}
+
+
+.card:hover{
+
+    border-color:#98bae3;
+
+    box-shadow:0 8px 20px rgba(1,33,105,.12);
+
+}
+
+
+
+/* Card Header */
+
+.card-header{
+
+    background:#EAF1F8;
+
+    color:#012169;
+
+    font-weight:700;
+
+    padding:15px 20px;
+
+    border-bottom:1px solid #D6E2F0;
+
+}
+
+
+
+/* Card Body */
+
+.card-body{
+
+    background:#FFFFFF;
+
+    padding:20px;
+
+}
+
+
+
+/* Card Footer */
+
+.card-footer{
+
+    background:#F8FAFD;
+
+    border-top:1px solid #D6E2F0;
+
+}
+
+
+
+.card-header{
+
+    background:#EAF1F8;
+
+    color:var(--navy);
+
+    font-weight:700;
+
+    border-bottom:1px solid #D5E2F0;
+
+    padding:15px 20px;
+
+}
+
+
+
+.card-body{
+
+    padding:20px;
+
+}
+
+
+
+.card-footer{
+
+    background:#F8FAFD;
+
+    border-top:1px solid var(--border);
+
+}
+
+
+
+/*====================================================
+    ERP TABLES
+====================================================*/
+
+
+.table-responsive{
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    background:#FFFFFF;
+
+}
+
+
+
+.table{
+
+    width:100%;
+
+    margin-bottom:0;
+
+    background:#FFFFFF;
+
+    border-collapse:separate;
+
+    border-spacing:0;
+
+}
+
+
+/* Table Header */
+
+.table thead th{
+
+    background:#012169;
+
+    color:#FFFFFF;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:.3px;
+
+    padding:14px 16px;
+
+    border:none;
+
+    vertical-align:middle;
+
+}
+
+
+
+/* Rounded Header Corners */
+
+.table thead th:first-child{
+
+    border-top-left-radius:10px;
+
+}
+
+
+.table thead th:last-child{
+
+    border-top-right-radius:10px;
+
+}
+
+
+
+/* Table Body */
+
+.table tbody td{
+
+    padding:13px 16px;
+
+    color:#212529;
+
+    font-size:14px;
+
+    vertical-align:middle;
+
+    border-bottom:1px solid #E9EEF5;
+
+}
+
+
+
+/* Zebra Rows */
+
+.table tbody tr:nth-child(even){
+
+    background:#F8FAFD;
+
+}
+
+
+
+/* Hover */
+
+.table tbody tr:hover{
+
+    background:#EAF1F8;
+
+    transition:.2s;
+
+}
+
+
+
+/* Remove Last Border */
+
+.table tbody tr:last-child td{
+
+    border-bottom:none;
+
+}
+
+
+
+/* Action Buttons Inside Tables */
+
+.table .btn{
+
+    padding:5px 10px;
+
+    font-size:13px;
+
+    border-radius:6px;
+
+}
+
+
+
+/* Empty Table Message */
+
+.table-empty{
+
+    padding:40px;
+
+    text-align:center;
+
+    color:#6C757D;
+
+}
+
+
+
+/* Pagination */
+
+.pagination .page-link{
+
+    color:#012169;
+
+    border:1px solid #D6E2F0;
+
+}
+
+
+
+.pagination .page-item.active .page-link{
+
+    background:#012169;
+
+    border-color:#012169;
+
+    color:#FFFFFF;
+
+}
+
+
+
+.pagination .page-link:hover{
+
+    background:#EAF1F8;
+
+}
+git branch
+
+
+/*====================================================
+    BUTTONS
+====================================================*/
+
+
+.btn-primary{
+
+    background:var(--blue);
+
+    border-color:var(--blue);
+
+}
+
+
+
+.btn-primary:hover{
+
+    background:var(--blue-dark);
+
+    border-color:var(--blue-dark);
+
+}
+
+
+/*====================================================
+    ERP FORMS
+====================================================*/
+
+label{
+
+    font-weight:600;
+
+    font-size:13px;
+
+    color:#374151;
+
+    margin-bottom:4px;
+
+}
+
+.form-group,
+.mb-3{
+
+    margin-bottom:14px;
+
+}
+
+.form-control,
+.form-select{
+
+    min-height:40px;
+
+    border-radius:8px;
+
+    border:1px solid #ced4da;
+
+    font-size:14px;
+
+    padding:.45rem .75rem;
+
+}
+
+textarea.form-control{
+
+    min-height:100px;
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+    border-color:var(--blue);
+
+    box-shadow:0 0 0 .15rem rgba(0,48,135,.15);
+
+}
+
+.form-text{
+
+    font-size:12px;
+
+    color:#6c757d;
+
+}
+
+
+
+/*====================================================
+    FOOTER
+====================================================*/
+
+
+footer,
+.footer{
+
+    background:var(--footer);
+
+    color:#FFFFFF;
+
+    padding:15px 25px;
+
+    margin-top:auto;
+
+}
+
+
+
+/*====================================================
+    SCROLLBAR
+====================================================*/
+
+
+.erp-sidebar::-webkit-scrollbar{
+
+    width:7px;
+
+}
+
+
+.erp-sidebar::-webkit-scrollbar-thumb{
+
+    background:rgba(255,255,255,.3);
+
+    border-radius:10px;
+
+}
+
+
+
+/*====================================================
+    MOBILE
+====================================================*/
+
+
+@media(max-width:992px){
+
+
+.erp-sidebar{
+
+    width:70px;
+
+}
+
+
+.sidebar-brand a{
+
+    font-size:0;
+
+}
+
+
+.sidebar-menu a span,
+.sidebar-user h6,
+.sidebar-user small,
+.menu-title{
+
+    display:none;
+
+}
+
+
+.sidebar-menu a{
+
+    justify-content:center;
+
+}
+
+}
