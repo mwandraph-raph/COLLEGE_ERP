@@ -1,0 +1,363 @@
+/*====================================================
+    XORADEX EDUCORE ERP
+    CARDS
+====================================================*/
+
+/*====================================================
+    DEFAULT CARD
+====================================================*/
+
+.card{
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius-lg);
+
+    box-shadow:var(--shadow-sm);
+
+    margin-bottom:24px;
+
+    overflow:hidden;
+
+    transition:all .25s ease;
+
+}
+
+.card:hover{
+
+    box-shadow:var(--shadow);
+
+    transform:translateY(-2px);
+
+}
+
+/*====================================================
+    CARD HEADER
+====================================================*/
+
+.card-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:16px 20px;
+
+    background:#F8FAFD;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.card-header h1,
+.card-header h2,
+.card-header h3,
+.card-header h4,
+.card-header h5,
+.card-header h6{
+
+    margin:0;
+
+    color:var(--navy);
+
+    font-weight:600;
+
+}
+
+.card-title{
+
+    margin:0;
+
+    color:var(--navy);
+
+    font-size:17px;
+
+    font-weight:600;
+
+}
+
+.card-subtitle{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+    margin-top:4px;
+
+}
+
+/*====================================================
+    CARD BODY
+====================================================*/
+
+.card-body{
+
+    padding:24px;
+
+    background:#FFFFFF;
+
+}
+
+/*====================================================
+    CARD FOOTER
+====================================================*/
+
+.card-footer{
+
+    padding:16px 20px;
+
+    background:#FAFBFD;
+
+    border-top:1px solid var(--border);
+
+}
+
+/*====================================================
+    STATISTICS CARDS
+====================================================*/
+
+.stat-card{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:22px;
+
+}
+
+.stat-card-left{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.stat-card-label{
+
+    font-size:13px;
+
+    color:var(--muted);
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+}
+
+.stat-card-value{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:var(--navy);
+
+    margin-top:6px;
+
+    line-height:1;
+
+}
+
+.stat-card-icon{
+
+    width:64px;
+
+    height:64px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#EEF4FB;
+
+    color:var(--blue);
+
+    font-size:28px;
+
+}
+
+/*====================================================
+    COLOR VARIANTS
+====================================================*/
+
+.stat-primary .stat-card-icon{
+
+    background:#E8F1FD;
+
+    color:#0D6EFD;
+
+}
+
+.stat-success .stat-card-icon{
+
+    background:#EAF8EF;
+
+    color:#198754;
+
+}
+
+.stat-warning .stat-card-icon{
+
+    background:#FFF7E6;
+
+    color:#FD7E14;
+
+}
+
+.stat-danger .stat-card-icon{
+
+    background:#FDECEC;
+
+    color:#DC3545;
+
+}
+
+/*====================================================
+    CARD ACTIONS
+====================================================*/
+
+.card-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+/*====================================================
+    BORDERLESS CARD
+====================================================*/
+
+.card-borderless{
+
+    border:none;
+
+}
+
+/*====================================================
+    FLAT CARD
+====================================================*/
+
+.card-flat{
+
+    box-shadow:none;
+
+}
+
+/*====================================================
+    CARD WITH PRIMARY TOP BORDER
+====================================================*/
+
+.card-primary{
+
+    border-top:4px solid var(--navy);
+
+}
+
+.card-success{
+
+    border-top:4px solid #198754;
+
+}
+
+.card-warning{
+
+    border-top:4px solid #FFC107;
+
+}
+
+.card-danger{
+
+    border-top:4px solid #DC3545;
+
+}
+
+/*====================================================
+    CARD LISTS
+====================================================*/
+
+.card-list{
+
+    list-style:none;
+
+    margin:0;
+
+    padding:0;
+
+}
+
+.card-list li{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #EEF2F7;
+
+}
+
+.card-list li:last-child{
+
+    border-bottom:none;
+
+}
+
+/*====================================================
+    RESPONSIVE
+====================================================*/
+
+@media(max-width:768px){
+
+    .card-body{
+
+        padding:18px;
+
+    }
+
+    .card-header{
+
+        padding:14px 18px;
+
+    }
+
+    .card-footer{
+
+        padding:14px 18px;
+
+    }
+
+    .stat-card{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:18px;
+
+    }
+
+    .stat-card-value{
+
+        font-size:26px;
+
+    }
+
+}

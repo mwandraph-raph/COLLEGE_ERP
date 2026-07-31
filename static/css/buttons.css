@@ -1,0 +1,296 @@
+/*====================================================
+    XORADEX EDUCORE ERP
+    BUTTONS
+====================================================*/
+
+/*====================================================
+    BASE BUTTON
+====================================================*/
+
+.btn{
+
+    font-weight:500;
+
+    border-radius:10px;
+
+    padding:10px 18px;
+
+    font-size:14px;
+
+    transition:all .25s ease;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    box-shadow:none;
+
+}
+
+.btn:focus{
+
+    box-shadow:none;
+
+}
+
+/*====================================================
+    PRIMARY
+====================================================*/
+
+.btn-primary{
+
+    background:var(--blue);
+
+    border:1px solid var(--blue);
+
+    color:#FFFFFF;
+
+}
+
+.btn-primary:hover{
+
+    background:var(--blue-dark);
+
+    border-color:var(--blue-dark);
+
+    transform:translateY(-1px);
+
+}
+
+/*====================================================
+    SUCCESS
+====================================================*/
+
+.btn-success{
+
+    background:#198754;
+
+    border-color:#198754;
+
+}
+
+.btn-success:hover{
+
+    background:#157347;
+
+    border-color:#157347;
+
+}
+
+/*====================================================
+    WARNING
+====================================================*/
+
+.btn-warning{
+
+    color:#212529;
+
+    background:#FFC107;
+
+    border-color:#FFC107;
+
+}
+
+.btn-warning:hover{
+
+    background:#FFCA2C;
+
+    border-color:#FFC720;
+
+}
+
+/*====================================================
+    DANGER
+====================================================*/
+
+.btn-danger{
+
+    background:#DC3545;
+
+    border-color:#DC3545;
+
+}
+
+.btn-danger:hover{
+
+    background:#BB2D3B;
+
+    border-color:#B02A37;
+
+}
+
+/*====================================================
+    SECONDARY
+====================================================*/
+
+.btn-secondary{
+
+    background:#6C757D;
+
+    border-color:#6C757D;
+
+}
+
+.btn-secondary:hover{
+
+    background:#5C636A;
+
+}
+
+/*====================================================
+    OUTLINE PRIMARY
+====================================================*/
+
+.btn-outline-primary{
+
+    color:var(--blue);
+
+    border:1px solid var(--blue);
+
+    background:transparent;
+
+}
+
+.btn-outline-primary:hover{
+
+    background:var(--blue);
+
+    color:#FFFFFF;
+
+}
+
+/*====================================================
+    LIGHT
+====================================================*/
+
+.btn-light{
+
+    background:#F8F9FA;
+
+    border:1px solid var(--border);
+
+    color:var(--text);
+
+}
+
+.btn-light:hover{
+
+    background:#E9ECEF;
+
+}
+
+/*====================================================
+    SMALL
+====================================================*/
+
+.btn-sm{
+
+    padding:6px 12px;
+
+    font-size:13px;
+
+}
+
+/*====================================================
+    LARGE
+====================================================*/
+
+.btn-lg{
+
+    padding:14px 24px;
+
+    font-size:16px;
+
+}
+
+/*====================================================
+    ICON BUTTON
+====================================================*/
+
+.btn-icon{
+
+    width:40px;
+
+    height:40px;
+
+    padding:0;
+
+    border-radius:10px;
+
+}
+
+.btn-icon i{
+
+    margin:0;
+
+}
+
+/*====================================================
+    BUTTON GROUPS
+====================================================*/
+
+.btn-group-actions{
+
+    display:flex;
+
+    gap:8px;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+}
+
+/*====================================================
+    PAGE ACTION BAR
+====================================================*/
+
+.page-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    margin-bottom:20px;
+
+    flex-wrap:wrap;
+
+}
+
+/*====================================================
+    DISABLED
+====================================================*/
+
+.btn:disabled{
+
+    opacity:.65;
+
+    cursor:not-allowed;
+
+}
+
+/*====================================================
+    RESPONSIVE
+====================================================*/
+
+@media(max-width:768px){
+
+    .page-actions{
+
+        justify-content:stretch;
+
+    }
+
+    .page-actions .btn{
+
+        width:100%;
+
+    }
+
+}

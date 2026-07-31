@@ -1,0 +1,382 @@
+/*====================================================
+    XORADEX EDUCORE ERP
+    TABLES
+====================================================*/
+
+/*====================================================
+    TABLE CONTAINER
+====================================================*/
+
+.table-responsive{
+
+    background:#FFFFFF;
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius-lg);
+
+    box-shadow:var(--shadow-sm);
+
+    overflow:hidden;
+
+    margin-bottom:24px;
+
+}
+
+/*====================================================
+    TABLE
+====================================================*/
+
+.table{
+
+    width:100%;
+
+    margin:0;
+
+    border-collapse:collapse;
+
+    vertical-align:middle;
+
+}
+
+/*====================================================
+    TABLE HEADER
+====================================================*/
+
+.table thead{
+
+    background:var(--navy);
+
+}
+
+.table thead th{
+
+    background:transparent;
+
+    color:#FFFFFF;
+
+    padding:15px 18px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+    white-space:nowrap;
+
+    border:none;
+
+    vertical-align:middle;
+
+}
+
+/*====================================================
+    TABLE BODY
+====================================================*/
+
+.table tbody td{
+
+    padding:14px 18px;
+
+    border-top:1px solid #EEF2F7;
+
+    color:var(--text);
+
+    vertical-align:middle;
+
+    background:#FFFFFF;
+
+}
+
+/*====================================================
+    ZEBRA STRIPES
+====================================================*/
+
+.table-striped tbody tr:nth-of-type(even){
+
+    background:#FAFBFD;
+
+}
+
+/*====================================================
+    HOVER
+====================================================*/
+
+.table-hover tbody tr{
+
+    transition:var(--transition);
+
+}
+
+.table-hover tbody tr:hover{
+
+    background:#EEF4FB;
+
+}
+
+/*====================================================
+    LAST ROW
+====================================================*/
+
+.table tbody tr:last-child td{
+
+    border-bottom:none;
+
+}
+
+/*====================================================
+    LINKS
+====================================================*/
+
+.table a{
+
+    color:var(--blue);
+
+    font-weight:500;
+
+}
+
+.table a:hover{
+
+    color:var(--blue-dark);
+
+}
+
+/*====================================================
+    ACTION BUTTONS
+====================================================*/
+
+.table-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    flex-wrap:wrap;
+
+}
+
+.table-actions .btn{
+
+    min-width:34px;
+
+    height:34px;
+
+    padding:0 10px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+/*====================================================
+    BADGES
+====================================================*/
+
+.table .badge{
+
+    padding:.45rem .75rem;
+
+    font-size:12px;
+
+    border-radius:30px;
+
+    font-weight:500;
+
+}
+
+/*====================================================
+    STATUS COLORS
+====================================================*/
+
+.badge-draft{
+
+    background:#E9ECEF;
+
+    color:#495057;
+
+}
+
+.badge-submitted{
+
+    background:#D1ECF1;
+
+    color:#0C5460;
+
+}
+
+.badge-approved{
+
+    background:#D4EDDA;
+
+    color:#155724;
+
+}
+
+.badge-returned{
+
+    background:#F8D7DA;
+
+    color:#721C24;
+
+}
+
+.badge-pending{
+
+    background:#FFF3CD;
+
+    color:#856404;
+
+}
+
+/*====================================================
+    TABLE SEARCH BAR
+====================================================*/
+
+.table-toolbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:16px;
+
+    margin-bottom:18px;
+
+    flex-wrap:wrap;
+
+}
+
+.table-search{
+
+    max-width:340px;
+
+    width:100%;
+
+}
+
+.table-search input{
+
+    border-radius:10px;
+
+}
+
+/*====================================================
+    PAGINATION
+====================================================*/
+
+.pagination{
+
+    margin-top:20px;
+
+}
+
+.pagination .page-link{
+
+    color:var(--navy);
+
+    border:1px solid var(--border);
+
+    margin:0 2px;
+
+    border-radius:8px;
+
+    min-width:38px;
+
+    text-align:center;
+
+    transition:var(--transition);
+
+}
+
+.pagination .page-link:hover{
+
+    background:#EEF4FB;
+
+    border-color:var(--blue);
+
+}
+
+.pagination .page-item.active .page-link{
+
+    background:var(--navy);
+
+    border-color:var(--navy);
+
+    color:#FFFFFF;
+
+}
+
+/*====================================================
+    EMPTY TABLE
+====================================================*/
+
+.table-empty{
+
+    padding:60px 20px;
+
+    text-align:center;
+
+    color:var(--muted);
+
+}
+
+.table-empty i{
+
+    font-size:48px;
+
+    color:#CED4DA;
+
+    margin-bottom:16px;
+
+    display:block;
+
+}
+
+/*====================================================
+    RESPONSIVE TABLE
+====================================================*/
+
+@media(max-width:768px){
+
+    .table thead th{
+
+        padding:12px;
+
+        font-size:12px;
+
+    }
+
+    .table tbody td{
+
+        padding:12px;
+
+        font-size:13px;
+
+    }
+
+    .table-toolbar{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+    }
+
+    .table-search{
+
+        max-width:100%;
+
+    }
+
+}

@@ -1,0 +1,223 @@
+/*====================================================
+    XORADEX EDUCORE ERP
+    LAYOUT
+====================================================*/
+
+/*====================================================
+    GLOBAL
+====================================================*/
+
+*,
+*::before,
+*::after{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    height:100%;
+    margin:0;
+    padding:0;
+}
+
+/*====================================================
+    BODY
+====================================================*/
+
+body{
+
+    background:var(--background);
+
+    color:var(--text);
+
+    font-family:
+        "Inter",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+    overflow-x:hidden;
+
+    -webkit-font-smoothing:antialiased;
+
+    -moz-osx-font-smoothing:grayscale;
+
+}
+
+/*====================================================
+    LINKS
+====================================================*/
+
+a{
+
+    color:inherit;
+
+    text-decoration:none;
+
+    transition:var(--transition);
+
+}
+
+a:hover{
+
+    text-decoration:none;
+
+}
+
+/*====================================================
+    IMAGES
+====================================================*/
+
+img{
+
+    max-width:100%;
+
+    height:auto;
+
+    display:block;
+
+}
+
+/*====================================================
+    APPLICATION WRAPPER
+====================================================*/
+
+.erp-wrapper{
+
+    display:flex;
+
+    min-height:100vh;
+
+    background:var(--background);
+
+}
+
+/*====================================================
+    MAIN AREA
+====================================================*/
+
+.erp-main{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    min-width:0;
+
+}
+
+/*====================================================
+    CONTENT
+====================================================*/
+
+.erp-content{
+
+    flex:1;
+
+    padding:24px;
+
+    background:var(--background);
+
+}
+
+/*====================================================
+    PAGE CONTAINER
+====================================================*/
+
+.page-container{
+
+    width:100%;
+
+    max-width:1600px;
+
+    margin:auto;
+
+}
+
+/*====================================================
+    PAGE HEADER
+====================================================*/
+
+.page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:24px;
+
+    gap:16px;
+
+    flex-wrap:wrap;
+
+}
+
+.page-title{
+
+    margin:0;
+
+    color:var(--navy);
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+.page-subtitle{
+
+    color:var(--muted);
+
+    margin-top:4px;
+
+    font-size:14px;
+
+}
+
+/*====================================================
+    UTILITIES
+====================================================*/
+
+.shadow-card{
+
+    box-shadow:var(--shadow);
+
+}
+
+.rounded-card{
+
+    border-radius:var(--radius);
+
+}
+
+.bg-card{
+
+    background:var(--card);
+
+}
+
+.text-muted{
+
+    color:var(--muted)!important;
+
+}
+
+.text-primary{
+
+    color:var(--navy)!important;
+
+}
+
+.border-soft{
+
+    border:1px solid var(--border);
+
+}

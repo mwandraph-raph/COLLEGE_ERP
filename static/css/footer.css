@@ -1,0 +1,120 @@
+/*====================================================
+    XORADEX EDUCORE ERP
+    FOOTER
+====================================================*/
+
+/*====================================================
+    FOOTER
+====================================================*/
+
+.footer,
+footer{
+
+    background:var(--footer);
+
+    color:#FFFFFF;
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+    padding:14px 24px;
+
+    font-size:13px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:10px;
+
+}
+
+.footer-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+.footer-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.footer a{
+
+    color:#D9E2EC;
+
+    text-decoration:none;
+
+    transition:color .25s ease;
+
+}
+
+.footer a:hover{
+
+    color:#FFFFFF;
+
+}
+
+.footer-version{
+
+    background:rgba(255,255,255,.10);
+
+    padding:4px 10px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+}
+
+.footer-company{
+
+    font-weight:600;
+
+    letter-spacing:.3px;
+
+}
+
+.footer i{
+
+    color:var(--gold);
+
+}
+
+/*====================================================
+    MOBILE
+====================================================*/
+
+@media(max-width:768px){
+
+    .footer,
+    footer{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+    .footer-right{
+
+        justify-content:center;
+
+        flex-wrap:wrap;
+
+    }
+
+}

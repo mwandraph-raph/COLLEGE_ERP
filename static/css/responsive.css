@@ -1,0 +1,140 @@
+/*====================================================
+    XORADEX EDUCORE ERP
+    RESPONSIVE
+====================================================*/
+
+/*====================================================
+    LARGE TABLETS
+====================================================*/
+
+@media(max-width:1200px){
+
+    .erp-content{
+
+        padding:20px;
+
+    }
+
+}
+
+/*====================================================
+    TABLETS
+====================================================*/
+
+@media(max-width:992px){
+
+    .erp-sidebar{
+
+        width:80px;
+
+    }
+
+    .erp-sidebar .brand-name,
+
+    .erp-sidebar .sidebar-user div,
+
+    .erp-sidebar .menu-title,
+
+    .erp-sidebar .sidebar-menu span{
+
+        display:none;
+
+    }
+
+    .sidebar-menu a{
+
+        justify-content:center;
+
+    }
+
+    .sidebar-submenu{
+
+        padding-left:12px;
+
+    }
+
+    .erp-content{
+
+        padding:18px;
+
+    }
+
+}
+
+/*====================================================
+    MOBILE
+====================================================*/
+
+@media(max-width:768px){
+
+    .erp-wrapper{
+
+        flex-direction:column;
+
+    }
+
+    .erp-sidebar{
+
+        width:100%;
+
+        min-height:auto;
+
+    }
+
+    .erp-main{
+
+        width:100%;
+
+    }
+
+    .erp-content{
+
+        padding:15px;
+
+    }
+
+    .card{
+
+        margin-bottom:18px;
+
+    }
+
+    .table-responsive{
+
+        font-size:13px;
+
+    }
+
+}
+
+/*====================================================
+    SMALL PHONES
+====================================================*/
+
+@media(max-width:576px){
+
+    h1{
+
+        font-size:26px;
+
+    }
+
+    h2{
+
+        font-size:22px;
+
+    }
+
+    h3{
+
+        font-size:20px;
+
+    }
+
+    .btn{
+
+        width:100%;
+
+    }
+
+}

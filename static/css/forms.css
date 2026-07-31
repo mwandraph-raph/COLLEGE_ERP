@@ -1,0 +1,381 @@
+/*====================================================
+    XORADEX EDUCORE ERP
+    FORMS
+====================================================*/
+
+/*====================================================
+    FORM LAYOUT
+====================================================*/
+
+.form-section{
+
+    background:#FFFFFF;
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius-lg);
+
+    padding:24px;
+
+    margin-bottom:24px;
+
+    box-shadow:var(--shadow-sm);
+
+}
+
+.form-section-title{
+
+    font-size:18px;
+
+    font-weight:600;
+
+    color:var(--navy);
+
+    margin-bottom:20px;
+
+    padding-bottom:12px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+/*====================================================
+    LABELS
+====================================================*/
+
+label{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:var(--text);
+
+    margin-bottom:6px;
+
+}
+
+.required{
+
+    color:#DC3545;
+
+    margin-left:3px;
+
+}
+
+/*====================================================
+    FORM GROUP
+====================================================*/
+
+.form-group,
+.mb-3{
+
+    margin-bottom:18px;
+
+}
+
+/*====================================================
+    INPUTS
+====================================================*/
+
+.form-control,
+.form-select{
+
+    min-height:44px;
+
+    border:1px solid var(--border);
+
+    border-radius:10px;
+
+    background:#FFFFFF;
+
+    color:var(--text);
+
+    font-size:14px;
+
+    padding:10px 14px;
+
+    transition:all .2s ease;
+
+}
+
+.form-control:hover,
+.form-select:hover{
+
+    border-color:#B7C7E6;
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+    border-color:var(--blue);
+
+    box-shadow:0 0 0 .15rem rgba(0,48,135,.15);
+
+    outline:none;
+
+}
+
+/*====================================================
+    PLACEHOLDER
+====================================================*/
+
+.form-control::placeholder{
+
+    color:#9CA3AF;
+
+    font-size:14px;
+
+}
+
+/*====================================================
+    TEXTAREA
+====================================================*/
+
+textarea.form-control{
+
+    min-height:120px;
+
+    resize:vertical;
+
+}
+
+/*====================================================
+    CHECKBOXES
+====================================================*/
+
+.form-check{
+
+    margin-bottom:12px;
+
+}
+
+.form-check-input{
+
+    cursor:pointer;
+
+}
+
+.form-check-input:checked{
+
+    background:var(--blue);
+
+    border-color:var(--blue);
+
+}
+
+.form-check-label{
+
+    cursor:pointer;
+
+}
+
+/*====================================================
+    SWITCHES
+====================================================*/
+
+.form-switch .form-check-input{
+
+    width:2.8rem;
+
+    height:1.4rem;
+
+}
+
+/*====================================================
+    INPUT GROUP
+====================================================*/
+
+.input-group-text{
+
+    background:#F8FAFD;
+
+    border:1px solid var(--border);
+
+    color:var(--navy);
+
+}
+
+/*====================================================
+    HELP TEXT
+====================================================*/
+
+.form-text{
+
+    color:var(--muted);
+
+    font-size:12px;
+
+}
+
+/*====================================================
+    VALIDATION
+====================================================*/
+
+.is-valid{
+
+    border-color:#198754 !important;
+
+}
+
+.is-invalid{
+
+    border-color:#DC3545 !important;
+
+}
+
+.invalid-feedback{
+
+    display:block;
+
+    font-size:12px;
+
+}
+
+.valid-feedback{
+
+    display:block;
+
+    font-size:12px;
+
+}
+
+/*====================================================
+    READONLY
+====================================================*/
+
+.form-control[readonly]{
+
+    background:#F8F9FA;
+
+}
+
+/*====================================================
+    DISABLED
+====================================================*/
+
+.form-control:disabled,
+.form-select:disabled{
+
+    background:#E9ECEF;
+
+    cursor:not-allowed;
+
+}
+
+/*====================================================
+    SEARCH BOX
+====================================================*/
+
+.search-box{
+
+    position:relative;
+
+}
+
+.search-box i{
+
+    position:absolute;
+
+    left:14px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:var(--muted);
+
+}
+
+.search-box .form-control{
+
+    padding-left:42px;
+
+}
+
+/*====================================================
+    FILTER BAR
+====================================================*/
+
+.filter-bar{
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+    margin-bottom:20px;
+
+    align-items:end;
+
+}
+
+.filter-bar .form-control,
+.filter-bar .form-select{
+
+    min-width:180px;
+
+}
+
+/*====================================================
+    FORM ACTIONS
+====================================================*/
+
+.form-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    margin-top:30px;
+
+    padding-top:20px;
+
+    border-top:1px solid var(--border);
+
+}
+
+/*====================================================
+    RESPONSIVE
+====================================================*/
+
+@media(max-width:768px){
+
+    .form-section{
+
+        padding:18px;
+
+    }
+
+    .filter-bar{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+    }
+
+    .filter-bar .form-control,
+    .filter-bar .form-select{
+
+        width:100%;
+
+    }
+
+    .form-actions{
+
+        flex-direction:column;
+
+    }
+
+    .form-actions .btn{
+
+        width:100%;
+
+    }
+
+}

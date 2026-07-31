@@ -1,0 +1,456 @@
+/*====================================================
+    XORADEX EDUCORE ERP
+    SIDEBAR
+====================================================*/
+
+/*====================================================
+    SIDEBAR CONTAINER
+====================================================*/
+
+.erp-sidebar{
+
+    width:var(--sidebar-width);
+
+    min-height:100vh;
+
+    background:linear-gradient(
+        180deg,
+        var(--navy) 0%,
+        var(--blue-dark) 100%
+    );
+
+    color:var(--light-text);
+
+    display:flex;
+
+    flex-direction:column;
+
+    transition:all var(--transition);
+
+    box-shadow:var(--shadow-lg);
+
+    overflow-y:auto;
+
+    overflow-x:hidden;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1040;
+
+}
+
+/*====================================================
+    BRAND
+====================================================*/
+
+.sidebar-brand{
+
+    padding:22px 20px;
+
+    border-bottom:1px solid rgba(255,255,255,.10);
+
+}
+
+.brand-link{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    color:#FFFFFF;
+
+}
+
+.brand-link:hover{
+
+    color:#FFFFFF;
+
+}
+
+.brand-logo{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.12);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-shrink:0;
+
+}
+
+.brand-logo i{
+
+    font-size:24px;
+
+    color:var(--gold);
+
+}
+
+.brand-name{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.brand-name h5{
+
+    margin:0;
+
+    color:#FFFFFF;
+
+    font-size:20px;
+
+    font-weight:700;
+
+}
+
+.brand-name small{
+
+    color:rgba(255,255,255,.75);
+
+    font-size:13px;
+
+    letter-spacing:.5px;
+
+}
+
+/*====================================================
+    USER PANEL
+====================================================*/
+
+.sidebar-user{
+
+    padding:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    border-bottom:1px solid rgba(255,255,255,.10);
+
+}
+
+.avatar{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    background:#FFFFFF;
+
+    color:var(--navy);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:18px;
+
+    flex-shrink:0;
+
+}
+
+.sidebar-user strong{
+
+    color:#FFFFFF;
+
+    font-size:14px;
+
+    display:block;
+
+}
+
+.sidebar-user small{
+
+    color:rgba(255,255,255,.70);
+
+}
+
+/*====================================================
+    MENU
+====================================================*/
+
+.sidebar-menu{
+
+    list-style:none;
+
+    padding:14px 0;
+
+    margin:0;
+
+    flex:1;
+
+}
+
+.sidebar-menu li{
+
+    margin:2px 12px;
+
+}
+
+.menu-title{
+
+    color:rgba(255,255,255,.55);
+
+    text-transform:uppercase;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    padding:18px 14px 8px;
+
+}
+
+/*====================================================
+    MENU LINKS
+====================================================*/
+
+.sidebar-menu a{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+    padding:11px 14px;
+
+    border-radius:10px;
+
+    color:#E8EEF7;
+
+    transition:all .25s ease;
+
+    font-size:14px;
+
+    font-weight:500;
+
+}
+
+.sidebar-menu a span{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.sidebar-menu a i{
+
+    width:20px;
+
+    text-align:center;
+
+    flex-shrink:0;
+
+}
+
+/*====================================================
+    HOVER
+====================================================*/
+
+.sidebar-menu a:hover{
+
+    background:rgba(255,255,255,.10);
+
+    color:#FFFFFF;
+
+    transform:translateX(3px);
+
+}
+
+/*====================================================
+    ACTIVE
+====================================================*/
+
+.sidebar-menu a.active{
+
+    background:#FFFFFF;
+
+    color:var(--navy);
+
+    font-weight:600;
+
+}
+
+.sidebar-menu a.active i{
+
+    color:var(--blue);
+
+}
+
+/*====================================================
+    SUBMENU
+====================================================*/
+
+.sidebar-submenu{
+
+    list-style:none;
+
+    padding:6px 0 6px 18px;
+
+    margin:4px 0;
+
+}
+
+.sidebar-submenu li{
+
+    margin:2px 0;
+
+}
+
+.sidebar-submenu a{
+
+    padding:9px 14px;
+
+    border-radius:8px;
+
+    color:#D7E4F3;
+
+    font-size:13px;
+
+    font-weight:400;
+
+}
+
+.sidebar-submenu a:hover{
+
+    background:rgba(255,255,255,.08);
+
+}
+
+.sidebar-submenu a.active{
+
+    background:rgba(255,255,255,.18);
+
+    color:#FFFFFF;
+
+}
+
+/*====================================================
+    COLLAPSED
+====================================================*/
+
+.erp-sidebar.collapsed{
+
+    width:var(--sidebar-collapsed-width);
+
+}
+
+.erp-sidebar.collapsed .brand-name,
+
+.erp-sidebar.collapsed .sidebar-user div,
+
+.erp-sidebar.collapsed .menu-title,
+
+.erp-sidebar.collapsed .sidebar-menu span,
+
+.erp-sidebar.collapsed .sidebar-submenu{
+
+    display:none;
+
+}
+
+.erp-sidebar.collapsed .sidebar-menu a{
+
+    justify-content:center;
+
+}
+
+.erp-sidebar.collapsed .sidebar-menu li{
+
+    margin:4px 8px;
+
+}
+
+/*====================================================
+    FOOTER
+====================================================*/
+
+.sidebar-footer{
+
+    border-top:1px solid rgba(255,255,255,.10);
+
+    padding:16px;
+
+    text-align:center;
+
+    color:rgba(255,255,255,.65);
+
+    font-size:12px;
+
+}
+
+/*====================================================
+    SCROLLBAR
+====================================================*/
+
+.erp-sidebar::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.erp-sidebar::-webkit-scrollbar-thumb{
+
+    background:rgba(255,255,255,.20);
+
+    border-radius:20px;
+
+}
+
+/*====================================================
+    MOBILE
+====================================================*/
+
+@media (max-width:992px){
+
+    .erp-sidebar{
+
+        position:fixed;
+
+        left:-100%;
+
+        top:0;
+
+        height:100vh;
+
+        z-index:1055;
+
+    }
+
+    .erp-sidebar.show{
+
+        left:0;
+
+    }
+
+}
