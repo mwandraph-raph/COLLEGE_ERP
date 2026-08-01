@@ -1,19 +1,51 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
 <div class="container mt-4">
 
-<div class="p-4 mb-4 bg-light rounded-3 shadow-sm">
+<div class="dashboard-header">
 
-    <h1 class="display-6 fw-bold">
-        College ERP Dashboard
-    </h1>
+    <div>
 
-    <p class="lead mb-0">
-        Welcome,
-        {{ user.get_full_name|default:user.username }}
-    </p>
+        <h2 class="dashboard-title">
+            Dashboard
+        </h2>
+
+        <p class="dashboard-subtitle">
+
+            Welcome back,
+            <strong>
+                {{ user.get_full_name|default:user.username }}
+            </strong>
+
+        </p>
+
+    </div>
+
+    <div class="dashboard-date">
+
+        <i class="fa-solid fa-calendar-days"></i>
+
+        {% if active_year %}
+            {{ active_year }}
+        {% else %}
+            Academic Year Not Set
+        {% endif %}
+
+        <br>
+
+        <small>
+
+            {% if active_semester %}
+                {{ active_semester }}
+            {% else %}
+                Semester Not Set
+            {% endif %}
+
+        </small>
+
+    </div>
 
 </div>
 
@@ -38,46 +70,455 @@
 
 {% if dashboard_type == "admin" %}
 
-<div class="row">
+<div class="row g-4">
 
-    <div class="col-md-3 mb-3">
-        <div class="card shadow text-center">
-            <div class="card-body">
-                <h2>{{ total_students }}</h2>
-                <p>Students</p>
+    <div class="col-xl-3 col-md-6">
+
+        <div class="dashboard-card card-students">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-user-graduate"></i>
             </div>
+
+            <div class="dashboard-info">
+
+                <h6>Total Students</h6>
+
+                <h2>{{ total_students|default:0 }}</h2>
+
+                <small>Registered Students</small>
+
+            </div>
+
         </div>
+
     </div>
 
-    <div class="col-md-3 mb-3">
-        <div class="card shadow text-center">
-            <div class="card-body">
-                <h2>{{ total_applicants }}</h2>
-                <p>Applicants</p>
+    <div class="col-xl-3 col-md-6">
+
+        <div class="dashboard-card card-applicants">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-user-plus"></i>
             </div>
+
+            <div class="dashboard-info">
+
+                <h6>Applicants</h6>
+
+                <h2>{{ total_applicants|default:0 }}</h2>
+
+                <small>Admission Applications</small>
+
+            </div>
+
         </div>
+
     </div>
 
-    <div class="col-md-3 mb-3">
-        <div class="card shadow text-center">
-            <div class="card-body">
-                <h2>{{ total_enrollments }}</h2>
-                <p>Enrollments</p>
+    <div class="col-xl-3 col-md-6">
+
+        <div class="dashboard-card card-enrollments">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-user-check"></i>
             </div>
+
+            <div class="dashboard-info">
+
+                <h6>Enrollments</h6>
+
+                <h2>{{ total_enrollments|default:0 }}</h2>
+
+                <small>Current Semester</small>
+
+            </div>
+
         </div>
+
     </div>
 
-    <div class="col-md-3 mb-3">
-        <div class="card shadow text-center">
-            <div class="card-body">
-                <h2>{{ total_registrations }}</h2>
-                <p>Registrations</p>
+    <div class="col-xl-3 col-md-6">
+
+        <div class="dashboard-card card-registrations">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-clipboard-check"></i>
             </div>
+
+            <div class="dashboard-info">
+
+                <h6>Registrations</h6>
+
+                <h2>{{ total_registrations|default:0 }}</h2>
+
+                <small>Units Registered</small>
+
+            </div>
+
         </div>
+
+    </div>
+
+
+<div class="row mt-4">
+
+    <!-- Admissions Trend -->
+    <div class="col-lg-8">
+
+        <div class="card">
+
+<div class="card-header d-flex justify-content-between align-items-center">
+
+    <span>Admissions Trend</span>
+
+    <a href="{% url 'admissions_report' %}"
+       class="btn btn-sm btn-outline-primary">
+
+        View Report
+
+    </a>
+
+</div>
+<div class="card-body chart-body" style="height:380px;">
+
+    <canvas
+        id="admissionsChart"
+        data-labels='{{ admission_labels|safe }}'
+        data-values='{{ admission_values|safe }}'>
+    </canvas>
+
+</div>
+
+        </div>
+
+    </div>
+
+    <!-- Programme Distribution -->
+
+    <div class="col-lg-4">
+
+        <div class="card">
+
+            <div class="card-header">
+
+                Student Distribution
+
+            </div>
+
+            <div class="card-body">
+
+                {% if programme_labels %}
+
+                    <canvas
+                        id="studentChart"
+                        data-labels='{{ programme_labels|safe }}'
+                        data-values='{{ programme_values|safe }}'>
+                    </canvas>
+
+                {% else %}
+
+                    <div class="text-center text-muted py-5">
+
+                        <i class="fa-solid fa-users fa-3x mb-3"></i>
+
+                        <p class="mb-0">
+                            No programme data available.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- QUICK LINKS & SYSTEM SUMMARY -->
+
+<div class="row mt-4">
+
+   <!-- Quick Links -->
+<!-- Quick Links -->
+<div class="col-lg-6">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <i class="fa-solid fa-bolt text-warning"></i>
+            Quick Links
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="quick-actions">
+
+
+                <a href="{% url 'applicant_list' %}" class="quick-action">
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    <span>Applicants</span>
+
+                </a>
+
+
+
+                <a href="{% url 'student_list' %}" class="quick-action">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <span>Students</span>
+
+                </a>
+
+
+
+                <a href="{% url 'registration_list' %}" class="quick-action">
+
+                    <i class="fa-solid fa-clipboard-check"></i>
+
+                    <span>Registrations</span>
+
+                </a>
+
+
+
+                <a href="{% url 'programme_list' %}" class="quick-action">
+
+                    <i class="fa-solid fa-graduation-cap"></i>
+
+                    <span>Programmes</span>
+
+                </a>
+
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
 
+    <!-- System Summary -->
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header">
+                <i class="fa-solid fa-chart-column text-success"></i>
+                System Summary
+            </div>
+
+            <div class="card-body">
+
+                <table class="table table-sm table-borderless mb-0">
+
+                    <tr>
+                        <td>Academic Year</td>
+                        <td class="text-end">{{ active_year }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Semester</td>
+                        <td class="text-end">{{ active_semester }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total Students</td>
+                        <td class="text-end">{{ total_students }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total Applicants</td>
+                        <td class="text-end">{{ total_applicants }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total Enrollments</td>
+                        <td class="text-end">{{ total_enrollments }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total Registrations</td>
+                        <td class="text-end">{{ total_registrations }}</td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-lg-6">
+
+    <div class="card dashboard-card activity-card">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <i class="fa-solid fa-clock-rotate-left text-primary"></i>
+
+                <strong>Recent Activity</strong>
+
+            </div>
+
+            <div>
+
+                <button
+                    class="btn btn-sm btn-light"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#recentActivity">
+
+                    <i class="fa-solid fa-chevron-down"></i>
+
+                </button>
+
+                <a href="{% url 'system:activity' %}"
+                   class="btn btn-sm btn-outline-primary">
+
+                    View All
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="collapse show"
+            id="recentActivity">
+
+            <div class="card-body p-0">
+
+                {% for activity in recent_activities %}
+
+                    <div class="activity-row">
+
+                        <div class="activity-icon
+
+                            {% if activity.action == 'Create' %}
+                                bg-success-subtle text-success
+
+                            {% elif activity.action == 'Update' %}
+                                bg-primary-subtle text-primary
+
+                            {% elif activity.action == 'Delete' %}
+                                bg-danger-subtle text-danger
+
+                            {% elif activity.action == 'Generate' %}
+                                bg-warning-subtle text-warning
+
+                            {% elif activity.action == 'Login' %}
+                                bg-info-subtle text-info
+
+                            {% elif activity.action == 'Logout' %}
+                                bg-secondary-subtle text-secondary
+
+                            {% else %}
+                                bg-light text-dark
+                            {% endif %}
+
+                        ">
+
+                            {% if activity.action == 'Create' %}
+
+                                <i class="fa-solid fa-plus"></i>
+
+                            {% elif activity.action == 'Update' %}
+
+                                <i class="fa-solid fa-pen"></i>
+
+                            {% elif activity.action == 'Delete' %}
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            {% elif activity.action == 'Generate' %}
+
+                                <i class="fa-solid fa-file-lines"></i>
+
+                            {% elif activity.action == 'Login' %}
+
+                                <i class="fa-solid fa-right-to-bracket"></i>
+
+                            {% elif activity.action == 'Logout' %}
+
+                                <i class="fa-solid fa-right-from-bracket"></i>
+
+                            {% else %}
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="activity-content">
+
+                            <div class="d-flex justify-content-between">
+
+                                <span class="activity-module">
+
+                                    {{ activity.module }}
+
+                                </span>
+
+                                <small class="text-muted">
+
+                                    {{ activity.created_at|timesince }} ago
+
+                                </small>
+
+                            </div>
+
+                            <div class="activity-description">
+
+                                {{ activity.description }}
+
+                            </div>
+
+                            <small class="text-muted">
+
+                                {{ activity.user }}
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="p-5 text-center text-muted">
+
+                        <i class="fa-solid fa-clock fa-2x mb-3"></i>
+
+                        <p>No recent activity.</p>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+</div>
 {% elif dashboard_type == "exam" %}
 
 <!-- EXAM OFFICER DASHBOARD -->
@@ -408,7 +849,7 @@
             Students
         </a>
 
-        <a href="{% url 'semester_enrollment_list' %}'"
+        <a href="{% url 'semester_enrollment_list' %}"
            class="btn btn-success me-2">
             Enrollments
         </a>
@@ -520,13 +961,20 @@
 {% else %}
 
 <div class="alert alert-secondary">
-
     No dashboard configured for your role.
-
 </div>
 
 {% endif %}
 
 </div>
+
+{% if dashboard_type == "admin" or dashboard_type == "admissions" %}
+
+    {{ admission_labels|json_script:"admission-labels" }}
+    {{ admission_values|json_script:"admission-values" }}
+
+    {{ programme_labels|json_script:"programme-labels" }}
+    {{ programme_values|json_script:"programme-values" }}
+{% endif %}
 
 {% endblock %}

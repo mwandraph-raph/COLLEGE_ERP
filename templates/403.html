@@ -2,40 +2,66 @@
 
 {% block content %}
 
-<div class="row justify-content-center">
+<div class="container py-5">
 
-    <div class="col-md-8">
+    <div class="row justify-content-center">
 
-        <div class="card shadow">
+        <div class="col-lg-6 col-md-8">
 
-            <div class="card-body text-center p-5">
+            <div class="card shadow-lg border-0 rounded-4">
 
-                <h1 class="display-4 text-danger">
+                <div class="card-body text-center p-5">
 
-                    403
+                    <div class="mb-4">
 
-                </h1>
+                        <i class="bi bi-shield-lock-fill text-danger"
+                           style="font-size:5rem;"></i>
 
-                <h3>
+                    </div>
 
-                    Access Denied
+                    <h1 class="display-3 fw-bold text-danger">
 
-                </h3>
+                        403
 
-                <p>
+                    </h1>
 
-                    You do not have permission
-                    to access this page.
+                    <h3 class="fw-semibold mb-3">
 
-                </p>
+                        Access Denied
 
-                <a
-                    href="{% url 'home' %}"
-                    class="btn btn-primary">
+                    </h3>
 
-                    Return Home
+                    <p class="text-muted mb-4">
 
-                </a>
+                        You do not have sufficient permissions to access this page.
+                        If you believe this is an error, please contact your system administrator.
+
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+
+                        <a href="{% url 'home' %}"
+                           class="btn btn-primary px-4">
+
+                            <i class="bi bi-house-door-fill me-2"></i>
+
+                            Dashboard
+
+                        </a>
+
+                        <button
+                            onclick="history.back()"
+                            class="btn btn-outline-secondary px-4">
+
+                            <i class="bi bi-arrow-left me-2"></i>
+
+                            Go Back
+
+                        </button>
+
+                    </div>
+
+                </div>
 
             </div>
 

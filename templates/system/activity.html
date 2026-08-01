@@ -1,0 +1,1338 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/activity.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4 activity-header">
+
+<div>
+    <h2 class="fw-bold mb-1">
+        Audit Trail
+    </h2>
+
+    <p class="text-muted mb-0">
+        Complete history of user actions, security events and system operations.
+    </p>
+</div>
+
+
+<div class="d-flex gap-2">
+
+    <a 
+    href="{% url 'system:activity_export_excel' %}?search={{ request.GET.search }}&module={{ request.GET.module }}&action={{ request.GET.action }}&date={{ request.GET.date }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}&user={{ request.GET.user }}&severity={{ request.GET.severity }}"
+    class="btn btn-outline-success activity-export-btn">
+
+
+        <i class="bi bi-file-earmark-excel"></i>
+
+        Export Excel
+
+    </a>
+
+
+
+    <a
+    href="{% url 'system:activity_export_pdf' %}?search={{ request.GET.search }}&module={{ request.GET.module }}&action={{ request.GET.action }}&date={{ request.GET.date }}&start_date={{ request.GET.start_date }}&end_date={{ request.GET.end_date }}&user={{ request.GET.user }}&severity={{ request.GET.severity }}"
+    class="btn btn-outline-danger activity-export-btn">
+
+        <i class="bi bi-file-earmark-pdf"></i>
+
+        Export PDF
+
+    </a>
+
+
+
+    <a href="/" 
+    class="btn btn-primary activity-export-btn">
+
+        <i class="bi bi-arrow-left"></i>
+
+        Dashboard
+
+    </a>
+
+
+</div>
+
+    </div>
+
+
+
+    <!-- SUMMARY CARDS -->
+
+   <!-- ENTERPRISE AUDIT SUMMARY -->
+
+<div class="row g-3 mb-4">
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card activity-stat-card shadow-sm border-0">
+
+            <div class="card-body">
+
+                <small class="text-muted">
+                    Total Activities
+                </small>
+
+                <h3 class="fw-bold text-primary">
+                    {{ total_activities }}
+                </h3>
+
+                <i class="bi bi-activity fs-2 text-primary"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card activity-stat-card shadow-sm border-0">
+
+            <div class="card-body">
+
+                <small class="text-muted">
+                    Verified Records
+                </small>
+
+
+                <h3 class="fw-bold text-success">
+                    {{ verified_count|default:"0" }}
+                </h3>
+
+
+                <i class="bi bi-shield-check fs-2 text-success"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card activity-stat-card shadow-sm border-0">
+
+            <div class="card-body">
+
+                <small class="text-muted">
+                    Tampered Records
+                </small>
+
+
+                <h3 class="fw-bold text-danger">
+                    {{ tampered_count|default:"0" }}
+                </h3>
+
+
+                <i class="bi bi-shield-exclamation fs-2 text-danger"></i>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card activity-stat-card shadow-sm border-0">
+
+            <div class="card-body">
+
+
+                <small class="text-muted">
+                    Security Events Today
+                </small>
+
+
+                <h3 class="fw-bold text-info">
+                    {{ today_count|default:"0" }}
+                </h3>
+
+
+                <i class="bi bi-clock-history fs-2 text-info"></i>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- SECURITY ANALYTICS -->
+
+<div class="row g-3 mb-4">
+
+<div class="col-md-4">
+
+
+<div class="card shadow-sm border-0">
+
+<div class="card-body">
+
+
+<h6 class="fw-bold">
+
+<i class="bi bi-person-check"></i>
+Most Active User
+
+</h6>
+
+
+<h4>
+
+{% if most_active_user.user__username %}
+
+{{ most_active_user.user__username }}
+
+{% else %}
+
+-
+
+{% endif %}
+
+</h4>
+
+
+<small class="text-muted">
+
+{{ most_active_user.total|default:"0" }} activities
+
+</small>
+
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="col-md-4">
+
+
+<div class="card shadow-sm border-0">
+
+<div class="card-body">
+
+
+<h6 class="fw-bold">
+
+<i class="bi bi-grid"></i>
+
+Most Active Module
+
+</h6>
+
+
+<h4>
+
+{{ most_active_module.module|default:"-" }}
+
+</h4>
+
+
+<small class="text-muted">
+
+{{ most_active_module.total|default:"0" }} events
+
+</small>
+
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="col-md-4">
+
+
+<div class="card shadow-sm border-0">
+
+<div class="card-body">
+
+
+<h6 class="fw-bold">
+
+<i class="bi bi-lock"></i>
+
+Security Actions
+
+</h6>
+
+
+<div>
+
+    Login:
+    <strong>
+        {{ login_count }}
+    </strong>
+
+</div>
+
+
+<div>
+
+    Delete:
+    <strong>
+        {{ delete_count }}
+    </strong>
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+<!-- ================================================== -->
+<!-- ENTERPRISE AUDIT ANALYTICS -->
+<!-- ================================================== -->
+
+<div class="row g-4 mb-4">
+
+
+    <!-- ACTION CHART -->
+
+    <div class="col-lg-4">
+
+        <div class="card shadow-sm border-0 activity-stat-card">
+
+            <div class="card-body">
+
+                <h6 class="fw-bold mb-3">
+
+                    <i class="bi bi-pie-chart text-primary"></i>
+                    Actions Overview
+
+                </h6>
+
+
+                <div style="height:300px;">
+
+                    <canvas id="actionChart"></canvas>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <!-- MODULE CHART -->
+
+    <div class="col-lg-4">
+
+        <div class="card shadow-sm border-0 activity-stat-card">
+
+            <div class="card-body">
+
+                <h6 class="fw-bold mb-3">
+
+                    <i class="bi bi-grid text-success"></i>
+                    Module Activity
+
+                </h6>
+
+
+                <div style="height:300px;">
+
+                    <canvas id="moduleChart"></canvas>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <!-- SEVERITY CHART -->
+
+    <div class="col-lg-4">
+
+        <div class="card shadow-sm border-0 activity-stat-card">
+
+            <div class="card-body">
+
+                <h6 class="fw-bold mb-3">
+
+                    <i class="bi bi-shield-exclamation text-danger"></i>
+                    Security Severity
+
+                </h6>
+
+
+                <div style="height:300px;">
+
+                    <canvas id="severityChart"></canvas>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<!-- FILTER BAR -->
+
+<div class="card activity-filter shadow-sm border-0 mb-4">
+
+    <div class="card-body">
+
+        <form method="GET">
+
+
+<div class="row g-3 align-items-end">
+
+
+    <!-- SEARCH -->
+
+    <div class="col-lg-3 col-md-6">
+
+        <label class="form-label small text-muted">
+            Search
+        </label>
+
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search user, description, object..."
+            value="{{ request.GET.search }}"
+        >
+
+    </div>
+
+
+
+    <!-- MODULE -->
+
+    <div class="col-lg-2 col-md-6">
+
+        <label class="form-label small text-muted">
+            Module
+        </label>
+
+
+        <select
+            name="module"
+            class="form-select"
+        >
+
+            <option value="">
+                All Modules
+            </option>
+
+
+            {% for value,label in modules %}
+
+            <option
+                value="{{ value }}"
+                {% if request.GET.module == value %}
+                    selected
+                {% endif %}
+            >
+
+                {{ label }}
+
+            </option>
+
+            {% endfor %}
+
+
+        </select>
+
+
+    </div>
+
+
+    <!-- ACTION -->
+
+
+    <div class="col-lg-2 col-md-6">
+
+        <label class="form-label small text-muted">
+            Action
+        </label>
+
+
+        <select
+            name="action"
+            class="form-select"
+        >
+
+            <option value="">
+                All Actions
+            </option>
+
+
+            {% for value,label in actions %}
+
+
+            <option
+                value="{{ value }}"
+                {% if request.GET.action == value %}
+                    selected
+                {% endif %}
+            >
+
+                {{ label }}
+
+            </option>
+
+
+            {% endfor %}
+
+
+        </select>
+
+
+    </div>
+
+
+    <!-- USER FILTER -->
+
+
+    <div class="col-lg-1 col-md-6">
+
+
+        <label class="form-label small text-muted">
+            User
+        </label>
+
+
+        <select
+            name="user"
+            class="form-select"
+        >
+
+            <option value="">
+                All Users
+            </option>
+
+
+            {% for u in users %}
+
+
+            <option
+                value="{{ u.user__id }}"
+                {% if request.GET.user == u.user__id|stringformat:"s" %}
+                    selected
+                {% endif %}
+            >
+
+                {{ u.user__username }}
+
+            </option>
+
+
+            {% endfor %}
+
+
+        </select>
+
+
+    </div>
+
+
+
+
+
+
+<!-- START DATE -->
+
+<div class="col-lg-2 col-md-3">
+
+    <label class="form-label small text-muted">
+        From Date
+    </label>
+
+    <input
+        type="date"
+        name="start_date"
+        class="form-control"
+        value="{{ request.GET.start_date }}"
+    >
+
+</div>
+
+
+
+<!-- END DATE -->
+
+<div class="col-lg-1 col-md-3">
+
+    <label class="form-label small text-muted">
+        To Date
+    </label>
+
+    <input
+        type="date"
+        name="end_date"
+        class="form-control"
+        value="{{ request.GET.end_date }}"
+    >
+
+</div>
+
+    <!-- BUTTONS -->
+
+
+    <div class="col-lg-1 col-md-6">
+
+
+        <button
+            type="submit"
+            class="btn btn-primary w-100 mb-2"
+        >
+
+            <i class="bi bi-search"></i>
+            Filter
+
+        </button>
+
+
+
+        <a
+            href="{% url 'system:activity' %}"
+            class="btn btn-outline-secondary w-100"
+        >
+
+            <i class="bi bi-x-circle"></i>
+            Clear
+
+        </a>
+
+
+    </div>
+
+
+</div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+    <!-- ACTIVITY TABLE -->
+
+
+    <div class="card activity-stat-card shadow-sm border-0">
+
+
+        <div class="card-body p-0">
+
+
+            <div class="table-responsive">
+
+
+ <table class="table table-hover align-middle mb-0 activity-table">
+
+    <thead>
+
+        <tr>
+
+            <th style="width:120px;">
+                Date
+            </th>
+
+            <th style="width:190px;">
+                User
+            </th>
+
+            <th style="width:150px;">
+                Module
+            </th>
+
+            <th style="width:120px;">
+                Action
+            </th>
+
+            <th style="width:120px;">
+                Severity
+            </th>
+
+            <th>
+                Activity
+            </th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for activity in activities %}
+
+    <tr
+        class="activity-row"
+        data-bs-toggle="modal"
+        data-id="{{ activity.id }}"
+        data-verified-at="{{ activity.created_at|date:'d M Y H:i:s' }}"
+        data-bs-target="#activityModal"
+
+        data-user="{% if activity.user %}{{ activity.user.username }}{% else %}System{% endif %}"
+        data-module="{{ activity.module }}"
+        data-action="{{ activity.action }}"
+        data-severity="{{ activity.severity }}"
+        data-description="{{ activity.description|escapejs }}"
+        data-object="{{ activity.object_name|default:'-' }}"
+        data-ip="{{ activity.ip_address|default:'-' }}"
+        data-agent="{{ activity.user_agent|default:'-' }}"
+        data-date="{{ activity.created_at|date:'d M Y H:i' }}"
+        data-hash="{{ activity.record_hash }}"
+        data-verified="{% if activity.is_verified %}true{% else %}false{% endif %}"
+    >
+
+        <!-- DATE -->
+
+        <td>
+
+            <small>
+
+                {{ activity.created_at|date:"d M Y" }}
+
+                <br>
+
+                {{ activity.created_at|date:"H:i" }}
+
+            </small>
+
+        </td>
+
+
+        <!-- USER -->
+
+        <td>
+
+            <div class="d-flex align-items-center">
+
+                <div class="activity-avatar bg-primary text-white me-2">
+
+                    {% if activity.user %}
+                        {{ activity.user.username|first|upper }}
+                    {% else %}
+                        S
+                    {% endif %}
+
+                </div>
+
+                <div>
+
+                    {% if activity.user %}
+
+                        <strong>{{ activity.user.username }}</strong>
+
+                    {% else %}
+
+                        <strong>System</strong>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </td>
+
+
+        <!-- MODULE -->
+
+        <td>
+
+            <span class="badge bg-light text-dark">
+
+                {{ activity.module }}
+
+            </span>
+
+        </td>
+
+
+        <!-- ACTION -->
+
+        <td>
+
+            {% if activity.action == "Delete" %}
+
+                <span class="badge rounded-pill activity-badge bg-danger">
+
+                    <i class="bi bi-trash"></i>
+
+                    {{ activity.action }}
+
+                </span>
+
+            {% elif activity.action == "Update" %}
+
+                <span class="badge rounded-pill activity-badge bg-warning text-dark">
+
+                    <i class="bi bi-pencil"></i>
+
+                    {{ activity.action }}
+
+                </span>
+
+            {% elif activity.action == "Create" %}
+
+                <span class="badge rounded-pill activity-badge bg-success">
+
+                    <i class="bi bi-plus-circle"></i>
+
+                    {{ activity.action }}
+
+                </span>
+
+            {% elif activity.action == "Login" %}
+
+                <span class="badge rounded-pill activity-badge bg-primary">
+
+                    <i class="bi bi-box-arrow-in-right"></i>
+
+                    {{ activity.action }}
+
+                </span>
+
+            {% else %}
+
+                <span class="badge rounded-pill activity-badge bg-secondary">
+
+                    {{ activity.action }}
+
+                </span>
+
+            {% endif %}
+
+        </td>
+
+
+        <!-- SEVERITY -->
+
+        <td>
+
+            {% if activity.severity == "Critical" %}
+
+                <span class="badge rounded-pill activity-badge bg-danger">
+
+                    <i class="bi bi-exclamation-triangle"></i>
+
+                    Critical
+
+                </span>
+
+            {% elif activity.severity == "Warning" %}
+
+                <span class="badge rounded-pill activity-badge bg-warning text-dark">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    Warning
+
+                </span>
+
+            {% else %}
+
+                <span class="badge rounded-pill activity-badge bg-success">
+
+                    <i class="bi bi-info-circle"></i>
+
+                    Info
+
+                </span>
+
+            {% endif %}
+
+        </td>
+
+
+        <!-- DESCRIPTION -->
+
+    <td>
+
+        <div class="activity-description">
+
+            {{ activity.description|truncatechars:90 }}
+
+        </div>
+
+        {% if activity.object_name %}
+
+            <small class="text-muted">
+
+                {{ activity.object_name }}
+
+            </small>
+
+        {% endif %}
+
+    </td>
+
+    </tr>
+
+    {% empty %}
+
+    <tr>
+
+        <td colspan="6" class="activity-empty">
+
+            <i class="bi bi-inbox fs-1 text-muted"></i>
+
+            <h5 class="mt-3">
+
+                No activity records found
+
+            </h5>
+
+            <p class="text-muted">
+
+                System events will appear here automatically.
+
+            </p>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>               
+
+<nav class="mt-4">
+
+<ul class="pagination justify-content-center">
+
+
+{% if page_obj.has_previous %}
+
+<li class="page-item">
+
+<a class="page-link"
+href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}&module={{ request.GET.module }}&action={{ request.GET.action }}&date={{ request.GET.date }}&user={{ request.GET.user }}">
+
+Previous
+
+</a>
+
+</li>
+
+{% endif %}
+
+
+
+<li class="page-item active">
+
+<span class="page-link">
+
+Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+</span>
+
+</li>
+
+
+
+{% if page_obj.has_next %}
+
+<li class="page-item">
+
+<a class="page-link"
+href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}&module={{ request.GET.module }}&action={{ request.GET.action }}&date={{ request.GET.date }}&user={{ request.GET.user }}">
+
+Next
+
+</a>
+
+</li>
+
+{% endif %}
+
+
+</ul>
+
+</nav>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+</div>
+
+<!-- ACTIVITY DETAIL MODAL -->
+
+<div class="modal fade"
+     id="activityModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content activity-modal">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-shield-check text-primary"></i>
+                    Activity Details
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row g-4">
+
+                    <!-- USER -->
+
+                    <div class="col-md-6">
+
+                        <label class="text-muted small">User</label>
+
+                        <h6 id="modalUser">-</h6>
+
+                    </div>
+
+                    <!-- DATE -->
+
+                    <div class="col-md-6">
+
+                        <label class="text-muted small">Date</label>
+
+                        <h6 id="modalDate">-</h6>
+
+                    </div>
+
+                    <!-- MODULE -->
+
+                    <div class="col-md-4">
+
+                        <label class="text-muted small">Module</label>
+
+                        <h6 id="modalModule">-</h6>
+
+                    </div>
+
+                    <!-- ACTION -->
+
+                    <div class="col-md-4">
+
+                        <label class="text-muted small">Action</label>
+
+                        <h6>
+
+                            <span
+                                id="modalAction"
+                                class="badge rounded-pill activity-badge bg-primary">
+
+                                -
+
+                            </span>
+
+                        </h6>
+
+                    </div>
+
+                    <!-- SEVERITY -->
+
+                    <div class="col-md-4">
+
+                        <label class="text-muted small">Severity</label>
+
+                        <h6>
+
+                            <span
+                                id="modalSeverity"
+                                class="badge rounded-pill activity-badge bg-success">
+
+                                -
+
+                            </span>
+
+                        </h6>
+
+                    </div>
+
+                    <!-- OBJECT -->
+
+                    <div class="col-md-6">
+
+                        <label class="text-muted small">Object</label>
+
+                        <h6 id="modalObject">-</h6>
+
+                    </div>
+
+                    <!-- IP -->
+
+                    <div class="col-md-6">
+
+                        <label class="text-muted small">IP Address</label>
+
+                        <h6 id="modalIP">-</h6>
+
+                    </div>
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="col-12">
+
+                        <label class="text-muted small">
+                            Description
+                        </label>
+
+                        <div class="alert alert-light mb-0">
+
+                            <span id="modalDescription">-</span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- USER AGENT -->
+
+                    <div class="col-12">
+
+                        <label class="text-muted small">
+                            Browser / Device
+                        </label>
+
+                        <p
+                            id="modalAgent"
+                            class="small text-muted mb-0">
+
+                            -
+
+                        </p>
+
+                    </div>
+
+                    <!-- DIVIDER -->
+
+                    <div class="col-12">
+                        <hr>
+                    </div>
+
+                <!-- SECURITY -->
+
+                    <div class="col-12">
+
+                        <div class="card border-0 bg-light">
+
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                    <div>
+
+                                        <h6 class="fw-bold mb-1">
+
+                                            <i class="bi bi-shield-lock"></i>
+
+                                            Audit Security
+
+                                        </h6>
+
+                                        <small class="text-muted">
+
+                                            SHA-256 protected audit record
+
+                                        </small>
+
+                                    </div>
+
+                                    <span
+                                        id="modalIntegrity"
+                                        class="badge rounded-pill bg-success activity-badge">
+
+                                        Verified
+
+                                    </span>
+
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-4">
+
+                                        <label class="small text-muted">
+
+                                            Record ID
+
+                                        </label>
+
+                                        <div id="modalRecordId"
+                                            class="fw-semibold">
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-8">
+
+                                        <label class="small text-muted">
+
+                                            Verified At
+
+                                        </label>
+
+                                        <div id="modalVerifiedAt">
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                                <label class="small text-muted">
+
+                                    SHA-256 Record Hash
+
+                                </label>
+
+                                <div
+                                    id="modalHash"
+                                    class="border rounded bg-white p-3 font-monospace small text-break mb-3">
+
+                                </div>
+
+                                <button
+                                    id="copyHashBtn"
+                                    type="button"
+                                    class="btn btn-outline-primary btn-sm">
+
+                                    <i class="bi bi-clipboard"></i>
+
+                                    Copy Hash
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+{{ action_chart|json_script:"action-chart-data" }}
+{{ module_chart|json_script:"module-chart-data" }}
+{{ severity_chart|json_script:"severity-chart-data" }}
+
+
+<script>
+
+const actionData =
+JSON.parse(
+    document.getElementById(
+        "action-chart-data"
+    ).textContent
+);
+
+
+const moduleData =
+JSON.parse(
+    document.getElementById(
+        "module-chart-data"
+    ).textContent
+);
+
+
+const severityData =
+JSON.parse(
+    document.getElementById(
+        "severity-chart-data"
+    ).textContent
+);
+
+
+</script>
+
+
+<script src="{% static 'js/activity.js' %}"></script>
+
+{% endblock %}

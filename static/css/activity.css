@@ -1,0 +1,833 @@
+/* =====================================================
+   Xoradex EduCore - Activity Log SaaS Styling
+===================================================== */
+
+
+/* ============================
+   PAGE HEADER
+============================ */
+
+
+.activity-header h2 {
+
+    font-size:1.8rem;
+    letter-spacing:-0.5px;
+
+}
+
+
+.activity-header p {
+
+    font-size:.95rem;
+
+}
+
+
+
+/* ============================
+   EXPORT BUTTONS
+============================ */
+
+
+.activity-export-btn {
+
+    border-radius:10px;
+
+    padding:9px 16px;
+
+    font-weight:600;
+
+    transition:.25s ease;
+
+}
+
+
+.activity-export-btn:hover {
+
+    transform:translateY(-2px);
+
+}
+
+
+
+/* ============================
+   SUMMARY CARDS
+============================ */
+
+
+.activity-stat-card {
+
+    border-radius:18px;
+
+    border:none;
+
+    background:#ffffff;
+
+    transition:.25s ease;
+
+}
+
+
+.activity-stat-card:hover {
+
+    transform:translateY(-5px);
+
+    box-shadow:0 15px 35px rgba(0,0,0,.08)!important;
+
+}
+
+
+.activity-stat-card .card-body {
+
+    padding:22px;
+
+}
+
+
+.activity-stat-card h3 {
+
+    font-size:2rem;
+
+}
+
+
+
+/* ============================
+   FILTER CARD
+============================ */
+
+
+.activity-filter {
+
+    border-radius:18px;
+
+}
+
+
+.activity-filter .card-body {
+
+    padding:25px;
+
+}
+
+
+.activity-filter label {
+
+    font-weight:600;
+
+    letter-spacing:.3px;
+
+}
+
+
+
+.activity-filter .form-control,
+.activity-filter .form-select {
+
+
+    height:42px;
+
+    border-radius:10px;
+
+    border:1px solid #dee2e6;
+
+    transition:.2s ease;
+
+}
+
+
+
+.activity-filter .form-control:focus,
+.activity-filter .form-select:focus {
+
+
+    box-shadow:0 0 0 .2rem rgba(13,110,253,.15);
+
+}
+
+
+
+/* =====================================================
+   ACTIVITY TABLE
+===================================================== */
+
+.activity-card{
+
+    border:none;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+}
+
+
+/* Scroll on smaller screens */
+
+.table-responsive{
+
+    overflow-x:auto;
+
+    overflow-y:hidden;
+
+    border-radius:18px;
+
+}
+
+
+/* Table */
+
+.activity-table{
+
+    width:100%;
+
+    min-width:850px;
+
+    border-collapse:separate;
+
+    border-spacing:0;
+
+    margin-bottom:0;
+
+}
+
+
+/* Header */
+
+.activity-table thead{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:5;
+
+}
+
+
+.activity-table thead th{
+
+    background:#0d6efd;
+
+    color:#fff;
+
+    font-size:.80rem;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:.4px;
+
+    padding:16px 18px;
+
+    white-space:nowrap;
+
+    border:none;
+
+}
+
+
+/* Body */
+
+.activity-table tbody td{
+
+    padding:16px 18px;
+
+    vertical-align:middle;
+
+    border-top:1px solid #eef2f7;
+
+}
+
+
+/* Hover */
+
+.activity-row{
+
+    cursor:pointer;
+
+    transition:all .20s ease;
+
+}
+
+
+.activity-row:hover{
+
+    background:#f8fbff !important;
+
+}
+
+
+/* Column widths */
+
+.activity-table th:nth-child(1),
+.activity-table td:nth-child(1){
+
+    width:120px;
+
+}
+
+
+.activity-table th:nth-child(2),
+.activity-table td:nth-child(2){
+
+    width:190px;
+
+}
+
+
+.activity-table th:nth-child(3),
+.activity-table td:nth-child(3){
+
+    width:150px;
+
+}
+
+
+.activity-table th:nth-child(4),
+.activity-table td:nth-child(4){
+
+    width:120px;
+
+}
+
+
+.activity-table th:nth-child(5),
+.activity-table td:nth-child(5){
+
+    width:120px;
+
+}
+
+
+/* Description */
+
+.activity-table th:nth-child(6),
+.activity-table td:nth-child(6){
+
+    min-width:320px;
+
+}
+
+
+/* User avatar */
+
+.activity-avatar{
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-weight:700;
+
+    font-size:.90rem;
+
+    flex-shrink:0;
+
+}
+
+
+/* Badges */
+
+.activity-badge{
+
+    padding:6px 12px;
+
+    font-size:.75rem;
+
+    font-weight:600;
+
+}
+
+
+/* Empty state */
+
+.activity-empty{
+
+    padding:70px 20px !important;
+
+    text-align:center;
+
+}
+
+
+/* Responsive */
+
+@media (max-width:992px){
+
+    .activity-table{
+
+        min-width:850px;
+
+    }
+
+}
+
+
+
+/* ============================
+   USER AVATAR
+============================ */
+
+
+.activity-avatar {
+
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-weight:700;
+
+    font-size:.9rem;
+
+    flex-shrink:0;
+
+}
+
+
+
+/* ============================
+   BADGES
+============================ */
+
+
+.activity-badge {
+
+
+    padding:7px 13px;
+
+    font-size:.75rem;
+
+    font-weight:600;
+
+    letter-spacing:.2px;
+
+}
+
+
+
+.activity-table .badge.bg-light {
+
+
+    padding:7px 12px;
+
+    border-radius:20px;
+
+    font-weight:600;
+
+}
+
+
+
+/* ============================
+   DESCRIPTION COLUMN
+============================ */
+
+
+.activity-table td:nth-child(6) {
+
+
+    max-width:350px;
+
+    color:#495057;
+
+}
+
+
+
+/* ============================
+   EMPTY STATE
+============================ */
+
+
+.activity-empty {
+
+
+    padding:70px 20px!important;
+
+    text-align:center;
+
+}
+
+
+
+.activity-empty i {
+
+
+    opacity:.5;
+
+}
+
+
+
+/* ============================
+   PAGINATION
+============================ */
+
+
+.pagination {
+
+
+    padding-bottom:20px;
+
+}
+
+
+
+.pagination .page-link {
+
+
+    border-radius:10px;
+
+    margin:0 3px;
+
+    border:none;
+
+    color:#495057;
+
+}
+
+
+
+.pagination .active .page-link {
+
+
+    background:#0d6efd;
+
+    color:white;
+
+}
+
+
+
+/* ============================
+   MODAL
+============================ */
+
+
+.activity-modal {
+
+
+    border-radius:20px;
+
+    border:none;
+
+    overflow:hidden;
+
+}
+
+
+
+.activity-modal .modal-header {
+
+
+    background:#f8faff;
+
+    border-bottom:1px solid #edf0f5;
+
+    padding:20px 25px;
+
+}
+
+
+
+.activity-modal .modal-body {
+
+
+    padding:30px;
+
+}
+
+
+
+.activity-modal label {
+
+
+    font-size:.75rem;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+    font-weight:600;
+
+}
+
+
+
+.activity-modal h6 {
+
+
+    margin-top:8px;
+
+    font-weight:600;
+
+    color:#343a40;
+
+}
+
+
+
+.activity-modal .alert {
+
+
+    border-radius:12px;
+
+    border:none;
+
+    background:#f8f9fa;
+
+    padding:15px;
+
+}
+
+
+
+.activity-modal .activity-badge {
+
+
+    padding:8px 15px;
+
+}
+
+
+
+/* modal animation */
+
+
+.modal.fade .modal-dialog {
+
+
+    transform:translateY(-20px);
+
+    transition:.3s ease;
+
+}
+
+
+
+.modal.show .modal-dialog {
+
+
+    transform:translateY(0);
+
+}
+
+
+
+/* ============================
+   TABLE SCROLL
+============================ */
+
+.table-responsive{
+
+    width:100%;
+
+    overflow-x:auto;
+
+    overflow-y:hidden;
+
+    -webkit-overflow-scrolling:touch;
+
+    border-radius:18px;
+
+}
+
+
+/* Nice scrollbar */
+
+.table-responsive::-webkit-scrollbar{
+
+    height:8px;
+
+}
+
+
+.table-responsive::-webkit-scrollbar-track{
+
+    background:#f1f3f5;
+
+}
+
+
+.table-responsive::-webkit-scrollbar-thumb{
+
+    background:#cfd4da;
+
+    border-radius:10px;
+
+}
+
+
+.table-responsive::-webkit-scrollbar-thumb:hover{
+
+    background:#adb5bd;
+
+}
+
+
+
+/* ============================
+   RESPONSIVE
+============================ */
+
+.activity-header .d-flex{
+
+    flex-wrap:wrap;
+
+}
+
+
+@media (max-width:992px){
+
+    .activity-header{
+
+        flex-direction:column;
+
+        align-items:flex-start !important;
+
+        gap:15px;
+
+    }
+
+}
+
+
+@media (max-width:768px){
+
+    .activity-table{
+
+        min-width:900px;
+
+    }
+
+}
+
+
+@media (max-width:576px){
+
+    .activity-export-btn{
+
+        width:100%;
+
+    }
+
+}
+/* =====================================
+   FIX ACTIVITY TABLE HEADER VISIBILITY
+===================================== */
+
+
+.activity-table {
+
+    width:100%;
+
+    min-width:1100px;
+
+}
+
+
+
+.activity-table thead {
+
+    display:table-header-group;
+
+}
+
+
+
+.activity-table thead tr {
+
+    display:table-row;
+
+}
+
+
+
+.activity-table thead th {
+
+    display:table-cell !important;
+
+    visibility:visible !important;
+
+    opacity:1 !important;
+
+    background:#0d6efd;
+
+    color:white;
+
+    padding:15px;
+
+    font-weight:700;
+
+    white-space:nowrap;
+
+}
+
+
+
+.activity-table tbody tr {
+
+    display:table-row;
+
+}
+
+
+
+.activity-table tbody td {
+
+    display:table-cell;
+
+}
+
+/* =====================================
+   INTEGRITY SECTION
+===================================== */
+
+#modalIntegrity {
+
+    font-size: .85rem;
+
+    padding: 8px 16px;
+
+}
+
+#modalHash {
+
+    word-break: break-all;
+
+    white-space: normal;
+
+    line-height: 1.6;
+
+    font-size: .80rem;
+
+    color: #495057;
+
+    min-height: 60px;
+
+    background: #f8f9fa;
+
+    border: 1px solid #dee2e6;
+
+    border-radius: 10px;
+
+}

@@ -6,46 +6,79 @@ from finance.models import (
     FinancialClearance,
     StudentCredit,
 )
+from django.db import transaction
 
-
+@transaction.atomic
 def generate_student_invoice(enrollment):
     """
-    Generate invoice automatically
-    from the student's semester enrollment.
+    Generate a student invoice from a semester enrollment.
+
+    The function is idempotent:
+        • Returns the existing invoice if one already exists.
+        • Otherwise creates a new invoice.
+        • Generates all invoice items.
+        • Applies available credits.
+        • Updates financial clearance.
+
+    Parameters
+    ----------
+    enrollment : SemesterEnrollment
+
+    Returns
+    -------
+    StudentInvoice
     """
 
-    # Prevent duplicate invoice
-    if hasattr(enrollment, "invoice"):
+    # ==========================================================
+    # Return existing invoice (Prevent duplicates)
+    # ==========================================================
 
-        return enrollment.invoice
+    existing_invoice = getattr(
+        enrollment,
+        "invoice",
+        None,
+    )
 
+    if existing_invoice:
+        return existing_invoice
+
+    # ==========================================================
+    # Retrieve Active Fee Structure
+    # ==========================================================
 
     try:
 
-        fee_structure = FeeStructure.objects.get(
-
-            programme_level=enrollment.programme_level,
-
-            academic_year=enrollment.academic_year,
-
-            semester=enrollment.semester,
-
-            is_active=True,
-
+        fee_structure = (
+            FeeStructure.objects
+            .select_related(
+                "programme_level",
+                "academic_year",
+                "semester",
+            )
+            .prefetch_related(
+                "items",
+                "items__fee_category",
+            )
+            .get(
+                programme_level=enrollment.programme_level,
+                academic_year=enrollment.academic_year,
+                semester=enrollment.semester,
+                is_active=True,
+            )
         )
-
 
     except FeeStructure.DoesNotExist:
 
         raise ValueError(
-
             "No active fee structure found for "
-            f"{enrollment.programme_level} - "
-            f"{enrollment.academic_year} - "
-            f"{enrollment.semester}"
-
+            f"{enrollment.programme_level} | "
+            f"{enrollment.academic_year} | "
+            f"{enrollment.semester}."
         )
 
+    # ==========================================================
+    # Create Invoice
+    # ==========================================================
 
     invoice = StudentInvoice.objects.create(
 
@@ -53,15 +86,17 @@ def generate_student_invoice(enrollment):
 
         enrollment=enrollment,
 
-        status="POSTED",
+        status=StudentInvoice.POSTED,
 
     )
 
+    # ==========================================================
+    # Create Invoice Items
+    # ==========================================================
 
-    for item in fee_structure.items.all():
+    invoice_items = [
 
-
-        InvoiceItem.objects.create(
+        InvoiceItem(
 
             invoice=invoice,
 
@@ -71,15 +106,29 @@ def generate_student_invoice(enrollment):
 
         )
 
+        for item in fee_structure.items.all()
 
-    apply_credit_to_invoice(invoice)
+    ]
 
+    InvoiceItem.objects.bulk_create(
+        invoice_items
+    )
 
-    # Create/update financial clearance
+    # ==========================================================
+    # Apply Student Credits
+    # ==========================================================
+
+    apply_credit_to_invoice(
+        invoice
+    )
+
+    # ==========================================================
+    # Update Financial Clearance
+    # ==========================================================
+
     update_financial_clearance(
         enrollment
     )
-
 
     return invoice
 
@@ -267,10 +316,8 @@ def update_financial_clearance(enrollment, user=None):
 
         clearance.updated_by = user
 
-
-
     clearance.save()
 
-
-
     return clearance
+
+

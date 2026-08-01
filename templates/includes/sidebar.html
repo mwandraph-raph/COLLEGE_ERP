@@ -84,19 +84,21 @@
 
         <!-- Dashboard -->
 
-        <li>
+<!-- ================================================= -->
+<!-- DASHBOARD -->
+<!-- ================================================= -->
 
-            <a href="{% url 'home' %}">
+<li>
 
-                <i class="fa-solid fa-house"></i>
+    <a href="{% url 'home' %}">
+        <span>
+            <i class="fa-solid fa-house me-2"></i>
+            Dashboard
+        </span>
 
-                <span>
-                    Dashboard
-                </span>
+    </a>
 
-            </a>
-
-        </li>
+</li>
 
         <!-- ================================================= -->
         <!-- ADMISSIONS -->
@@ -131,11 +133,9 @@
         <ul class="sidebar-submenu">
 
             <li>
-
+                
                 <a href="{% url 'applicant_list' %}">
-
                     <i class="fa-solid fa-user-plus"></i>
-
                     Applicants
 
                 </a>
@@ -143,11 +143,9 @@
             </li>
 
             <li>
-
+                
                 <a href="{% url 'intake_list' %}">
-
                     <i class="fa-solid fa-calendar-plus"></i>
-
                     Intakes
 
                 </a>
@@ -155,11 +153,9 @@
             </li>
 
             <li>
-
+                
                 <a href="{% url 'admissions_report' %}">
-
                     <i class="fa-solid fa-chart-column"></i>
-
                     Admissions Report
 
                 </a>
@@ -756,7 +752,7 @@
 
 <li class="menu-title">
 
-    Xoradex Admin
+    System Admin
 
 </li>
 <li>
@@ -821,29 +817,58 @@
 
             </li>
 
-            <li>
 
-                <a href="{% url 'accounts:profile' %}">
+<li>
 
-                    <i class="fa-solid fa-id-badge"></i>
+    <a href="{% url 'system:activity' %}">
 
-                    My Profile
+        <span>
 
-                </a>
+            <i class="fa-solid fa-shield-halved"></i>
 
-            </li>
+            Audit Trail
 
-            <li>
+        </span>
 
-                <a href="{% url 'accounts:logout' %}">
+    </a>
 
-                    <i class="fa-solid fa-right-from-bracket"></i>
+</li>
 
-                    Logout
 
-                </a>
+<li>
 
-            </li>
+    <a href="{% url 'accounts:profile' %}">
+
+        <span>
+
+            <i class="fa-solid fa-id-badge"></i>
+
+            My Profile
+
+        </span>
+
+    </a>
+
+</li>
+<!-- ================================================= -->
+<!-- LOGOUT -->
+<!-- ================================================= -->
+
+<li>
+
+    <a href="{% url 'accounts:logout' %}">
+
+        <span>
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            Logout
+
+        </span>
+
+    </a>
+
+</li>
 
         </ul>
 
@@ -852,19 +877,6 @@
 </li>
 
 {% endif %}
-
-        <li>
-
-            <a href="{% url 'accounts:logout' %}">
-
-                <i class="fa-solid fa-right-from-bracket"></i>
-
-                Logout
-
-            </a>
-
-        </li>
-
     </ul>
 
     <div class="sidebar-footer text-center mb-2">

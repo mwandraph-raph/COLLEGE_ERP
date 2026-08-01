@@ -235,10 +235,6 @@
 
     align-items:center;
 
-    justify-content:space-between;
-
-    gap:12px;
-
     padding:11px 14px;
 
     border-radius:10px;
@@ -251,7 +247,34 @@
 
     font-weight:500;
 
+    gap:12px;
+
 }
+
+
+/* Dropdown menus with arrows */
+
+.sidebar-menu a.justify-content-between{
+
+    justify-content:space-between;
+
+}
+
+
+/* Icon alignment */
+
+.sidebar-menu a > i:first-child{
+
+    width:20px;
+
+    min-width:20px;
+
+    text-align:center;
+
+}
+
+
+/* Text wrapper */
 
 .sidebar-menu a span{
 
@@ -263,30 +286,18 @@
 
 }
 
-.sidebar-menu a i{
+
+/* Icons inside text wrapper */
+
+.sidebar-menu a span i{
 
     width:20px;
 
+    min-width:20px;
+
     text-align:center;
 
-    flex-shrink:0;
-
 }
-
-/*====================================================
-    HOVER
-====================================================*/
-
-.sidebar-menu a:hover{
-
-    background:rgba(255,255,255,.10);
-
-    color:#FFFFFF;
-
-    transform:translateX(3px);
-
-}
-
 /*====================================================
     ACTIVE
 ====================================================*/
@@ -454,3 +465,4 @@
     }
 
 }
+

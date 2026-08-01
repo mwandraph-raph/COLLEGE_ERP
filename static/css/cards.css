@@ -36,20 +36,43 @@
 /*====================================================
     CARD HEADER
 ====================================================*/
+.dashboard-chart-card,
+.card:has(.card-header){
+
+    border:none;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
 
 .card-header{
 
-    display:flex;
+    background:white;
+    border-bottom:1px solid #eee;
+    padding:18px 20px;
+    font-weight:700;
+    font-size:16px;
 
-    justify-content:space-between;
+}
 
-    align-items:center;
+.card-header span{
 
-    padding:16px 20px;
+    color:#333;
 
-    background:#F8FAFD;
+}
 
-    border-bottom:1px solid var(--border);
+.card-header .btn{
+
+    border-radius:20px;
+    padding:5px 15px;
+    font-size:13px;
+
+}
+
+.card-header .btn:hover{
+
+    transform:translateY(-1px);
 
 }
 

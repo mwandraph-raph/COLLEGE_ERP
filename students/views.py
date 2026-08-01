@@ -41,7 +41,7 @@ from finance.services import (
     generate_student_invoice,
     update_financial_clearance,
 )
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.paginator import Paginator
 from .utils import generate_admission_no
 from django.db import transaction
@@ -72,32 +72,86 @@ from .forms import (
     UnitOfferingForm,
     BulkUnitOfferingForm,
 )
+from system.dashboard import get_recent_activities
 from students.services import (
     progress_student as progress_student_service,
     get_outstanding_supplementary_units,
 )
+import json
 
 
 # Create your views here.
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.db.models import Count
+import json
+from system.services import (
+    log_create,
+    log_update,
+    log_delete,
+    log_generate,
+)
+from system.constants import (
+    ADMISSIONS,
+    SEMESTER_ENROLLMENT,
+    ENROLLMENT,
+    FINANCE,
+)
 @login_required
 def home(request):
 
-    context = {}
+    context = {
+        "active_year": AcademicYear.objects.filter(is_active=True).first(),
+        "active_semester": Semester.objects.filter(is_active=True).first(),
+        "latest_enrollment": None,
+    }
 
-    active_year = AcademicYear.objects.filter(
-        is_active=True
-    ).first()
+    # ======================================================
+    # DASHBOARD CHART DATA (AVAILABLE TO ALL DASHBOARDS)
+    # ======================================================
 
-    active_semester = Semester.objects.filter(
-        is_active=True
-    ).first()
+    applicants_by_intake = (
+        Applicant.objects
+        .values("intake__name")
+        .annotate(total=Count("id"))
+        .order_by("intake__name")
+    )
 
-    context["active_year"] = active_year
-    context["active_semester"] = active_semester
+    applicants_by_programme = (
+        Applicant.objects
+        .values("programme__name")
+        .annotate(total=Count("id"))
+        .order_by("programme__name")
+    )
 
-    # ==============================
-    # Student Dashboard
-    # ==============================
+    context.update({
+
+        "admission_labels": json.dumps([
+            row["intake__name"] or "Unknown"
+            for row in applicants_by_intake
+        ]),
+
+        "admission_values": json.dumps([
+            row["total"]
+            for row in applicants_by_intake
+        ]),
+
+        "programme_labels": json.dumps([
+            row["programme__name"] or "Unknown"
+            for row in applicants_by_programme
+        ]),
+
+        "programme_values": json.dumps([
+            row["total"]
+            for row in applicants_by_programme
+        ]),
+
+    })
+
+    # ======================================================
+    # STUDENT
+    # ======================================================
+
     if hasattr(request.user, "student_profile"):
 
         student = request.user.student_profile
@@ -117,8 +171,6 @@ def home(request):
 
         registrations = Registration.objects.none()
 
-        registration_count = 0
-
         if enrollment:
 
             registrations = (
@@ -131,8 +183,6 @@ def home(request):
                 .order_by("unit__code")
             )
 
-            registration_count = registrations.count()
-
         context.update({
 
             "dashboard_type": "student",
@@ -141,15 +191,17 @@ def home(request):
 
             "enrollment": enrollment,
 
+            "latest_enrollment": enrollment,
+
             "registrations": registrations,
 
-            "registration_count": registration_count,
+            "registration_count": registrations.count(),
 
         })
 
-    # ==============================
-    # Administrator Dashboard
-    # ==============================
+    # ======================================================
+    # ADMIN
+    # ======================================================
 
     elif request.user.is_superuser:
 
@@ -173,12 +225,11 @@ def home(request):
 
         })
 
-    # ==============================
-    # Lecturer Dashboard
-    # ==============================
-    elif request.user.groups.filter(
-        name="Lecturer"
-    ).exists():
+    # ======================================================
+    # LECTURER
+    # ======================================================
+
+    elif request.user.groups.filter(name="Lecturer").exists():
 
         assignments = LecturerAssignment.objects.filter(
             lecturer=request.user,
@@ -187,74 +238,56 @@ def home(request):
             unit_offering__semester__is_active=True,
         )
 
-        my_units = assignments.count()
-
-
-        my_students = Registration.objects.filter(
-            unit__in=assignments.values(
-                "unit_offering__unit"
-            ),
-            enrollment__academic_year__is_active=True,
-            enrollment__semester__is_active=True,
-            status=Registration.REGISTERED,
-        ).values(
-            "enrollment__student"
-        ).distinct().count()
-
-
-        pending_results = Result.objects.filter(
-            unit_offering__in=assignments.values(
-                "unit_offering"
-            ),
-            batch__status=ResultBatch.SUBMITTED,
-        ).count()
-
-
         context.update({
 
             "dashboard_type": "lecturer",
 
-            "my_units": my_units,
+            "my_units": assignments.count(),
 
-            "my_students": my_students,
+            "my_students": (
+                Registration.objects.filter(
+                    unit__in=assignments.values("unit_offering__unit"),
+                    enrollment__academic_year__is_active=True,
+                    enrollment__semester__is_active=True,
+                    status=Registration.REGISTERED,
+                )
+                .values("enrollment__student")
+                .distinct()
+                .count()
+            ),
 
-            "pending_results": pending_results,
+            "pending_results": Result.objects.filter(
+                unit_offering__in=assignments.values("unit_offering"),
+                batch__status=ResultBatch.SUBMITTED,
+            ).count(),
 
         })
-    # ==============================
-    # Exam Officer Dashboard
-    # ==============================
-    elif request.user.has_perm(
-        "students.view_lecturerassignment"
-    ):
 
-        submitted_batches = ResultBatch.objects.filter(
-            status=ResultBatch.SUBMITTED
-        )
+    # ======================================================
+    # EXAM OFFICER
+    # ======================================================
 
-        returned_batches = ResultBatch.objects.filter(
-            status=ResultBatch.RETURNED
-        )
-
-        approved_batches = ResultBatch.objects.filter(
-            status=ResultBatch.APPROVED
-        )
-
-        unlocked_batches = ResultBatch.objects.filter(
-            status=ResultBatch.UNLOCKED
-        )
+    elif request.user.has_perm("students.view_lecturerassignment"):
 
         context.update({
 
             "dashboard_type": "exam",
 
-            "submitted_batches": submitted_batches.count(),
+            "submitted_batches": ResultBatch.objects.filter(
+                status=ResultBatch.SUBMITTED
+            ).count(),
 
-            "returned_batches": returned_batches.count(),
+            "returned_batches": ResultBatch.objects.filter(
+                status=ResultBatch.RETURNED
+            ).count(),
 
-            "approved_batches": approved_batches.count(),
+            "approved_batches": ResultBatch.objects.filter(
+                status=ResultBatch.APPROVED
+            ).count(),
 
-            "unlocked_batches": unlocked_batches.count(),
+            "unlocked_batches": ResultBatch.objects.filter(
+                status=ResultBatch.UNLOCKED
+            ).count(),
 
             "total_batches": ResultBatch.objects.count(),
 
@@ -266,13 +299,11 @@ def home(request):
 
         })
 
-    # ==============================
-    # Registrar Dashboard
-    # ==============================
+    # ======================================================
+    # REGISTRAR
+    # ======================================================
 
-    elif request.user.has_perm(
-        "students.view_registration"
-    ):
+    elif request.user.has_perm("students.view_registration"):
 
         context.update({
 
@@ -286,67 +317,68 @@ def home(request):
 
         })
 
-    # ==============================
-    # Admissions Dashboard
-    # ==============================
+    # ======================================================
+    # ADMISSIONS
+    # ======================================================
 
-    elif request.user.has_perm(
-        "students.view_applicant"
-    ):
+    elif request.user.has_perm("students.view_applicant"):
 
         context.update({
 
             "dashboard_type": "admissions",
 
-            "total_applicants":
+            "total_applicants": Applicant.objects.count(),
 
-                Applicant.objects.count(),
+            "pending_applicants": Applicant.objects.filter(
+                status="PENDING"
+            ).count(),
 
-            "pending_applicants":
+            "approved_applicants": Applicant.objects.filter(
+                status="APPROVED"
+            ).count(),
 
-                Applicant.objects.filter(
-                    status="PENDING"
-                ).count(),
+            "rejected_applicants": Applicant.objects.filter(
+                status="REJECTED"
+            ).count(),
 
-            "approved_applicants":
-
-                Applicant.objects.filter(
-                    status="APPROVED"
-                ).count(),
-
-            "rejected_applicants":
-
-                Applicant.objects.filter(
-                    status="REJECTED"
-                ).count(),
-
-            "total_intakes":
-
-                Intake.objects.count(),
+            "total_intakes": Intake.objects.count(),
 
         })
+
+    # ======================================================
+    # GENERAL
+    # ======================================================
 
     else:
 
         context["dashboard_type"] = "general"
 
-    latest_enrollment = None
+    # ==============================
+    # Recent Dashboard Activity
+    # ==============================
 
-    if hasattr(request.user, "student_profile"):
-        latest_enrollment = (
-            request.user.student_profile.enrollments
-            .select_related("academic_year", "semester")
-            .order_by("-academic_year__id", "-semester__id")
-            .first()
-        )
+    context["recent_applicants"] = Applicant.objects.order_by(
+        "-id"
+    )[:5]
 
-    context["latest_enrollment"] = latest_enrollment
 
+    context["recent_students"] = Student.objects.order_by(
+        "-id"
+    )[:5]
+
+
+    context["recent_registrations"] = Registration.objects.order_by(
+        "-id"
+    )[:5]
+
+    context["recent_activities"] = get_recent_activities()
+    
     return render(
         request,
         "students/home.html",
         context,
     )
+
 
 
 @login_required
@@ -2605,7 +2637,6 @@ def enrollment_create(request):
         .first()
     )
 
-
     if not active_year:
 
         messages.error(
@@ -2616,7 +2647,6 @@ def enrollment_create(request):
         return redirect(
             "enrollment_list"
         )
-
 
     if not active_semester:
 
@@ -2629,13 +2659,11 @@ def enrollment_create(request):
             "enrollment_list"
         )
 
-
     if request.method == "POST":
 
         form = SemesterEnrollmentForm(
             request.POST
         )
-
 
         if form.is_valid():
 
@@ -2643,9 +2671,7 @@ def enrollment_create(request):
                 commit=False
             )
 
-
             # Prevent duplicate enrollment
-
             exists = (
                 SemesterEnrollment.objects
                 .filter(
@@ -2655,7 +2681,6 @@ def enrollment_create(request):
                 )
                 .exists()
             )
-
 
             if exists:
 
@@ -2668,28 +2693,16 @@ def enrollment_create(request):
                     "enrollment_create"
                 )
 
-
             # Automatically assign current academic period
-
-            enrollment.academic_year = (
-                active_year
-            )
-
-            enrollment.semester = (
-                active_semester
-            )
-
+            enrollment.academic_year = active_year
+            enrollment.semester = active_semester
 
             # Ensure programme comes from student
-
             enrollment.programme = (
                 enrollment.student.programme
             )
 
-
-            # Ensure the selected programme level belongs
-            # to the student's programme.
-
+            # Validate programme level
             if (
                 enrollment.programme_level.programme
                 != enrollment.programme
@@ -2708,25 +2721,36 @@ def enrollment_create(request):
                 SemesterEnrollment.ENROLLED
             )
 
-
             enrollment.save()
 
+            # ===========================================
+            # AUDIT TRAIL
+            # ===========================================
+
+            log_create(
+                request=request,
+                module=ENROLLMENT,
+                obj=enrollment,
+                description=(
+                    f"Student '{enrollment.student}' "
+                    f"enrolled into "
+                    f"{enrollment.programme} "
+                    f"({active_year} - {active_semester})."
+                ),
+            )
 
             messages.success(
                 request,
                 "Student enrolled successfully."
             )
 
-
             return redirect(
                 "enrollment_list"
             )
 
-
     else:
 
         form = SemesterEnrollmentForm()
-
 
     return render(
         request,
@@ -2905,22 +2929,27 @@ def applicant_create(request):
 
     if request.method == "POST":
 
-        form = ApplicantForm(
-            request.POST
-        )
+        form = ApplicantForm(request.POST)
 
         if form.is_valid():
 
-            form.save()
+            applicant = form.save()
+
+            log_create(
+                request=request,
+                module=ADMISSIONS,
+                obj=applicant,
+                description=(
+                    f"Applicant '{applicant}' was created."
+                ),
+            )
 
             messages.success(
                 request,
-                "Applicant created."
+                "Applicant created successfully."
             )
 
-            return redirect(
-                "applicant_list"
-            )
+            return redirect("applicant_list")
 
     else:
 
@@ -2939,10 +2968,7 @@ def applicant_create(request):
     "students.change_applicant",
     raise_exception=True
 )
-def applicant_update(
-    request,
-    pk
-):
+def applicant_update(request, pk):
 
     applicant = get_object_or_404(
         Applicant,
@@ -2958,11 +2984,20 @@ def applicant_update(
 
         if form.is_valid():
 
-            form.save()
+            applicant = form.save()
+
+            log_update(
+                request=request,
+                module=ADMISSIONS,
+                obj=applicant,
+                description=(
+                    f"Applicant '{applicant}' was updated."
+                ),
+            )
 
             messages.success(
                 request,
-                "Applicant updated."
+                "Applicant updated successfully."
             )
 
             return redirect(
@@ -2989,10 +3024,7 @@ def applicant_update(
     "students.delete_applicant",
     raise_exception=True
 )
-def applicant_delete(
-    request,
-    pk
-):
+def applicant_delete(request, pk):
 
     applicant = get_object_or_404(
         Applicant,
@@ -3001,11 +3033,22 @@ def applicant_delete(
 
     if request.method == "POST":
 
+        applicant_name = str(applicant)
+
+        log_delete(
+            request=request,
+            module=ADMISSIONS,
+            obj=applicant,
+            description=(
+                f"Applicant '{applicant_name}' was deleted."
+            ),
+        )
+
         applicant.delete()
 
         messages.success(
             request,
-            "Applicant deleted."
+            "Applicant deleted successfully."
         )
 
         return redirect(
@@ -5272,6 +5315,11 @@ def semester_enrollment_list(request):
         }
     )
 
+@login_required
+@permission_required(
+    "students.add_semesterenrollment",
+    raise_exception=True,
+)
 @transaction.atomic
 def semester_enrollment_create(request):
 
@@ -5279,73 +5327,89 @@ def semester_enrollment_create(request):
         request.POST or None
     )
 
-
     if form.is_valid():
-
 
         enrollment = form.save()
 
+        # ==========================================
+        # AUDIT : Semester Enrollment
+        # ==========================================
 
+        log_create(
+            request=request,
+            module=SEMESTER_ENROLLMENT,
+            obj=enrollment,
+            description=(
+                f"Semester enrollment created for "
+                f"'{enrollment.student}' "
+                f"({enrollment.academic_year} - "
+                f"{enrollment.semester})."
+            ),
+        )
 
         try:
 
-            generate_student_invoice(
+            invoice = generate_student_invoice(
                 enrollment
             )
 
+            # ======================================
+            # AUDIT : Invoice Generated
+            # ======================================
+
+            log_generate(
+                request=request,
+                module=FINANCE,
+                obj=invoice if invoice else enrollment,
+                description=(
+                    f"Invoice generated for "
+                    f"'{enrollment.student}'."
+                ),
+            )
 
             update_financial_clearance(
                 enrollment,
-                request.user
+                request.user,
             )
 
+            # ======================================
+            # AUDIT : Financial Clearance Updated
+            # ======================================
+
+            log_generate(
+                request=request,
+                module=FINANCE,
+                obj=enrollment,
+                description=(
+                    f"Financial clearance updated for "
+                    f"'{enrollment.student}'."
+                ),
+            )
 
             messages.success(
-
                 request,
-
-                "Semester enrollment created and invoice generated successfully."
-
+                "Semester enrollment created and invoice generated successfully.",
             )
-
 
         except ValueError as e:
 
-
             messages.warning(
-
                 request,
-
-                str(e)
-
+                str(e),
             )
 
-
-
         return redirect(
-
             "semester_enrollment_detail",
-
-            pk=enrollment.pk
-
+            pk=enrollment.pk,
         )
 
-
-
     return render(
-
         request,
-
         "students/enrollments/enrollment_form.html",
-
         {
-
-            "form": form
-
-        }
-
+            "form": form,
+        },
     )
-
 
 def semester_enrollment_detail(request, pk):
 

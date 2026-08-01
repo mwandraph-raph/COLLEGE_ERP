@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "accounts",
     "finance",
     "graduation",
+    "system.apps.SystemConfig",
 ]
 
 MIDDLEWARE = [
