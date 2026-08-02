@@ -1,0 +1,385 @@
+/*====================================================
+    XORADEX EDUCORE ERP
+    ADMIN DASHBOARD
+====================================================*/
+
+
+/*====================================================
+    DASHBOARD HEADER
+====================================================*/
+
+.dashboard-header{
+    background:linear-gradient(135deg,var(--blue),#1e40af);
+    border-radius:22px;
+    padding:30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:#fff;
+    margin-bottom:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+.dashboard-title{
+    margin:0;
+    font-size:32px;
+    font-weight:800;
+}
+
+.dashboard-subtitle{
+    margin-top:8px;
+    margin-bottom:0;
+    font-size:16px;
+    opacity:.9;
+}
+
+.dashboard-subtitle strong{
+    color:#fff;
+}
+
+.dashboard-date{
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(10px);
+    padding:18px 24px;
+    border-radius:16px;
+    text-align:right;
+    font-weight:600;
+}
+
+.dashboard-date i{
+    margin-right:8px;
+}
+
+.dashboard-date small{
+    opacity:.85;
+}
+
+/*====================================================
+    RESPONSIVE
+====================================================*/
+
+@media(max-width:992px){
+
+.dashboard-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+}
+
+.dashboard-date{
+    width:100%;
+    text-align:left;
+}
+
+.quick-actions{
+    grid-template-columns:1fr;
+}
+
+.dashboard-card{
+    padding:18px;
+}
+
+.dashboard-icon{
+    width:60px;
+    height:60px;
+    font-size:24px;
+}
+
+.dashboard-info h2{
+    font-size:26px;
+}
+
+}
+
+/*====================================================
+    KPI CARDS
+====================================================*/
+
+.dashboard-card{
+    background:#fff;
+    border-radius:20px;
+    padding:22px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    height:100%;
+    border:1px solid #edf2f7;
+    box-shadow:0 6px 20px rgba(0,0,0,.06);
+    transition:.3s;
+}
+
+.dashboard-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+}
+
+.dashboard-icon{
+    width:65px;
+    height:65px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    flex-shrink:0;
+}
+
+.dashboard-info{
+    flex:1;
+}
+
+.dashboard-info h6{
+    margin:0;
+    color:#64748b;
+    font-size:14px;
+    font-weight:600;
+}
+
+.dashboard-info h2{
+    margin:6px 0;
+    font-size:30px;
+    font-weight:800;
+    color:#0f172a;
+}
+
+.dashboard-info small{
+    color:#94a3b8;
+}
+
+
+/*====================================================
+    KPI COLORS
+====================================================*/
+
+.card-students .dashboard-icon{
+    background:#e0f2fe;
+    color:#0284c7;
+}
+
+.card-applicants .dashboard-icon{
+    background:#dcfce7;
+    color:#16a34a;
+}
+
+.card-enrollments .dashboard-icon{
+    background:#fef3c7;
+    color:#ca8a04;
+}
+
+.card-registrations .dashboard-icon{
+    background:#f3e8ff;
+    color:#7c3aed;
+}
+
+
+/*====================================================
+    ADMIN CHARTS
+====================================================*/
+
+.chart-body{
+    height:380px;
+    position:relative;
+    padding:25px;
+}
+
+.chart-body canvas{
+    width:100%!important;
+    height:100%!important;
+}
+
+
+/*====================================================
+    ADMIN QUICK ACTIONS
+====================================================*/
+
+.quick-actions{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.quick-action{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:18px;
+    padding:22px;
+    min-height:120px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    text-decoration:none;
+    color:var(--navy);
+    transition:.3s;
+}
+
+.quick-action:hover{
+    background:var(--blue);
+    color:#fff;
+    transform:translateY(-5px);
+    box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+
+.quick-action i{
+    width:56px;
+    height:56px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#eff6ff;
+    color:#2563eb;
+    margin-bottom:14px;
+    font-size:24px;
+}
+
+.quick-action:hover i{
+    background:rgba(255,255,255,.2);
+    color:#fff;
+}
+
+.quick-action span{
+    font-size:14px;
+    font-weight:700;
+}
+
+
+/*====================================================
+    ADMIN TABLES
+====================================================*/
+
+.table-borderless td{
+    padding:14px 4px;
+    border:none;
+}
+
+.table-borderless tr:not(:last-child){
+    border-bottom:1px solid #edf2f7;
+}
+
+
+
+
+/*====================================================
+    RECENT ACTIVITY
+====================================================*/
+
+.activity-row{
+    display:flex;
+    gap:18px;
+    padding:18px 22px;
+    border-bottom:1px solid var(--border);
+    transition:.25s;
+}
+
+.activity-row:last-child{
+    border-bottom:none;
+}
+
+.activity-row:hover{
+    background:#f8fafc;
+}
+
+.activity-icon{
+    width:48px;
+    height:48px;
+    border-radius:14px;
+    background:#eff6ff;
+    color:var(--blue);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.activity-content{
+    flex:1;
+}
+
+/*====================================================
+    ACTIVITY HEADER SPACING
+====================================================*/
+/*====================================================
+    RECENT ACTIVITY
+====================================================*/
+
+.activity-header{
+    cursor:pointer;
+}
+
+
+.activity-header .btn-link{
+    color:var(--navy);
+}
+
+
+.activity-header .btn-link:hover{
+    color:var(--blue);
+}
+
+
+.activity-chevron{
+    transition:.3s ease;
+}
+
+
+.activity-header button[aria-expanded="false"] .activity-chevron{
+    transform:rotate(-90deg);
+}
+
+
+
+.activity-card{
+    border-radius:20px;
+    overflow:hidden;
+}
+
+
+.activity-row{
+    display:flex;
+    gap:15px;
+    padding:18px 20px;
+    border-bottom:1px solid #edf2f7;
+    transition:.3s;
+}
+
+
+.activity-row:hover{
+    background:#f8fafc;
+}
+
+
+.activity-row:last-child{
+    border-bottom:none;
+}
+
+
+.activity-icon{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:#eff6ff;
+    color:#2563eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+
+.activity-content{
+    flex:1;
+    font-size:14px;
+}
+
+
+.activity-content span{
+    color:#0f172a;
+}
+
+
+.activity-content div{
+    color:#475569;
+    margin-top:5px;
+}

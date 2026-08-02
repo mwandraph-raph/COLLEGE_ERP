@@ -397,6 +397,12 @@ path(
 ),
 
 path(
+    "lecturer-submission/<int:lecturer_id>/",
+    views.lecturer_submission_detail,
+    name="lecturer_submission_detail"
+),
+
+path(
     "my-units/",
     views.my_units,
     name="my_units",

@@ -1,19 +1,21 @@
 @import url("tokens.css");
 
 @import url("layout.css");
-
 @import url("sidebar.css");
-
 @import url("topbar.css");
 
 @import url("cards.css");
-
 @import url("tables.css");
-
 @import url("buttons.css");
-
 @import url("forms.css");
 
-@import url("footer.css");
+/* Shared dashboard components */
+@import url("dashboard.css");
 
+/* Role dashboards */
+@import url("admin_dashboard.css");
+@import url("student_dashboard.css");
+
+@import url("footer.css");
 @import url("responsive.css");
+@import url(style.css);

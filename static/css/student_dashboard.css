@@ -1,0 +1,663 @@
+/*====================================================
+    XORADEX EDUCORE
+    STUDENT DASHBOARD
+====================================================*/
+
+
+/*====================================================
+    HERO
+====================================================*/
+
+.hero-card{
+
+    background:linear-gradient(135deg,var(--blue),var(--navy));
+    border-radius:24px;
+    color:#012169;
+    overflow:hidden;
+    box-shadow:var(--shadow-lg);
+    border:none;
+
+}
+
+.hero-card .card-body{
+
+    padding:38px;
+
+}
+
+.hero-title{
+
+    font-size:32px;
+    font-weight:700;
+    margin-bottom:6px;
+
+}
+
+.hero-subtitle{
+
+    color:rgba(255,255,255,.85);
+    font-size:16px;
+    margin-bottom:18px;
+
+}
+
+.hero-meta{
+
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+
+}
+
+.hero-badge{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    background:rgba(255,255,255,.12);
+
+    padding:10px 18px;
+
+    border-radius:50px;
+
+    backdrop-filter:blur(10px);
+
+    font-size:14px;
+
+}
+
+.hero-badge i{
+
+    opacity:.9;
+
+}
+
+
+/*====================================================
+    AVATAR
+====================================================*/
+
+.profile-avatar{
+
+    width:90px;
+    height:90px;
+
+    border-radius:22px;
+
+    background:rgba(255,255,255,.18);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:42px;
+
+    color:#fff;
+
+    backdrop-filter:blur(12px);
+
+}
+
+
+/*====================================================
+    KPI GRID
+====================================================*/
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:22px;
+
+}
+
+.kpi-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    border:1px solid var(--border);
+
+    transition:.25s;
+
+    box-shadow:var(--shadow-sm);
+
+}
+
+.kpi-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:var(--shadow);
+
+}
+
+.kpi-card .card-body{
+
+    padding:24px;
+
+}
+
+.kpi-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.kpi-value{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:var(--navy);
+
+    line-height:1;
+
+}
+
+.kpi-label{
+
+    margin-top:8px;
+
+    font-size:14px;
+
+    color:var(--muted);
+
+}
+
+.kpi-icon{
+
+    width:62px;
+
+    height:62px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:24px;
+
+}
+
+.kpi-icon.primary{
+
+    background:#e8f1ff;
+
+    color:#2563eb;
+
+}
+
+.kpi-icon.success{
+
+    background:#e8fff2;
+
+    color:#16a34a;
+
+}
+
+.kpi-icon.warning{
+
+    background:#fff8df;
+
+    color:#d97706;
+
+}
+
+.kpi-icon.danger{
+
+    background:#ffecec;
+
+    color:#dc2626;
+
+}
+
+
+/*====================================================
+    PROGRESS
+====================================================*/
+
+.progress-chart-wrapper{
+
+    width:230px;
+
+    margin:auto;
+
+}
+
+.progress-summary{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+}
+
+.progress-item{
+
+    flex:1;
+
+    background:#f8fafc;
+
+    border-radius:16px;
+
+    padding:18px;
+
+    text-align:center;
+
+}
+
+.progress-item span{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+}
+
+.progress-item strong{
+
+    display:block;
+
+    margin-top:6px;
+
+    font-size:24px;
+
+    color:var(--navy);
+
+}
+
+
+/*====================================================
+    UNIT LIST
+====================================================*/
+
+.unit-list{
+
+    padding:12px;
+
+}
+
+.unit-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px;
+
+    border-bottom:1px solid #eef2f7;
+
+    transition:.2s;
+
+}
+
+.unit-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.unit-item:hover{
+
+    background:#f8fbff;
+
+}
+
+.unit-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.unit-icon{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:16px;
+
+    background:#e8f1ff;
+
+    color:var(--blue);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:20px;
+
+}
+
+.unit-code{
+
+    font-weight:700;
+
+    color:var(--navy);
+
+}
+
+.unit-name{
+
+    color:var(--muted);
+
+    font-size:14px;
+
+}
+
+.unit-status{
+
+    padding:8px 16px;
+
+    border-radius:50px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.unit-status.registered{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+}
+
+
+/*====================================================
+    CALENDAR
+====================================================*/
+
+.calendar-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:18px 0;
+
+    border-bottom:1px solid #eef2f7;
+
+}
+
+.calendar-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.calendar-icon{
+
+    width:50px;
+
+    height:50px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#fff;
+
+}
+
+.calendar-item h6{
+
+    margin:4px 0 0;
+
+    font-weight:700;
+
+}
+
+.calendar-item small{
+
+    color:var(--muted);
+
+}
+
+
+/*====================================================
+    DOWNLOADS
+====================================================*/
+
+.quick-actions{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:18px;
+
+}
+
+.quick-action{
+
+    background:#fff;
+
+    border:1px solid #edf2f7;
+
+    border-radius:18px;
+
+    padding:24px 18px;
+
+    text-align:center;
+
+    color:var(--navy);
+
+    text-decoration:none;
+
+    transition:.25s;
+
+}
+
+.quick-action:hover{
+
+    background:var(--blue);
+
+    color:#fff;
+
+    transform:translateY(-5px);
+
+}
+
+.quick-action i{
+
+    font-size:24px;
+
+    margin-bottom:14px;
+
+    display:block;
+
+}
+
+.quick-action span{
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+
+/*====================================================
+    NOTIFICATIONS
+====================================================*/
+
+.notification-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 0;
+
+    border-bottom:1px solid #eef2f7;
+
+}
+
+.notification-item:last-child{
+
+    border-bottom:none;
+
+}
+
+
+/*====================================================
+    SURVEY
+====================================================*/
+
+.survey-card{
+
+    background:linear-gradient(135deg,#eef5ff,#ffffff);
+
+    border:2px dashed #c7dbff;
+
+    border-radius:24px;
+
+    text-align:center;
+
+    padding:50px;
+
+}
+
+.survey-card i{
+
+    font-size:46px;
+
+    color:var(--blue);
+
+    margin-bottom:18px;
+
+}
+
+.survey-card h4{
+
+    font-weight:700;
+
+    color:var(--navy);
+
+}
+
+.survey-card p{
+
+    max-width:650px;
+
+    margin:18px auto 28px;
+
+}
+
+
+/*====================================================
+    EMPTY STATE
+====================================================*/
+
+.units-empty{
+
+    text-align:center;
+
+    padding:70px 20px;
+
+}
+
+.units-empty i{
+
+    font-size:54px;
+
+    color:#cbd5e1;
+
+    margin-bottom:20px;
+
+}
+
+
+/*====================================================
+    RESPONSIVE
+====================================================*/
+
+@media(max-width:1200px){
+
+.dashboard-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+.quick-actions{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:768px){
+
+.hero-card .card-body{
+
+padding:28px;
+
+}
+
+.hero-title{
+
+font-size:24px;
+
+}
+
+.hero-meta{
+
+gap:8px;
+
+}
+
+.dashboard-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.quick-actions{
+
+grid-template-columns:1fr;
+
+}
+
+.progress-summary{
+
+flex-direction:column;
+
+}
+
+}

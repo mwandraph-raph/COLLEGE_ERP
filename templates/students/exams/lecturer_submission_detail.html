@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-3">
+
+    <a href="{% url 'home' %}"
+       class="btn btn-outline-primary">
+
+        <i class="fa-solid fa-arrow-left me-2"></i>
+
+        Back to Exam Dashboard
+
+    </a>
+
+</div>
+
+<div class="container mt-4">
+
+
+<div class="card">
+
+
+<div class="card-header">
+
+
+<h4>
+
+{{ lecturer.get_full_name }}
+
+</h4>
+
+
+<small>
+
+Lecturer Submission Details
+
+</small>
+
+
+</div>
+
+
+
+<div class="card-body">
+
+
+<table class="table">
+
+
+<thead>
+
+<tr>
+
+<th>
+Unit Code
+</th>
+
+<th>
+Unit Name
+</th>
+
+<th>
+Status
+</th>
+
+<th>
+Action
+</th>
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody>
+
+
+{% for item in units %}
+
+
+<tr>
+
+
+<td>
+
+{{ item.unit.code }}
+
+</td>
+
+
+<td>
+
+{{ item.unit.name }}
+
+</td>
+
+
+<td>
+
+{% if item.status == "Pending" %}
+
+<span class="badge bg-warning">
+
+Pending
+
+</span>
+
+{% else %}
+
+<span class="badge bg-success">
+
+{{ item.status }}
+
+</span>
+
+{% endif %}
+
+
+</td>
+
+
+<td>
+
+
+{% if item.status == "Pending" %}
+
+<a href="#"
+class="btn btn-sm btn-danger">
+
+Send Reminder
+
+</a>
+
+
+{% endif %}
+
+
+</td>
+
+
+</tr>
+
+
+{% endfor %}
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+{% endblock %}

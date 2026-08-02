@@ -225,125 +225,281 @@ def home(request):
 
         })
 
+
     # ======================================================
     # LECTURER
     # ======================================================
 
     elif request.user.groups.filter(name="Lecturer").exists():
 
+
         assignments = LecturerAssignment.objects.filter(
+
             lecturer=request.user,
+
             unit_offering__is_active=True,
+
             unit_offering__academic_year__is_active=True,
+
             unit_offering__semester__is_active=True,
+
         )
+
 
         context.update({
 
             "dashboard_type": "lecturer",
 
+
             "my_units": assignments.count(),
 
-            "my_students": (
-                Registration.objects.filter(
-                    unit__in=assignments.values("unit_offering__unit"),
-                    enrollment__academic_year__is_active=True,
-                    enrollment__semester__is_active=True,
-                    status=Registration.REGISTERED,
-                )
-                .values("enrollment__student")
-                .distinct()
-                .count()
-            ),
 
-            "pending_results": Result.objects.filter(
-                unit_offering__in=assignments.values("unit_offering"),
-                batch__status=ResultBatch.SUBMITTED,
+            "my_students": Registration.objects.filter(
+
+                unit__in=assignments.values(
+                    "unit_offering__unit"
+                ),
+
+                enrollment__academic_year__is_active=True,
+
+                enrollment__semester__is_active=True,
+
+                status=Registration.REGISTERED,
+
+            )
+            .values(
+                "enrollment__student"
+            )
+            .distinct()
+            .count(),
+
+
+            "pending_results": ResultBatch.objects.filter(
+
+                lecturer_assignment__in=assignments,
+
+                status=ResultBatch.DRAFT,
+
             ).count(),
+
 
         })
 
     # ======================================================
     # EXAM OFFICER
     # ======================================================
+     
+    elif request.user.groups.filter(name="Exam Officer").exists():
+        # ==================================================
+        # EXAMINATION SUMMARY
+        # ==================================================
 
-    elif request.user.has_perm("students.view_lecturerassignment"):
+        context.update({
+
+            "total_result_batches": ResultBatch.objects.count(),
+
+            "total_results": Result.objects.count(),
+
+            "total_assignments": LecturerAssignment.objects.count(),
+
+            "total_unit_offerings": UnitOffering.objects.filter(
+                is_active=True
+            ).count(),
+
+        })
+
+        # ==================================================
+        # EXAM OFFICER KPIs
+        # ==================================================
 
         context.update({
 
             "dashboard_type": "exam",
 
-            "submitted_batches": ResultBatch.objects.filter(
+            "pending_review": ResultBatch.objects.filter(
                 status=ResultBatch.SUBMITTED
-            ).count(),
-
-            "returned_batches": ResultBatch.objects.filter(
-                status=ResultBatch.RETURNED
             ).count(),
 
             "approved_batches": ResultBatch.objects.filter(
                 status=ResultBatch.APPROVED
             ).count(),
 
+            "returned_batches": ResultBatch.objects.filter(
+                status=ResultBatch.RETURNED
+            ).count(),
+
+            "published_batches": ResultBatch.objects.filter(
+                status=ResultBatch.PUBLISHED
+            ).count(),
+
+            "total_batches": ResultBatch.objects.exclude(
+                status=ResultBatch.DRAFT
+            ).count(),
+
             "unlocked_batches": ResultBatch.objects.filter(
                 status=ResultBatch.UNLOCKED
             ).count(),
 
-            "total_batches": ResultBatch.objects.count(),
-
-            "total_results": Result.objects.count(),
-
-            "total_assignments": LecturerAssignment.objects.count(),
-
-            "total_unit_offerings": UnitOffering.objects.count(),
-
         })
 
-    # ======================================================
-    # REGISTRAR
-    # ======================================================
+        # ==================================================
+        # LECTURER SUBMISSION PROGRESS
+        # ==================================================
+        lecturer_progress = []
 
-    elif request.user.has_perm("students.view_registration"):
 
-        context.update({
+        lecturers = User.objects.filter(
+            lecturer_assignments__isnull=False
+        ).distinct()
 
-            "dashboard_type": "registrar",
 
-            "total_students": Student.objects.count(),
+        for lecturer in lecturers:
 
-            "total_enrollments": SemesterEnrollment.objects.count(),
+            assignments = LecturerAssignment.objects.filter(
+                lecturer=lecturer,
+                unit_offering__is_active=True,
+                unit_offering__academic_year__is_active=True,
+                unit_offering__semester__is_active=True,
+            )
 
-            "total_registrations": Registration.objects.count(),
 
-        })
+            assigned = assignments.count()
 
-    # ======================================================
-    # ADMISSIONS
-    # ======================================================
 
-    elif request.user.has_perm("students.view_applicant"):
+            submitted = ResultBatch.objects.filter(
+                lecturer_assignment__lecturer=lecturer,
+                status__in=[
+                    ResultBatch.SUBMITTED,
+                    ResultBatch.APPROVED,
+                    ResultBatch.PUBLISHED,
+                ],
+            ).count()
 
-        context.update({
+            pending = assigned - submitted
 
-            "dashboard_type": "admissions",
 
-            "total_applicants": Applicant.objects.count(),
+            progress = 0
 
-            "pending_applicants": Applicant.objects.filter(
-                status="PENDING"
-            ).count(),
+            if assigned > 0:
+                progress = round(
+                    (submitted / assigned) * 100
+                )
 
-            "approved_applicants": Applicant.objects.filter(
-                status="APPROVED"
-            ).count(),
 
-            "rejected_applicants": Applicant.objects.filter(
-                status="REJECTED"
-            ).count(),
+            lecturer_progress.append({
 
-            "total_intakes": Intake.objects.count(),
+                "department": (
+                    assignments.first()
+                    .unit_offering
+                    .unit
+                    .programme_level
+                    .programme
+                    .course
+                    .department
+                ),
 
-        })
+                "lecturer": lecturer,
+
+                "assigned": assigned,
+
+                "submitted": submitted,
+
+                "pending": pending,
+
+                "progress": progress,
+
+            })
+
+
+        context["lecturer_progress"] = lecturer_progress
+
+        context["departments"] = sorted(
+            set(
+                item["department"]
+                for item in lecturer_progress
+            )
+        )
+
+        # ======================================================
+        # DEPARTMENT SUBMISSION SUMMARY
+        # ======================================================
+
+        department_summary = []
+
+        for department in Department.objects.order_by("name"):
+
+            lecturers = User.objects.filter(
+                lecturer_assignments__unit_offering__unit__programme_level__programme__course__department=department
+            ).distinct()
+
+            lecturer_rows = []
+
+            for lecturer in lecturers:
+
+                assignments = LecturerAssignment.objects.filter(
+                    lecturer=lecturer,
+                    unit_offering__unit__programme_level__programme__course__department=department,
+                    unit_offering__academic_year__is_active=True,
+                    unit_offering__semester__is_active=True,
+                )
+
+                assigned = assignments.count()
+
+                submitted = ResultBatch.objects.filter(
+                    lecturer_assignment__in=assignments,
+                    status=ResultBatch.SUBMITTED
+                ).count()
+
+                returned = ResultBatch.objects.filter(
+                    lecturer_assignment__in=assignments,
+                    status=ResultBatch.RETURNED
+                ).count()
+
+                approved = ResultBatch.objects.filter(
+                    lecturer_assignment__in=assignments,
+                    status=ResultBatch.APPROVED
+                ).count()
+
+                published = ResultBatch.objects.filter(
+                    lecturer_assignment__in=assignments,
+                    status=ResultBatch.PUBLISHED
+                ).count()
+
+                pending = max(assigned - submitted - approved - published, 0)
+
+                progress = round(
+                    ((submitted + approved + published) / assigned) * 100
+                ) if assigned else 0
+
+                lecturer_rows.append({
+
+                    "lecturer": lecturer,
+
+                    "assigned": assigned,
+
+                    "submitted": submitted,
+
+                    "returned": returned,
+
+                    "approved": approved,
+
+                    "published": published,
+
+                    "pending": pending,
+
+                    "progress": progress,
+
+                })
+
+            department_summary.append({
+
+                "department": department,
+
+                "lecturers": lecturer_rows,
+
+            })
+
+        context["department_summary"] = department_summary
 
     # ======================================================
     # GENERAL
@@ -352,15 +508,6 @@ def home(request):
     else:
 
         context["dashboard_type"] = "general"
-
-    # ==============================
-    # Recent Dashboard Activity
-    # ==============================
-
-    context["recent_applicants"] = Applicant.objects.order_by(
-        "-id"
-    )[:5]
-
 
     context["recent_students"] = Student.objects.order_by(
         "-id"
@@ -371,14 +518,44 @@ def home(request):
         "-id"
     )[:5]
 
+
     context["recent_activities"] = get_recent_activities()
-    
-    return render(
-        request,
-        "students/home.html",
-        context,
+
+
+    # ======================================================
+    # DASHBOARD TEMPLATE ROUTER
+    # ======================================================
+
+    dashboard_templates = {
+
+        "admin": "students/dashboards/admin_home.html",
+
+        "student": "students/dashboards/student_home.html",
+
+        "lecturer": "students/home.html",
+
+        "exam": "students/dashboards/exam_home.html",
+
+        "registrar": "students/dashboards/registrar_home.html",
+
+        "admissions": "students/dashboards/admissions_home.html",
+
+        "general": "students/dashboards/student_home.html",
+
+    }
+
+
+    template = dashboard_templates.get(
+        context.get("dashboard_type"),
+        "students/home.html"
     )
 
+
+    return render(
+        request,
+        template,
+        context,
+    )
 
 
 @login_required
@@ -3725,9 +3902,9 @@ def enter_marks(request, assignment_id):
         pk=assignment_id,
     )
 
-    # ----------------------------------------
+    # ==================================================
     # Ensure lecturer owns this assignment
-    # ----------------------------------------
+    # ==================================================
 
     if assignment.lecturer != request.user:
 
@@ -3736,15 +3913,13 @@ def enter_marks(request, assignment_id):
             "You are not assigned to this Unit Offering.",
         )
 
-        return redirect(
-            "lecturer_assignment_list",
-        )
+        return redirect("my_units")
 
     offering = assignment.unit_offering
 
-    # ----------------------------------------
+    # ==================================================
     # Create / Get Result Batch
-    # ----------------------------------------
+    # ==================================================
 
     batch, created = ResultBatch.objects.get_or_create(
         unit_offering=offering,
@@ -3756,9 +3931,9 @@ def enter_marks(request, assignment_id):
 
     locked = batch.is_locked
 
-    # ----------------------------------------
+    # ==================================================
     # Registered Students
-    # ----------------------------------------
+    # ==================================================
 
     registrations = (
         Registration.objects.filter(
@@ -3776,9 +3951,9 @@ def enter_marks(request, assignment_id):
         )
     )
 
-    # ----------------------------------------
-    # Create missing Result records
-    # ----------------------------------------
+    # ==================================================
+    # Ensure every registration has a Result record
+    # ==================================================
 
     for registration in registrations:
 
@@ -3792,22 +3967,12 @@ def enter_marks(request, assignment_id):
             },
         )
 
-        if result.batch != batch:
-
-            result.batch = batch
-            result.save(
-                update_fields=[
-                    "batch",
-                ]
-            )
-
         registration.current_result = result
-
         registration.can_edit = result.is_editable
 
-    # ----------------------------------------
+    # ==================================================
     # Save Marks
-    # ----------------------------------------
+    # ==================================================
 
     if request.method == "POST":
 
@@ -3838,50 +4003,17 @@ def enter_marks(request, assignment_id):
             if not cat1 and not cat2 and not exam:
                 continue
 
-            result.cat1 = (
-                Decimal(cat1)
-                if cat1
-                else None
-            )
-
-            result.cat2 = (
-                Decimal(cat2)
-                if cat2
-                else None
-            )
-
-            result.exam = (
-                Decimal(exam)
-                if exam
-                else None
-            )
-
+            result.cat1 = Decimal(cat1) if cat1 else None
+            result.cat2 = Decimal(cat2) if cat2 else None
+            result.exam = Decimal(exam) if exam else None
             result.entered_by = request.user
 
+            # Keep the result linked to its batch
             result.batch = batch
 
+            # Let the model handle validation,
+            # totals, grades and remarks.
             result.save()
-
-            # ----------------------------------------
-            # If this student had been reopened,
-            # close reopening and resubmit batch
-            # ----------------------------------------
-
-            if result.is_reopened:
-
-                result.close_reopening()
-
-                batch.status = ResultBatch.SUBMITTED
-                batch.submitted_by = request.user
-                batch.submitted_at = timezone.now()
-
-                batch.save(
-                    update_fields=[
-                        "status",
-                        "submitted_by",
-                        "submitted_at",
-                    ]
-                )
 
             saved = True
 
@@ -3902,14 +4034,6 @@ def enter_marks(request, assignment_id):
         return redirect(
             "enter_marks",
             assignment_id=assignment.id,
-        )
-
-    for r in registrations:
-        print(
-            r.id,
-            r.enrollment.student.admission_no,
-            r.can_edit,
-            r.current_result.is_reopened,
         )
 
     return render(
@@ -4329,19 +4453,24 @@ def submit_results(request, assignment_id):
     batch, created = ResultBatch.objects.get_or_create(
         lecturer_assignment=assignment,
         unit_offering=offering,
+        defaults={
+            "status": ResultBatch.DRAFT,
+        },
     )
 
-    # Prevent duplicate submissions
+    # ==========================================
+    # Prevent invalid workflow transitions
+    # ==========================================
 
     if batch.status == ResultBatch.SUBMITTED:
 
         messages.warning(
             request,
-            "These results have already been submitted and are awaiting approval.",
+            "These results have already been submitted and are awaiting Examination Office review.",
         )
 
         return redirect(
-            "enter_marks",
+            "unit_marksheet",
             assignment_id=assignment.id,
         )
 
@@ -4353,30 +4482,38 @@ def submit_results(request, assignment_id):
         )
 
         return redirect(
-            "enter_marks",
+            "unit_marksheet",
             assignment_id=assignment.id,
         )
 
-    # Get all results for this offering
-
-    results = Result.objects.filter(
-        unit_offering=offering,
-    )
-
-    # Ensure result records exist
-
-    registered_count = Registration.objects.filter(
-        enrollment__academic_year=offering.academic_year,
-        enrollment__semester=offering.semester,
-        unit=offering.unit,
-        status=Registration.REGISTERED,
-    ).count()
-
-    if results.count() < registered_count:
+    if batch.status == ResultBatch.PUBLISHED:
 
         messages.error(
             request,
-            "Some registered students do not yet have result records."
+            "These results have already been published.",
+        )
+
+        return redirect(
+            "unit_marksheet",
+            assignment_id=assignment.id,
+        )
+
+    # ==========================================
+    # Get lecturer's results
+    # ==========================================
+
+    results = Result.objects.filter(
+        registration__unit_offering=offering,
+    ).select_related(
+        "registration",
+        "enrollment",
+    )
+
+    if not results.exists():
+
+        messages.error(
+            request,
+            "No marks have been entered for this unit.",
         )
 
         return redirect(
@@ -4384,21 +4521,70 @@ def submit_results(request, assignment_id):
             assignment_id=assignment.id,
         )
 
-    # Attach all results to this batch
+    # ==========================================
+    # Verify every registered student has a result
+    # ==========================================
 
-    results.update(
-        batch=batch,
+    registered_count = Registration.objects.filter(
+        unit_offering=offering,
+        status=Registration.REGISTERED,
+    ).count()
+
+    if results.count() != registered_count:
+
+        messages.error(
+            request,
+            "Some registered students do not yet have results.",
+        )
+
+        return redirect(
+            "enter_marks",
+            assignment_id=assignment.id,
+        )
+
+    # ==========================================
+    # Close reopened results
+    # ==========================================
+
+    results.filter(
+        is_reopened=True,
+    ).update(
+        is_reopened=False,
+        reopened_by=None,
+        reopened_at=None,
+        reopen_reason="",
     )
 
-    # Submit batch regardless of blank marks
+    # ==========================================
+    # Submit batch
+    # ==========================================
 
     batch.status = ResultBatch.SUBMITTED
+
     batch.submitted_by = request.user
+
     batch.submitted_at = timezone.now()
+
     batch.approved_by = None
+
     batch.approved_at = None
+
     batch.remarks = ""
-    batch.save()
+
+    batch.save(
+        update_fields=[
+            "status",
+            "submitted_by",
+            "submitted_at",
+            "approved_by",
+            "approved_at",
+            "remarks",
+        ]
+    )
+
+    # ==========================================
+    # Check for incomplete marks
+    # ==========================================
 
     blank_results = results.filter(
         cat1__isnull=True,
@@ -4410,20 +4596,19 @@ def submit_results(request, assignment_id):
 
         messages.warning(
             request,
-            f"Results submitted successfully. "
-            f"{blank_results} student(s) have no marks entered. "
-            f"The Examination Office should verify before approval."
+            f"Results submitted successfully. {blank_results} student(s) have incomplete marks. The Examination Office should verify before approval.",
         )
 
     else:
 
         messages.success(
             request,
-            "Results submitted successfully and forwarded to the Examination Office."
+            "Results submitted successfully and forwarded to the Examination Office.",
         )
 
     return redirect(
-        "my_units",
+        "unit_marksheet",
+        assignment_id=assignment.id,
     )
 
 @login_required
@@ -5718,4 +5903,90 @@ def reopen_result(request, result_id):
         {
             "result": result,
         },
+    )
+
+
+@login_required
+def lecturer_submission_detail(request, lecturer_id):
+
+    lecturer = get_object_or_404(
+        User,
+        id=lecturer_id
+    )
+
+
+    assignments = LecturerAssignment.objects.filter(
+
+        lecturer=lecturer,
+
+        unit_offering__is_active=True,
+
+        unit_offering__academic_year__is_active=True,
+
+        unit_offering__semester__is_active=True,
+
+    ).select_related(
+
+        "unit_offering__unit",
+
+        "unit_offering__semester",
+
+        "unit_offering__academic_year",
+
+    )
+
+
+    units = []
+
+
+    for assignment in assignments:
+
+
+        batch = ResultBatch.objects.filter(
+
+            lecturer_assignment=assignment
+
+        ).first()
+
+
+        status = "Pending"
+
+
+        if batch:
+
+            status = batch.get_status_display()
+
+
+
+        units.append({
+
+            "assignment": assignment,
+
+            "unit": assignment.unit_offering.unit,
+
+            "status": status,
+
+            "batch": batch,
+
+        })
+
+
+
+    context = {
+
+        "lecturer": lecturer,
+
+        "units": units,
+
+    }
+
+
+    return render(
+
+        request,
+
+        "students/exams/lecturer_submission_detail.html",
+
+        context
+
     )

@@ -6,6 +6,7 @@
 
 <div class="dashboard-header">
 
+    <!-- Left -->
     <div>
 
         <h2 class="dashboard-title">
@@ -13,16 +14,15 @@
         </h2>
 
         <p class="dashboard-subtitle">
-
             Welcome back,
             <strong>
                 {{ user.get_full_name|default:user.username }}
             </strong>
-
         </p>
 
     </div>
 
+    <!-- Right -->
     <div class="dashboard-date">
 
         <i class="fa-solid fa-calendar-days"></i>
@@ -46,6 +46,8 @@
         </small>
 
     </div>
+
+</div>
 
 </div>
 
@@ -673,9 +675,220 @@
 
 <!-- LECTURER DASHBOARD -->
 
+<!-- ========================================= -->
+<!-- LECTURER HERO -->
+<!-- ========================================= -->
+
+<div class="hero-card mb-4">
+    <div class="card-body">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-8">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="profile-avatar me-4">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="mb-1">
+                            Welcome,
+                            {{ request.user.get_full_name|default:request.user.username }}
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Manage your teaching workload, assessments and student progress from one place.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+
+                <span class="badge bg-primary fs-6 px-3 py-2">
+                    Lecturer Dashboard
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================= -->
+<!-- STATISTICS -->
+<!-- ========================================= -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6">
+
+        <div class="dashboard-card stat-card-primary">
+
+            <div class="icon">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+
+            <div>
+
+                <h2>{{ my_units }}</h2>
+
+                <span>Assigned Units</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+        <div class="dashboard-card stat-card-success">
+
+            <div class="icon">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+
+            <div>
+
+                <h2>{{ my_students }}</h2>
+
+                <span>Students To Assess</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- QUICK ACTIONS -->
+<!-- ========================================= -->
+
+<div class="card modern-card mb-4">
+
+    <div class="card-header">
+
+        <i class="fa-solid fa-bolt me-2"></i>
+
+        Quick Actions
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row g-3">
+
+            <div class="col-md-4">
+
+                <a href="{% url 'my_units' %}" class="quick-action">
+
+                    <i class="fa-solid fa-book"></i>
+
+                    <span>My Units</span>
+
+                </a>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <a href="#" class="quick-action">
+
+                    <i class="fa-solid fa-square-check"></i>
+
+                    <span>Enter Marks</span>
+
+                </a>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <a href="#" class="quick-action">
+
+                    <i class="fa-solid fa-chart-column"></i>
+
+                    <span>Performance</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- WORKLOAD -->
+<!-- ========================================= -->
+
+<div class="card modern-card">
+
+    <div class="card-header">
+
+        <i class="fa-solid fa-briefcase me-2"></i>
+
+        Teaching Summary
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row text-center">
+
+            <div class="col-md-4">
+
+                <h3>{{ my_units }}</h3>
+
+                <p class="text-muted">
+                    Active Units
+                </p>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <h3>{{ my_students }}</h3>
+
+                <p class="text-muted">
+                    Students
+                </p>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <h3>
+                    {{ my_units }}
+                </h3>
+
+                <p class="text-muted">
+                    Classes
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!--
 <div class="row">
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-5 mb-3">
 
         <div class="card shadow text-center">
 
@@ -693,7 +906,8 @@
 
     </div>
 
-    <div class="col-md-6 mb-3">
+
+    <div class="col-md-5 mb-3">
 
         <div class="card shadow text-center">
 
@@ -712,7 +926,6 @@
     </div>
 
 </div>
-
 <div class="card shadow">
 
     <div class="card-header">
@@ -730,6 +943,7 @@
 
 </div>
 
+-->
 {% elif dashboard_type == "admissions" %}
 
 <!-- ADMISSIONS DASHBOARD -->
@@ -966,7 +1180,7 @@
 
 {% endif %}
 
-</div>
+
 
 {% if dashboard_type == "admin" or dashboard_type == "admissions" %}
 

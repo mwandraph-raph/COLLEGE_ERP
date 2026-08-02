@@ -1,0 +1,654 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_css %}
+<link rel="stylesheet"
+      href="{% static 'css/exam_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ====================================== -->
+    <!-- HEADER -->
+    <!-- ====================================== -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <h2 class="dashboard-title">
+                Examination Dashboard
+            </h2>
+
+            <p class="dashboard-subtitle">
+
+                Welcome back,
+
+                <strong>
+                    {{ user.get_full_name|default:user.username }}
+                </strong>
+
+            </p>
+
+        </div>
+
+        <div class="dashboard-date">
+
+            <i class="fa-solid fa-calendar-days"></i>
+
+            {{ active_year|default:"Academic Year Not Set" }}
+
+            <br>
+
+            <small>
+
+                {{ active_semester|default:"Semester Not Set" }}
+
+            </small>
+
+        </div>
+
+    </div>
+
+
+
+ <!-- ====================================== -->
+<!-- KPI CARDS -->
+<!-- ====================================== -->
+
+<div class="row g-4">
+
+    <!-- Pending Review -->
+    <div class="col-xl-2 col-md-4">
+
+        <div class="dashboard-card submitted">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-paper-plane"></i>
+            </div>
+
+            <div class="dashboard-info">
+
+                <h6>Pending Review</h6>
+
+                <h2>{{ pending_review }}</h2>
+
+                <small>Awaiting Examination Review</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Approved -->
+    <div class="col-xl-2 col-md-4">
+
+        <div class="dashboard-card approved">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <div class="dashboard-info">
+
+                <h6>Approved</h6>
+
+                <h2>{{ approved_batches }}</h2>
+
+                <small>Ready for Publication</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Returned -->
+    <div class="col-xl-2 col-md-4">
+
+        <div class="dashboard-card returned">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-rotate-left"></i>
+            </div>
+
+            <div class="dashboard-info">
+
+                <h6>Returned</h6>
+
+                <h2>{{ returned_batches }}</h2>
+
+                <small>Corrections Required</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Unlocked -->
+    <div class="col-xl-2 col-md-4">
+
+        <div class="dashboard-card unlocked">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-lock-open"></i>
+            </div>
+
+            <div class="dashboard-info">
+
+                <h6>Unlocked</h6>
+
+                <h2>{{ unlocked_batches }}</h2>
+
+                <small>Reopened for Editing</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Published -->
+    <div class="col-xl-2 col-md-4">
+
+        <div class="dashboard-card published">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-file-circle-check"></i>
+            </div>
+
+            <div class="dashboard-info">
+
+                <h6>Published</h6>
+
+                <h2>{{ published_batches }}</h2>
+
+                <small>Visible to Students</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Overall Progress -->
+    <div class="col-xl-2 col-md-4">
+
+        <div class="dashboard-card total">
+
+            <div class="dashboard-icon">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+
+            <div class="dashboard-info">
+
+                <h6>Overall Progress</h6>
+
+                <h2>{{ processed_batches }}/{{ total_batches }}</h2>
+
+                <small>{{ completion_rate }}% Complete</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+    <!-- ====================================== -->
+    <!-- QUICK ACTIONS -->
+    <!-- ====================================== -->
+
+    <div class="row mt-4">
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+
+                    <i class="fa-solid fa-bolt text-warning me-2"></i>
+
+                    Quick Actions
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="quick-actions">
+
+                        <a href="{% url 'approval_queue' %}" class="quick-action">
+
+                            <i class="fa-solid fa-list-check"></i>
+
+                            <span>Approval Queue</span>
+
+                        </a>
+
+                        <a href="{% url 'lecturer_assignment_list' %}" class="quick-action">
+
+                            <i class="fa-solid fa-chalkboard-user"></i>
+
+                            <span>Assignments</span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+
+                    <i class="fa-solid fa-chart-column text-success me-2"></i>
+
+                    Examination Summary
+
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-borderless mb-0">
+
+                        <tr>
+
+                            <td>Total Result Batches</td>
+
+                            <td class="text-end">{{ total_batches }}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>Total Results</td>
+
+                            <td class="text-end">{{ total_results }}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>Assignments</td>
+
+                            <td class="text-end">{{ total_assignments }}</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>Unit Offerings</td>
+
+                            <td class="text-end">{{ total_unit_offerings }}</td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+<!-- ====================================== -->
+<!-- LECTURER SUBMISSION PROGRESS -->
+<!-- ====================================== -->
+
+<div class="row mt-4">
+
+    <div class="col-12">
+
+        <div class="card submission-card">
+
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <i class="fa-solid fa-users-between-lines me-2"></i>
+
+                    Lecturer Submission Progress
+
+                </div>
+
+
+                <span class="badge bg-primary">
+
+                    {{ lecturer_progress|length }} Lecturers
+
+                </span>
+
+
+            </div>
+
+
+
+            <div class="card-body p-0">
+
+
+                <!-- ============================== -->
+                <!-- DEPARTMENT FILTER -->
+                <!-- ============================== -->
+
+                <div class="row p-3">
+
+                    <div class="col-md-4">
+
+                        <select id="departmentFilter"
+                                class="form-select">
+
+
+                            <option value="">
+                                All Departments
+                            </option>
+
+
+                            {% for dept in departments %}
+
+                            <option value="{{ dept }}">
+                                {{ dept }}
+                            </option>
+
+                            {% endfor %}
+
+
+                        </select>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                {% if lecturer_progress %}
+
+
+                <div class="table-responsive">
+
+
+                    <table class="table submission-table">
+
+
+                        <thead>
+
+
+                            <tr>
+
+                                <th>
+                                    Department
+                                </th>
+
+
+                                <th>
+                                    Lecturer
+                                </th>
+
+
+                                <th class="text-center">
+                                    Assigned
+                                </th>
+
+
+                                <th class="text-center">
+                                    Submitted
+                                </th>
+
+
+                                <th class="text-center">
+                                    Pending
+                                </th>
+
+
+                                <th width="220">
+                                    Progress
+                                </th>
+
+
+                            </tr>
+
+
+                        </thead>
+
+
+
+                        <tbody>
+
+
+                            {% for item in lecturer_progress %}
+
+
+                            <tr data-department="{{ item.department }}">
+
+
+                                <td>
+
+                                    <span class="department-name">
+
+                                        {{ item.department }}
+
+                                    </span>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <a href="{% url 'lecturer_submission_detail' item.lecturer.id %}"
+                                    class="lecturer-name text-decoration-none">
+
+                                    {{ item.lecturer.get_full_name|default:item.lecturer.username }}
+
+                                    </a>
+
+                                </td>
+
+
+
+                                <td class="text-center">
+
+
+                                    <span class="metric primary">
+
+                                        {{ item.assigned }}
+
+                                    </span>
+
+
+                                </td>
+
+
+
+                                <td class="text-center">
+
+
+                                    <span class="metric success">
+
+                                        {{ item.submitted }}
+
+                                    </span>
+
+
+                                </td>
+
+
+
+                                <td class="text-center">
+
+
+                                    <span class="metric danger">
+
+                                        {{ item.pending }}
+
+                                    </span>
+
+
+                                </td>
+
+
+
+                                <td>
+
+
+                                    <div class="progress submission-progress">
+
+
+                                        <div class="progress-bar"
+
+                                             role="progressbar"
+
+                                             style="width:{{ item.progress }}%">
+
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <small class="progress-text">
+
+                                        {{ item.progress }}%
+
+                                    </small>
+
+
+                                </td>
+
+
+
+                            </tr>
+
+
+                            {% endfor %}
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+
+                {% else %}
+
+
+                <div class="empty-state">
+
+
+                    <i class="fa-solid fa-chart-column"></i>
+
+
+                    <h5>
+                        No lecturer submission data available.
+                    </h5>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ============================== -->
+<!-- DEPARTMENT FILTER SCRIPT -->
+<!-- ============================== -->
+
+<script>
+
+document.getElementById(
+    "departmentFilter"
+).addEventListener(
+    "change",
+    function(){
+
+        let selectedDepartment = this.value;
+
+
+        document.querySelectorAll(
+            ".submission-table tbody tr"
+        ).forEach(row => {
+
+
+            let department =
+                row.dataset.department;
+
+
+            if(
+                selectedDepartment === "" ||
+                department === selectedDepartment
+            ){
+
+                row.style.display = "";
+
+            }
+            else{
+
+                row.style.display = "none";
+
+            }
+
+
+        });
+
+
+    }
+);
+
+</script>
+
+
+
+</div>
+
+
+
+
+{% endblock %}

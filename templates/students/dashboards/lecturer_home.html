@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <h2>
+                Welcome {{ request.user.get_full_name }}
+            </h2>
+
+            <p>
+                Lecturer Dashboard
+            </p>
+
+
+            <div class="row">
+
+
+                <div class="col-md-4">
+
+                    <div class="card">
+
+                        <div class="card-body">
+
+                            <h6>
+                                My Units
+                            </h6>
+
+                            <h2>
+                                {{ my_units }}
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="col-md-4">
+
+                    <div class="card">
+
+                        <div class="card-body">
+
+                            <h6>
+                                My Students
+                            </h6>
+
+                            <h2>
+                                {{ my_students }}
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="col-md-4">
+
+                    <div class="card">
+
+                        <div class="card-body">
+
+                            <h6>
+                                Pending Results
+                            </h6>
+
+                            <h2>
+                                {{ pending_results }}
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

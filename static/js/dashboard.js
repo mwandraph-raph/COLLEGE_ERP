@@ -201,4 +201,92 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+/*=========================================================
+    STUDENT ACADEMIC ANALYTICS
+=========================================================*/
+
+const analyticsChart = document.getElementById("studentAnalyticsChart");
+
+if (analyticsChart) {
+
+    const registered = parseInt(
+        analyticsChart.dataset.registered || 0
+    );
+
+    const total = parseInt(
+        analyticsChart.dataset.total || 8
+    );
+
+    new Chart(analyticsChart, {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: [
+
+                "Registered Units",
+
+                "Remaining Units"
+
+            ],
+
+            datasets: [{
+
+                data: [
+
+                    registered,
+
+                    Math.max(total - registered, 0)
+
+                ],
+
+                backgroundColor: [
+
+                    "#2563eb",
+
+                    "#e2e8f0"
+
+                ],
+
+                borderColor: "#ffffff",
+
+                borderWidth: 2
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            cutout: "70%",
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom",
+
+                    labels: {
+
+                        usePointStyle: true,
+
+                        padding: 20
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
 });
