@@ -1,3 +1,7 @@
+{% if url %}
+<a href="{{ url }}" class="text-decoration-none text-reset">
+{% endif %}
+
 <div class="kpi-card">
 
     <div class="card-body">
@@ -15,17 +19,15 @@
                 </div>
 
                 {% if subtitle %}
-                <small class="text-success">
+                <small class="text-{{ subtitle_color|default:'success' }}">
                     {{ subtitle }}
                 </small>
                 {% endif %}
 
             </div>
 
-            <div class="kpi-icon {{ icon_class }}">
-
+            <div class="kpi-icon {{ icon_class|default:'primary' }}">
                 <i class="{{ icon }}"></i>
-
             </div>
 
         </div>
@@ -33,3 +35,7 @@
     </div>
 
 </div>
+
+{% if url %}
+</a>
+{% endif %}

@@ -170,116 +170,16 @@
 <!-- ========================================================= -->
 
 <div class="dashboard-grid mb-4">
+{% if latest_enrollment %}
+{% url 'register_units' latest_enrollment.pk as register_units_url %}
+{% endif %}
+{% include "includes/components/stat_card.html" with value=registration_count title="Registered Units" subtitle="Current Semester" icon="fa-solid fa-book" icon_class="primary" url=register_units_url %}
 
-{% include "includes/components/stat_card.html" with value=registration_count title="Registered Units" subtitle="Current Semester" icon="fa-solid fa-book" icon_class="primary" %}
+{% include "includes/components/stat_card.html" with value=enrollment.programme_level title="Current Level" icon="fa-solid fa-layer-group" icon_class="success" %}
 
-    <div class="kpi-card">
+{% include "includes/components/stat_card.html" with value=student.get_status_display title="Academic Status" icon="fa-solid fa-circle-check" icon_class="warning" %}
 
-        <div class="card-body">
-
-            <div class="kpi-header">
-
-                <div>
-
-                    <div class="kpi-value">
-
-                        {{ enrollment.programme_level }}
-
-                    </div>
-
-                    <div class="kpi-label">
-
-                        Current Level
-
-                    </div>
-
-                </div>
-
-                <div class="kpi-icon success">
-
-                    <i class="fa-solid fa-layer-group"></i>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="card-body">
-
-            <div class="kpi-header">
-
-                <div>
-
-                    <div class="kpi-value">
-
-                        {{ student.get_status_display }}
-
-                    </div>
-
-                    <div class="kpi-label">
-
-                        Academic Status
-
-                    </div>
-
-                </div>
-
-                <div class="kpi-icon warning">
-
-                    <i class="fa-solid fa-circle-check"></i>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="card-body">
-
-            <div class="kpi-header">
-
-                <div>
-
-                    <div class="kpi-value">
-
-                        {{ enrollment.semester }}
-
-                    </div>
-
-                    <div class="kpi-label">
-
-                        Current Semester
-
-                    </div>
-
-                </div>
-
-                <div class="kpi-icon danger">
-
-                    <i class="fa-solid fa-calendar-days"></i>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
+{% include "includes/components/stat_card.html" with value=enrollment.semester title="Current Semester" icon="fa-solid fa-calendar-days" icon_class="danger" %}
 
 <!-- ========================================================= -->
 <!-- REGISTRATION PROGRESS + CURRENT SEMESTER UNITS -->
