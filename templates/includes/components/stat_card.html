@@ -1,0 +1,35 @@
+<div class="kpi-card">
+
+    <div class="card-body">
+
+        <div class="kpi-header">
+
+            <div>
+
+                <div class="kpi-value">
+                    {{ value }}
+                </div>
+
+                <div class="kpi-label">
+                    {{ title }}
+                </div>
+
+                {% if subtitle %}
+                <small class="text-success">
+                    {{ subtitle }}
+                </small>
+                {% endif %}
+
+            </div>
+
+            <div class="kpi-icon {{ icon_class }}">
+
+                <i class="{{ icon }}"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
