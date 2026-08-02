@@ -171,47 +171,7 @@
 
 <div class="dashboard-grid mb-4">
 
-    <div class="kpi-card">
-
-        <div class="card-body">
-
-            <div class="kpi-header">
-
-                <div>
-
-                    <div class="kpi-value">
-
-                        {{ registration_count }}
-
-                    </div>
-
-                    <div class="kpi-label">
-
-                        Registered Units
-
-                    </div>
-
-                    <small class="text-success">
-
-                        Current Semester
-
-                    </small>
-
-                </div>
-
-                <div class="kpi-icon primary">
-
-                    <i class="fa-solid fa-book"></i>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
+{% include "includes/components/stat_card.html" with value=registration_count title="Registered Units" subtitle="Current Semester" icon="fa-solid fa-book" icon_class="primary" %}
 
     <div class="kpi-card">
 
