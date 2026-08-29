@@ -30,12 +30,14 @@ from .models import (Student,
                      ResultBatchLog,
                      ProgrammeLevel,
                      UnitOffering,
+                    
                      )
 from finance.models import (
     FeeStructure,
     StudentInvoice,
     InvoiceItem,
     FinancialClearance,
+    Payment
 )
 from finance.services import (
     generate_student_invoice,
@@ -97,6 +99,12 @@ from system.constants import (
     ENROLLMENT,
     FINANCE,
 )
+from django.db.models import Sum, Count, DecimalField, Value
+from django.db.models.functions import Coalesce
+from django.utils import timezone
+from datetime import timedelta
+
+
 @login_required
 def home(request):
 
@@ -225,6 +233,24 @@ def home(request):
 
         })
 
+
+   # ======================================================
+    # FINANCE OFFICER
+    # ======================================================
+
+    elif request.user.groups.filter(name="Finance Officer").exists():
+
+        from finance.dashboard_service import (
+            get_finance_dashboard_data,
+        )
+
+        context.update({
+            "dashboard_type": "finance",
+        })
+
+        context.update(
+            get_finance_dashboard_data()
+        )
 
     # ======================================================
     # LECTURER
@@ -532,13 +558,15 @@ def home(request):
 
         "student": "students/dashboards/student_home.html",
 
-        "lecturer": "students/home.html",
+        "lecturer": "students/dashboards/lecturer_home.html",
 
         "exam": "students/dashboards/exam_home.html",
 
         "registrar": "students/dashboards/registrar_home.html",
 
         "admissions": "students/dashboards/admissions_home.html",
+
+        "finance": "students/dashboards/finance_home.html",
 
         "general": "students/dashboards/student_home.html",
 

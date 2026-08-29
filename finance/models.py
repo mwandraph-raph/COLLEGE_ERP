@@ -11,6 +11,9 @@ from students.models import (
     Student,
     SemesterEnrollment,
 )
+from decimal import Decimal
+from django.db.models import Sum
+
 # Create your models here.
 class FeeCategory(models.Model):
     code = models.CharField(
@@ -171,98 +174,161 @@ class StudentInvoice(models.Model):
     invoice_number = models.CharField(
         max_length=30,
         unique=True,
-        blank=True
+        blank=True,
     )
 
     student = models.ForeignKey(
         Student,
         on_delete=models.PROTECT,
-        related_name="invoices"
+        related_name="invoices",
     )
 
     enrollment = models.OneToOneField(
         SemesterEnrollment,
         on_delete=models.CASCADE,
-        related_name="invoice"
+        related_name="invoice",
     )
 
     invoice_date = models.DateField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     due_date = models.DateField(
         null=True,
-        blank=True
+        blank=True,
     )
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default="DRAFT"
+        default="DRAFT",
     )
 
     credit_applied = models.DecimalField(
         max_digits=12,
         decimal_places=2,
-        default=0
+        default=0,
+    )
+
+    # ==========================================================
+    # CACHED FINANCIAL TOTALS (FAST DASHBOARDS & REPORTS)
+    # ==========================================================
+
+    invoice_total = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+        db_index=True,
+    )
+
+    amount_paid_cached = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+        db_index=True,
+    )
+
+    balance_cached = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+        db_index=True,
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     class Meta:
 
         ordering = [
-            "-invoice_date"
+            "-invoice_date",
         ]
+
+    # ==========================================================
+    # PUBLIC PROPERTIES
+    # ==========================================================
 
     @property
     def total_amount(self):
-
-        return sum(
-            item.amount
-            for item in self.items.all()
-        )
+        return self.invoice_total
 
     @property
     def amount_paid(self):
-
-        return sum(
-            payment.amount
-            for payment in self.payments.filter(
-                is_reversed=False
-            )
-        )
+        return self.amount_paid_cached
 
     @property
     def balance(self):
-
-        return (
-            self.total_amount
-            - self.credit_applied
-            - self.amount_paid
-        )
+        return self.balance_cached
 
     @property
     def payment_percentage(self):
 
         net_amount = (
-            self.total_amount
+            self.invoice_total
             - self.credit_applied
         )
 
         if net_amount <= 0:
-
             return 100
 
         return round(
             (
-                self.amount_paid
+                self.amount_paid_cached
                 / net_amount
             ) * 100,
-            2
+            2,
         )
+
+    # ==========================================================
+    # RECALCULATE TOTALS
+    # ==========================================================
+
+    def recalculate_totals(self):
+
+        from finance.services import (
+            recalculate_invoice,
+        )
+
+        return recalculate_invoice(
+            self
+        )
+
+        amount_paid = (
+            self.payments.filter(
+                is_reversed=False,
+                posting_status="POSTED",
+            ).aggregate(
+                total=Sum("amount")
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        balance = (
+            invoice_total
+            - self.credit_applied
+            - amount_paid
+        )
+
+        StudentInvoice.objects.filter(
+            pk=self.pk
+        ).update(
+
+            invoice_total=invoice_total,
+
+            amount_paid_cached=amount_paid,
+
+            balance_cached=balance,
+
+        )
+
+        self.invoice_total = invoice_total
+        self.amount_paid_cached = amount_paid
+        self.balance_cached = balance
+
+    # ==========================================================
+    # SAVE
+    # ==========================================================
 
     def save(self, *args, **kwargs):
 
@@ -281,34 +347,31 @@ class StudentInvoice(models.Model):
                 .first()
             )
 
+            last_number = 0
+
             if last_invoice:
 
                 try:
 
                     last_number = int(
-                        last_invoice.invoice_number
-                        .split("/")[-1]
+                        last_invoice.invoice_number.split("/")[-1]
                     )
 
-                except (
-                    ValueError,
-                    IndexError
-                ):
+                except (ValueError, IndexError):
 
                     last_number = 0
-
-            else:
-
-                last_number = 0
 
             self.invoice_number = (
                 f"{prefix}{last_number + 1:05d}"
             )
 
-        super().save(
-            *args,
-            **kwargs
-        )
+        super().save(*args, **kwargs)
+
+
+
+    # ==========================================================
+    # STRING
+    # ==========================================================
 
     def __str__(self):
 

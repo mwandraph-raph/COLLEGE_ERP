@@ -58,152 +58,105 @@
 <!-- KPI CARDS -->
 <!-- ====================================== -->
 
-<div class="row g-4">
+<div class="exam-kpi-grid">
 
     <!-- Pending Review -->
-    <div class="col-xl-2 col-md-4">
+    <div class="dashboard-card submitted">
 
-        <div class="dashboard-card submitted">
+        <div class="dashboard-icon">
+            <i class="fa-solid fa-paper-plane"></i>
+        </div>
 
-            <div class="dashboard-icon">
-                <i class="fa-solid fa-paper-plane"></i>
-            </div>
-
-            <div class="dashboard-info">
-
-                <h6>Pending Review</h6>
-
-                <h2>{{ pending_review }}</h2>
-
-                <small>Awaiting Examination Review</small>
-
-            </div>
-
+        <div class="dashboard-info">
+            <h6>Pending Review</h6>
+            <h2>{{ pending_review }}</h2>
+            <small>Awaiting Examination Review</small>
         </div>
 
     </div>
-
 
 
     <!-- Approved -->
-    <div class="col-xl-2 col-md-4">
+    <div class="dashboard-card approved">
 
-        <div class="dashboard-card approved">
+        <div class="dashboard-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
 
-            <div class="dashboard-icon">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
-
-            <div class="dashboard-info">
-
-                <h6>Approved</h6>
-
-                <h2>{{ approved_batches }}</h2>
-
-                <small>Ready for Publication</small>
-
-            </div>
-
+        <div class="dashboard-info">
+            <h6>Approved</h6>
+            <h2>{{ approved_batches }}</h2>
+            <small>Ready for Publication</small>
         </div>
 
     </div>
-
 
 
     <!-- Returned -->
-    <div class="col-xl-2 col-md-4">
+    <div class="dashboard-card returned">
 
-        <div class="dashboard-card returned">
+        <div class="dashboard-icon">
+            <i class="fa-solid fa-rotate-left"></i>
+        </div>
 
-            <div class="dashboard-icon">
-                <i class="fa-solid fa-rotate-left"></i>
-            </div>
-
-            <div class="dashboard-info">
-
-                <h6>Returned</h6>
-
-                <h2>{{ returned_batches }}</h2>
-
-                <small>Corrections Required</small>
-
-            </div>
-
+        <div class="dashboard-info">
+            <h6>Returned</h6>
+            <h2>{{ returned_batches }}</h2>
+            <small>Corrections Required</small>
         </div>
 
     </div>
-
 
 
     <!-- Unlocked -->
-    <div class="col-xl-2 col-md-4">
+    <div class="dashboard-card unlocked">
 
-        <div class="dashboard-card unlocked">
+        <div class="dashboard-icon">
+            <i class="fa-solid fa-lock-open"></i>
+        </div>
 
-            <div class="dashboard-icon">
-                <i class="fa-solid fa-lock-open"></i>
-            </div>
-
-            <div class="dashboard-info">
-
-                <h6>Unlocked</h6>
-
-                <h2>{{ unlocked_batches }}</h2>
-
-                <small>Reopened for Editing</small>
-
-            </div>
-
+        <div class="dashboard-info">
+            <h6>Unlocked</h6>
+            <h2>{{ unlocked_batches }}</h2>
+            <small>Reopened for Editing</small>
         </div>
 
     </div>
-
 
 
     <!-- Published -->
-    <div class="col-xl-2 col-md-4">
+    <div class="dashboard-card published">
 
-        <div class="dashboard-card published">
+        <div class="dashboard-icon">
+            <i class="fa-solid fa-file-circle-check"></i>
+        </div>
 
-            <div class="dashboard-icon">
-                <i class="fa-solid fa-file-circle-check"></i>
-            </div>
-
-            <div class="dashboard-info">
-
-                <h6>Published</h6>
-
-                <h2>{{ published_batches }}</h2>
-
-                <small>Visible to Students</small>
-
-            </div>
-
+        <div class="dashboard-info">
+            <h6>Published</h6>
+            <h2>{{ published_batches }}</h2>
+            <small>Visible to Students</small>
         </div>
 
     </div>
 
 
-
     <!-- Overall Progress -->
-    <div class="col-xl-2 col-md-4">
+    <div class="dashboard-card total">
 
-        <div class="dashboard-card total">
+        <div class="dashboard-icon">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
 
-            <div class="dashboard-icon">
-                <i class="fa-solid fa-chart-line"></i>
-            </div>
+        <div class="dashboard-info">
+            <h6>Overall Progress</h6>
 
-            <div class="dashboard-info">
+            <h2>
+                {{ processed_batches }}/{{ total_batches }}
+            </h2>
 
-                <h6>Overall Progress</h6>
-
-                <h2>{{ processed_batches }}/{{ total_batches }}</h2>
-
-                <small>{{ completion_rate }}% Complete</small>
-
-            </div>
-
+            <small>
+                {{ completion_rate }}% Complete
+            </small>
         </div>
 
     </div>

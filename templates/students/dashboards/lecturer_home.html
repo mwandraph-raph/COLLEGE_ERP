@@ -1,98 +1,648 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/lecturer_dashboard.css' %}">
+{% endblock %}
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="lecturer-dashboard-page">
+<!-- =========================================================
+     PAGE HEADER
+========================================================== -->
+<section class="dashboard-header modern-header mb-4">
 
-    <div class="card">
+    <div class="lec-header">
 
-        <div class="card-body">
+        <!-- Header Left -->
+        <div class="header-left">
 
-            <h2>
-                Welcome {{ request.user.get_full_name }}
-            </h2>
-
-            <p>
-                Lecturer Dashboard
-            </p>
-
-
-            <div class="row">
-
-
-                <div class="col-md-4">
-
-                    <div class="card">
-
-                        <div class="card-body">
-
-                            <h6>
-                                My Units
-                            </h6>
-
-                            <h2>
-                                {{ my_units }}
-                            </h2>
-
-                        </div>
-
-                    </div>
-
+            <div class="dashboard-avatar">
+                <div class="avatar-circle">
+                    <i class="fa-solid fa-chalkboard-user"></i>
                 </div>
+            </div>
 
+            <div class="header-content">
 
+                <span class="dashboard-overline">
+                    LECTURER PORTAL
+                </span>
 
-                <div class="col-md-4">
+                <h2 class="dashboard-title">
+                    Welcome back,
+                    <span>
+                        {{ user.get_full_name|default:user.username }}
+                    </span>
+                </h2>
 
-                    <div class="card">
-
-                        <div class="card-body">
-
-                            <h6>
-                                My Students
-                            </h6>
-
-                            <h2>
-                                {{ my_students }}
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="col-md-4">
-
-                    <div class="card">
-
-                        <div class="card-body">
-
-                            <h6>
-                                Pending Results
-                            </h6>
-
-                            <h2>
-                                {{ pending_results }}
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+                <p class="dashboard-subtitle">
+                    Manage your teaching, assessments and examination activities
+                    from one place.
+                </p>
 
             </div>
 
+        </div>
+
+
+        <!-- Header Right — Current Session -->
+        <div class="academic-summary-card">
+
+            <div class="summary-top">
+
+                <span class="summary-label">
+                    Current Session
+                </span>
+
+                <i class="fa-solid fa-calendar-days"></i>
+
+            </div>
+
+            <div class="summary-body">
+
+                <div class="summary-item">
+
+                    <small>
+                        Academic Year
+                    </small>
+
+                    <h6>
+                        {% if active_year %}
+                            {{ active_year }}
+                        {% else %}
+                            Academic Year Not Set
+                        {% endif %}
+                    </h6>
+
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-item">
+
+                    <small>
+                        Semester
+                    </small>
+
+                    <h6>
+                        {% if active_semester %}
+                            {{ active_semester }}
+                        {% else %}
+                            Semester Not Set
+                        {% endif %}
+                    </h6>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
+</section>
+
+
+<div class="container-fluid px-0">
+
+    <!-- =====================================================
+         HERO — NOTIFICATIONS + QUICK ACTIONS
+    ====================================================== -->
+    <section class="modern-hero mb-4">
+
+        <div class="hero-inner">
+
+            <!-- =================================================
+                 LEFT — NOTIFICATIONS
+            ================================================== -->
+            <div class="hero-main hero-notifications">
+
+                <div class="notification-panel">
+
+                    <div class="notification-panel-header">
+
+                        <div>
+                            <h3>
+                                Notifications
+                            </h3>
+                        </div>
+
+                        <div class="notification-bell">
+                            <i class="fa-solid fa-bell"></i>
+                        </div>
+
+                    </div>
+
+
+                    <div class="notification-list">
+
+                        <!-- Teaching Assignment -->
+                        <div class="notification-item">
+
+                            <div class="notification-icon notification-success">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+
+                            <div class="notification-content">
+
+                                <strong>
+                                    Teaching Assignment
+                                </strong>
+
+                                <span>
+                                    You have
+                                    <strong>{{ my_units }}</strong>
+                                    assigned teaching unit{{ my_units|pluralize }}
+                                    this semester.
+                                </span>
+
+                            </div>
+
+                            <span class="status-badge status-success">
+                                Active
+                            </span>
+
+                        </div>
+
+
+                        <!-- Result Submission -->
+                        <div class="notification-item">
+
+                            <div class="notification-icon notification-warning">
+                                <i class="fa-solid fa-file-signature"></i>
+                            </div>
+
+                            <div class="notification-content">
+
+                                <strong>
+                                    Result Submission
+                                </strong>
+
+                                <span>
+                                    <strong>{{ pending_results }}</strong>
+                                    result batch{{ pending_results|pluralize }}
+                                    awaiting submission.
+                                </span>
+
+                            </div>
+
+                            {% if pending_results %}
+
+                                <span class="status-badge status-warning">
+                                    Pending
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-badge status-success">
+                                    Complete
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- Academic Session -->
+                        <div class="notification-item">
+
+                            <div class="notification-icon notification-primary">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+
+                            <div class="notification-content">
+
+                                <strong>
+                                    Academic Session
+                                </strong>
+
+                                <span>
+                                    {{ active_year }}
+                                    •
+                                    {{ active_semester }}
+                                </span>
+
+                            </div>
+
+                            <span class="status-badge status-primary">
+                                Current
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT — QUICK ACTIONS
+            ================================================== -->
+            <div class="hero-actions">
+
+                <div class="quick-panel">
+
+                    <div class="quick-panel-header">
+
+                        <div>
+                            <h5>
+                                Quick Actions
+                            </h5>
+
+                        </div>
+
+                        <div class="quick-panel-icon">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+
+                    </div>
+
+
+                    <p class="quick-panel-description">
+                        Access your most frequently used teaching services.
+                    </p>
+
+
+                    <div class="quick-buttons">
+
+                        <a href="{% url 'my_units' %}"
+                           class="quick-btn quick-btn-primary">
+
+                            <i class="fa-solid fa-book-open"></i>
+
+                            <span>
+                                My Units
+                            </span>
+
+                            <i class="fa-solid fa-arrow-right ms-auto"></i>
+
+                        </a>
+
+
+                        <a href="{% url 'my_units' %}"
+                           class="quick-btn quick-btn-outline">
+
+                            <i class="fa-solid fa-pen-to-square"></i>
+
+                            <span>
+                                Enter Results
+                            </span>
+
+                            <i class="fa-solid fa-arrow-right ms-auto"></i>
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="quick-summary">
+
+                        <div>
+
+                            <span>
+                                Assigned Units
+                            </span>
+
+                            <strong>
+                                {{ my_units }}
+                            </strong>
+
+                        </div>
+
+                        <div class="quick-summary-divider"></div>
+
+                        <div>
+
+                            <span>
+                                Pending Results
+                            </span>
+
+                            <strong>
+                                {{ pending_results }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TEACHING OVERVIEW + ACADEMIC CALENDAR
+    ====================================================== -->
+    <div class="row g-4 mb-4">
+
+        <!-- Teaching Overview -->
+        <div class="col-lg-7">
+
+            <div class="dashboard-widget h-100">
+
+                <div class="card-header">
+
+                    <i class="fa-solid fa-chalkboard-user text-primary"></i>
+
+                    <span>
+                        Teaching Overview
+                    </span>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row text-center g-3">
+
+                        <div class="col-4">
+
+                            <div class="overview-stat">
+
+                                <h2>
+                                    {{ my_units }}
+                                </h2>
+
+                                <span>
+                                    Assigned Units
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-4">
+
+                            <div class="overview-stat">
+
+                                <h2>
+                                    {{ my_students }}
+                                </h2>
+
+                                <span>
+                                    Students
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-4">
+
+                            <div class="overview-stat">
+
+                                <h2>
+                                    {{ pending_results }}
+                                </h2>
+
+                                <span>
+                                    Draft Results
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="overview-message">
+
+                        <i class="fa-solid fa-circle-info"></i>
+
+                        <span>
+
+                            You are currently assigned
+                            <strong>{{ my_units }}</strong>
+                            teaching unit{{ my_units|pluralize }}
+                            with
+                            <strong>{{ my_students }}</strong>
+                            registered student{{ my_students|pluralize }}.
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Academic Calendar -->
+        <div class="col-lg-5">
+
+            <div class="dashboard-widget h-100">
+
+                <div class="card-header">
+
+                    <i class="fa-solid fa-calendar-days text-primary"></i>
+
+                    <span>
+                        Academic Calendar
+                    </span>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="calendar-item">
+
+                        <div class="calendar-icon bg-primary">
+                            <i class="fa-solid fa-calendar"></i>
+                        </div>
+
+                        <div>
+                            <small>
+                                Academic Year
+                            </small>
+
+                            <h6>
+                                {{ active_year }}
+                            </h6>
+                        </div>
+
+                    </div>
+
+
+                    <div class="calendar-item">
+
+                        <div class="calendar-icon bg-success">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+
+                        <div>
+                            <small>
+                                Semester
+                            </small>
+
+                            <h6>
+                                {{ active_semester }}
+                            </h6>
+                        </div>
+
+                    </div>
+
+
+                    <div class="calendar-item">
+
+                        <div class="calendar-icon bg-warning">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+
+                        <div>
+                            <small>
+                                Assigned Units
+                            </small>
+
+                            <h6>
+                                {{ my_units }}
+                            </h6>
+                        </div>
+
+                    </div>
+
+
+                    <div class="calendar-item">
+
+                        <div class="calendar-icon bg-danger">
+                            <i class="fa-solid fa-file-signature"></i>
+                        </div>
+
+                        <div>
+                            <small>
+                                Pending Results
+                            </small>
+
+                            <h6>
+                                {{ pending_results }}
+                            </h6>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LECTURER SERVICES
+    ====================================================== -->
+    <section class="dashboard-widget mb-4">
+
+        <div class="card-header">
+
+            <i class="fa-solid fa-briefcase text-primary"></i>
+
+            <span>
+                Lecturer Services
+            </span>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="quick-actions">
+
+                <a href="{% url 'my_units' %}"
+                   class="quick-action">
+
+                    <i class="fa-solid fa-book-open"></i>
+
+                    <span>
+                        My Units
+                    </span>
+
+                </a>
+
+
+                <a href="{% url 'my_units' %}"
+                   class="quick-action">
+
+                    <i class="fa-solid fa-pen-to-square"></i>
+
+                    <span>
+                        Enter Results
+                    </span>
+
+                </a>
+
+
+                <a href="{% url 'my_units' %}"
+                   class="quick-action">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <span>
+                        Class Lists
+                    </span>
+
+                </a>
+
+
+                <a href="#"
+                   class="quick-action">
+
+                    <i class="fa-solid fa-calendar-week"></i>
+
+                    <span>
+                        Timetable
+                    </span>
+
+                </a>
+
+
+                <a href="#"
+                   class="quick-action">
+
+                    <i class="fa-solid fa-chart-column"></i>
+
+                    <span>
+                        Reports
+                    </span>
+
+                </a>
+
+
+                <a href="#"
+                   class="quick-action">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <span>
+                        My Profile
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
 </div>
 
+
+</div>
 
 {% endblock %}

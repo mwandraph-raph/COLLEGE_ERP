@@ -3,6 +3,7 @@ from django.shortcuts import (
     redirect,
     get_object_or_404,
 )
+
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from finance.services import (
@@ -33,13 +34,19 @@ from .forms import (
     FinanceSettingForm,
     PaymentReversalForm
     )
+
+from .dashboard_service import get_finance_dashboard_data
 # Create your views here.
 
 @login_required
 def finance_dashboard(request):
+
+    context = get_finance_dashboard_data()
+
     return render(
         request,
-        "finance/dashboard.html"
+        "students/dashboards/finance_home.html",
+        context
     )
 
 @login_required

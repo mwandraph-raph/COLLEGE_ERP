@@ -25,7 +25,7 @@
                     </span>
 
                     <h1 class="mb-2">
-                        Good Morning,
+                        Welcome,
                         <span class="officer-name">
                             {{ user.get_full_name|default:user.username }}
                         </span>
@@ -53,7 +53,7 @@
 
                         <span class="finance-chip">
                             <i class="fa-solid fa-clock"></i>
-                            {% now "l, F j, Y" %}{% now "l, F j, Y" %}
+                            {% now "l, F j, Y" %}
                         </span>
 
                         <span class="finance-chip">
@@ -143,7 +143,7 @@
 
                             <div class="fin-kpi-value">
                                 <small class="fin-currency">KSh</small>
-                                {{ total_fees_collected|default:"0.00" }}
+                                {{ total_collected|default:"0.00" }}
                             </div>
 
                             <div class="fin-kpi-label">
@@ -183,7 +183,7 @@
 
                             <div class="fin-kpi-value">
                                 <small class="fin-currency">KSh</small>
-                                {{ outstanding_balances|default:"0.00" }}
+                                {{ outstanding_balance|default:"0.00" }}
                             </div>
 
                             <div class="fin-kpi-label">
@@ -262,7 +262,7 @@
 
                             <div class="fin-kpi-value">
                                 <small class="fin-currency">KSh</small>
-                                {{ todays_collections|default:"0.00" }}
+                               KSH {{ today_collections|floatformat:2 }}
                             </div>
 
                             <div class="fin-kpi-label">
@@ -381,7 +381,7 @@
 
                             <div class="fin-kpi-value">
                                 <small class="fin-currency">KSh</small>
-                                {{ projected_cash_flow|default:"0.00" }}
+                                {{ expected_revenue|default:"0.00" }}
                             </div>
 
                             <div class="fin-kpi-label">
@@ -421,7 +421,7 @@
 
                             <div class="fin-kpi-value">
                                 <small class="fin-currency">KSh</small>
-                                {{ bank_reconciled|default:"0.00" }}
+                                {{ bank_total|default:"0.00" }}
                             </div>
 
                             <div class="fin-kpi-label">
@@ -442,7 +442,7 @@
 
         </section>
 
-<!-- ========================================================= -->
+        <!-- ========================================================= -->
         <!-- SECTION 3 : TODAY'S FINANCIAL PERFORMANCE                -->
         <!-- ========================================================= -->
         <section class="row g-3 g-xl-4 mb-4">
@@ -486,7 +486,7 @@
                                     <small>Today's Collections</small>
 
                                     <strong class="text-success">
-                                        KSh {{ todays_collections|default:"0.00" }}
+                                        KSh {{ today_collections|default:"0.00"}}
                                     </strong>
 
                                 </div>
@@ -500,7 +500,7 @@
                                     <small>This Week</small>
 
                                     <strong>
-                                        KSh {{ weekly_collections|default:"0.00" }}
+                                        KSh {{ week_collections|default:"0.00" }}
                                     </strong>
 
                                 </div>
@@ -514,7 +514,7 @@
                                     <small>This Month</small>
 
                                     <strong>
-                                        KSh {{ monthly_collections|default:"0.00" }}
+                                        KSh {{ month_collections|default:"0.00" }}
                                     </strong>
 
                                 </div>
@@ -662,7 +662,7 @@
                                         <i class="fa-solid fa-circle-half-stroke"></i>
                                     </div>
 
-                                    <strong>{{ partially_cleared|default:"0" }}</strong>
+                                    <strong>{{ partially_paid|default:"0" }}</strong>
 
                                     <small>Partial</small>
 
@@ -678,7 +678,7 @@
                                         <i class="fa-solid fa-circle-xmark"></i>
                                     </div>
 
-                                    <strong>{{ not_cleared|default:"0" }}</strong>
+                                    <strong>{{ not_paid|default:"0" }}</strong>
 
                                     <small>Not Cleared</small>
 
@@ -801,11 +801,11 @@
 
                             <h3 class="fin-widget-title">
                                 <i class="fa-solid fa-chart-pie me-2"></i>
-                                Collections by Category
+                                Collections by Payment
                             </h3>
 
                             <p class="fin-widget-sub mb-0">
-                                Share of revenue per fee category
+                                Share of revenue per fee payment
                             </p>
 
                         </div>
@@ -837,8 +837,10 @@
     </div>
 
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/finance_dashboard.js' %}"></script>
 {% endblock %}
+

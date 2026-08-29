@@ -674,12 +674,12 @@
 {% elif dashboard_type == "lecturer" %}
 
 <!-- LECTURER DASHBOARD -->
-
-<!-- ========================================= -->
+<!-- ========================================================= -->
 <!-- LECTURER HERO -->
-<!-- ========================================= -->
+<!-- ========================================================= -->
 
 <div class="hero-card mb-4">
+
     <div class="card-body">
 
         <div class="row align-items-center">
@@ -689,19 +689,44 @@
                 <div class="d-flex align-items-center">
 
                     <div class="profile-avatar me-4">
+
                         <i class="fa-solid fa-chalkboard-user"></i>
+
                     </div>
 
                     <div>
 
-                        <h2 class="mb-1">
-                            Welcome,
-                            {{ request.user.get_full_name|default:request.user.username }}
+                        <h2 class="hero-title">
+
+                            Welcome, {{ user.get_full_name|default:user.username }}
+
                         </h2>
 
-                        <p class="text-muted mb-0">
-                            Manage your teaching workload, assessments and student progress from one place.
+                        <p class="hero-subtitle">
+
+                            Manage teaching, assessments and student progress from one place.
+
                         </p>
+
+                        <div class="hero-meta">
+
+                            <span class="hero-badge">
+
+                                <i class="fa-solid fa-book-open"></i>
+
+                                {{ my_units }} Assigned Units
+
+                            </span>
+
+                            <span class="hero-badge">
+
+                                <i class="fa-solid fa-user-graduate"></i>
+
+                                {{ my_students }} Students
+
+                            </span>
+
+                        </div>
 
                     </div>
 
@@ -709,19 +734,23 @@
 
             </div>
 
-            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
 
-                <span class="badge bg-primary fs-6 px-3 py-2">
-                    Lecturer Dashboard
-                </span>
+                <a href="{% url 'my_units' %}" class="btn btn-primary">
+
+                    <i class="fa-solid fa-book-open me-2"></i>
+
+                    My Units
+
+                </a>
 
             </div>
 
         </div>
 
     </div>
-</div>
 
+</div>
 <!-- ========================================= -->
 <!-- STATISTICS -->
 <!-- ========================================= -->
