@@ -15,6 +15,8 @@ from finance.models import (
     Receipt,
 )
 
+from students.models import AcademicYear, Semester
+
 
 def get_finance_dashboard_data():
     """
@@ -29,6 +31,22 @@ def get_finance_dashboard_data():
     start_of_week = today - timedelta(days=today.weekday())
 
     start_of_month = today.replace(day=1)
+
+    # ======================================================
+    # ACTIVE ACADEMIC PERIOD
+    # ======================================================
+
+    active_academic_year = (
+        AcademicYear.objects
+        .filter(is_active=True)
+        .first()
+    )
+
+    active_semester = (
+        Semester.objects
+        .filter(is_active=True)
+        .first()
+    )
 
     # ======================================================
     # COLLECTIONS
@@ -299,50 +317,61 @@ def get_finance_dashboard_data():
 
     return {
 
-    "total_collected": total_collected,
+        # ======================================================
+        # ACTIVE ACADEMIC PERIOD
+        # ======================================================
 
-    "today_collections": today_collections,
+        "active_academic_year": active_academic_year,
+        "active_semester": active_semester,
 
-    "week_collections": week_collections,
+        # ======================================================
+        # FINANCE KPIs
+        # ======================================================
 
-    "month_collections": month_collections,
+        "total_collected": total_collected,
 
-    "expected_revenue": expected_revenue,
+        "today_collections": today_collections,
 
-    "outstanding_balance": outstanding_balance,
+        "week_collections": week_collections,
 
-    "pending_invoices": pending_invoices,
-    
-    "total_invoiced_students": total_invoiced_students,
+        "month_collections": month_collections,
 
-    "fully_cleared": fully_cleared,
+        "expected_revenue": expected_revenue,
 
-    "partially_paid": partially_paid,
+        "outstanding_balance": outstanding_balance,
 
-    "not_paid": not_paid,
+        "pending_invoices": pending_invoices,
 
-    "receipts_issued": receipts_issued,
+        "total_invoiced_students": total_invoiced_students,
 
-    "reversed_payments": reversed_payments,
+        "fully_cleared": fully_cleared,
 
-    "mpesa_total": mpesa_total,
+        "partially_paid": partially_paid,
 
-    "bank_total": bank_total,
+        "not_paid": not_paid,
 
-    "cash_total": cash_total,
+        "receipts_issued": receipts_issued,
 
-    "mpesa_share": mpesa_share,
+        "reversed_payments": reversed_payments,
 
-    "bank_share": bank_share,
+        "mpesa_total": mpesa_total,
 
-    "cash_share": cash_share,
+        "bank_total": bank_total,
 
-    "other_share": other_share,
+        "cash_total": cash_total,
 
-    "revenue_labels": json.dumps(revenue_labels),
-    "revenue_values": json.dumps(revenue_values),
+        "mpesa_share": mpesa_share,
 
-    "category_labels": json.dumps(category_labels),
-    "category_values": json.dumps(category_values),
+        "bank_share": bank_share,
 
-}
+        "cash_share": cash_share,
+
+        "other_share": other_share,
+
+        "revenue_labels": json.dumps(revenue_labels),
+        "revenue_values": json.dumps(revenue_values),
+
+        "category_labels": json.dumps(category_labels),
+        "category_values": json.dumps(category_values),
+
+    }

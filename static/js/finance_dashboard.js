@@ -152,11 +152,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             backgroundColor: [
 
-                                "#0f766e",
+                                "#012169",
 
                                 "#10b981",
 
-                                "#f59e0b",
+                                "#FFC107",
 
                                 "#0ea5e9",
 

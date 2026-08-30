@@ -18,3 +18,33 @@
     {% endfor %}
 
 {% endif %}
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const alerts = document.querySelectorAll(".alert-dismissible");
+
+    alerts.forEach(function (alert) {
+
+        setTimeout(function () {
+
+            if (typeof bootstrap !== "undefined") {
+
+                const bsAlert =
+                    bootstrap.Alert.getOrCreateInstance(alert);
+
+                bsAlert.close();
+
+            } else {
+
+                alert.remove();
+
+            }
+
+        }, 1000);
+
+    });
+
+});
+</script>

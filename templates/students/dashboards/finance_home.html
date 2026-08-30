@@ -1,22 +1,24 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block extra_css %}
-<link rel="stylesheet"
-      href="{% static 'css/finance_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/finance_dashboard.css' %}">
 {% endblock %}
+
 {% block content %}
+
 <div class="finance-dashboard-page">
 
-    <div class="container-fluid py-4">
+    <div class="container-fluid px-4 pt-1 pb-4">
 
-        <!-- ===================================================== -->
-        <!-- SECTION 1 : FINANCE HERO HEADER                        -->
-        <!-- ===================================================== -->
+        <!-- ========================================================= -->
+        <!-- 01. FINANCE HERO                                         -->
+        <!-- ========================================================= -->
+
         <section class="finance-hero">
 
-            <div class="row g-4 align-items-center">
+            <div class="row align-items-center g-4">
 
-                <!-- Left : Greeting + Session Info -->
                 <div class="col-lg-8">
 
                     <span class="finance-hero-overline">
@@ -24,31 +26,48 @@
                         Finance Officer Portal
                     </span>
 
-                    <h1 class="mb-2">
+                    <h1 class="finance-hero-title">
                         Welcome,
                         <span class="officer-name">
                             {{ user.get_full_name|default:user.username }}
                         </span>
                     </h1>
 
-                    <p class="overview-text mb-4">
-                        Today's financial activities are summarized below.
-                        Here is a live view of collections, outstanding
-                        balances and institutional revenue performance.
+                    <p class="finance-hero-description">
+                        Monitor collections, invoices, student balances
+                        and financial performance from one place.
                     </p>
 
                     <div class="finance-hero-chips">
 
                         <span class="finance-chip">
                             <i class="fa-solid fa-calendar-days"></i>
-                            Academic Year:
-                            Academic Year Not Set
+
+                            <span>
+                                Academic Year:
+                                <strong>
+                                    {% if active_academic_year %}
+                                        {{ active_academic_year.year_name }}
+                                    {% else %}
+                                        Not Set
+                                    {% endif %}
+                                </strong>
+                            </span>
                         </span>
 
                         <span class="finance-chip">
                             <i class="fa-solid fa-book-open"></i>
-                            Semester:
-                            Semester Not Set
+
+                            <span>
+                                Semester:
+                                <strong>
+                                    {% if active_semester %}
+                                        {{ active_semester.semester_name }}
+                                    {% else %}
+                                        Not Set
+                                    {% endif %}
+                                </strong>
+                            </span>
                         </span>
 
                         <span class="finance-chip">
@@ -56,34 +75,21 @@
                             {% now "l, F j, Y" %}
                         </span>
 
-                        <span class="finance-chip">
-                            <i class="fa-solid fa-building-columns"></i>
-                            Finance Department
-                        </span>
-
                     </div>
 
                 </div>
 
-                <!-- Right : Illustration -->
                 <div class="col-lg-4">
 
                     <div class="finance-hero-visual">
 
                         <div class="finance-hero-icon-box">
-
                             <i class="fa-solid fa-chart-pie"></i>
+                        </div>
 
-                            <span class="finance-float-stat top">
-                                <i class="fa-solid fa-arrow-trend-up"></i>
-                                +12.5%
-                            </span>
-
-                            <span class="finance-float-stat bottom">
-                                <i class="fa-solid fa-coins"></i>
-                                Collections
-                            </span>
-
+                        <div class="finance-float-stat bottom">
+                            <i class="fa-solid fa-coins"></i>
+                            Collections
                         </div>
 
                     </div>
@@ -94,37 +100,172 @@
 
         </section>
 
-        <!-- ========================================================= -->
-        <!-- SECTION 2 : KPI CARDS                                    -->
-        <!-- ========================================================= -->
-        <section class="fin-section mb-4">
 
-            <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+        <!-- ========================================================= -->
+        <!-- 02. FINANCE SERVICES                                     -->
+        <!-- ========================================================= -->
+
+        <section class="finance-dashboard-section finance-services-section">
+
+            <div class="finance-section-heading">
 
                 <div>
-                    <h2 class="fin-section-title mb-1">
-                        Financial Overview
+                    <span class="finance-panel-eyebrow">
+                        FINANCE SERVICES
+                    </span>
+
+                    <h2>
+                        Financial Operations
                     </h2>
-                    <p class="fin-section-sub mb-0">
-                        Key revenue and collection metrics for the current session
+
+                    <p>
+                        Manage fees, student accounts, collections,
+                        clearance and financial records.
                     </p>
                 </div>
 
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-xl-3 col-md-6">
+
+                    <a href="{% url 'finance:fee_structure_list' %}"
+                       class="finance-service-card">
+
+                        <span class="finance-service-icon">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </span>
+
+                        <span class="finance-service-content">
+                            <strong>Fee Management</strong>
+                            <small>
+                                Manage institutional fee structures
+                            </small>
+                        </span>
+
+                        <i class="fa-solid fa-arrow-right finance-service-arrow"></i>
+
+                    </a>
+
+                </div>
+
+
+                <div class="col-xl-3 col-md-6">
+
+                    <a href="{% url 'finance:invoice_list' %}"
+                       class="finance-service-card">
+
+                        <span class="finance-service-icon">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </span>
+
+                        <span class="finance-service-content">
+                            <strong>Student Invoices</strong>
+                            <small>
+                                Create and manage student invoices
+                            </small>
+                        </span>
+
+                        <i class="fa-solid fa-arrow-right finance-service-arrow"></i>
+
+                    </a>
+
+                </div>
+
+
+                <div class="col-xl-3 col-md-6">
+
+                    <a href="{% url 'finance:payment_list' %}"
+                       class="finance-service-card">
+
+                        <span class="finance-service-icon">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                        </span>
+
+                        <span class="finance-service-content">
+                            <strong>Payments</strong>
+                            <small>
+                                Record and manage fee payments
+                            </small>
+                        </span>
+
+                        <i class="fa-solid fa-arrow-right finance-service-arrow"></i>
+
+                    </a>
+
+                </div>
+
+
+                <div class="col-xl-3 col-md-6">
+
+                    <a href="{% url 'finance:financial_clearance_list' %}"
+                       class="finance-service-card">
+
+                        <span class="finance-service-icon">
+                            <i class="fa-solid fa-user-check"></i>
+                        </span>
+
+                        <span class="finance-service-content">
+                            <strong>Financial Clearance</strong>
+                            <small>
+                                Review balances and student clearance
+                            </small>
+                        </span>
+
+                        <i class="fa-solid fa-arrow-right finance-service-arrow"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- 03. FINANCIAL OVERVIEW                                   -->
+        <!-- ========================================================= -->
+
+        <section class="finance-dashboard-section">
+
+            <div class="finance-section-heading">
+
+                <div>
+
+                    <span class="finance-panel-eyebrow">
+                        FINANCIAL OVERVIEW
+                    </span>
+
+                    <h2>
+                        Key Financial Metrics
+                    </h2>
+
+                    <p>
+                        Revenue, collections and outstanding financial obligations.
+                    </p>
+
+                </div>
+
                 <a href="{% url 'finance:payment_list' %}"
-                   class="btn btn-sm btn-outline-primary rounded-pill px-3 mt-2 mt-sm-0">
+                   class="btn btn-sm btn-outline-primary rounded-pill px-3">
+
                     <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>
                     All Payments
+
                 </a>
 
             </div>
 
-            <div class="row g-3 g-xl-4">
 
-                <!-- KPI 1 : TOTAL FEES COLLECTED -->
+            <div class="row g-4">
+
+                <!-- TOTAL COLLECTED -->
                 <div class="col-12 col-sm-6 col-xl-3">
 
                     <a href="{% url 'finance:payment_list' %}"
-                       class="text-decoration-none fin-kpi-link">
+                       class="text-decoration-none">
 
                         <div class="fin-kpi-card fin-kpi-primary">
 
@@ -134,15 +275,10 @@
                                     <i class="fa-solid fa-sack-dollar"></i>
                                 </span>
 
-                                <span class="fin-kpi-trend up">
-                                    <i class="fa-solid fa-arrow-trend-up"></i>
-                                    +12.5%
-                                </span>
-
                             </div>
 
                             <div class="fin-kpi-value">
-                                <small class="fin-currency">KSh</small>
+                                <small>KSh</small>
                                 {{ total_collected|default:"0.00" }}
                             </div>
 
@@ -160,11 +296,12 @@
 
                 </div>
 
-                <!-- KPI 2 : OUTSTANDING BALANCES -->
+
+                <!-- OUTSTANDING -->
                 <div class="col-12 col-sm-6 col-xl-3">
 
                     <a href="{% url 'finance:fee_statement_list' %}"
-                       class="text-decoration-none fin-kpi-link">
+                       class="text-decoration-none">
 
                         <div class="fin-kpi-card fin-kpi-danger">
 
@@ -174,15 +311,10 @@
                                     <i class="fa-solid fa-file-invoice-dollar"></i>
                                 </span>
 
-                                <span class="fin-kpi-trend down">
-                                    <i class="fa-solid fa-arrow-trend-down"></i>
-                                    -3.2%
-                                </span>
-
                             </div>
 
                             <div class="fin-kpi-value">
-                                <small class="fin-currency">KSh</small>
+                                <small>KSh</small>
                                 {{ outstanding_balance|default:"0.00" }}
                             </div>
 
@@ -200,11 +332,12 @@
 
                 </div>
 
-                <!-- KPI 3 : RECEIPTS ISSUED -->
+
+                <!-- RECEIPTS -->
                 <div class="col-12 col-sm-6 col-xl-3">
 
                     <a href="{% url 'finance:receipt_list' %}"
-                       class="text-decoration-none fin-kpi-link">
+                       class="text-decoration-none">
 
                         <div class="fin-kpi-card fin-kpi-warning">
 
@@ -212,11 +345,6 @@
 
                                 <span class="fin-kpi-icon">
                                     <i class="fa-solid fa-receipt"></i>
-                                </span>
-
-                                <span class="fin-kpi-trend up">
-                                    <i class="fa-solid fa-arrow-trend-up"></i>
-                                    +6.4%
                                 </span>
 
                             </div>
@@ -239,11 +367,12 @@
 
                 </div>
 
-                <!-- KPI 4 : TODAY'S COLLECTIONS -->
+
+                <!-- TODAY -->
                 <div class="col-12 col-sm-6 col-xl-3">
 
                     <a href="{% url 'finance:receipt_list' %}"
-                       class="text-decoration-none fin-kpi-link">
+                       class="text-decoration-none">
 
                         <div class="fin-kpi-card fin-kpi-success">
 
@@ -261,8 +390,8 @@
                             </div>
 
                             <div class="fin-kpi-value">
-                                <small class="fin-currency">KSh</small>
-                               KSH {{ today_collections|floatformat:2 }}
+                                <small>KSh</small>
+                                {{ today_collections|default:"0.00" }}
                             </div>
 
                             <div class="fin-kpi-label">
@@ -279,11 +408,12 @@
 
                 </div>
 
-                <!-- KPI 5 : EXPECTED REVENUE -->
+
+                <!-- EXPECTED -->
                 <div class="col-12 col-sm-6 col-xl-3">
 
                     <a href="{% url 'finance:invoice_list' %}"
-                       class="text-decoration-none fin-kpi-link">
+                       class="text-decoration-none">
 
                         <div class="fin-kpi-card fin-kpi-info">
 
@@ -293,15 +423,10 @@
                                     <i class="fa-solid fa-chart-line"></i>
                                 </span>
 
-                                <span class="fin-kpi-trend up">
-                                    <i class="fa-solid fa-arrow-trend-up"></i>
-                                    +8.1%
-                                </span>
-
                             </div>
 
                             <div class="fin-kpi-value">
-                                <small class="fin-currency">KSh</small>
+                                <small>KSh</small>
                                 {{ expected_revenue|default:"0.00" }}
                             </div>
 
@@ -319,11 +444,12 @@
 
                 </div>
 
-                <!-- KPI 6 : PENDING INVOICES -->
+
+                <!-- PENDING -->
                 <div class="col-12 col-sm-6 col-xl-3">
 
                     <a href="{% url 'finance:invoice_list' %}"
-                       class="text-decoration-none fin-kpi-link">
+                       class="text-decoration-none">
 
                         <div class="fin-kpi-card fin-kpi-secondary">
 
@@ -358,11 +484,12 @@
 
                 </div>
 
-                <!-- KPI 7 : PROJECTED CASH FLOW -->
+
+                <!-- CASH FLOW -->
                 <div class="col-12 col-sm-6 col-xl-3">
 
                     <a href="{% url 'finance:fee_statement_list' %}"
-                       class="text-decoration-none fin-kpi-link">
+                       class="text-decoration-none">
 
                         <div class="fin-kpi-card fin-kpi-gold">
 
@@ -372,15 +499,10 @@
                                     <i class="fa-solid fa-chart-column"></i>
                                 </span>
 
-                                <span class="fin-kpi-trend up">
-                                    <i class="fa-solid fa-arrow-trend-up"></i>
-                                    +8.1%
-                                </span>
-
                             </div>
 
                             <div class="fin-kpi-value">
-                                <small class="fin-currency">KSh</small>
+                                <small>KSh</small>
                                 {{ expected_revenue|default:"0.00" }}
                             </div>
 
@@ -398,11 +520,12 @@
 
                 </div>
 
-                <!-- KPI 8 : BANK RECONCILIATION -->
+
+                <!-- BANK -->
                 <div class="col-12 col-sm-6 col-xl-3">
 
                     <a href="{% url 'finance:payment_list' %}"
-                       class="text-decoration-none fin-kpi-link">
+                       class="text-decoration-none">
 
                         <div class="fin-kpi-card fin-kpi-purple">
 
@@ -420,7 +543,7 @@
                             </div>
 
                             <div class="fin-kpi-value">
-                                <small class="fin-currency">KSh</small>
+                                <small>KSh</small>
                                 {{ bank_total|default:"0.00" }}
                             </div>
 
@@ -442,161 +565,236 @@
 
         </section>
 
+
         <!-- ========================================================= -->
-        <!-- SECTION 3 : TODAY'S FINANCIAL PERFORMANCE                -->
+        <!-- 04. FINANCIAL PERFORMANCE                                -->
         <!-- ========================================================= -->
-        <section class="row g-3 g-xl-4 mb-4">
 
-            <!-- Collection Performance -->
-            <div class="col-12 col-lg-7">
+        <section class="finance-dashboard-section">
 
-                <div class="fin-widget h-100">
+            <div class="finance-section-heading">
 
-                    <div class="fin-widget-header">
+                <div>
 
-                        <div>
+                    <span class="finance-panel-eyebrow">
+                        FINANCIAL PERFORMANCE
+                    </span>
 
-                            <h3 class="fin-widget-title">
-                                <i class="fa-solid fa-gauge-high me-2"></i>
-                                Collection Performance
-                            </h3>
+                    <h2>
+                        Collections & Billing
+                    </h2>
 
-                            <p class="fin-widget-sub mb-0">
-                                Daily collections versus monthly collection target
-                            </p>
+                    <p>
+                        Monitor collection activity and student payment status.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-4">
+
+
+                <!-- COLLECTION PERFORMANCE -->
+                <div class="col-12 col-lg-7">
+
+                    <div class="fin-widget h-100">
+
+                        <div class="fin-widget-header">
+
+                            <div>
+
+                                <h3 class="fin-widget-title">
+                                    <i class="fa-solid fa-gauge-high me-2"></i>
+                                    Collection Performance
+                                </h3>
+
+                                <p class="fin-widget-sub">
+                                    Daily, weekly and monthly collection performance.
+                                </p>
+
+                            </div>
+
+                            <span class="fin-pill success">
+                                <i class="fa-solid fa-circle-check me-1"></i>
+                                On Track
+                            </span>
 
                         </div>
 
-                        <span class="fin-pill success">
-                            <i class="fa-solid fa-circle-check me-1"></i>
-                            On Track
-                        </span>
 
-                    </div>
+                        <div class="fin-widget-body">
 
-                    <div class="fin-widget-body">
+                            <div class="row g-3 mb-4">
 
-                        <!-- Mini stats -->
-                        <div class="row g-3 mb-4">
+                                <div class="col-md-4">
 
-                            <div class="col-6 col-xl-4">
+                                    <div class="fin-mini-stat">
 
-                                <div class="fin-mini-stat">
+                                        <small>Today's Collections</small>
 
-                                    <small>Today's Collections</small>
+                                        <strong class="text-success">
+                                            KSh {{ today_collections|default:"0.00" }}
+                                        </strong>
 
-                                    <strong class="text-success">
-                                        KSh {{ today_collections|default:"0.00"}}
-                                    </strong>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-4">
+
+                                    <div class="fin-mini-stat">
+
+                                        <small>This Week</small>
+
+                                        <strong>
+                                            KSh {{ week_collections|default:"0.00" }}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-4">
+
+                                    <div class="fin-mini-stat">
+
+                                        <small>This Month</small>
+
+                                        <strong>
+                                            KSh {{ month_collections|default:"0.00" }}
+                                        </strong>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
-                            <div class="col-6 col-xl-4">
 
-                                <div class="fin-mini-stat">
+                            <div class="mb-4">
 
-                                    <small>This Week</small>
+                                <div class="d-flex justify-content-between mb-2">
+
+                                    <small class="fw-semibold text-muted">
+                                        Monthly Collection Target
+                                    </small>
+
+                                    <small class="fw-bold text-primary">
+                                        {{ collection_rate|default:"0" }}%
+                                    </small>
+
+                                </div>
+
+                                <div class="progress fin-progress">
+
+                                    <div class="progress-bar fin-progress-bar"
+                                         role="progressbar"
+                                         style="width: {{ collection_rate|default:'0' }}%"
+                                         aria-valuenow="{{ collection_rate|default:'0' }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="fin-legend">
+
+                                <div class="fin-legend-item">
+
+                                    <span class="fin-dot fin-dot-mpesa"></span>
+
+                                    <span class="fin-legend-label">
+                                        M-Pesa
+                                    </span>
+
+                                    <div class="progress fin-progress-sm flex-grow-1 mx-3">
+
+                                        <div class="progress-bar fin-progress-bar-mpesa"
+                                             style="width: {{ mpesa_share|default:'0' }}%">
+                                        </div>
+
+                                    </div>
 
                                     <strong>
-                                        KSh {{ week_collections|default:"0.00" }}
+                                        {{ mpesa_share|default:"0" }}%
                                     </strong>
 
                                 </div>
 
-                            </div>
 
-                            <div class="col-6 col-xl-4">
+                                <div class="fin-legend-item">
 
-                                <div class="fin-mini-stat">
+                                    <span class="fin-dot fin-dot-bank"></span>
 
-                                    <small>This Month</small>
+                                    <span class="fin-legend-label">
+                                        Bank Transfer
+                                    </span>
+
+                                    <div class="progress fin-progress-sm flex-grow-1 mx-3">
+
+                                        <div class="progress-bar fin-progress-bar-bank"
+                                             style="width: {{ bank_share|default:'0' }}%">
+                                        </div>
+
+                                    </div>
 
                                     <strong>
-                                        KSh {{ month_collections|default:"0.00" }}
+                                        {{ bank_share|default:"0" }}%
                                     </strong>
 
                                 </div>
 
-                            </div>
 
-                        </div>
+                                <div class="fin-legend-item">
 
-                        <!-- Monthly target progress -->
-                        <div class="mb-4">
+                                    <span class="fin-dot fin-dot-cash"></span>
 
-                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fin-legend-label">
+                                        Cash
+                                    </span>
 
-                                <small class="fw-semibold text-muted">
-                                    Monthly Target
-                                </small>
+                                    <div class="progress fin-progress-sm flex-grow-1 mx-3">
 
-                                <small class="fw-bold text-primary">
-                                    {{ collection_rate|default:"0" }}%
-                                </small>
+                                        <div class="progress-bar fin-progress-bar-cash"
+                                             style="width: {{ cash_share|default:'0' }}%">
+                                        </div>
 
-                            </div>
-
-                            <div class="progress fin-progress">
-
-                                <div class="progress-bar fin-progress-bar"
-                                     role="progressbar"
-                                     style="width: {{ collection_rate|default:'0' }}%"
-                                     aria-valuenow="{{ collection_rate|default:'0' }}"
-                                     aria-valuemin="0"
-                                     aria-valuemax="100">
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <!-- Payment channel split -->
-                        <div class="fin-legend">
-
-                            <div class="fin-legend-item">
-                                <span class="fin-dot fin-dot-mpesa"></span>
-                                <span class="fin-legend-label">M-Pesa</span>
-                                <div class="progress fin-progress-sm flex-grow-1 mx-3">
-                                    <div class="progress-bar fin-progress-bar-mpesa"
-                                         style="width: {{ mpesa_share|default:'0' }}%">
                                     </div>
-                                </div>
-                                <strong>{{ mpesa_share|default:"0" }}%</strong>
-                            </div>
 
-                            <div class="fin-legend-item">
-                                <span class="fin-dot fin-dot-bank"></span>
-                                <span class="fin-legend-label">Bank Transfer</span>
-                                <div class="progress fin-progress-sm flex-grow-1 mx-3">
-                                    <div class="progress-bar fin-progress-bar-bank"
-                                         style="width: {{ bank_share|default:'0' }}%">
-                                    </div>
-                                </div>
-                                <strong>{{ bank_share|default:"0" }}%</strong>
-                            </div>
+                                    <strong>
+                                        {{ cash_share|default:"0" }}%
+                                    </strong>
 
-                            <div class="fin-legend-item">
-                                <span class="fin-dot fin-dot-cash"></span>
-                                <span class="fin-legend-label">Cash</span>
-                                <div class="progress fin-progress-sm flex-grow-1 mx-3">
-                                    <div class="progress-bar fin-progress-bar-cash"
-                                         style="width: {{ cash_share|default:'0' }}%">
-                                    </div>
                                 </div>
-                                <strong>{{ cash_share|default:"0" }}%</strong>
-                            </div>
 
-                            <div class="fin-legend-item">
-                                <span class="fin-dot fin-dot-other"></span>
-                                <span class="fin-legend-label">Other Methods</span>
-                                <div class="progress fin-progress-sm flex-grow-1 mx-3">
-                                    <div class="progress-bar fin-progress-bar-other"
-                                         style="width: {{ other_share|default:'0' }}%">
+
+                                <div class="fin-legend-item">
+
+                                    <span class="fin-dot fin-dot-other"></span>
+
+                                    <span class="fin-legend-label">
+                                        Other
+                                    </span>
+
+                                    <div class="progress fin-progress-sm flex-grow-1 mx-3">
+
+                                        <div class="progress-bar fin-progress-bar-other"
+                                             style="width: {{ other_share|default:'0' }}%">
+                                        </div>
+
                                     </div>
+
+                                    <strong>
+                                        {{ other_share|default:"0" }}%
+                                    </strong>
+
                                 </div>
-                                <strong>{{ other_share|default:"0" }}%</strong>
+
                             </div>
 
                         </div>
@@ -605,130 +803,158 @@
 
                 </div>
 
-            </div>
 
-            <!-- Billing Summary -->
-            <div class="col-12 col-lg-5">
+                <!-- BILLING SUMMARY -->
+                <div class="col-12 col-lg-5">
 
-                <div class="fin-widget h-100">
+                    <div class="fin-widget h-100">
 
-                    <div class="fin-widget-header">
+                        <div class="fin-widget-header">
 
-                        <div>
+                            <div>
 
-                            <h3 class="fin-widget-title">
-                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>
-                                Billing Summary
-                            </h3>
+                                <h3 class="fin-widget-title">
+                                    <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                                    Billing Summary
+                                </h3>
 
-                            <p class="fin-widget-sub mb-0">
-                                Student invoice payment completeness
-                            </p>
+                                <p class="fin-widget-sub">
+                                    Student invoice payment completeness.
+                                </p>
+
+                            </div>
+
+                            <a href="{% url 'finance:financial_clearance_list' %}"
+                               class="fin-link">
+                                View Clearance
+                            </a>
 
                         </div>
 
-                        <a href="{% url 'finance:financial_clearance_list' %}"
-                           class="fin-link">
-                            View Clearance
-                        </a>
 
-                    </div>
+                        <div class="fin-widget-body">
 
-                    <div class="fin-widget-body">
+                            <div class="row g-3 mb-4">
 
-                        <div class="row g-3 mb-4">
+                                <div class="col-4">
 
-                            <div class="col-4">
+                                    <div class="fin-billing-stat">
 
-                                <div class="fin-billing-stat">
+                                        <div class="fin-billing-icon bg-success-subtle text-success">
+                                            <i class="fa-solid fa-circle-check"></i>
+                                        </div>
 
-                                    <div class="fin-billing-icon bg-success-subtle text-success">
-                                        <i class="fa-solid fa-circle-check"></i>
+                                        <strong>
+                                            {{ fully_cleared|default:"0" }}
+                                        </strong>
+
+                                        <small>
+                                            Fully Cleared
+                                        </small>
+
                                     </div>
 
-                                    <strong>{{ fully_cleared|default:"0" }}</strong>
+                                </div>
 
-                                    <small>Fully Cleared</small>
+
+                                <div class="col-4">
+
+                                    <div class="fin-billing-stat">
+
+                                        <div class="fin-billing-icon bg-warning-subtle text-warning">
+                                            <i class="fa-solid fa-circle-half-stroke"></i>
+                                        </div>
+
+                                        <strong>
+                                            {{ partially_paid|default:"0" }}
+                                        </strong>
+
+                                        <small>
+                                            Partial
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-4">
+
+                                    <div class="fin-billing-stat">
+
+                                        <div class="fin-billing-icon bg-danger-subtle text-danger">
+                                            <i class="fa-solid fa-circle-xmark"></i>
+                                        </div>
+
+                                        <strong>
+                                            {{ not_paid|default:"0" }}
+                                        </strong>
+
+                                        <small>
+                                            Not Cleared
+                                        </small>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
-                            <div class="col-4">
 
-                                <div class="fin-billing-stat">
+                            <div class="fin-stat-mini">
 
-                                    <div class="fin-billing-icon bg-warning-subtle text-warning">
-                                        <i class="fa-solid fa-circle-half-stroke"></i>
-                                    </div>
+                                <span>
+                                    <i class="fa-solid fa-users"></i>
+                                    Total Invoiced Students
+                                </span>
 
-                                    <strong>{{ partially_paid|default:"0" }}</strong>
-
-                                    <small>Partial</small>
-
-                                </div>
+                                <strong>
+                                    {{ total_invoiced_students|default:"0" }}
+                                </strong>
 
                             </div>
 
-                            <div class="col-4">
 
-                                <div class="fin-billing-stat">
+                            <div class="fin-stat-mini">
 
-                                    <div class="fin-billing-icon bg-danger-subtle text-danger">
-                                        <i class="fa-solid fa-circle-xmark"></i>
-                                    </div>
+                                <span>
+                                    <i class="fa-solid fa-receipt"></i>
+                                    Receipts Issued
+                                </span>
 
-                                    <strong>{{ not_paid|default:"0" }}</strong>
-
-                                    <small>Not Cleared</small>
-
-                                </div>
+                                <strong>
+                                    {{ receipts_issued|default:"0" }}
+                                </strong>
 
                             </div>
 
-                        </div>
 
-                        <div class="fin-stat-mini">
+                            <div class="fin-stat-mini">
 
-                            <span>
-                                <i class="fa-solid fa-users me-2 text-muted"></i>
-                                Total Invoiced Students
-                            </span>
+                                <span>
+                                    <i class="fa-solid fa-hourglass-half"></i>
+                                    Pending Invoices
+                                </span>
 
-                            <strong>{{ total_invoiced_students|default:"0" }}</strong>
+                                <strong>
+                                    {{ pending_invoices|default:"0" }}
+                                </strong>
 
-                        </div>
+                            </div>
 
-                        <div class="fin-stat-mini">
 
-                            <span>
-                                <i class="fa-solid fa-receipt me-2 text-muted"></i>
-                                Receipts Issued
-                            </span>
+                            <div class="fin-stat-mini mb-0">
 
-                            <strong>{{ receipts_issued|default:"0" }}</strong>
+                                <span>
+                                    <i class="fa-solid fa-arrow-rotate-left"></i>
+                                    Reversed Payments
+                                </span>
 
-                        </div>
+                                <strong>
+                                    {{ reversed_payments|default:"0" }}
+                                </strong>
 
-                        <div class="fin-stat-mini">
-
-                            <span>
-                                <i class="fa-solid fa-hourglass-half me-2 text-muted"></i>
-                                Pending Invoices
-                            </span>
-
-                            <strong>{{ pending_invoices|default:"0" }}</strong>
-
-                        </div>
-
-                        <div class="fin-stat-mini mb-0">
-
-                            <span>
-                                <i class="fa-solid fa-arrow-rotate-left me-2 text-muted"></i>
-                                Reversed Payments
-                            </span>
-
-                            <strong>{{ reversed_payments|default:"0" }}</strong>
+                            </div>
 
                         </div>
 
@@ -740,47 +966,76 @@
 
         </section>
 
+
         <!-- ========================================================= -->
-        <!-- SECTION 4 : REVENUE ANALYTICS CHARTS                     -->
+        <!-- 05. REVENUE ANALYTICS                                   -->
         <!-- ========================================================= -->
-        <section class="row g-3 g-xl-4 mb-4">
 
-            <!-- Revenue Trend Chart -->
-            <div class="col-12 col-lg-8">
+        <section class="finance-dashboard-section">
 
-                <div class="fin-widget h-100">
+            <div class="finance-section-heading">
 
-                    <div class="fin-widget-header">
+                <div>
 
-                        <div>
+                    <span class="finance-panel-eyebrow">
+                        REVENUE ANALYTICS
+                    </span>
 
-                            <h3 class="fin-widget-title">
-                                <i class="fa-solid fa-chart-column me-2"></i>
-                                Revenue Trend
-                            </h3>
+                    <h2>
+                        Revenue Intelligence
+                    </h2>
 
-                            <p class="fin-widget-sub mb-0">
-                                Monthly collections for the current academic year
-                            </p>
+                    <p>
+                        Understand collection trends and payment-method distribution.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-4">
+
+
+                <!-- REVENUE TREND -->
+                <div class="col-12 col-lg-8">
+
+                    <div class="fin-widget h-100">
+
+                        <div class="fin-widget-header">
+
+                            <div>
+
+                                <h3 class="fin-widget-title">
+                                    <i class="fa-solid fa-chart-column me-2"></i>
+                                    Revenue Trend
+                                </h3>
+
+                                <p class="fin-widget-sub">
+                                    Monthly collections for the current academic year.
+                                </p>
+
+                            </div>
+
+                            <a href="{% url 'finance:payment_list' %}"
+                               class="fin-link">
+                                View Payments
+                            </a>
 
                         </div>
 
-                        <a href="{% url 'finance:payment_list' %}"
-                           class="fin-link">
-                            View Payments
-                        </a>
 
-                    </div>
+                        <div class="fin-widget-body">
 
-                    <div class="fin-widget-body">
+                            <div class="fin-chart-box">
 
-                        <div class="fin-chart-box">
+                                <canvas
+                                    id="financeRevenueChart"
+                                    data-labels='{{ revenue_labels|default:"[]" }}'
+                                    data-values='{{ revenue_values|default:"[]" }}'>
+                                </canvas>
 
-                            <canvas
-                                id="financeRevenueChart"
-                                data-labels='{{ revenue_labels|default:"[]" }}'
-                                data-values='{{ revenue_values|default:"[]" }}'>
-                            </canvas>
+                            </div>
 
                         </div>
 
@@ -788,39 +1043,41 @@
 
                 </div>
 
-            </div>
 
-            <!-- Fee Category Breakdown -->
-            <div class="col-12 col-lg-4">
+                <!-- PAYMENT METHODS -->
+                <div class="col-12 col-lg-4">
 
-                <div class="fin-widget h-100">
+                    <div class="fin-widget h-100">
 
-                    <div class="fin-widget-header">
+                        <div class="fin-widget-header">
 
-                        <div>
+                            <div>
 
-                            <h3 class="fin-widget-title">
-                                <i class="fa-solid fa-chart-pie me-2"></i>
-                                Collections by Payment
-                            </h3>
+                                <h3 class="fin-widget-title">
+                                    <i class="fa-solid fa-chart-pie me-2"></i>
+                                    Payment Methods
+                                </h3>
 
-                            <p class="fin-widget-sub mb-0">
-                                Share of revenue per fee payment
-                            </p>
+                                <p class="fin-widget-sub">
+                                    Revenue distribution by payment method.
+                                </p>
+
+                            </div>
 
                         </div>
 
-                    </div>
 
-                    <div class="fin-widget-body">
+                        <div class="fin-widget-body">
 
-                        <div class="fin-chart-box fin-chart-box-sm">
+                            <div class="fin-chart-box fin-chart-box-sm">
 
-                            <canvas
-                                id="financeCategoryChart"
-                                data-labels='{{ category_labels|default:"[]" }}'
-                                data-values='{{ category_values|default:"[]" }}'>
-                            </canvas>
+                                <canvas
+                                    id="financeCategoryChart"
+                                    data-labels='{{ category_labels|default:"[]" }}'
+                                    data-values='{{ category_values|default:"[]" }}'>
+                                </canvas>
+
+                            </div>
 
                         </div>
 
@@ -832,7 +1089,71 @@
 
         </section>
 
-        <!-- NEXT SECTION : RECENT PAYMENTS TABLE -->
+
+        <!-- ========================================================= -->
+        <!-- 06. RECENT FINANCIAL ACTIVITY                            -->
+        <!-- ========================================================= -->
+
+        <section class="finance-dashboard-section finance-last-section">
+
+            <div class="finance-section-heading">
+
+                <div>
+
+                    <span class="finance-panel-eyebrow">
+                        FINANCIAL ACTIVITY
+                    </span>
+
+                    <h2>
+                        Recent Transactions
+                    </h2>
+
+                    <p>
+                        Recent payments, receipts and financial activity.
+                    </p>
+
+                </div>
+
+                <a href="{% url 'finance:payment_list' %}"
+                   class="btn btn-sm btn-outline-primary rounded-pill px-3">
+
+                    View All Transactions
+                    <i class="fa-solid fa-arrow-right ms-1"></i>
+
+                </a>
+
+            </div>
+
+
+            <div class="fin-widget">
+
+                <div class="fin-empty-state">
+
+                    <div class="fin-empty-icon">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+
+                    <h3>
+                        Recent Financial Activity
+                    </h3>
+
+                    <p>
+                        Recent payments and receipts will appear here.
+                    </p>
+
+                    <a href="{% url 'finance:payment_list' %}"
+                       class="btn btn-primary rounded-pill px-4">
+
+                        <i class="fa-solid fa-money-bill-transfer me-1"></i>
+                        View Payments
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
 
     </div>
 
@@ -840,7 +1161,10 @@
 
 {% endblock %}
 
+
 {% block extra_js %}
+
 <script src="{% static 'js/finance_dashboard.js' %}"></script>
+
 {% endblock %}
 

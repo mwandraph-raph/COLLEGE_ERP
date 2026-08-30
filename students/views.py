@@ -39,6 +39,7 @@ from finance.models import (
     FinancialClearance,
     Payment
 )
+from students.models import AcademicYear, Semester
 from finance.services import (
     generate_student_invoice,
     update_financial_clearance,

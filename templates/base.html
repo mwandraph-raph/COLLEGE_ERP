@@ -23,10 +23,26 @@
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/exam_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    {% block extra_css %}{% endblock %}
+    {% block extra_css %}
+    <style>
+.alert-success {
+    background: #eaf1ff;
+    border: 1px solid #003087;
+    color: #012169;
+}
+
+.alert-error,
+.alert-danger {
+    background: #f5f7fb;
+    border: 1px solid #012169;
+    color: #012169;
+}
+</style>
+{% endblock %}
 </head>
 
 <body class="erp-body">

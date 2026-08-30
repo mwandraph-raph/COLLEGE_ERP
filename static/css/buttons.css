@@ -1,7 +1,9 @@
 /*====================================================
     XORADEX EDUCORE ERP
-    BUTTONS
+    GLOBAL BUTTON SYSTEM
+    Enterprise SaaS • Clean • Consistent
 ====================================================*/
+
 
 /*====================================================
     BASE BUTTON
@@ -9,34 +11,51 @@
 
 .btn{
 
-    font-weight:500;
-
-    border-radius:10px;
-
-    padding:10px 18px;
-
-    font-size:14px;
-
-    transition:all .25s ease;
-
     display:inline-flex;
 
     align-items:center;
-
     justify-content:center;
 
-    gap:8px;
+    gap:6px;
+
+    min-height:36px;
+
+    padding:8px 14px;
+
+    border-radius:7px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    line-height:1.2;
+
+    white-space:nowrap;
+
+    vertical-align:middle;
+
+    transition:
+        background-color .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        box-shadow .15s ease;
 
     box-shadow:none;
-    
 
 }
 
-.btn:focus{
 
-    box-shadow:none;
+/*====================================================
+    FOCUS
+====================================================*/
+
+.btn:focus,
+.btn:focus-visible{
+
+    box-shadow:0 0 0 3px rgba(13,110,253,.12);
 
 }
+
 
 /*====================================================
     PRIMARY
@@ -58,9 +77,10 @@
 
     border-color:var(--blue-dark);
 
-    transform:translateY(-1px);
+    color:#FFFFFF;
 
 }
+
 
 /*====================================================
     SUCCESS
@@ -70,7 +90,9 @@
 
     background:#198754;
 
-    border-color:#198754;
+    border:1px solid #198754;
+
+    color:#FFFFFF;
 
 }
 
@@ -80,7 +102,10 @@
 
     border-color:#157347;
 
+    color:#FFFFFF;
+
 }
+
 
 /*====================================================
     WARNING
@@ -88,21 +113,24 @@
 
 .btn-warning{
 
-    color:#212529;
+    background:#F59E0B;
 
-    background:#FFC107;
+    border:1px solid #F59E0B;
 
-    border-color:#FFC107;
+    color:#FFFFFF;
 
 }
 
 .btn-warning:hover{
 
-    background:#FFCA2C;
+    background:#D97706;
 
-    border-color:#FFC720;
+    border-color:#D97706;
+
+    color:#FFFFFF;
 
 }
+
 
 /*====================================================
     DANGER
@@ -112,7 +140,9 @@
 
     background:#DC3545;
 
-    border-color:#DC3545;
+    border:1px solid #DC3545;
+
+    color:#FFFFFF;
 
 }
 
@@ -120,9 +150,12 @@
 
     background:#BB2D3B;
 
-    border-color:#B02A37;
+    border-color:#BB2D3B;
+
+    color:#FFFFFF;
 
 }
+
 
 /*====================================================
     SECONDARY
@@ -130,17 +163,24 @@
 
 .btn-secondary{
 
-    background:#6C757D;
+    background:#FFFFFF;
 
-    border-color:#6C757D;
+    border:1px solid #D0D5DD;
+
+    color:#344054;
 
 }
 
 .btn-secondary:hover{
 
-    background:#5C636A;
+    background:#F8FAFC;
+
+    border-color:#98A2B3;
+
+    color:#1D2939;
 
 }
+
 
 /*====================================================
     OUTLINE PRIMARY
@@ -148,21 +188,74 @@
 
 .btn-outline-primary{
 
-    color:var(--blue);
+    background:#FFFFFF;
 
-    border:1px solid var(--blue);
+    border:1px solid #B2DDFF;
 
-    background:transparent;
+    color:#175CD3;
 
 }
 
 .btn-outline-primary:hover{
 
-    background:var(--blue);
+    background:#EFF8FF;
 
-    color:#FFFFFF;
+    border-color:#84CAFF;
+
+    color:#1849A9;
 
 }
+
+
+/*====================================================
+    OUTLINE SUCCESS
+====================================================*/
+
+.btn-outline-success{
+
+    background:#FFFFFF;
+
+    border:1px solid #ABEFC6;
+
+    color:#027A48;
+
+}
+
+.btn-outline-success:hover{
+
+    background:#ECFDF3;
+
+    border-color:#75E0A7;
+
+    color:#05603A;
+
+}
+
+
+/*====================================================
+    OUTLINE DANGER
+====================================================*/
+
+.btn-outline-danger{
+
+    background:#FFFFFF;
+
+    border:1px solid #FDA29B;
+
+    color:#B42318;
+
+}
+
+.btn-outline-danger:hover{
+
+    background:#FEF3F2;
+
+    border-color:#F97066;
+
+    color:#912018;
+
+}
+
 
 /*====================================================
     LIGHT
@@ -170,43 +263,89 @@
 
 .btn-light{
 
-    background:#F8F9FA;
+    background:#F8FAFC;
 
-    border:1px solid var(--border);
+    border:1px solid #E4E7EC;
 
-    color:var(--text);
+    color:#344054;
 
 }
 
 .btn-light:hover{
 
-    background:#E9ECEF;
+    background:#F2F4F7;
+
+    border-color:#D0D5DD;
+
+    color:#1D2939;
 
 }
 
+
 /*====================================================
-    SMALL
+    LINK BUTTON
+====================================================*/
+
+.btn-link{
+
+    background:transparent;
+
+    border:0;
+
+    color:#175CD3;
+
+    padding:6px 8px;
+
+    text-decoration:none;
+
+}
+
+.btn-link:hover{
+
+    color:#1849A9;
+
+    background:#EFF8FF;
+
+    text-decoration:none;
+
+}
+
+
+/*====================================================
+    SMALL BUTTON
 ====================================================*/
 
 .btn-sm{
 
-    padding:6px 12px;
+    min-height:32px;
 
-    font-size:13px;
+    padding:6px 11px;
+
+    border-radius:6px;
+
+    font-size:12px;
+
+    gap:5px;
 
 }
 
+
 /*====================================================
-    LARGE
+    LARGE BUTTON
 ====================================================*/
 
 .btn-lg{
 
-    padding:14px 24px;
+    min-height:42px;
 
-    font-size:16px;
+    padding:10px 18px;
+
+    border-radius:8px;
+
+    font-size:14px;
 
 }
+
 
 /*====================================================
     ICON BUTTON
@@ -214,13 +353,17 @@
 
 .btn-icon{
 
-    width:40px;
+    width:36px;
 
-    height:40px;
+    height:36px;
+
+    min-height:36px;
 
     padding:0;
 
-    border-radius:10px;
+    border-radius:7px;
+
+    gap:0;
 
 }
 
@@ -230,6 +373,24 @@
 
 }
 
+
+/*====================================================
+    SMALL ICON BUTTON
+====================================================*/
+
+.btn-icon.btn-sm{
+
+    width:32px;
+
+    height:32px;
+
+    min-height:32px;
+
+    padding:0;
+
+}
+
+
 /*====================================================
     BUTTON GROUPS
 ====================================================*/
@@ -238,13 +399,14 @@
 
     display:flex;
 
-    gap:8px;
-
     align-items:center;
+
+    gap:6px;
 
     flex-wrap:wrap;
 
 }
+
 
 /*====================================================
     PAGE ACTION BAR
@@ -256,7 +418,9 @@
 
     justify-content:flex-end;
 
-    gap:10px;
+    align-items:center;
+
+    gap:8px;
 
     margin-bottom:20px;
 
@@ -264,17 +428,110 @@
 
 }
 
+
+/*====================================================
+    TABLE ACTION AREA
+    IMPORTANT FOR ENROLLMENT TABLE
+====================================================*/
+
+.table td:last-child{
+
+    vertical-align:middle;
+
+    white-space:nowrap;
+
+}
+
+
+/*====================================================
+    TABLE ACTION BUTTONS
+====================================================*/
+
+.table td:last-child .btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    vertical-align:middle;
+
+    height:32px;
+
+    min-height:32px;
+
+    padding:6px 10px;
+
+    margin:0 3px 0 0;
+
+    border-radius:6px;
+
+    font-size:11px;
+
+    font-weight:600;
+
+    line-height:1;
+
+    white-space:nowrap;
+
+}
+
+
+/*====================================================
+    REMOVE EXTRA SPACE AFTER LAST BUTTON
+====================================================*/
+
+.table td:last-child .btn:last-child{
+
+    margin-right:0;
+
+}
+
+
+/*====================================================
+    KEEP ALL ACTIONS ON ONE LINE
+====================================================*/
+
+.table td:last-child{
+
+    width:1%;
+
+}
+
+
+/*====================================================
+    BUTTON ICONS
+====================================================*/
+
+.btn i{
+
+    font-size:.9em;
+
+}
+
+.btn-sm i{
+
+    font-size:.85em;
+
+}
+
+
 /*====================================================
     DISABLED
 ====================================================*/
 
-.btn:disabled{
+.btn:disabled,
+.btn.disabled{
 
-    opacity:.65;
+    opacity:.55;
 
     cursor:not-allowed;
 
+    pointer-events:none;
+
 }
+
 
 /*====================================================
     RESPONSIVE
@@ -290,7 +547,52 @@
 
     .page-actions .btn{
 
+        flex:1 1 auto;
+
+    }
+
+}
+
+
+/*====================================================
+    MOBILE
+====================================================*/
+
+@media(max-width:480px){
+
+    .btn{
+
+        min-height:36px;
+
+        padding:8px 12px;
+
+        font-size:12px;
+
+    }
+
+    .btn-lg{
+
+        min-height:40px;
+
+        padding:9px 15px;
+
+    }
+
+    .btn-group-actions{
+
         width:100%;
+
+    }
+
+    /*
+       Enrollment/action tables can scroll
+       on very small screens rather than
+       squeezing buttons.
+    */
+
+    .table td:last-child{
+
+        white-space:nowrap;
 
     }
 

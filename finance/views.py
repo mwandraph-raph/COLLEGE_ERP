@@ -9,7 +9,7 @@ from django.conf import settings
 from finance.services import (
     update_financial_clearance,
 )
-from students.models import SemesterEnrollment
+from students.models import SemesterEnrollment, AcademicYear, Semester
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import (
