@@ -2,9 +2,17 @@ from django.urls import path
 
 from . import views
 
+
 app_name = "graduation"
 
+
 urlpatterns = [
+
+    path(
+        "",
+        views.eligibility_list,
+        name="dashboard",
+    ),
 
     path(
         "eligibility/",
@@ -19,9 +27,14 @@ urlpatterns = [
     ),
 
     path(
-    "eligibility/<int:student_id>/",
-    views.graduation_eligibility,
-    name="graduation_eligibility"
-),
+        "student/<int:student_id>/approve/",
+        views.approve_graduation,
+        name="approve_graduation",
+    ),
 
+    path(
+        "list/",
+        views.graduation_list,
+        name="graduation_list",
+    ),
 ]

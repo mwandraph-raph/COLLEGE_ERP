@@ -8,10 +8,8 @@
 ====================================================*/
 
 .erp-sidebar{
-
     width:var(--sidebar-width);
-
-    min-height:100vh;
+    height:100vh;
 
     background:linear-gradient(
         180deg,
@@ -20,25 +18,21 @@
     );
 
     color:var(--light-text);
-
     display:flex;
-
     flex-direction:column;
 
     transition:all var(--transition);
-
     box-shadow:var(--shadow-lg);
 
     overflow-y:auto;
-
     overflow-x:hidden;
 
-    position:sticky;
-
+    /* FIXED SIDEBAR */
+    position:fixed;
     top:0;
+    left:0;
 
     z-index:1040;
-
 }
 
 /*====================================================

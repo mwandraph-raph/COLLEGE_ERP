@@ -12,6 +12,7 @@ from finance.models import (
 )
 
 from finance.services import (
+    recalculate_invoice,
     generate_student_invoice,
 )
 

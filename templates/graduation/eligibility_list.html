@@ -1,305 +1,308 @@
 {% extends "base.html" %}
 
-
 {% block content %}
 
+<div class="container-fluid py-3">
 
-<div class="card shadow">
+<!-- PAGE HEADER -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
 
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <i class="bi bi-mortarboard-fill text-success fs-4"></i>
 
-    <div class="card-header bg-success text-white">
+            <h2 class="fw-bold mb-0">
+                Graduation Eligibility Candidates
+            </h2>
+        </div>
 
-
-        <h4 class="mb-0">
-
-            Graduation Eligibility Candidates
-
-        </h4>
-
-
+        <p class="text-muted mb-0">
+            Review and verify students who are eligible for graduation.
+        </p>
     </div>
 
-
-
-    <div class="card-body">
-
-
-
-        <form method="get" class="row mb-4">
-
-
-            <div class="col-md-6">
-
-
-                <label class="form-label">
-
-                    Programme
-
-                </label>
-
-
-                <select
-                    name="programme"
-                    class="form-select">
-
-
-                    <option value="">
-
-                        All Programmes
-
-                    </option>
-
-
-
-                    {% for programme in programmes %}
-
-
-                    <option
-
-                        value="{{ programme.id }}"
-
-                        {% if selected_programme == programme.id|stringformat:"s" %}
-
-                        selected
-
-                        {% endif %}
-
-                    >
-
-
-                        {{ programme.programme_name }}
-
-
-                    </option>
-
-
-                    {% endfor %}
-
-
-                </select>
-
-
-            </div>
-
-
-
-
-            <div class="col-md-2 d-flex align-items-end">
-
-
-                <button class="btn btn-success w-100">
-
-
-                    Filter
-
-
-                </button>
-
-
-            </div>
-
-
-
-        </form>
-
-
-
-
-
-        <table class="table table-bordered table-hover">
-
-
-            <thead class="table-light">
-
-
-                <tr>
-
-
-                    <th>
-
-                        Admission No
-
-                    </th>
-
-
-                    <th>
-
-                        Student
-
-                    </th>
-
-
-                    <th>
-
-                        Programme
-
-                    </th>
-
-
-                    <th>
-
-                        Current Level
-
-                    </th>
-
-
-                    <th>
-
-                        Status
-
-                    </th>
-
-
-                    <th>
-
-                        Action
-
-                    </th>
-
-
-                </tr>
-
-
-            </thead>
-
-
-
-
-            <tbody>
-
-
-
-            {% for candidate in candidates %}
-
-
-
-                <tr>
-
-
-                    <td>
-
-
-                        {{ candidate.student.admission_no }}
-
-
-                    </td>
-
-
-
-                    <td>
-
-
-                        {{ candidate.student.first_name }}
-
-                        {{ candidate.student.last_name }}
-
-
-                    </td>
-
-
-
-
-                    <td>
-
-
-                        {{ candidate.student.programme.programme_name }}
-
-
-                    </td>
-
-
-
-
-                    <td>
-
-
-                        {{ candidate.latest_enrollment.study_level.level_name }}
-
-
-                    </td>
-
-
-
-
-                    <td>
-
-
-                        <span class="badge bg-success">
-
-
-                            {{ candidate.latest_enrollment.status|title }}
-
-
-                        </span>
-
-
-                    </td>
-
-
-
-
-                    <td>
-
-
-                        <a
-
-                            href="{% url 'graduation:graduation_eligibility' candidate.student.id %}"
-
-                            class="btn btn-success btn-sm"
-
-
-                        >
-
-                            Check Eligibility
-
-
-                        </a>
-
-
-                    </td>
-
-
-                </tr>
-
-
-
-
-            {% empty %}
-
-
-
-                <tr>
-
-
-                    <td colspan="6" class="text-center">
-
-
-                        No graduation candidates found.
-
-
-                    </td>
-
-
-                </tr>
-
-
-
-            {% endfor %}
-
-
-
-            </tbody>
-
-
-        </table>
-
-
-
+    <div>
+        <span class="badge bg-success-subtle text-primary rounded-pill px-3 py-2">
+            <i class="bi bi-people-fill me-1"></i>
+            Graduation Candidates
+        </span>
     </div>
-
 
 </div>
 
 
+<!-- FILTER -->
+<div class="card border-0 shadow-sm mb-4">
+
+    <div class="card-body p-4">
+
+        <div class="d-flex align-items-center mb-3">
+
+            <div class="me-3">
+                <span class="d-flex align-items-center justify-content-center
+                             bg-success-subtle text-success rounded-3"
+                      style="width: 42px; height: 42px;">
+                    <i class="bi bi-funnel-fill"></i>
+                </span>
+            </div>
+
+            <div>
+                <h6 class="fw-bold mb-1">
+                    Filter Candidates
+                </h6>
+
+                <p class="text-muted small mb-0">
+                    Select a programme to filter the candidate list.
+                </p>
+            </div>
+
+        </div>
+
+
+        <form method="get">
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-12 col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Programme
+                    </label>
+
+                    <select
+                        name="programme"
+                        class="form-select">
+
+                        <option value="">
+                            All Programmes
+                        </option>
+
+                        {% for programme in programmes %}
+
+                            <option
+                                value="{{ programme.id }}"
+                                {% if selected_programme == programme.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ programme.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-12 col-md-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100">
+                        <i class="bi bi-funnel-fill me-1"></i>
+                        Filter
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- CANDIDATES -->
+<div class="card border-0 shadow-sm">
+
+    <div class="card-header bg-white border-0 px-4 py-3">
+
+        <div class="d-flex flex-column flex-md-row
+                    justify-content-between align-items-md-center gap-2">
+
+            <div>
+                <h5 class="fw-bold mb-1">
+                    Graduation Candidates
+                </h5>
+
+                <p class="text-muted small mb-0">
+                    Students identified for graduation eligibility review.
+                </p>
+            </div>
+
+            <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
+                <i class="bi bi-list-check me-1"></i>
+                Candidate List
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th class="px-4 py-3">
+                            Admission No
+                        </th>
+
+                        <th class="py-3">
+                            Student
+                        </th>
+
+                        <th class="py-3">
+                            Programme
+                        </th>
+
+                        <th class="py-3">
+                            Current Level
+                        </th>
+
+                        <th class="py-3">
+                            Status
+                        </th>
+
+                        <th class="py-3 text-end px-4">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for candidate in candidates %}
+
+                        <tr>
+
+                            <td class="px-4">
+                                <span class="fw-semibold">
+                                    {{ candidate.student.admission_no }}
+                                </span>
+                            </td>
+
+
+                            <td>
+
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <span
+                                        class="d-flex align-items-center justify-content-center
+                                               rounded-circle bg-success-subtle text-success fw-bold"
+                                        style="width: 40px; height: 40px;">
+
+                                        {{ candidate.student.first_name|first|upper }}
+
+                                    </span>
+
+                                    <div>
+
+                                        <div class="fw-semibold">
+                                            {{ candidate.student.first_name }}
+                                            {{ candidate.student.last_name }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+                                <span class="fw-medium">
+                                    {{ candidate.student.programme.name }}
+                                </span>
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge bg-light text-dark border">
+                                    {{ candidate.latest_enrollment.programme_level.name }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+
+                                    <i class="bi bi-check-circle-fill me-1"></i>
+
+                                    {{ candidate.latest_enrollment.status|title }}
+
+                                </span>
+
+                            </td>
+
+
+                            <td class="text-end px-4">
+
+                                <a
+                                    href="{% url 'graduation:graduation_eligibility' candidate.student.id %}"
+                                    class="btn btn-success btn-sm">
+
+                                    <i class="bi bi-clipboard-check me-1"></i>
+                                    Check Eligibility
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td colspan="6" class="text-center py-5">
+
+                                <div class="text-muted">
+
+                                    <i class="bi bi-mortarboard fs-1 d-block mb-3"></i>
+
+                                    <h6 class="fw-bold">
+                                        No graduation candidates found.
+                                    </h6>
+
+                                    <p class="small mb-0">
+                                        There are currently no candidates matching the selected criteria.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
 
 {% endblock %}

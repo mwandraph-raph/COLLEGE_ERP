@@ -13,74 +13,101 @@ from students.models import (
 
 def get_next_academic_period(enrollment):
     """
-    Determine the next Academic Year and Semester.
+    Determine the next academic period based on the configured
+    semester sequence.
 
-    Rules
+    Semester sequence:
+        Jan - March
+        April - June
+        July - September
+        October - December
 
-    Semester 1 -> Semester 2 (same Academic Year)
-
-    Semester 2 -> Semester 1 (next Academic Year)
+    Progression:
+        1st semester -> 2nd semester
+        2nd semester -> 3rd semester
+        3rd semester -> 4th semester
+        4th semester -> next academic year's 1st semester
     """
 
+    current_year = enrollment.academic_year
     current_semester = enrollment.semester
 
-    # -----------------------------------
-    # Semester 1 -> Semester 2
-    # -----------------------------------
+    semester_order = {
+        "Jan - March": 1,
+        "April - June": 2,
+        "July - September": 3,
+        "October - December": 4,
+    }
 
-    if current_semester.semester_name == "Semester 1":
+    current_order = semester_order.get(
+        current_semester.semester_name
+    )
 
-        next_semester = (
-            Semester.objects.filter(
-                academic_year=enrollment.academic_year,
-                semester_name="Semester 2",
-            ).first()
+    if current_order is None:
+        return None, None
+
+    # ==========================================================
+    # NEXT SEMESTER IN SAME ACADEMIC YEAR
+    # ==========================================================
+
+    if current_order < 4:
+
+        next_order = current_order + 1
+
+        next_semester_name = next(
+            (
+                name
+                for name, order in semester_order.items()
+                if order == next_order
+            ),
+            None,
         )
 
-        if next_semester:
-
-            return (
-                enrollment.academic_year,
-                next_semester,
-            )
-
-    # -----------------------------------
-    # Semester 2 -> Next Academic Year
-    # -----------------------------------
-
-    if current_semester.semester_name == "Semester 2":
-
-        next_year = (
-            enrollment.academic_year.__class__.objects
-            .exclude(
-                pk=enrollment.academic_year.pk,
-            )
-            .order_by(
-                "year_name",
+        next_semester = (
+            Semester.objects
+            .filter(
+                academic_year=current_year,
+                semester_name=next_semester_name,
             )
             .first()
         )
 
-        if next_year:
+        if next_semester:
+            return current_year, next_semester
 
-            next_semester = (
-                Semester.objects.filter(
-                    academic_year=next_year,
-                    semester_name="Semester 1",
-                ).first()
-            )
+        return None, None
 
-            if next_semester:
+    # ==========================================================
+    # OCTOBER - DECEMBER -> NEXT ACADEMIC YEAR
+    # ==========================================================
 
-                return (
-                    next_year,
-                    next_semester,
-                )
-
-    return (
-        None,
-        None,
+    next_year = (
+        current_year.__class__.objects
+        .filter(
+            year_name__gt=current_year.year_name,
+        )
+        .order_by(
+            "year_name",
+        )
+        .first()
     )
+
+    if not next_year:
+        return None, None
+
+    next_semester = (
+        Semester.objects
+        .filter(
+            academic_year=next_year,
+            semester_name="Jan - March",
+        )
+        .first()
+    )
+
+    if next_semester:
+        return next_year, next_semester
+
+    return None, None
 
 
 def validate_results_exist(enrollment):
@@ -304,21 +331,91 @@ def progress_student(
     user=None,
 ):
     """
-    Basic progression service.
+    Progress a student to the next programme level.
 
-    Validation will be added later.
+    Progression requirements:
+
+    1. All registered units must have results.
+    2. All results must be published.
+    3. The student's current semester invoice must be
+       100% financially cleared.
+    4. All units from the current programme year must be
+       passed before crossing into the next programme year.
+    5. The next academic period must be configured.
+    6. Duplicate enrollment must not be created.
+
+    Financial Rule
+    --------------
+    A student MUST have paid 100% of the financial obligation
+    for the current semester before progression is allowed.
+
+    Therefore:
+
+        100%  -> progression allowed
+        99.99% or below -> progression blocked
+
+    The financial check is performed server-side here so that
+    progression cannot be bypassed through the user interface.
     """
+
+    # ==========================================================
+    # 1. VALIDATE RESULTS
+    # ==========================================================
+
     validate_results_exist(
         enrollment
     )
 
+    # ==========================================================
+    # 2. VALIDATE RESULTS PUBLICATION
+    # ==========================================================
+
     validate_results_published(
-    enrollment
+        enrollment
     )
+
+    # ==========================================================
+    # 3. FINANCIAL CLEARANCE
+    #
+    # A student must have completely settled the invoice
+    # belonging to THIS semester before progressing.
+    # ==========================================================
+
+    try:
+
+        invoice = enrollment.invoice
+
+    except Exception:
+
+        raise ValueError(
+            "Cannot progress this student because the current "
+            "semester has no financial invoice."
+        )
+
+    payment_percentage = invoice.payment_percentage
+
+    if payment_percentage < 100:
+
+        raise ValueError(
+            (
+                "Cannot progress this student. "
+                f"Financial clearance is {payment_percentage}%. "
+                "The student must be 100% financially cleared "
+                "for the current semester before progressing."
+            )
+        )
+
+    # ==========================================================
+    # 4. CURRENT PROGRAMME LEVEL
+    # ==========================================================
 
     current_level = (
         enrollment.programme_level
     )
+
+    # ==========================================================
+    # 5. DETERMINE NEXT PROGRAMME LEVEL
+    # ==========================================================
 
     next_level = (
         enrollment.programme.levels
@@ -333,14 +430,12 @@ def progress_student(
         .first()
     )
 
-    validate_year_boundary_progression(
-    enrollment,
-    next_level,
-    )
-
-    # -----------------------------
-    # Final Programme Level
-    # -----------------------------
+    # ==========================================================
+    # 6. FINAL PROGRAMME LEVEL
+    #
+    # If there is no next programme level, the student has
+    # completed the programme.
+    # ==========================================================
 
     if next_level is None:
 
@@ -359,9 +454,22 @@ def progress_student(
 
         return enrollment
 
-    # -----------------------------
-    # Next Academic Period
-    # -----------------------------
+    # ==========================================================
+    # 7. YEAR BOUNDARY VALIDATION
+    #
+    # Failed units may be carried within the same programme
+    # year, but all units from the previous year must be passed
+    # before entering the next programme year.
+    # ==========================================================
+
+    validate_year_boundary_progression(
+        enrollment,
+        next_level,
+    )
+
+    # ==========================================================
+    # 8. DETERMINE NEXT ACADEMIC PERIOD
+    # ==========================================================
 
     next_year, next_semester = (
         get_next_academic_period(
@@ -378,7 +486,9 @@ def progress_student(
             "Next academic period has not been configured."
         )
 
-    # Prevent duplicate enrollment
+    # ==========================================================
+    # 9. PREVENT DUPLICATE ENROLLMENT
+    # ==========================================================
 
     if SemesterEnrollment.objects.filter(
         student=enrollment.student,
@@ -390,9 +500,9 @@ def progress_student(
             "Student is already enrolled in the next semester."
         )
 
-    # -----------------------------
-    # Create New Enrollment
-    # -----------------------------
+    # ==========================================================
+    # 10. CREATE NEXT SEMESTER ENROLLMENT
+    # ==========================================================
 
     new_enrollment = (
         SemesterEnrollment.objects.create(
@@ -405,9 +515,9 @@ def progress_student(
         )
     )
 
-    # -----------------------------
-    # Close Current Enrollment
-    # -----------------------------
+    # ==========================================================
+    # 11. CLOSE CURRENT ENROLLMENT
+    # ==========================================================
 
     enrollment.status = (
         SemesterEnrollment.PROGRESSED
@@ -415,9 +525,9 @@ def progress_student(
 
     enrollment.save()
 
-    # -----------------------------
-    # Audit Log
-    # -----------------------------
+    # ==========================================================
+    # 12. AUDIT LOG
+    # ==========================================================
 
     ProgressionLog.objects.create(
         student=enrollment.student,

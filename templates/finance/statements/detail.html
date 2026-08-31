@@ -2,191 +2,174 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container-fluid px-4 mt-4">
 
     <div class="card shadow-sm">
 
+        <!-- Header -->
         <div class="card-header d-flex justify-content-between align-items-center">
-
             <h4 class="mb-0">
                 Fee Statement
             </h4>
 
             <a href="{% url 'finance:fee_statement_list' %}"
                class="btn btn-secondary btn-sm">
-
                 Back
-
             </a>
-
         </div>
 
         <div class="card-body">
 
+            <!-- Student Information -->
             <div class="row mb-4">
 
                 <div class="col-md-6">
-
-                    <p>
-
+                    <p class="mb-2">
                         <strong>Admission No:</strong>
-
                         {{ student.admission_no }}
-
                     </p>
 
-                    <p>
-
+                    <p class="mb-2">
                         <strong>Student:</strong>
-
                         {{ student.first_name }}
                         {{ student.last_name }}
-
                     </p>
-
                 </div>
 
                 <div class="col-md-6">
-
-                    <p>
-
+                    <p class="mb-2">
                         <strong>Programme:</strong>
-
                         {{ student.programme }}
-
                     </p>
 
-                    <p>
-
+                    <p class="mb-2">
                         <strong>Study Level:</strong>
-
-                       {{ student.current_programme_level }}
-
+                        {{ student.current_programme_level }}
                     </p>
-
                 </div>
 
             </div>
 
-            <table class="table table-bordered table-striped">
+            <!-- Transactions -->
+            <div class="table-responsive">
 
-                <thead>
+                <table class="table table-bordered table-striped align-middle mb-0">
 
-                    <tr>
-
-                        <th>
-                            Date
-                        </th>
-
-                        <th>
-                            Description
-                        </th>
-
-                        <th>
-                            Debit
-                        </th>
-
-                        <th>
-                            Credit
-                        </th>
-
-                    </tr>
-
-                </thead>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th class="text-end">Debit</th>
+                            <th class="text-end">Credit</th>
+                        </tr>
+                    </thead>
 
                     <tbody>
 
-                    {% for transaction in transactions %}
+                        {% for transaction in transactions %}
 
-                    <tr>
+                        <tr>
 
-                        <td>{{ transaction.date }}</td>
+                            <td>
+                                {{ transaction.date }}
+                            </td>
 
-                        <td>
-                            {{ transaction.description }}
+                            <td>
+                                {{ transaction.description }}
 
-                            {% if transaction.is_reversed %}
-                                <span class="badge bg-danger ms-2">
-                                    Reversed
-                                </span>
-                            {% endif %}
-                        </td>
+                                {% if transaction.is_reversed %}
+                                    <span class="badge bg-danger ms-2">
+                                        Reversed
+                                    </span>
+                                {% endif %}
+                            </td>
 
-                        <td>
-                            {% if transaction.debit %}
-                                {{ transaction.debit }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
+                            <td class="text-end">
+                                {% if transaction.debit %}
+                                    {{ transaction.debit }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
 
-                        <td>
-                            {% if transaction.credit %}
-                                {{ transaction.credit }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
+                            <td class="text-end">
+                                {% if transaction.credit %}
+                                    {{ transaction.credit }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                    {% empty %}
+                        {% empty %}
 
-                    <tr>
-                        <td colspan="4" class="text-center">
-                            No transactions found.
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                No transactions found.
+                            </td>
+                        </tr>
 
-                    {% endfor %}
+                        {% endfor %}
 
                     </tbody>
 
-            </table>
+                </table>
 
-                <div class="card mt-4">
+            </div>
 
-                    <div class="card-body">
+            <!-- Statement Summary -->
+            <div class="card mt-4 border-0 bg-light">
 
-                        <p>
-                            <strong>Total Invoiced</strong><br>
-                            {{ total_invoiced }}
-                        </p>
+                <div class="card-body">
 
-                        <p>
-                            <strong>Total Paid</strong><br>
-                            {{ total_paid }}
-                        </p>
+                    <div class="row">
 
-<p>
+                        <div class="col-md-4">
+                            <small class="text-muted">
+                                Total Invoiced
+                            </small>
 
-    {% if balance < 0 %}
+                            <h5 class="mb-0">
+                                {{ total_invoiced }}
+                            </h5>
+                        </div>
 
-        <span class="badge bg-success">
+                        <div class="col-md-4">
+                            <small class="text-muted">
+                                Total Paid
+                            </small>
 
-            Credit Balance
+                            <h5 class="mb-0">
+                                {{ total_paid }}
+                            </h5>
+                        </div>
 
-        </span>
+                        <div class="col-md-4">
 
-        <br>
+                            {% if balance < 0 %}
 
-        {{ balance|floatformat:2|cut:"-" }}
+                                <span class="badge bg-success mb-2">
+                                    Credit Balance
+                                </span>
 
-    {% else %}
+                                <h5 class="text-success mb-0">
+                                    {{ balance|floatformat:2|cut:"-" }}
+                                </h5>
 
-        <span class="badge bg-danger">
+                            {% else %}
 
-            Outstanding Balance
+                                <span class="badge bg-danger mb-2">
+                                    Outstanding Balance
+                                </span>
 
-        </span>
+                                <h5 class="text-danger mb-0">
+                                    {{ balance|floatformat:2 }}
+                                </h5>
 
-        <br>
+                            {% endif %}
 
-        {{ balance|floatformat:2 }}
-
-    {% endif %}
-
-</p>
+                        </div>
 
                     </div>
 
@@ -194,14 +177,14 @@
 
             </div>
 
-            <div class="mt-2 mb-3 ms-4">
+            <!-- Print -->
+            <div class="mt-4 mb-2">
 
                 <button
+                    type="button"
                     class="btn btn-primary"
                     onclick="window.print()">
-
                     Print Statement
-
                 </button>
 
             </div>

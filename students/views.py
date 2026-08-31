@@ -4994,6 +4994,10 @@ def student_results(request):
         user=request.user,
     )
 
+    # ==========================================================
+    # ALL STUDENT ENROLLMENTS
+    # ==========================================================
+
     enrollments = (
         SemesterEnrollment.objects
         .filter(
@@ -5009,8 +5013,38 @@ def student_results(request):
         .order_by(
             "academic_year",
             "semester",
+            "programme_level__progression_order",
         )
     )
+
+    # ==========================================================
+    # CURRENT ENROLLMENT
+    # ==========================================================
+
+    current_enrollment = (
+        SemesterEnrollment.objects
+        .filter(
+            student=student,
+        )
+        .select_related(
+            "academic_year",
+            "semester",
+            "programme_level",
+            "programme_level__programme",
+            "financial_clearance",
+        )
+        .order_by(
+            "-programme_level__progression_order",
+            "-academic_year__id",
+            "-semester__id",
+            "-id",
+        )
+        .first()
+    )
+
+    # ==========================================================
+    # FINANCIAL CLEARANCE
+    # ==========================================================
 
     cleared_enrollments = []
 
@@ -5028,6 +5062,10 @@ def student_results(request):
 
             pass
 
+    # ==========================================================
+    # PUBLISHED RESULTS
+    # ==========================================================
+
     results = (
         Result.objects
         .select_related(
@@ -5041,6 +5079,7 @@ def student_results(request):
             "enrollment",
             "enrollment__academic_year",
             "enrollment__semester",
+            "enrollment__programme_level",
         )
         .filter(
             enrollment__in=cleared_enrollments,
@@ -5055,6 +5094,50 @@ def student_results(request):
         )
     )
 
+    # ==========================================================
+    # GROUP RESULTS BY SEMESTER ENROLLMENT
+    #
+    # Each SemesterEnrollment becomes its own result group.
+    # Historical results therefore remain attached to the
+    # semester in which they were actually taken.
+    # ==========================================================
+
+    semester_results = []
+
+    results_by_enrollment = {}
+
+    for result in results:
+
+        enrollment_id = result.enrollment_id
+
+        if enrollment_id not in results_by_enrollment:
+
+            results_by_enrollment[enrollment_id] = []
+
+        results_by_enrollment[enrollment_id].append(
+            result
+        )
+
+    for enrollment in enrollments:
+
+        enrollment_results = results_by_enrollment.get(
+            enrollment.id,
+            [],
+        )
+
+        if enrollment_results:
+
+            semester_results.append(
+                {
+                    "enrollment": enrollment,
+                    "results": enrollment_results,
+                }
+            )
+
+    # ==========================================================
+    # NO FINANCIAL CLEARANCE
+    # ==========================================================
+
     if not cleared_enrollments:
 
         messages.warning(
@@ -5065,13 +5148,19 @@ def student_results(request):
             ),
         )
 
+    # ==========================================================
+    # TEMPLATE
+    # ==========================================================
+
     return render(
         request,
         "students/results/student_results.html",
         {
             "student": student,
             "enrollments": enrollments,
+            "current_enrollment": current_enrollment,
             "results": results,
+            "semester_results": semester_results,
         },
     )
 

@@ -3,12 +3,14 @@ from django.shortcuts import (
     redirect,
     get_object_or_404,
 )
-
+from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from finance.services import (
+    recalculate_invoice,
     update_financial_clearance,
 )
+from decimal import Decimal
 from students.models import SemesterEnrollment, AcademicYear, Semester
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -395,48 +397,38 @@ def invoice_detail(request, pk):
 
 
 @login_required
+@transaction.atomic
 def payment_create(request, invoice_id):
 
     invoice = get_object_or_404(
         StudentInvoice,
-        pk=invoice_id
+        pk=invoice_id,
     )
-
 
     if request.method == "POST":
 
         form = PaymentForm(
             request.POST,
-            invoice=invoice
+            invoice=invoice,
         )
-
 
         if form.is_valid():
 
-            payment = form.save(
-                commit=False
-            )
+            payment = form.save(commit=False)
 
             payment.invoice = invoice
-
-            payment.received_by = (
-                request.user
-            )
-
+            payment.received_by = request.user
 
             try:
 
                 payment.save()
 
-
             except ValidationError as e:
-
 
                 messages.error(
                     request,
-                    e.messages[0]
+                    e.messages[0],
                 )
-
 
                 return render(
                     request,
@@ -444,103 +436,82 @@ def payment_create(request, invoice_id):
                     {
                         "form": form,
                         "invoice": invoice,
-                    }
+                    },
                 )
 
+            # --------------------------------------------------
+            # REFRESH INVOICE AFTER PAYMENT
+            # --------------------------------------------------
 
+            invoice.refresh_from_db()
 
-            # Create student credit if overpayment exists
+            recalculate_invoice(invoice)
 
-            if invoice.balance < 0:
+            # --------------------------------------------------
+            # OVERPAYMENT / STUDENT CREDIT
+            # --------------------------------------------------
 
+            if (
+                payment.posting_status == "POSTED"
+                and not payment.is_reversed
+                and invoice.balance_cached < Decimal("0.00")
+            ):
 
-                StudentCredit.objects.get_or_create(
+                credit_amount = abs(
+                    invoice.balance_cached
+                )
 
+                StudentCredit.objects.update_or_create(
                     source_payment=payment,
-
                     defaults={
-
                         "student": invoice.student,
-
-                        "amount": abs(
-                            invoice.balance
-                        ),
-
-                    }
-
+                        "amount": credit_amount,
+                    },
                 )
 
-
-
-            # Generate receipt automatically
+            # --------------------------------------------------
+            # RECEIPT
+            # --------------------------------------------------
 
             Receipt.objects.get_or_create(
-
                 payment=payment,
-
                 defaults={
-
                     "created_by": request.user,
-
-                }
-
+                },
             )
 
-
-
-            # Update financial clearance
+            # --------------------------------------------------
+            # FINANCIAL CLEARANCE
+            # --------------------------------------------------
 
             update_financial_clearance(
-
                 invoice.enrollment,
-
-                request.user
-
+                request.user,
             )
-
-
 
             messages.success(
-
                 request,
-
-                "Payment recorded successfully."
-
+                "Payment recorded successfully.",
             )
-
 
             return redirect(
-
                 "finance:payment_detail",
-
-                pk=payment.pk
-
+                pk=payment.pk,
             )
-
 
     else:
 
-
         form = PaymentForm(
-
-            invoice=invoice
-
+            invoice=invoice,
         )
 
-
     return render(
-
         request,
-
         "finance/payments/form.html",
-
         {
             "form": form,
-
             "invoice": invoice,
-
-        }
-
+        },
     )
 
 @login_required

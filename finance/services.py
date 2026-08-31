@@ -229,87 +229,68 @@ def generate_student_invoice(enrollment):
 @transaction.atomic
 def apply_credit_to_invoice(invoice):
     """
-    Automatically apply any available student credit
-    to an invoice.
+    Automatically apply valid student credits to an invoice.
 
-    Credits are consumed using FIFO
-    (oldest credit first).
+    Credits are consumed FIFO (oldest first).
 
-    Returns
-    -------
-    Decimal
-        Total credit applied.
+    Only credits whose source payment is currently POSTED
+    and not reversed are eligible.
     """
 
-    credits = (
-        StudentCredit.objects
-        .filter(
-            student=invoice.student,
-        )
-        .order_by(
-            "created_at",
-        )
-    )
-
-    # Ensure latest invoice totals
-    recalculate_invoice(
-        invoice
-    )
+    # Make sure the invoice has current payment totals
+    recalculate_invoice(invoice)
 
     remaining_balance = invoice.balance_cached
 
-    if remaining_balance <= 0:
-
+    if remaining_balance <= Decimal("0.00"):
         return Decimal("0.00")
+
+    credits = (
+        StudentCredit.objects
+        .select_related("source_payment")
+        .filter(
+            student=invoice.student,
+            source_payment__posting_status="POSTED",
+            source_payment__is_reversed=False,
+        )
+        .order_by("created_at", "id")
+    )
 
     credit_used = Decimal("0.00")
 
     for credit in credits:
 
-        available = credit.balance
-
-        if available <= 0:
-
-            continue
-
-        if remaining_balance <= 0:
-
+        if remaining_balance <= Decimal("0.00"):
             break
 
+        available = credit.balance
+
+        if available <= Decimal("0.00"):
+            continue
+
         amount_to_apply = min(
-
             available,
-
             remaining_balance,
-
         )
 
         credit.used_amount += amount_to_apply
 
         credit.save(
-            update_fields=[
-                "used_amount",
-            ]
+            update_fields=["used_amount"]
         )
 
         credit_used += amount_to_apply
-
         remaining_balance -= amount_to_apply
 
-    if credit_used > 0:
+    if credit_used > Decimal("0.00"):
 
         invoice.credit_applied += credit_used
 
         invoice.save(
-            update_fields=[
-                "credit_applied",
-            ]
+            update_fields=["credit_applied"]
         )
 
-        # Refresh cached totals
-        recalculate_invoice(
-            invoice
-        )
+        recalculate_invoice(invoice)
 
     return credit_used
 

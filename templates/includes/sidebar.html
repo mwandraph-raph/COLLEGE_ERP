@@ -684,65 +684,30 @@
 
     </a>
 
-    <div class="collapse" id="graduationMenu">
+<div class="collapse" id="graduationMenu">
 
-        <ul class="sidebar-submenu">
+    <ul class="sidebar-submenu">
 
-            <li>
+        <!-- Graduation Dashboard -->
+        <li>
+            <a href="{% url 'graduation:dashboard' %}">
+                <i class="fa-solid fa-graduation-cap"></i>
+                Graduation Dashboard
+            </a>
+        </li>
 
-                <a href="/graduation/">
 
-                    <i class="fa-solid fa-graduation-cap"></i>
+        <!-- Approved Graduation List -->
+        <li>
+            <a href="{% url 'graduation:graduation_list' %}">
+                <i class="fa-solid fa-user-graduate"></i>
+                Graduation List
+            </a>
+        </li>
 
-                    Graduation Dashboard
+    </ul>
 
-                </a>
-
-            </li>
-
-            <!-- Add these as you implement them -->
-
-            <!--
-            <li>
-
-                <a href="#">
-
-                    <i class="fa-solid fa-file-lines"></i>
-
-                    Transcripts
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="#">
-
-                    <i class="fa-solid fa-certificate"></i>
-
-                    Certificates
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="#">
-
-                    <i class="fa-solid fa-user-graduate"></i>
-
-                    Graduation List
-
-                </a>
-
-            </li>
-            -->
-
-        </ul>
-
-    </div>
+</div>
 
 </li>
 
