@@ -867,6 +867,9 @@ def graduation_assessment(student):
         1. Academic completion
         2. Financial clearance
         3. Programme / semester completion
+
+    Classification is calculated only after the student
+    satisfies all graduation requirements.
     """
 
     academic = academic_assessment(
@@ -901,13 +904,147 @@ def graduation_assessment(student):
         progression["issues"]
     )
 
+    # ------------------------------------------------------
+    # CLASSIFICATION
+    # ------------------------------------------------------
+
+    classification = {
+        "average": None,
+        "classification": None,
+        "results_count": 0,
+    }
+
+    if eligible:
+
+        classification = graduation_classification(
+            student
+        )
+
     return {
         "eligible": eligible,
         "academic": academic,
         "finance": finance,
         "progression": progression,
+        "classification": classification,
         "issues": issues,
     }
+
+# ==========================================================
+# OVERALL GRADUATION CLASSIFICATION
+# ==========================================================
+
+def graduation_classification(student):
+    """
+    Calculate the student's overall graduation classification.
+
+    Results are taken from ALL published results across the
+    student's semester enrollments.
+
+    Classification:
+
+        70 - 100  = DISTINCTION
+        60 - 69   = CREDIT
+        50 - 59   = PASS
+        Below 50  = FAIL
+
+    A classification is returned only when the student's
+    academic graduation requirements have been satisfied.
+    """
+
+    from students.models import ResultBatch
+
+    enrollments = list(
+        get_student_enrollments(student)
+    )
+
+    if not enrollments:
+        return {
+            "average": None,
+            "classification": None,
+            "results_count": 0,
+        }
+
+    registrations = (
+        Registration.objects
+        .filter(
+            enrollment__in=enrollments
+        )
+        .select_related(
+            "result",
+            "result__batch",
+        )
+    )
+
+    marks = []
+
+    for registration in registrations:
+
+        result = getattr(
+            registration,
+            "result",
+            None,
+        )
+
+        if not result:
+            continue
+
+        if not result.batch:
+            continue
+
+        if result.batch.status != ResultBatch.PUBLISHED:
+            continue
+
+        # --------------------------------------------------
+        # CALCULATE RESULT MARK
+        # --------------------------------------------------
+
+        cat1 = result.cat1 or 0
+        cat2 = result.cat2 or 0
+        exam = result.exam or 0
+
+        total = (
+            cat1
+            + cat2
+            + exam
+        )
+
+        marks.append(
+            float(total)
+        )
+
+    if not marks:
+
+        return {
+            "average": None,
+            "classification": None,
+            "results_count": 0,
+        }
+
+    overall_average = (
+        sum(marks) / len(marks)
+    )
+
+    if overall_average >= 70:
+        classification = "DISTINCTION"
+
+    elif overall_average >= 60:
+        classification = "CREDIT"
+
+    elif overall_average >= 50:
+        classification = "PASS"
+
+    else:
+        classification = "FAIL"
+
+    return {
+        "average": round(
+            overall_average,
+            2,
+        ),
+        "classification": classification,
+        "results_count": len(marks),
+    }
+
 
 
 # ==========================================================
@@ -926,3 +1063,4 @@ def graduation_eligibility(student):
     return graduation_assessment(
         student
     )
+

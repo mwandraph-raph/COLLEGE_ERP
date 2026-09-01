@@ -1,6 +1,6 @@
 from decimal import Decimal
 from datetime import timedelta
-
+import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ValidationError
@@ -609,8 +609,8 @@ def finance_dashboard(request):
         # CHARTS
         # ==================================================
 
-        "revenue_labels": revenue_labels,
-        "revenue_values": revenue_values,
+        "revenue_labels": json.dumps(revenue_labels),
+        "revenue_values": json.dumps(revenue_values),
 
         "category_labels": [
             "M-Pesa",

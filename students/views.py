@@ -2346,6 +2346,15 @@ def register_units(request, pk):
         "student_profile",
     )
 
+    # ----------------------------------------
+    # Student ownership check
+    # ----------------------------------------
+    if hasattr(request.user, "student_profile"):
+
+        if enrollment.student.user_id != request.user.id:
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied
+
 
     # ----------------------------------------
     # Student must be enrolled
@@ -3610,6 +3619,10 @@ def intake_delete(request, pk):
 
 #Create Report View
 @login_required
+@permission_required(
+    "students.view_applicant",
+    raise_exception=True,
+)
 def admissions_report(request):
 
     by_intake = (
@@ -3849,6 +3862,10 @@ def my_units(request):
 
 
 @login_required
+@permission_required(
+    "students.view_lecturerassignment",
+    raise_exception=True,
+)
 def my_units(request):
 
     assignments = (
@@ -4079,6 +4096,10 @@ def enter_marks(request, assignment_id):
 
 
 @login_required
+@permission_required(
+    "students.view_lecturerassignment",
+    raise_exception=True,
+)
 def unit_marksheet(request, assignment_id):
 
     assignment = get_object_or_404(
@@ -4091,6 +4112,16 @@ def unit_marksheet(request, assignment_id):
         ),
         id=assignment_id,
     )
+
+    if (
+    hasattr(request.user, "student_profile") is False
+    and request.user.groups.filter(
+        name="Lecturer"
+    ).exists()
+       ):
+        if assignment.lecturer_id != request.user.id:
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied
 
 
     offering = assignment.unit_offering
@@ -4209,6 +4240,10 @@ def unit_marksheet(request, assignment_id):
     )
 
 @login_required
+@permission_required(
+    "students.view_lecturerassignment",
+    raise_exception=True,
+)
 def export_marksheet_excel(request, assignment_id):
 
     from openpyxl import Workbook
@@ -4224,6 +4259,15 @@ def export_marksheet_excel(request, assignment_id):
         LecturerAssignment,
         id=assignment_id,
     )
+
+    if (
+        request.user.groups.filter(
+            name="Lecturer"
+        ).exists()
+        and assignment.lecturer_id != request.user.id
+    ):
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied
 
     offering = assignment.unit_offering
 
@@ -4469,6 +4513,10 @@ def export_marksheet_excel(request, assignment_id):
     return response
 
 @login_required
+@permission_required(
+    "students.change_result",
+    raise_exception=True,
+)
 def submit_results(request, assignment_id):
 
     assignment = get_object_or_404(
@@ -5179,6 +5227,20 @@ def enrollment_results(request, pk):
         pk=pk,
     )
 
+    if enrollment.student.user_id != request.user.id:
+
+        if not request.user.groups.filter(
+            name__in=[
+                "Registrar",
+                "Exam Officer",
+                "HOD",
+                "ICT Officer",
+            ]
+        ).exists():
+
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied
+
     try:
 
         if not enrollment.financial_clearance.result_slip_cleared:
@@ -5792,6 +5854,10 @@ def semester_enrollment_delete(request, pk):
 
 
 @login_required
+@permission_required(
+    "students.change_semesterenrollment",
+    raise_exception=True,
+)
 @transaction.atomic
 def enroll_student(request, pk):
     student = get_object_or_404(
@@ -6025,6 +6091,10 @@ def reopen_result(request, result_id):
 
 
 @login_required
+@permission_required(
+    "students.view_lecturerassignment",
+    raise_exception=True,
+)
 def lecturer_submission_detail(request, lecturer_id):
 
     lecturer = get_object_or_404(

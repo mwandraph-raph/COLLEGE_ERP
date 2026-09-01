@@ -678,4 +678,5 @@ def get_finance_dashboard_data():
         "category_values": json.dumps(
             category_values
         ),
+        
     }

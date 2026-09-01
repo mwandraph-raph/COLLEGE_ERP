@@ -41,7 +41,7 @@
 
                 <div
                     class="d-flex align-items-center justify-content-center
-                           rounded-circle bg-success-subtle text-success fw-bold"
+                           rounded-circle bg-primary-subtle text-primary fw-bold"
                     style="width: 60px; height: 60px; font-size: 1.4rem;"
                 >
                     {{ student.first_name|first|upper }}
@@ -96,7 +96,7 @@
 
                 {% if assessment.eligible %}
 
-                    <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+                    <span class="badge rounded-pill px-3 py-2 text-white" style="background-color: #012169 !important;">
                         <i class="bi bi-check-circle-fill me-1"></i>
                         Eligible
                     </span>
@@ -246,7 +246,7 @@
 
                         {% if assessment.academic.status %}
 
-                            <span class="badge bg-success rounded-pill px-3 py-2">
+                            <span class="badge rounded-pill px-3 py-2 text-white" style="background-color: #012169 !important;">
                                 <i class="bi bi-check-circle-fill me-1"></i>
                                 Academic Requirements Passed
                             </span>
@@ -488,7 +488,7 @@
 
                             <a
                                 href="{% url 'graduation:graduation_list' %}"
-                                class="btn btn-success"
+                                class="btn btn-primary"
                             >
                                 <i class="bi bi-check-circle-fill me-1"></i>
                                 Approved — View Graduation List

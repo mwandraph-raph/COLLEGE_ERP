@@ -10,7 +10,6 @@
 
 <div class="finance-dashboard-page">
 
-```
 <div class="container-fluid px-4 pt-1 pb-4">
 
     <!-- ========================================================= -->
@@ -1135,100 +1134,110 @@
         </div>
 
 
-        <div class="row g-4">
+<div class="row g-4">
 
+<!-- REVENUE TREND -->
 
-            <!-- REVENUE TREND -->
+<div class="col-12 col-lg-8">
 
-            <div class="col-12 col-lg-8">
+    <div class="fin-widget h-100">
 
-                <div class="fin-widget h-100">
+        <div class="fin-widget-header">
 
-                    <div class="fin-widget-header">
+            <div>
 
-                        <div>
+                <h3 class="fin-widget-title">
+                    <i class="fa-solid fa-chart-column me-2"></i>
+                    Revenue Trend
+                </h3>
 
-                            <h3 class="fin-widget-title">
-                                <i class="fa-solid fa-chart-column me-2"></i>
-                                Revenue Trend
-                            </h3>
-
-                            <p class="fin-widget-sub">
-                                Monthly posted payment collections for the current academic year.
-                            </p>
-
-                        </div>
-
-                        <a href="{% url 'finance:payment_list' %}"
-                           class="fin-link">
-                            View Payments
-                        </a>
-
-                    </div>
-
-
-                    <div class="fin-widget-body">
-
-                        <div class="fin-chart-box">
-
-                            <canvas
-                                id="financeRevenueChart"
-                                data-labels='{{ revenue_labels|default:"[]" }}'
-                                data-values='{{ revenue_values|default:"[]" }}'>
-                            </canvas>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                <p class="fin-widget-sub">
+                    Monthly posted payment collections for the current academic year.
+                </p>
 
             </div>
 
+            <a href="{% url 'finance:payment_list' %}"
+               class="fin-link">
+                View Payments
+            </a>
 
-            <!-- PAYMENT METHODS -->
+        </div>
 
-            <div class="col-12 col-lg-4">
+        <div class="fin-widget-body">
 
-                <div class="fin-widget h-100">
+            <div class="fin-chart-box">
 
-                    <div class="fin-widget-header">
-
-                        <div>
-
-                            <h3 class="fin-widget-title">
-                                <i class="fa-solid fa-chart-pie me-2"></i>
-                                Payment Methods
-                            </h3>
-
-                            <p class="fin-widget-sub">
-                                Posted collections by payment method.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="fin-widget-body">
-
-                        <div class="fin-chart-box fin-chart-box-sm">
-
-                            <canvas
-                                id="financeCategoryChart"
-                                data-labels='{{ category_labels|default:"[]" }}'
-                                data-values='{{ category_values|default:"[]" }}'>
-                            </canvas>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                <canvas
+                    id="financeRevenueChart"
+                    data-labels="{{ revenue_labels }}"
+                    data-values="{{ revenue_values }}">
+                </canvas>
 
             </div>
 
         </div>
+
+    </div>
+
+</div>
+
+<!-- PAYMENT METHODS -->
+
+<div class="col-12 col-lg-4">
+
+    <div class="fin-widget h-100">
+
+        <div class="fin-widget-header">
+
+            <div>
+                <h3 class="fin-widget-title">
+                    <i class="fa-solid fa-chart-pie me-2"></i>
+                    Payment Methods
+                </h3>
+
+                <p class="fin-widget-sub">
+                    Posted collections by payment method.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="fin-widget-body">
+
+            <div class="fin-chart-box fin-chart-box-sm">
+
+                {% if mpesa_total or bank_total or cash_total %}
+
+                    <canvas
+                        id="financeCategoryChart"
+                        data-mpesa="{{ mpesa_total|default:'0' }}"
+                        data-bank="{{ bank_total|default:'0' }}"
+                        data-cash="{{ cash_total|default:'0' }}">
+                    </canvas>
+
+                {% else %}
+
+                    <div class="d-flex align-items-center justify-content-center h-100">
+                        <div class="text-center">
+                            <i class="fa-solid fa-chart-pie fa-2x mb-3 text-muted"></i>
+                            <p class="mb-0 text-muted">
+                                No category data available.
+                            </p>
+                        </div>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
 
     </section>
 
@@ -1300,8 +1309,6 @@
     </section>
 
 </div>
-```
-
 </div>
 
 {% endblock %}

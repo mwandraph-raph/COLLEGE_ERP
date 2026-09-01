@@ -3,6 +3,8 @@ from django.shortcuts import (
     get_object_or_404,
     redirect,
 )
+from openpyxl import Workbook
+from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import (
     login_required,
@@ -281,7 +283,6 @@ def graduation_eligibility_view(
 # ==========================================================
 # APPROVE GRADUATION
 # ==========================================================
-
 @login_required
 @permission_required(
     "graduation.change_graduation",
@@ -305,7 +306,7 @@ def approve_graduation(
     )
 
     # ======================================================
-    # ALWAYS RE-CHECK ELIGIBILITY
+    # 1. ALWAYS RE-CHECK GRADUATION ELIGIBILITY
     # ======================================================
 
     assessment = graduation_assessment(
@@ -329,7 +330,68 @@ def approve_graduation(
         )
 
     # ======================================================
-    # GET FINAL / CURRENT ENROLLMENT
+    # 2. GET ALL PUBLISHED RESULTS
+    # ======================================================
+
+    from students.models import Result, ResultBatch
+
+    results = (
+        Result.objects
+        .filter(
+            enrollment__student=student,
+            batch__status=ResultBatch.PUBLISHED,
+        )
+    )
+
+    # ======================================================
+    # 3. CALCULATE OVERALL MARK
+    # ======================================================
+
+    result_count = results.count()
+
+    if result_count == 0:
+
+        messages.error(
+            request,
+            "Student has no published results.",
+        )
+
+        return redirect(
+            "graduation:graduation_eligibility",
+            student_id=student.id,
+        )
+
+    total_marks = sum(
+        result.total
+        for result in results
+    )
+
+    overall_mark = (
+        total_marks / result_count
+    )
+
+    # ======================================================
+    # 4. DETERMINE CLASSIFICATION
+    # ======================================================
+
+    if overall_mark >= 70:
+
+        classification = "Distinction"
+
+    elif overall_mark >= 60:
+
+        classification = "Credit"
+
+    elif overall_mark >= 40:
+
+        classification = "Pass"
+
+    else:
+
+        classification = "Fail"
+
+    # ======================================================
+    # 5. GET LATEST ENROLLMENT
     # ======================================================
 
     latest_enrollment = (
@@ -361,13 +423,7 @@ def approve_graduation(
         )
 
     # ======================================================
-    # FIND EXISTING GRADUATION RECORD
-    #
-    # IMPORTANT:
-    # Graduation.student is UNIQUE.
-    #
-    # Therefore we MUST search by student only.
-    # We must NOT use academic_year in get_or_create().
+    # 6. FIND EXISTING GRADUATION RECORD
     # ======================================================
 
     graduation = (
@@ -379,7 +435,7 @@ def approve_graduation(
     )
 
     # ======================================================
-    # CREATE ONLY IF NO RECORD EXISTS
+    # 7. CREATE GRADUATION RECORD
     # ======================================================
 
     if graduation is None:
@@ -390,6 +446,8 @@ def approve_graduation(
             status="APPROVED",
             approved_by=request.user,
             approved_date=timezone.now(),
+            overall_mark=overall_mark,
+            classification=classification,
             remarks=(
                 "Student has satisfied graduation "
                 "eligibility requirements."
@@ -397,20 +455,32 @@ def approve_graduation(
         )
 
     # ======================================================
-    # EXISTING RECORD
-    #
-    # NEVER CREATE A SECOND RECORD.
-    # UPDATE THE EXISTING RECORD.
+    # 8. UPDATE EXISTING GRADUATION RECORD
     # ======================================================
 
     else:
 
         graduation.status = "APPROVED"
+
         graduation.academic_year = (
             latest_enrollment.academic_year
         )
-        graduation.approved_by = request.user
-        graduation.approved_date = timezone.now()
+
+        graduation.approved_by = (
+            request.user
+        )
+
+        graduation.approved_date = (
+            timezone.now()
+        )
+
+        graduation.overall_mark = (
+            overall_mark
+        )
+
+        graduation.classification = (
+            classification
+        )
 
         graduation.remarks = (
             "Student has satisfied graduation "
@@ -423,28 +493,29 @@ def approve_graduation(
                 "academic_year",
                 "approved_by",
                 "approved_date",
+                "overall_mark",
+                "classification",
                 "remarks",
                 "updated_at",
             ]
         )
 
     # ======================================================
-    # SUCCESS
+    # 9. SUCCESS
     # ======================================================
 
     messages.success(
         request,
         (
             f"{student.admission_no} has been approved "
-            "for graduation."
+            f"for graduation with "
+            f"{classification} classification."
         ),
     )
 
     return redirect(
         "graduation:graduation_list",
     )
-
-
 # ==========================================================
 # APPROVED GRADUATION LIST
 # ==========================================================
@@ -482,3 +553,142 @@ def graduation_list(request):
         "graduation/graduation_list.html",
         context,
     )
+
+@login_required
+@permission_required(
+    "graduation.view_graduation",
+    raise_exception=True,
+)
+def export_graduation_list(request):
+
+    graduations = (
+        Graduation.objects
+        .filter(
+            status="APPROVED"
+        )
+        .select_related(
+            "student",
+            "student__programme",
+            "academic_year",
+            "approved_by",
+        )
+        .order_by(
+            "-approved_date",
+            "student__admission_no",
+        )
+    )
+
+    # ======================================================
+    # CREATE WORKBOOK
+    # ======================================================
+
+    workbook = Workbook()
+
+    worksheet = workbook.active
+    worksheet.title = "Approved Graduands"
+
+    # ======================================================
+    # HEADERS
+    # ======================================================
+
+    worksheet.append([
+        "#",
+        "Admission No",
+        "Student",
+        "Programme",
+        "Academic Year",
+        "Status",
+        "Approved By",
+        "Date",
+        "Average Marks",
+        "Classification",
+    ])
+
+    # ======================================================
+    # DATA
+    # ======================================================
+
+    for number, graduation in enumerate(
+        graduations,
+        start=1,
+    ):
+
+        student = graduation.student
+
+        student_name = (
+            f"{student.first_name} "
+            f"{student.last_name}"
+        ).strip()
+
+        worksheet.append([
+            number,
+            student.admission_no,
+            student_name,
+            student.programme.name,
+            str(graduation.academic_year),
+            graduation.get_status_display(),
+            str(graduation.approved_by or ""),
+            (
+                graduation.approved_date.strftime("%d %b %Y")
+                if graduation.approved_date
+                else ""
+            ),
+            (
+                float(graduation.overall_mark)
+                if graduation.overall_mark is not None
+                else ""
+            ),
+            graduation.classification,
+        ])
+
+    # ======================================================
+    # COLUMN WIDTHS
+    # ======================================================
+
+    widths = {
+        "A": 8,
+        "B": 22,
+        "C": 30,
+        "D": 55,
+        "E": 18,
+        "F": 15,
+        "G": 22,
+        "H": 18,
+        "I": 18,
+        "J": 20,
+    }
+
+    for column, width in widths.items():
+        worksheet.column_dimensions[column].width = width
+
+    # ======================================================
+    # AVERAGE MARK FORMAT
+    # ======================================================
+
+    for cell in worksheet["I"][1:]:
+        cell.number_format = "0.00"
+
+    # ======================================================
+    # FREEZE HEADER
+    # ======================================================
+
+    worksheet.freeze_panes = "A2"
+
+    # ======================================================
+    # EXCEL RESPONSE
+    # ======================================================
+
+    response = HttpResponse(
+        content_type=(
+            "application/vnd.openxmlformats-officedocument."
+            "spreadsheetml.sheet"
+        )
+    )
+
+    response["Content-Disposition"] = (
+        'attachment; filename="approved_graduands.xlsx"'
+    )
+
+    workbook.save(response)
+
+    return response

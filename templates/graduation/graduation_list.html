@@ -47,7 +47,13 @@
                 <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
                     {{ graduations|length }} Approved
                 </span>
-
+                <a
+                    href="{% url 'graduation:export_graduation_list' %}"
+                    class="btn btn-primary text-white"
+                >
+                    <i class="bi bi-file-earmark-excel me-2"></i>
+                    Export to Excel
+                </a>
             </div>
 
         </div>
@@ -93,6 +99,14 @@
 
                             <th class="text-end px-4">
                                 Date
+                            </th>
+
+                            <th>
+                                Average Marks
+                            </th>
+
+                            <th>
+                                Classification
                             </th>
 
                         </tr>
@@ -149,6 +163,38 @@
 
                                     {{ graduation.approved_date|date:"d M Y" }}
 
+                                </td>
+                                <td>
+                                    <span class="fw-semibold">
+                                        {{ graduation.overall_mark|floatformat:2 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if graduation.classification == "Distinction" %}
+                                        <span class="badge bg-success">
+                                            DISTINCTION
+                                        </span>
+
+                                    {% elif graduation.classification == "Credit" %}
+                                        <span class="badge bg-primary">
+                                            CREDIT
+                                        </span>
+
+                                    {% elif graduation.classification == "Pass" %}
+                                        <span class="badge bg-warning text-dark">
+                                            PASS
+                                        </span>
+
+                                    {% elif graduation.classification == "Fail" %}
+                                        <span class="badge bg-danger">
+                                            FAIL
+                                        </span>
+
+                                    {% else %}
+                                        <span class="badge bg-secondary">
+                                            —
+                                        </span>
+                                    {% endif %}
                                 </td>
 
                             </tr>

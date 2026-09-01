@@ -37,4 +37,10 @@ urlpatterns = [
         views.graduation_list,
         name="graduation_list",
     ),
+
+     path(
+        "approved/export/",
+        views.export_graduation_list,
+        name="export_graduation_list",
+    ),
 ]
