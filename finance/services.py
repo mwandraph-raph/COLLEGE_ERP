@@ -19,18 +19,6 @@ from finance.models import (
 
 @transaction.atomic
 def recalculate_invoice(invoice):
-    """
-    Recalculate and cache invoice financial totals.
-
-    Updates:
-        • invoice_total
-        • amount_paid_cached
-        • balance_cached
-
-    Returns
-    -------
-    StudentInvoice
-    """
 
     invoice_total = (
         invoice.items.aggregate(
@@ -58,21 +46,17 @@ def recalculate_invoice(invoice):
     StudentInvoice.objects.filter(
         pk=invoice.pk
     ).update(
-
         invoice_total=invoice_total,
-
         amount_paid_cached=amount_paid,
-
         balance_cached=balance,
-
     )
 
-    # Keep current instance synchronized
     invoice.invoice_total = invoice_total
     invoice.amount_paid_cached = amount_paid
     invoice.balance_cached = balance
 
     return invoice
+
 
 # ==========================================================
 # GENERATE STUDENT INVOICE
@@ -80,29 +64,6 @@ def recalculate_invoice(invoice):
 
 @transaction.atomic
 def generate_student_invoice(enrollment):
-    """
-    Generate a student invoice from a semester enrollment.
-
-    This function is idempotent:
-        • Returns an existing invoice if one already exists.
-        • Creates a new invoice.
-        • Generates invoice items from the active fee structure.
-        • Calculates invoice totals.
-        • Applies available student credit.
-        • Updates financial clearance.
-
-    Parameters
-    ----------
-    enrollment : SemesterEnrollment
-
-    Returns
-    -------
-    StudentInvoice
-    """
-
-    # ======================================================
-    # RETURN EXISTING INVOICE
-    # ======================================================
 
     existing_invoice = getattr(
         enrollment,
@@ -112,14 +73,21 @@ def generate_student_invoice(enrollment):
 
     if existing_invoice:
 
+        apply_credit_to_invoice(
+            existing_invoice
+        )
+
+        recalculate_invoice(
+            existing_invoice
+        )
+
+        update_financial_clearance(
+            enrollment
+        )
+
         return existing_invoice
 
-    # ======================================================
-    # ACTIVE FEE STRUCTURE
-    # ======================================================
-
     try:
-
         fee_structure = (
             FeeStructure.objects
             .select_related(
@@ -142,85 +110,37 @@ def generate_student_invoice(enrollment):
     except FeeStructure.DoesNotExist:
 
         raise ValueError(
-
             "No active fee structure found for "
-
             f"{enrollment.programme_level} | "
-
             f"{enrollment.academic_year} | "
-
             f"{enrollment.semester}"
-
         )
-
-    # ======================================================
-    # CREATE INVOICE
-    # ======================================================
 
     invoice = StudentInvoice.objects.create(
-
         student=enrollment.student,
-
         enrollment=enrollment,
-
         status="POSTED",
-
     )
-
-    # ======================================================
-    # CREATE INVOICE ITEMS
-    # ======================================================
 
     InvoiceItem.objects.bulk_create([
-
         InvoiceItem(
-
             invoice=invoice,
-
             fee_category=item.fee_category,
-
             amount=item.amount,
-
         )
-
         for item in fee_structure.items.all()
-
     ])
 
-    # ======================================================
-    # bulk_create() DOES NOT FIRE SIGNALS
-    # Therefore calculate totals manually.
-    # ======================================================
+    recalculate_invoice(invoice)
 
-    recalculate_invoice(
-        invoice
-    )
+    apply_credit_to_invoice(invoice)
 
-    # ======================================================
-    # APPLY AVAILABLE CREDIT
-    # ======================================================
+    recalculate_invoice(invoice)
 
-    apply_credit_to_invoice(
-        invoice
-    )
-
-    # ======================================================
-    # RECALCULATE AFTER CREDIT
-    # ======================================================
-
-    recalculate_invoice(
-        invoice
-    )
-
-    # ======================================================
-    # UPDATE CLEARANCE
-    # ======================================================
-
-    update_financial_clearance(
-        enrollment
-    )
+    update_financial_clearance(enrollment)
 
     return invoice
+
 
 # ==========================================================
 # APPLY STUDENT CREDIT
@@ -228,16 +148,7 @@ def generate_student_invoice(enrollment):
 
 @transaction.atomic
 def apply_credit_to_invoice(invoice):
-    """
-    Automatically apply valid student credits to an invoice.
 
-    Credits are consumed FIFO (oldest first).
-
-    Only credits whose source payment is currently POSTED
-    and not reversed are eligible.
-    """
-
-    # Make sure the invoice has current payment totals
     recalculate_invoice(invoice)
 
     remaining_balance = invoice.balance_cached
@@ -253,7 +164,10 @@ def apply_credit_to_invoice(invoice):
             source_payment__posting_status="POSTED",
             source_payment__is_reversed=False,
         )
-        .order_by("created_at", "id")
+        .order_by(
+            "created_at",
+            "id",
+        )
     )
 
     credit_used = Decimal("0.00")
@@ -294,6 +208,7 @@ def apply_credit_to_invoice(invoice):
 
     return credit_used
 
+
 # ==========================================================
 # UPDATE FINANCIAL CLEARANCE
 # ==========================================================
@@ -303,14 +218,6 @@ def update_financial_clearance(
     enrollment,
     user=None,
 ):
-    """
-    Update a student's financial clearance based on
-    the current invoice payment percentage.
-
-    Returns
-    -------
-    FinancialClearance | None
-    """
 
     if not hasattr(
         enrollment,
@@ -320,10 +227,7 @@ def update_financial_clearance(
 
     invoice = enrollment.invoice
 
-    # Always use the latest cached totals
-    recalculate_invoice(
-        invoice
-    )
+    recalculate_invoice(invoice)
 
     settings = FinanceSetting.objects.first()
 
@@ -332,13 +236,10 @@ def update_financial_clearance(
 
     clearance, created = (
         FinancialClearance.objects.get_or_create(
-
             enrollment=enrollment,
-
             defaults={
                 "updated_by": user,
             },
-
         )
     )
 

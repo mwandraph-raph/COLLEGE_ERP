@@ -3,6 +3,7 @@ from students.models import (
     Registration,
     Result,
     Unit,
+    ProgrammeLevel,
 )
 
 from finance.models import FinancialClearance
@@ -15,11 +16,16 @@ from finance.models import FinancialClearance
 def get_student_enrollments(student):
     """
     Return every semester enrollment for a student.
+
+    Historical enrollments are preserved and are never replaced
+    merely because the student progresses to another semester.
     """
 
     return (
         SemesterEnrollment.objects
-        .filter(student=student)
+        .filter(
+            student=student,
+        )
         .select_related(
             "academic_year",
             "semester",
@@ -27,15 +33,22 @@ def get_student_enrollments(student):
             "programme",
         )
         .order_by(
+            "programme_level__progression_order",
             "academic_year__id",
             "semester__id",
+            "id",
         )
     )
 
 
 def get_completed_study_levels(student):
     """
-    Return all programme levels reached by the student.
+    Return programme levels reached by the student.
+
+    This is used for curriculum discovery.
+
+    Reaching a level through progression does NOT mean
+    that level has been completed.
     """
 
     return (
@@ -50,8 +63,10 @@ def get_completed_study_levels(student):
 
 def get_required_units(student):
     """
-    Return all curriculum units belonging to the
-    student's programme levels.
+    Return all curriculum units belonging to programme levels
+    reached by the student.
+
+    Every required unit must eventually have a PASS result.
     """
 
     programme_levels = get_completed_study_levels(student)
@@ -66,7 +81,7 @@ def get_required_units(student):
         )
         .distinct()
         .order_by(
-            "programme_level_id",
+            "programme_level__progression_order",
             "code",
         )
     )
@@ -79,13 +94,6 @@ def get_required_units(student):
 def get_registration_unit_id(registration):
     """
     Determine the actual Unit represented by a registration.
-
-    Some registrations may have the Unit directly through
-    registration.unit, while others are linked through
-    registration.unit_offering.unit.
-
-    This prevents graduation from incorrectly reporting
-    registered units as missing.
     """
 
     if registration.unit_id:
@@ -102,6 +110,103 @@ def get_registration_unit_id(registration):
 
 
 # ==========================================================
+# SEMESTER COMPLETION HELPER
+# ==========================================================
+
+def semester_completion_status(enrollment):
+    """
+    Determine whether a specific semester enrollment has
+    actually been completed.
+
+    A semester is completed only when:
+
+    1. It has registered units.
+    2. Every registered unit has a result.
+    3. Every result is PASS.
+
+    IMPORTANT:
+
+    An enrollment being created, ENROLLED, or PROGRESSED does
+    not by itself mean that the semester is completed.
+
+    Progression into another semester therefore cannot
+    automatically complete that semester.
+    """
+
+    registrations = list(
+        Registration.objects
+        .filter(
+            enrollment=enrollment,
+        )
+        .select_related(
+            "unit",
+            "unit_offering",
+            "unit_offering__unit",
+            "result",
+        )
+    )
+
+    if not registrations:
+        return {
+            "completed": False,
+            "issues": [
+                f"{enrollment.academic_year} - "
+                f"{enrollment.semester} "
+                "has no registered units."
+            ],
+        }
+
+    issues = []
+
+    for registration in registrations:
+
+        result = getattr(
+            registration,
+            "result",
+            None,
+        )
+
+        unit = (
+            registration.unit
+            or (
+                registration.unit_offering.unit
+                if (
+                    registration.unit_offering_id
+                    and registration.unit_offering
+                )
+                else None
+            )
+        )
+
+        unit_name = str(
+            unit or "registered unit"
+        )
+
+        if not result:
+
+            issues.append(
+                f"{enrollment.academic_year} - "
+                f"{enrollment.semester}: "
+                f"No result found for {unit_name}."
+            )
+
+            continue
+
+        if result.remarks != "PASS":
+
+            issues.append(
+                f"{enrollment.academic_year} - "
+                f"{enrollment.semester}: "
+                f"{unit_name} has not been passed."
+            )
+
+    return {
+        "completed": not issues,
+        "issues": issues,
+    }
+
+
+# ==========================================================
 # ACADEMIC ASSESSMENT
 # ==========================================================
 
@@ -109,21 +214,22 @@ def academic_assessment(student):
     """
     Academic graduation assessment.
 
-    Rules:
+    Graduation academic requirements are satisfied only when:
 
-    • Student must have semester enrollments.
-    • Curriculum units must exist.
-    • Every curriculum unit must be registered.
-    • Every registered curriculum unit must have a result.
-    • Every curriculum unit must be passed.
+    • Student has semester enrollments.
+    • Curriculum units exist.
+    • Every curriculum unit has been registered.
+    • Every registered curriculum unit has a result.
+    • The result belongs to a PUBLISHED ResultBatch.
+    • The published result is PASS.
 
-    Registration matching uses both:
-
-        Registration.unit
-        Registration.unit_offering.unit
-
-    so the assessment agrees with the actual academic records.
+    IMPORTANT:
+    An APPROVED result is NOT enough for graduation.
+    Results must be PUBLISHED before they count as final academic
+    results for graduation.
     """
+
+    from students.models import ResultBatch
 
     summary = {
         "required_units": 0,
@@ -135,6 +241,10 @@ def academic_assessment(student):
         "issues": [],
     }
 
+    # ======================================================
+    # 1. STUDENT ENROLLMENTS
+    # ======================================================
+
     enrollments = get_student_enrollments(student)
 
     if not enrollments.exists():
@@ -145,9 +255,9 @@ def academic_assessment(student):
 
         return summary
 
-    # ------------------------------------------------------
-    # CURRICULUM
-    # ------------------------------------------------------
+    # ======================================================
+    # 2. REQUIRED CURRICULUM UNITS
+    # ======================================================
 
     required_units = list(
         get_required_units(student)
@@ -166,9 +276,9 @@ def academic_assessment(student):
         required_units
     )
 
-    # ------------------------------------------------------
-    # ALL STUDENT REGISTRATIONS
-    # ------------------------------------------------------
+    # ======================================================
+    # 3. STUDENT REGISTRATIONS
+    # ======================================================
 
     registrations = list(
         Registration.objects
@@ -181,6 +291,7 @@ def academic_assessment(student):
             "unit_offering",
             "unit_offering__unit",
             "result",
+            "result__batch",
         )
     )
 
@@ -192,9 +303,9 @@ def academic_assessment(student):
 
         return summary
 
-    # ------------------------------------------------------
-    # MAP ACTUAL UNIT IDS TO REGISTRATIONS
-    # ------------------------------------------------------
+    # ======================================================
+    # 4. MAP ACTUAL UNIT IDS TO REGISTRATIONS
+    # ======================================================
 
     registration_map = {}
 
@@ -207,9 +318,6 @@ def academic_assessment(student):
         if not unit_id:
             continue
 
-        # Keep the first valid registration.
-        # If the student repeated a unit, the later
-        # passed result should also be considered below.
         registration_map.setdefault(
             unit_id,
             []
@@ -217,9 +325,9 @@ def academic_assessment(student):
             registration
         )
 
-    # ------------------------------------------------------
-    # CHECK EVERY CURRICULUM UNIT
-    # ------------------------------------------------------
+    # ======================================================
+    # 5. CHECK EVERY CURRICULUM UNIT
+    # ======================================================
 
     for unit in required_units:
 
@@ -227,6 +335,10 @@ def academic_assessment(student):
             unit.id,
             []
         )
+
+        # --------------------------------------------------
+        # NEVER REGISTERED
+        # --------------------------------------------------
 
         if not unit_registrations:
 
@@ -239,36 +351,13 @@ def academic_assessment(student):
             continue
 
         # --------------------------------------------------
-        # FIND A PASSED RESULT FIRST
+        # LOOK FOR A PUBLISHED PASS
         # --------------------------------------------------
 
-        passed_registration = None
-
-        for registration in unit_registrations:
-
-            result = getattr(
-                registration,
-                "result",
-                None,
-            )
-
-            if result and result.remarks == "PASS":
-
-                passed_registration = registration
-                break
-
-        if passed_registration:
-
-            summary["passed_units"] += 1
-
-            continue
-
-        # --------------------------------------------------
-        # NO PASSED RESULT
-        # --------------------------------------------------
-
-        has_result = False
-        has_failed_result = False
+        published_pass = False
+        published_fail = False
+        approved_not_published = False
+        has_any_result = False
 
         for registration in unit_registrations:
 
@@ -281,12 +370,56 @@ def academic_assessment(student):
             if not result:
                 continue
 
-            has_result = True
+            has_any_result = True
+
+            batch = getattr(
+                result,
+                "batch",
+                None,
+            )
+
+            # ==============================================
+            # RESULT NOT YET PUBLISHED
+            # ==============================================
+
+            if not batch or batch.status != ResultBatch.PUBLISHED:
+
+                approved_not_published = True
+
+                continue
+
+            # ==============================================
+            # PUBLISHED PASS
+            # ==============================================
+
+            if result.remarks == "PASS":
+
+                published_pass = True
+                break
+
+            # ==============================================
+            # PUBLISHED FAIL
+            # ==============================================
 
             if result.remarks == "FAIL":
-                has_failed_result = True
 
-        if has_failed_result:
+                published_fail = True
+
+        # --------------------------------------------------
+        # PUBLISHED PASS FOUND
+        # --------------------------------------------------
+
+        if published_pass:
+
+            summary["passed_units"] += 1
+
+            continue
+
+        # --------------------------------------------------
+        # PUBLISHED FAILURE
+        # --------------------------------------------------
+
+        if published_fail:
 
             summary["failed_units"] += 1
 
@@ -294,25 +427,50 @@ def academic_assessment(student):
                 f"Failed {unit}."
             )
 
-        elif has_result:
+            continue
+
+        # --------------------------------------------------
+        # RESULT EXISTS BUT NOT PUBLISHED
+        # --------------------------------------------------
+
+        if approved_not_published:
 
             summary["missing_results"] += 1
 
             summary["issues"].append(
-                f"Result for {unit} is not yet passed."
+                f"Result for {unit} has been entered/approved "
+                "but has not yet been published."
             )
 
-        else:
+            continue
+
+        # --------------------------------------------------
+        # RESULT EXISTS BUT NO PASS
+        # --------------------------------------------------
+
+        if has_any_result:
 
             summary["missing_results"] += 1
 
             summary["issues"].append(
-                f"No result found for {unit}."
+                f"Published result for {unit} is not passed."
             )
 
-    # ------------------------------------------------------
-    # FINAL ACADEMIC DECISION
-    # ------------------------------------------------------
+            continue
+
+        # --------------------------------------------------
+        # NO RESULT
+        # --------------------------------------------------
+
+        summary["missing_results"] += 1
+
+        summary["issues"].append(
+            f"No result found for {unit}."
+        )
+
+    # ======================================================
+    # 6. FINAL ACADEMIC DECISION
+    # ======================================================
 
     summary["status"] = (
         summary["required_units"] > 0
@@ -332,11 +490,12 @@ def academic_assessment(student):
 
 def finance_assessment(student):
     """
-    Check financial graduation clearance.
+    Graduation financial assessment.
 
-    Every semester enrollment must have a
-    Financial Clearance record and graduation_cleared
-    must be True.
+    EVERY semester enrollment must be financially cleared.
+
+    A student cannot graduate while ANY semester has an
+    outstanding graduation financial clearance.
     """
 
     summary = {
@@ -344,9 +503,11 @@ def finance_assessment(student):
         "issues": [],
     }
 
-    enrollments = get_student_enrollments(student)
+    enrollments = list(
+        get_student_enrollments(student)
+    )
 
-    if not enrollments.exists():
+    if not enrollments:
 
         summary["issues"].append(
             "Student has no semester enrollments."
@@ -354,7 +515,7 @@ def finance_assessment(student):
 
         return summary
 
-    summary["status"] = True
+    all_cleared = True
 
     for enrollment in enrollments:
 
@@ -364,7 +525,7 @@ def finance_assessment(student):
 
         except FinancialClearance.DoesNotExist:
 
-            summary["status"] = False
+            all_cleared = False
 
             summary["issues"].append(
                 f"{enrollment.academic_year} - "
@@ -376,7 +537,7 @@ def finance_assessment(student):
 
         if not clearance.graduation_cleared:
 
-            summary["status"] = False
+            all_cleared = False
 
             summary["issues"].append(
                 f"{enrollment.academic_year} - "
@@ -384,8 +545,14 @@ def finance_assessment(student):
                 "graduation financial clearance pending."
             )
 
+    summary["status"] = all_cleared
+
     return summary
 
+
+# ==========================================================
+# PROGRESSION / SEMESTER COMPLETION ASSESSMENT
+# ==========================================================
 
 # ==========================================================
 # PROGRESSION / SEMESTER COMPLETION ASSESSMENT
@@ -395,19 +562,24 @@ def progression_assessment(student):
     """
     Determine programme completion from actual academic records.
 
-    A semester is considered completed when:
+    A semester is considered completed only when:
 
     • It has registrations.
     • Every registered unit has a result.
-    • Every result is PASS.
+    • Every result belongs to a PUBLISHED ResultBatch.
+    • Every published result is PASS.
 
-    In addition, a student must have completed the FINAL
-    ProgrammeLevel configured for their programme before they
-    can satisfy the programme-completion requirement.
+    APPROVED results do NOT count as final completion.
+    Results must be PUBLISHED.
 
-    The final ProgrammeLevel is determined by the highest
+    The student must also have completed the FINAL
+    ProgrammeLevel configured for their programme.
+
+    The final ProgrammeLevel is determined dynamically using
     progression_order.
     """
+
+    from students.models import ProgrammeLevel, ResultBatch
 
     summary = {
         "status": False,
@@ -450,13 +622,14 @@ def progression_assessment(student):
                 "unit_offering",
                 "unit_offering__unit",
                 "result",
+                "result__batch",
                 "enrollment__programme_level",
             )
         )
 
-        # ------------------------------------------------------
-        # No registrations
-        # ------------------------------------------------------
+        # ======================================================
+        # NO REGISTRATIONS
+        # ======================================================
 
         if not registrations:
 
@@ -472,9 +645,9 @@ def progression_assessment(student):
 
         semester_completed = True
 
-        # ------------------------------------------------------
-        # Check every registration
-        # ------------------------------------------------------
+        # ======================================================
+        # CHECK EVERY REGISTRATION
+        # ======================================================
 
         for registration in registrations:
 
@@ -485,22 +658,29 @@ def progression_assessment(student):
             )
 
             # --------------------------------------------------
-            # Missing result
+            # DETERMINE REGISTERED UNIT
             # --------------------------------------------------
+
+            unit = (
+                registration.unit
+                or (
+                    registration.unit_offering.unit
+                    if (
+                        registration.unit_offering_id
+                        and registration.unit_offering
+                    )
+                    else None
+                )
+            )
+
+            # ==================================================
+            # MISSING RESULT
+            # ==================================================
 
             if not result:
 
                 semester_completed = False
-
-                unit = (
-                    registration.unit
-                    or (
-                        registration.unit_offering.unit
-                        if registration.unit_offering_id
-                        and registration.unit_offering
-                        else None
-                    )
-                )
+                all_completed = False
 
                 summary["issues"].append(
                     f"{enrollment.academic_year} - "
@@ -511,23 +691,51 @@ def progression_assessment(student):
 
                 continue
 
-            # --------------------------------------------------
-            # Failed / not passed
-            # --------------------------------------------------
+            # ==================================================
+            # RESULT HAS NO BATCH
+            # ==================================================
+
+            if not result.batch:
+
+                semester_completed = False
+                all_completed = False
+
+                summary["issues"].append(
+                    f"{enrollment.academic_year} - "
+                    f"{enrollment.semester}: "
+                    f"{unit or 'registered unit'} "
+                    "has a result that is not attached "
+                    "to a result batch."
+                )
+
+                continue
+
+            # ==================================================
+            # RESULT NOT PUBLISHED
+            # ==================================================
+
+            if result.batch.status != ResultBatch.PUBLISHED:
+
+                semester_completed = False
+                all_completed = False
+
+                summary["issues"].append(
+                    f"{enrollment.academic_year} - "
+                    f"{enrollment.semester}: "
+                    f"{unit or 'registered unit'} "
+                    "result has not yet been published."
+                )
+
+                continue
+
+            # ==================================================
+            # PUBLISHED RESULT BUT NOT PASSED
+            # ==================================================
 
             if result.remarks != "PASS":
 
                 semester_completed = False
-
-                unit = (
-                    registration.unit
-                    or (
-                        registration.unit_offering.unit
-                        if registration.unit_offering_id
-                        and registration.unit_offering
-                        else None
-                    )
-                )
+                all_completed = False
 
                 summary["issues"].append(
                     f"{enrollment.academic_year} - "
@@ -536,9 +744,11 @@ def progression_assessment(student):
                     "has not been passed."
                 )
 
-        # ------------------------------------------------------
-        # Semester completed
-        # ------------------------------------------------------
+                continue
+
+        # ======================================================
+        # SEMESTER COMPLETED
+        # ======================================================
 
         if semester_completed:
 
@@ -555,19 +765,6 @@ def progression_assessment(student):
     # ==========================================================
     # 3. FIND FINAL PROGRAMME LEVEL
     # ==========================================================
-    #
-    # ProgrammeLevel has:
-    #
-    #     programme
-    #     year
-    #     semester
-    #     progression_order
-    #
-    # Therefore we can determine the final level dynamically.
-    # No year or semester is hard-coded.
-    #
-
-    from students.models import ProgrammeLevel
 
     final_level = (
         ProgrammeLevel.objects
@@ -581,9 +778,9 @@ def progression_assessment(student):
         .first()
     )
 
-    # ----------------------------------------------------------
-    # No programme levels configured
-    # ----------------------------------------------------------
+    # ==========================================================
+    # NO PROGRAMME LEVELS CONFIGURED
+    # ==========================================================
 
     if not final_level:
 
@@ -611,16 +808,16 @@ def progression_assessment(student):
             key=lambda level: level.progression_order,
         )
 
-    # ----------------------------------------------------------
-    # Student has not completed any level
-    # ----------------------------------------------------------
+    # ==========================================================
+    # STUDENT HAS NOT COMPLETED ANY LEVEL
+    # ==========================================================
 
     if not highest_completed_level:
 
         all_completed = False
 
         summary["issues"].append(
-            f"Student has not completed any programme level. "
+            "Student has not completed any programme level. "
             f"Final programme level is "
             f"{final_level.name}."
         )
@@ -641,7 +838,7 @@ def progression_assessment(student):
         all_completed = False
 
         summary["issues"].append(
-            f"Programme completion is outstanding. "
+            "Programme completion is outstanding. "
             f"Student has completed "
             f"{highest_completed_level.name}, "
             f"but the final programme level is "
@@ -657,22 +854,19 @@ def progression_assessment(student):
     return summary
 
 
-
 # ==========================================================
 # MASTER GRADUATION ASSESSMENT
 # ==========================================================
 
 def graduation_assessment(student):
     """
-    Production Graduation Eligibility Engine.
+    Central production graduation eligibility engine.
 
-    This is the central function used by:
+    Graduation requires ALL THREE:
 
-    • Graduation
-    • Transcript
-    • Certificate
-    • Alumni
-    • Graduation Approval
+        1. Academic completion
+        2. Financial clearance
+        3. Programme / semester completion
     """
 
     academic = academic_assessment(
@@ -722,9 +916,9 @@ def graduation_assessment(student):
 
 def graduation_eligibility(student):
     """
-    Backward compatibility wrapper.
+    Backward-compatible wrapper.
 
-    Older views can continue calling:
+    Existing code can continue using:
 
         graduation_eligibility(student)
     """

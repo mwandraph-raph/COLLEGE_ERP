@@ -211,7 +211,7 @@ class StudentInvoice(models.Model):
     )
 
     # ==========================================================
-    # CACHED FINANCIAL TOTALS (FAST DASHBOARDS & REPORTS)
+    # CACHED FINANCIAL TOTALS
     # ==========================================================
 
     invoice_total = models.DecimalField(
@@ -286,45 +286,9 @@ class StudentInvoice(models.Model):
 
     def recalculate_totals(self):
 
-        from finance.services import (
-            recalculate_invoice,
-        )
+        from finance.services import recalculate_invoice
 
-        return recalculate_invoice(
-            self
-        )
-
-        amount_paid = (
-            self.payments.filter(
-                is_reversed=False,
-                posting_status="POSTED",
-            ).aggregate(
-                total=Sum("amount")
-            )["total"]
-            or Decimal("0.00")
-        )
-
-        balance = (
-            invoice_total
-            - self.credit_applied
-            - amount_paid
-        )
-
-        StudentInvoice.objects.filter(
-            pk=self.pk
-        ).update(
-
-            invoice_total=invoice_total,
-
-            amount_paid_cached=amount_paid,
-
-            balance_cached=balance,
-
-        )
-
-        self.invoice_total = invoice_total
-        self.amount_paid_cached = amount_paid
-        self.balance_cached = balance
+        return recalculate_invoice(self)
 
     # ==========================================================
     # SAVE
@@ -367,8 +331,6 @@ class StudentInvoice(models.Model):
 
         super().save(*args, **kwargs)
 
-
-
     # ==========================================================
     # STRING
     # ==========================================================
@@ -376,7 +338,7 @@ class StudentInvoice(models.Model):
     def __str__(self):
 
         return self.invoice_number
-    
+
 class InvoiceItem(models.Model):
 
     invoice = models.ForeignKey(
