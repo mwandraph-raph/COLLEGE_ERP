@@ -235,6 +235,531 @@ def home(request):
         })
 
 
+    # ======================================================
+    # PRINCIPAL
+    # ======================================================
+
+    elif request.user.groups.filter(name="Principal").exists():
+
+        # ==================================================
+        # CURRENT / SELECTED ACADEMIC PERIOD
+        # ==================================================
+
+        selected_year = (
+            AcademicYear.objects.filter(
+                pk=request.GET.get("academic_year")
+            ).first()
+            if request.GET.get("academic_year")
+            else None
+        )
+
+        selected_semester = (
+            Semester.objects.filter(
+                pk=request.GET.get("semester")
+            ).first()
+            if request.GET.get("semester")
+            else None
+        )
+
+        if not selected_year:
+            selected_year = AcademicYear.objects.filter(
+                is_active=True
+            ).first()
+
+        if not selected_semester and selected_year:
+            selected_semester = Semester.objects.filter(
+                academic_year=selected_year,
+                is_active=True
+            ).first()
+
+        if (
+            selected_semester
+            and selected_year
+            and selected_semester.academic_year_id
+            != selected_year.id
+        ):
+            selected_semester = Semester.objects.filter(
+                academic_year=selected_year
+            ).order_by("id").first()
+
+        # ==================================================
+        # INSTITUTIONAL OVERVIEW
+        # These remain GLOBAL — not semester filtered
+        # ==================================================
+
+        total_students = Student.objects.count()
+
+        total_programmes = Programme.objects.count()
+
+        total_departments = Department.objects.count()
+
+        total_enrollments = SemesterEnrollment.objects.count()
+
+        total_registrations = Registration.objects.count()
+
+        # ==================================================
+        # ADMISSIONS — GLOBAL
+        # ==================================================
+
+        total_applicants = Applicant.objects.count()
+
+        pending_applicants = Applicant.objects.filter(
+            status="PENDING"
+        ).count()
+
+        approved_applicants = Applicant.objects.filter(
+            status="APPROVED"
+        ).count()
+
+        rejected_applicants = Applicant.objects.filter(
+            status="REJECTED"
+        ).count()
+
+        admission_status_labels = [
+            "Pending",
+            "Approved",
+            "Rejected",
+        ]
+
+        admission_status_values = [
+            pending_applicants,
+            approved_applicants,
+            rejected_applicants,
+        ]
+
+        # ==================================================
+        # EXAMINATION WORKFLOW — GLOBAL
+        # ==================================================
+
+        total_result_batches = ResultBatch.objects.count()
+
+        pending_result_batches = ResultBatch.objects.filter(
+            status__in=[
+                ResultBatch.DRAFT,
+                ResultBatch.SUBMITTED,
+                ResultBatch.RETURNED,
+            ]
+        ).count()
+
+        approved_result_batches = ResultBatch.objects.filter(
+            status=ResultBatch.APPROVED
+        ).count()
+
+        published_result_batches = ResultBatch.objects.filter(
+            status=ResultBatch.PUBLISHED
+        ).count()
+
+        total_results = Result.objects.count()
+
+        result_status_labels = [
+            "Draft",
+            "Submitted",
+            "Approved",
+            "Published",
+            "Returned",
+        ]
+
+        result_status_values = [
+            ResultBatch.objects.filter(
+                status=ResultBatch.DRAFT
+            ).count(),
+
+            ResultBatch.objects.filter(
+                status=ResultBatch.SUBMITTED
+            ).count(),
+
+            ResultBatch.objects.filter(
+                status=ResultBatch.APPROVED
+            ).count(),
+
+            ResultBatch.objects.filter(
+                status=ResultBatch.PUBLISHED
+            ).count(),
+
+            ResultBatch.objects.filter(
+                status=ResultBatch.RETURNED
+            ).count(),
+        ]
+
+        # ==================================================
+        # FINANCE — GLOBAL
+        # ==================================================
+
+        posted_payments = Payment.objects.filter(
+            posting_status="POSTED",
+            is_reversed=False,
+        )
+
+        total_collections = posted_payments.aggregate(
+            total=Coalesce(
+                Sum("amount"),
+                Value(0),
+                output_field=DecimalField(
+                    max_digits=12,
+                    decimal_places=2,
+                ),
+            )
+        )["total"]
+
+        outstanding_balance = StudentInvoice.objects.filter(
+            status="POSTED"
+        ).aggregate(
+            total=Coalesce(
+                Sum("balance_cached"),
+                Value(0),
+                output_field=DecimalField(
+                    max_digits=12,
+                    decimal_places=2,
+                ),
+            )
+        )["total"]
+
+        expected_revenue = StudentInvoice.objects.filter(
+            status="POSTED"
+        ).aggregate(
+            total=Coalesce(
+                Sum("invoice_total"),
+                Value(0),
+                output_field=DecimalField(
+                    max_digits=12,
+                    decimal_places=2,
+                ),
+            )
+        )["total"]
+
+        # ==================================================
+        # GRADUATION — GLOBAL
+        # ==================================================
+
+        from graduation.models import Graduation
+
+        total_graduands = Graduation.objects.count()
+
+        eligible_graduands = Graduation.objects.filter(
+            status__in=["ELIGIBLE", "APPROVED"]
+        ).count()
+
+        approved_graduands = Graduation.objects.filter(
+            status="APPROVED"
+        ).count()
+
+        graduated_students = Graduation.objects.filter(
+            status="GRADUATED"
+        ).count()
+
+        # ==================================================
+        # SELECTED SEMESTER ENROLMENT
+        # ==================================================
+
+        semester_enrollments = SemesterEnrollment.objects.none()
+
+        if selected_year and selected_semester:
+
+            semester_enrollments = SemesterEnrollment.objects.filter(
+                academic_year=selected_year,
+                semester=selected_semester,
+            )
+
+        total_semester_enrollment = semester_enrollments.count()
+
+        enrolled_students = semester_enrollments.filter(
+            status=SemesterEnrollment.ENROLLED
+        ).count()
+
+        progressed_students = semester_enrollments.filter(
+            status=SemesterEnrollment.PROGRESSED
+        ).count()
+
+        completed_students = semester_enrollments.filter(
+            status=SemesterEnrollment.COMPLETED
+        ).count()
+
+        deferred_students = semester_enrollments.filter(
+            status=SemesterEnrollment.DEFERRED
+        ).count()
+
+        discontinued_students = semester_enrollments.filter(
+            status=SemesterEnrollment.DISCONTINUED
+        ).count()
+
+        # ==================================================
+        # ENROLMENT BY PROGRAMME
+        # ==================================================
+
+        enrolment_by_programme = (
+            semester_enrollments
+            .values("programme__name")
+            .annotate(total=Count("id"))
+            .order_by("-total", "programme__name")
+        )
+
+        enrolment_programme_labels = [
+            row["programme__name"] or "Unknown"
+            for row in enrolment_by_programme
+        ]
+
+        enrolment_programme_values = [
+            row["total"]
+            for row in enrolment_by_programme
+        ]
+
+        # ==================================================
+        # SELECTED SEMESTER EXAMINATION PERFORMANCE
+        # ONLY PUBLISHED RESULTS
+        # ==================================================
+
+        semester_results = Result.objects.none()
+
+        if selected_year and selected_semester:
+
+            semester_results = Result.objects.filter(
+                enrollment__academic_year=selected_year,
+                enrollment__semester=selected_semester,
+                batch__status=ResultBatch.PUBLISHED,
+            )
+
+        total_published_results = semester_results.count()
+
+        passed_results = semester_results.filter(
+            remarks="PASS"
+        ).count()
+
+        failed_results = semester_results.filter(
+            remarks="FAIL"
+        ).count()
+
+        pass_rate = 0
+
+        if total_published_results:
+            pass_rate = round(
+                (passed_results / total_published_results) * 100,
+                1
+            )
+
+        fail_rate = 0
+
+        if total_published_results:
+            fail_rate = round(
+                (failed_results / total_published_results) * 100,
+                1
+            )
+
+        # ==================================================
+        # EXAMINATION PERFORMANCE BY PROGRAMME
+        # ==================================================
+
+        exam_programmes = (
+            semester_results
+            .values("enrollment__programme__name")
+            .annotate(
+                total=Count("id"),
+                passed=Count(
+                    "id",
+                    filter=Q(remarks="PASS")
+                ),
+                failed=Count(
+                    "id",
+                    filter=Q(remarks="FAIL")
+                ),
+            )
+            .order_by(
+                "-total",
+                "enrollment__programme__name"
+            )
+        )
+
+        exam_programme_labels = []
+
+        exam_programme_pass_rates = []
+
+        for row in exam_programmes:
+
+            programme_name = (
+                row["enrollment__programme__name"]
+                or "Unknown"
+            )
+
+            total = row["total"]
+
+            passed = row["passed"]
+
+            programme_pass_rate = 0
+
+            if total:
+                programme_pass_rate = round(
+                    (passed / total) * 100,
+                    1
+                )
+
+            exam_programme_labels.append(
+                programme_name
+            )
+
+            exam_programme_pass_rates.append(
+                programme_pass_rate
+            )
+
+        # ==================================================
+        # AVAILABLE PERIODS
+        # ==================================================
+
+        academic_years = AcademicYear.objects.order_by(
+            "-year_name"
+        )
+
+        semesters = Semester.objects.select_related(
+            "academic_year"
+        ).order_by(
+            "-academic_year__year_name",
+            "semester_name"
+        )
+
+        # ==================================================
+        # PRINCIPAL CONTEXT
+        # ==================================================
+
+        context.update({
+
+            "dashboard_type": "principal",
+
+            # ----------------------------------------------
+            # INSTITUTIONAL
+            # ----------------------------------------------
+
+            "total_students": total_students,
+            "total_programmes": total_programmes,
+            "total_departments": total_departments,
+            "total_enrollments": total_enrollments,
+            "total_registrations": total_registrations,
+
+            # ----------------------------------------------
+            # ADMISSIONS
+            # ----------------------------------------------
+
+            "total_applicants": total_applicants,
+            "pending_applicants": pending_applicants,
+            "approved_applicants": approved_applicants,
+            "rejected_applicants": rejected_applicants,
+
+            # ----------------------------------------------
+            # EXAMINATION WORKFLOW
+            # ----------------------------------------------
+
+            "total_result_batches": total_result_batches,
+            "pending_result_batches": pending_result_batches,
+            "approved_result_batches": approved_result_batches,
+            "published_result_batches": published_result_batches,
+            "total_results": total_results,
+
+            # ----------------------------------------------
+            # FINANCE
+            # ----------------------------------------------
+
+            "total_collections": total_collections,
+            "outstanding_balance": outstanding_balance,
+            "expected_revenue": expected_revenue,
+
+            # ----------------------------------------------
+            # GRADUATION
+            # ----------------------------------------------
+
+            "total_graduands": total_graduands,
+            "eligible_graduands": eligible_graduands,
+            "approved_graduands": approved_graduands,
+            "graduated_students": graduated_students,
+
+            # ----------------------------------------------
+            # EXISTING CHARTS
+            # ----------------------------------------------
+
+            "admission_status_labels": json.dumps(
+                admission_status_labels
+            ),
+
+            "admission_status_values": json.dumps(
+                admission_status_values
+            ),
+
+            "result_status_labels": json.dumps(
+                result_status_labels
+            ),
+
+            "result_status_values": json.dumps(
+                result_status_values
+            ),
+
+            # ----------------------------------------------
+            # PERIOD SELECTOR
+            # ----------------------------------------------
+
+            "academic_years": academic_years,
+            "semesters": semesters,
+            "selected_year": selected_year,
+            "selected_semester": selected_semester,
+
+            # ----------------------------------------------
+            # SEMESTER ENROLMENT
+            # ----------------------------------------------
+
+            "total_semester_enrollment":
+                total_semester_enrollment,
+
+            "enrolled_students":
+                enrolled_students,
+
+            "progressed_students":
+                progressed_students,
+
+            "completed_students":
+                completed_students,
+
+            "deferred_students":
+                deferred_students,
+
+            "discontinued_students":
+                discontinued_students,
+
+            "enrolment_programme_labels":
+                json.dumps(
+                    enrolment_programme_labels
+                ),
+
+            "enrolment_programme_values":
+                json.dumps(
+                    enrolment_programme_values
+                ),
+
+            # ----------------------------------------------
+            # SEMESTER EXAM PERFORMANCE
+            # ----------------------------------------------
+
+            "total_published_results":
+                total_published_results,
+
+            "passed_results":
+                passed_results,
+
+            "failed_results":
+                failed_results,
+
+            "pass_rate":
+                pass_rate,
+
+            "fail_rate":
+                fail_rate,
+
+            "exam_programme_labels":
+                json.dumps(
+                    exam_programme_labels
+                ),
+
+            "exam_programme_pass_rates":
+                json.dumps(
+                    exam_programme_pass_rates
+                ),
+        })
+
+
    # ======================================================
     # FINANCE OFFICER
     # ======================================================
@@ -366,6 +891,144 @@ def home(request):
             "unlocked_batches": ResultBatch.objects.filter(
                 status=ResultBatch.UNLOCKED
             ).count(),
+
+        })
+
+    # ======================================================
+    # REGISTRAR
+    # ======================================================
+
+    elif request.user.groups.filter(
+        name="Registrar"
+    ).exists():
+
+        active_year = AcademicYear.objects.filter(
+            is_active=True
+        ).first()
+
+        active_semester = Semester.objects.filter(
+            is_active=True
+        ).first()
+
+        # --------------------------------------------------
+        # CORE COUNTS
+        # --------------------------------------------------
+
+        total_students = Student.objects.count()
+
+        total_applicants = Applicant.objects.count()
+
+        total_enrollments = SemesterEnrollment.objects.count()
+
+        total_registrations = Registration.objects.filter(
+            status=Registration.REGISTERED
+        ).count()
+
+        total_programmes = Programme.objects.count()
+
+        total_departments = Department.objects.count()
+
+        total_courses = Course.objects.count()
+
+        total_units = Unit.objects.count()
+
+        # --------------------------------------------------
+        # CURRENT ACADEMIC SESSION
+        # --------------------------------------------------
+
+        if active_year and active_semester:
+
+            current_enrollments = SemesterEnrollment.objects.filter(
+                academic_year=active_year,
+                semester=active_semester,
+            ).count()
+
+            current_registrations = Registration.objects.filter(
+                enrollment__academic_year=active_year,
+                enrollment__semester=active_semester,
+                status=Registration.REGISTERED,
+            ).count()
+
+        else:
+
+            current_enrollments = 0
+            current_registrations = 0
+
+        # --------------------------------------------------
+        # RECENT STUDENTS
+        # --------------------------------------------------
+
+        recent_students = (
+            Student.objects
+            .select_related(
+                "programme",
+                "programme__course",
+            )
+            .order_by("-id")[:8]
+        )
+
+        # --------------------------------------------------
+        # RECENT APPLICANTS
+        # --------------------------------------------------
+
+        recent_applicants = (
+            Applicant.objects
+            .select_related(
+                "programme",
+                "intake",
+            )
+            .order_by("-id")[:8]
+        )
+
+        # --------------------------------------------------
+        # RECENT ENROLLMENTS
+        # --------------------------------------------------
+
+        recent_enrollments = (
+            SemesterEnrollment.objects
+            .select_related(
+                "student",
+                "programme_level",
+                "programme_level__programme",
+                "academic_year",
+                "semester",
+            )
+            .order_by("-id")[:8]
+        )
+
+        # --------------------------------------------------
+        # REGISTRAR CONTEXT
+        # --------------------------------------------------
+
+        context.update({
+
+            "dashboard_type": "registrar",
+
+            "total_students": total_students,
+
+            "total_applicants": total_applicants,
+
+            "total_enrollments": total_enrollments,
+
+            "total_registrations": total_registrations,
+
+            "total_programmes": total_programmes,
+
+            "total_departments": total_departments,
+
+            "total_courses": total_courses,
+
+            "total_units": total_units,
+
+            "current_enrollments": current_enrollments,
+
+            "current_registrations": current_registrations,
+
+            "recent_students": recent_students,
+
+            "recent_applicants": recent_applicants,
+
+            "recent_enrollments": recent_enrollments,
 
         })
 
@@ -529,6 +1192,144 @@ def home(request):
         context["department_summary"] = department_summary
 
     # ======================================================
+    # ADMISSION OFFICER
+    # ======================================================
+
+    elif request.user.groups.filter(
+        name="Admission Officer"
+    ).exists():
+
+        # --------------------------------------------------
+        # APPLICATION SUMMARY
+        # --------------------------------------------------
+
+        total_applicants = Applicant.objects.count()
+
+        pending_applications = Applicant.objects.filter(
+            status="PENDING"
+        ).count()
+
+        approved_applicants = Applicant.objects.filter(
+            status="APPROVED"
+        ).count()
+
+        rejected_applicants = Applicant.objects.filter(
+            status="REJECTED"
+        ).count()
+
+        open_intakes = Intake.objects.filter(
+            is_open=True
+        ).count()
+
+
+        # --------------------------------------------------
+        # RECENT APPLICATIONS
+        # --------------------------------------------------
+
+        recent_applicants = (
+            Applicant.objects
+            .select_related(
+                "programme",
+                "academic_year",
+                "intake",
+            )
+            .order_by(
+                "-application_date",
+                "-id",
+            )[:8]
+        )
+
+
+        # --------------------------------------------------
+        # OPEN INTAKES
+        # --------------------------------------------------
+
+        active_intakes = (
+            Intake.objects
+            .select_related(
+                "academic_year",
+            )
+            .filter(
+                is_open=True,
+            )
+            .order_by(
+                "start_date",
+            )[:6]
+        )
+
+
+        # --------------------------------------------------
+        # DASHBOARD CONTEXT
+        # --------------------------------------------------
+
+        context.update({
+
+            "dashboard_type": "admissions",
+
+            "total_applicants": total_applicants,
+
+            "pending_applications": pending_applications,
+
+            "approved_applicants": approved_applicants,
+
+            "rejected_applicants": rejected_applicants,
+
+            "open_intakes": open_intakes,
+
+            "recent_applicants": recent_applicants,
+
+            "active_intakes": active_intakes,
+
+        })
+
+            # ======================================================
+    # ICT OFFICER
+    # ======================================================
+
+    elif request.user.groups.filter(
+        name="ICT Officer"
+    ).exists():
+
+        # --------------------------------------------------
+        # ICT SYSTEM SUMMARY
+        # --------------------------------------------------
+
+        total_users = User.objects.count()
+
+        active_users = User.objects.filter(
+            is_active=True
+        ).count()
+
+        total_staff = User.objects.filter(
+            is_staff=True
+        ).count()
+
+        total_students = Student.objects.count()
+
+        total_groups = Group.objects.count()
+
+
+        # --------------------------------------------------
+        # ICT DASHBOARD CONTEXT
+        # --------------------------------------------------
+
+        context.update({
+
+            "dashboard_type": "ict",
+
+            "total_users": total_users,
+
+            "active_users": active_users,
+
+            "total_staff": total_staff,
+
+            "total_students": total_students,
+
+            "total_groups": total_groups,
+
+        })
+
+    # ======================================================
     # GENERAL
     # ======================================================
 
@@ -557,6 +1358,8 @@ def home(request):
 
         "admin": "students/dashboards/admin_home.html",
 
+        "principal": "students/dashboards/principal_home.html",
+
         "student": "students/dashboards/student_home.html",
 
         "lecturer": "students/dashboards/lecturer_home.html",
@@ -568,6 +1371,8 @@ def home(request):
         "admissions": "students/dashboards/admissions_home.html",
 
         "finance": "students/dashboards/finance_home.html",
+
+        "ict": "students/dashboards/ict_home.html",
 
         "general": "students/dashboards/student_home.html",
 
@@ -6102,7 +6907,6 @@ def lecturer_submission_detail(request, lecturer_id):
         id=lecturer_id
     )
 
-
     assignments = LecturerAssignment.objects.filter(
 
         lecturer=lecturer,
@@ -6123,12 +6927,9 @@ def lecturer_submission_detail(request, lecturer_id):
 
     )
 
-
     units = []
 
-
     for assignment in assignments:
-
 
         batch = ResultBatch.objects.filter(
 
@@ -6136,9 +6937,7 @@ def lecturer_submission_detail(request, lecturer_id):
 
         ).first()
 
-
         status = "Pending"
-
 
         if batch:
 
@@ -6178,3 +6977,5 @@ def lecturer_submission_detail(request, lecturer_id):
         context
 
     )
+
+

@@ -713,7 +713,7 @@
 
 {% endif %}
     
-        {% if request.user.is_superuser %}
+     {% if user.is_staff and perms.auth.view_user %}
 
 <li class="menu-title">
 

@@ -12,54 +12,100 @@
 <div class="container-fluid px-4 pt-1 pb-4">
 
 
-    <!-- Dashboard Header -->
+<!-- =========================================================
+     ADMIN DASHBOARD HERO
+========================================================= -->
 
-<div class="dashboard-header">
+<section class="dashboard-hero">
 
-    <!-- Left -->
-    <div>
+    <div class="dashboard-hero-content">
 
-        <h2 class="dashboard-title">
-            Dashboard
-        </h2>
+        <!-- LEFT -->
 
-        <p class="dashboard-subtitle">
-            Welcome back,
-            <strong>
-                {{ user.get_full_name|default:user.username }}
-            </strong>
-        </p>
+        <div>
+
+            <span class="dashboard-eyebrow">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                ADMINISTRATION
+
+            </span>
+
+
+            <h1>
+                Admin Dashboard
+            </h1>
+
+
+            <p>
+
+                Welcome back,
+                <strong>
+                    {{ user.get_full_name|default:user.username }}
+                </strong>.
+                Manage and oversee your college's
+                academic, financial and administrative operations.
+
+            </p>
+
+        </div>
+
+
+        <!-- RIGHT -->
+
+        <div class="dashboard-session">
+
+            <div class="session-icon">
+
+                <i class="fa-solid fa-calendar-days"></i>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Academic Session
+                </span>
+
+
+                <strong>
+
+                    {% if active_year %}
+
+                        {{ active_year }}
+
+                    {% else %}
+
+                        Academic Year Not Set
+
+                    {% endif %}
+
+                </strong>
+
+
+                <small>
+
+                    {% if active_semester %}
+
+                        {{ active_semester }}
+
+                    {% else %}
+
+                        Semester Not Set
+
+                    {% endif %}
+
+                </small>
+
+            </div>
+
+        </div>
 
     </div>
 
-    <!-- Right -->
-    <div class="dashboard-date">
-
-        <i class="fa-solid fa-calendar-days"></i>
-
-        {% if active_year %}
-            {{ active_year }}
-        {% else %}
-            Academic Year Not Set
-        {% endif %}
-
-        <br>
-
-        <small>
-
-            {% if active_semester %}
-                {{ active_semester }}
-            {% else %}
-                Semester Not Set
-            {% endif %}
-
-        </small>
-
-    </div>
-
-</div>
-
-</div>
+</section>
 
 
 

@@ -1,0 +1,815 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Registrar Dashboard | Xoradex EduCore
+{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet"
+      href="{% static 'css/registrar_dashboard.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="registrar-dashboard">
+
+    <!-- =====================================================
+         REGISTRAR HEADER
+    ====================================================== -->
+
+    <section class="registrar-hero">
+
+        <div class="registrar-hero-content">
+
+            <div>
+
+                <span class="registrar-eyebrow">
+                    <i class="fa-solid fa-building-columns"></i>
+                    REGISTRAR'S OFFICE
+                </span>
+
+                <h1>
+                    Registrar Dashboard
+                </h1>
+
+                <p>
+                    Manage students, academic records, enrolments,
+                    registrations and institutional academic data.
+                </p>
+
+            </div>
+
+
+            <div class="registrar-session">
+
+                <div class="session-icon">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Academic Session
+                    </span>
+
+                    <strong>
+
+                        {% if active_year %}
+                            {{ active_year }}
+                        {% else %}
+                            Academic Year Not Set
+                        {% endif %}
+
+                    </strong>
+
+                    <small>
+
+                        {% if active_semester %}
+                            {{ active_semester }}
+                        {% else %}
+                            Semester Not Set
+                        {% endif %}
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         KPI CARDS
+    ====================================================== -->
+
+    <section class="registrar-kpis">
+
+        <div class="row g-4">
+
+            <!-- Students -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="registrar-kpi">
+
+                    <div class="kpi-icon students">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Students
+                        </span>
+
+                        <strong>
+                            {{ total_students|default:0 }}
+                        </strong>
+
+                        <small>
+                            Registered students
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Applicants -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="registrar-kpi">
+
+                    <div class="kpi-icon applicants">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Applicants
+                        </span>
+
+                        <strong>
+                            {{ total_applicants|default:0 }}
+                        </strong>
+
+                        <small>
+                            Admission applications
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Enrollments -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="registrar-kpi">
+
+                    <div class="kpi-icon enrollments">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Enrollments
+                        </span>
+
+                        <strong>
+                            {{ current_enrollments|default:0 }}
+                        </strong>
+
+                        <small>
+                            Current semester
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Registrations -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="registrar-kpi">
+
+                    <div class="kpi-icon registrations">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Registrations
+                        </span>
+
+                        <strong>
+                            {{ current_registrations|default:0 }}
+                        </strong>
+
+                        <small>
+                            Units registered
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         QUICK ACTIONS
+    ====================================================== -->
+
+    <section class="registrar-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-eyebrow">
+                    OPERATIONS
+                </span>
+
+                <h2>
+                    Quick Actions
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <!-- Students -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <a href="{% url 'student_list' %}"
+                   class="registrar-action">
+
+                    <div class="action-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Students
+                        </strong>
+
+                        <span>
+                            Manage student records
+                        </span>
+
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+                </a>
+
+            </div>
+
+
+            <!-- Applicants -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <a href="{% url 'applicant_list' %}"
+                   class="registrar-action">
+
+                    <div class="action-icon">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Applicants
+                        </strong>
+
+                        <span>
+                            Manage admissions
+                        </span>
+
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+                </a>
+
+            </div>
+
+
+            <!-- Enrollments -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <a href="{% url 'semester_enrollment_list' %}"
+                   class="registrar-action">
+
+                    <div class="action-icon">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Enrollments
+                        </strong>
+
+                        <span>
+                            Manage semester enrolment
+                        </span>
+
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+                </a>
+
+            </div>
+
+
+            <!-- Registrations -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <a href="{% url 'registration_list' %}"
+                   class="registrar-action">
+
+                    <div class="action-icon">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Registrations
+                        </strong>
+
+                        <span>
+                            Manage unit registration
+                        </span>
+
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         RECENT ACTIVITY
+    ====================================================== -->
+
+    <section class="registrar-section">
+
+        <div class="row g-4">
+
+            <!-- Recent Students -->
+
+            <div class="col-xl-7">
+
+                <div class="registrar-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="section-eyebrow">
+                                STUDENT RECORDS
+                            </span>
+
+                            <h3>
+                                Recent Students
+                            </h3>
+
+                        </div>
+
+                        <a href="{% url 'student_list' %}">
+                            View all
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table registrar-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Admission No.
+                                    </th>
+
+                                    <th>
+                                        Student
+                                    </th>
+
+                                    <th>
+                                        Programme
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for student in recent_students %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <span class="admission-badge">
+                                            {{ student.admission_no }}
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <strong>
+                                            {{ student.first_name }}
+                                            {{ student.last_name }}
+                                        </strong>
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if student.programme %}
+                                            {{ student.programme.name }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td colspan="3"
+                                        class="empty-state">
+
+                                        No students found.
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Recent Applicants -->
+
+            <div class="col-xl-5">
+
+                <div class="registrar-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="section-eyebrow">
+                                ADMISSIONS
+                            </span>
+
+                            <h3>
+                                Recent Applicants
+                            </h3>
+
+                        </div>
+
+                        <a href="{% url 'applicant_list' %}">
+                            View all
+                        </a>
+
+                    </div>
+
+
+                    <div class="applicant-list">
+
+                        {% for applicant in recent_applicants %}
+
+                        <div class="applicant-row">
+
+                            <div class="applicant-avatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+
+                            <div class="applicant-info">
+
+                                <strong>
+                                    {{ applicant }}
+                                </strong>
+
+                                <span>
+
+                                    {% if applicant.programme %}
+                                        {{ applicant.programme.name }}
+                                    {% else %}
+                                        Programme not assigned
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        {% empty %}
+
+                        <div class="empty-state">
+                            No recent applicants.
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ACADEMIC STRUCTURE
+    ====================================================== -->
+
+    <section class="registrar-section">
+
+        <div class="registrar-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        ACADEMIC STRUCTURE
+                    </span>
+
+                    <h3>
+                        Academic Records Overview
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-4">
+
+                <div class="col-md-3">
+
+                    <div class="structure-stat">
+
+                        <i class="fa-solid fa-building"></i>
+
+                        <div>
+
+                            <span>
+                                Departments
+                            </span>
+
+                            <strong>
+                                {{ total_departments|default:0 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="structure-stat">
+
+                        <i class="fa-solid fa-graduation-cap"></i>
+
+                        <div>
+
+                            <span>
+                                Programmes
+                            </span>
+
+                            <strong>
+                                {{ total_programmes|default:0 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="structure-stat">
+
+                        <i class="fa-solid fa-book"></i>
+
+                        <div>
+
+                            <span>
+                                Courses
+                            </span>
+
+                            <strong>
+                                {{ total_courses|default:0 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="structure-stat">
+
+                        <i class="fa-solid fa-book-open"></i>
+
+                        <div>
+
+                            <span>
+                                Units
+                            </span>
+
+                            <strong>
+                                {{ total_units|default:0 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         RECENT ENROLLMENTS
+    ====================================================== -->
+
+    <section class="registrar-section">
+
+        <div class="registrar-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        ENROLLMENT
+                    </span>
+
+                    <h3>
+                        Recent Semester Enrollments
+                    </h3>
+
+                </div>
+
+                <a href="{% url 'semester_enrollment_list' %}">
+                    View all
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table registrar-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Student
+                            </th>
+
+                            <th>
+                                Programme
+                            </th>
+
+                            <th>
+                                Academic Year
+                            </th>
+
+                            <th>
+                                Semester
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for enrollment in recent_enrollments %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ enrollment.student }}
+                                </strong>
+
+                            </td>
+
+                            <td>
+
+                                {% if enrollment.programme_level %}
+                                    {{ enrollment.programme_level.programme }}
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ enrollment.academic_year }}
+                            </td>
+
+                            <td>
+                                {{ enrollment.semester }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="4"
+                                class="empty-state">
+
+                                No recent enrollments.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</div>
+
+{% endblock %}

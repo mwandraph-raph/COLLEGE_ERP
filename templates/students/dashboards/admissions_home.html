@@ -1,0 +1,820 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+
+<link rel="stylesheet"
+      href="{% static 'css/admissions_dashboard.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="admissions-dashboard">
+
+    <div class="container-fluid px-4 pt-1 pb-4">
+
+
+        <!-- =========================================================
+             ADMISSIONS HERO
+        ========================================================== -->
+
+        <section class="admissions-hero">
+
+            <div class="admissions-hero-content">
+
+                <div>
+
+                    <span class="admissions-eyebrow">
+
+                        <i class="fa-solid fa-user-plus"></i>
+
+                        ADMISSIONS OFFICE
+
+                    </span>
+
+
+                    <h1>
+                        Admission Officer Dashboard
+                    </h1>
+
+
+                    <p>
+                        Manage applications, admissions, intakes
+                        and applicant records from one central workspace.
+                    </p>
+
+                </div>
+
+
+                <!-- SESSION -->
+
+                <div class="admissions-session">
+
+                    <div class="session-icon">
+
+                        <i class="fa-solid fa-calendar-days"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Academic Session
+                        </span>
+
+
+                        <strong>
+
+                            {% if active_year %}
+                                {{ active_year }}
+                            {% else %}
+                                Academic Year Not Set
+                            {% endif %}
+
+                        </strong>
+
+
+                        <small>
+
+                            {% if active_semester %}
+                                {{ active_semester }}
+                            {% else %}
+                                Semester Not Set
+                            {% endif %}
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             KPI CARDS
+        ========================================================== -->
+
+        <div class="row g-4 mb-4">
+
+
+            <!-- TOTAL APPLICANTS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="admission-kpi">
+
+                    <div class="kpi-icon kpi-applicants">
+
+                        <i class="fa-solid fa-users"></i>
+
+                    </div>
+
+
+                    <div class="kpi-content">
+
+                        <span>
+                            Total Applicants
+                        </span>
+
+                        <h2>
+                            {{ total_applicants }}
+                        </h2>
+
+                        <small>
+                            All applications
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PENDING -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="admission-kpi">
+
+                    <div class="kpi-icon kpi-pending">
+
+                        <i class="fa-solid fa-clock"></i>
+
+                    </div>
+
+
+                    <div class="kpi-content">
+
+                        <span>
+                            Pending Applications
+                        </span>
+
+                        <h2>
+                            {{ pending_applications }}
+                        </h2>
+
+                        <small>
+                            Awaiting review
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- APPROVED -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="admission-kpi">
+
+                    <div class="kpi-icon kpi-approved">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </div>
+
+
+                    <div class="kpi-content">
+
+                        <span>
+                            Approved Applicants
+                        </span>
+
+                        <h2>
+                            {{ approved_applicants }}
+                        </h2>
+
+                        <small>
+                            Successfully admitted
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- OPEN INTAKES -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="admission-kpi">
+
+                    <div class="kpi-icon kpi-intakes">
+
+                        <i class="fa-solid fa-calendar-check"></i>
+
+                    </div>
+
+
+                    <div class="kpi-content">
+
+                        <span>
+                            Open Intakes
+                        </span>
+
+                        <h2>
+                            {{ open_intakes }}
+                        </h2>
+
+                        <small>
+                            Currently accepting applications
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================================================
+             QUICK ACTIONS + STATUS
+        ========================================================== -->
+
+        <div class="row g-4 mb-4">
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="col-xl-8">
+
+                <div class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <span class="section-eyebrow">
+                                OPERATIONS
+                            </span>
+
+                            <h3>
+                                Admissions Actions
+                            </h3>
+
+                        </div>
+
+                        <span class="section-description">
+                            Common admissions tasks
+                        </span>
+
+                    </div>
+
+
+                    <div class="quick-actions">
+
+
+                        {% if perms.students.view_applicant %}
+
+                        <a href="{% url 'applicant_list' %}"
+                           class="quick-action">
+
+                            <div class="quick-action-icon">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+
+                            <strong>
+                                Applicants
+                            </strong>
+
+                            <span>
+                                View applications
+                            </span>
+
+                        </a>
+
+                        {% endif %}
+
+
+
+                        {% if perms.students.add_applicant %}
+
+                        <a href="{% url 'applicant_create' %}"
+                           class="quick-action">
+
+                            <div class="quick-action-icon">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </div>
+
+                            <strong>
+                                New Applicant
+                            </strong>
+
+                            <span>
+                                Register applicant
+                            </span>
+
+                        </a>
+
+                        {% endif %}
+
+
+
+                        {% if perms.students.view_intake %}
+
+                        <a href="{% url 'intake_list' %}"
+                           class="quick-action">
+
+                            <div class="quick-action-icon">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+
+                            <strong>
+                                Intakes
+                            </strong>
+
+                            <span>
+                                Manage admission intakes
+                            </span>
+
+                        </a>
+
+                        {% endif %}
+
+
+
+                        {% if perms.students.view_applicant %}
+
+                        <a href="{% url 'admissions_report' %}"
+                           class="quick-action">
+
+                            <div class="quick-action-icon">
+                                <i class="fa-solid fa-chart-column"></i>
+                            </div>
+
+                            <strong>
+                                Admissions Report
+                            </strong>
+
+                            <span>
+                                Review admissions data
+                            </span>
+
+                        </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- APPLICATION STATUS -->
+
+            <div class="col-xl-4">
+
+                <div class="dashboard-section status-section">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <span class="section-eyebrow">
+                                APPLICATIONS
+                            </span>
+
+                            <h3>
+                                Application Status
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="status-list">
+
+
+                        <div class="status-row">
+
+                            <div class="status-label">
+
+                                <span class="status-dot pending"></span>
+
+                                <span>
+                                    Pending
+                                </span>
+
+                            </div>
+
+                            <strong>
+                                {{ pending_applications }}
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="status-row">
+
+                            <div class="status-label">
+
+                                <span class="status-dot approved"></span>
+
+                                <span>
+                                    Approved
+                                </span>
+
+                            </div>
+
+                            <strong>
+                                {{ approved_applicants }}
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="status-row">
+
+                            <div class="status-label">
+
+                                <span class="status-dot rejected"></span>
+
+                                <span>
+                                    Rejected
+                                </span>
+
+                            </div>
+
+                            <strong>
+                                {{ rejected_applicants }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="status-total">
+
+                        <span>
+                            Total applications
+                        </span>
+
+                        <strong>
+                            {{ total_applicants }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================================================
+             RECENT APPLICATIONS
+        ========================================================== -->
+
+        <div class="row g-4 mb-4">
+
+            <div class="col-xl-8">
+
+                <div class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <span class="section-eyebrow">
+                                APPLICATION PIPELINE
+                            </span>
+
+                            <h3>
+                                Recent Applications
+                            </h3>
+
+                        </div>
+
+
+                        {% if perms.students.view_applicant %}
+
+                        <a href="{% url 'applicant_list' %}"
+                           class="section-link">
+
+                            View All
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="admissions-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Application
+                                    </th>
+
+                                    <th>
+                                        Applicant
+                                    </th>
+
+                                    <th>
+                                        Programme
+                                    </th>
+
+                                    <th>
+                                        Intake
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for applicant in recent_applicants %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <a href="{% url 'applicant_detail' applicant.pk %}"
+                                           class="application-number">
+
+                                            {{ applicant.application_no|default:"—" }}
+
+                                        </a>
+
+                                        <small>
+                                            {{ applicant.application_date|date:"d M Y" }}
+                                        </small>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="applicant-name">
+
+                                            <div class="applicant-avatar">
+
+                                                {{ applicant.first_name|first|upper }}
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <strong>
+
+                                                    {{ applicant.first_name }}
+
+                                                    {% if applicant.middle_name %}
+                                                        {{ applicant.middle_name }}
+                                                    {% endif %}
+
+                                                    {{ applicant.last_name }}
+
+                                                </strong>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="programme-name">
+
+                                            {{ applicant.programme.name }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ applicant.intake.name }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if applicant.status == "PENDING" %}
+
+                                            <span class="application-status pending">
+                                                Pending
+                                            </span>
+
+                                        {% elif applicant.status == "APPROVED" %}
+
+                                            <span class="application-status approved">
+                                                Approved
+                                            </span>
+
+                                        {% elif applicant.status == "REJECTED" %}
+
+                                            <span class="application-status rejected">
+                                                Rejected
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td colspan="5"
+                                        class="empty-state">
+
+                                        <i class="fa-solid fa-user-group"></i>
+
+                                        <span>
+                                            No applications found.
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- OPEN INTAKES -->
+
+            <div class="col-xl-4">
+
+                <div class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <span class="section-eyebrow">
+                                ADMISSIONS CALENDAR
+                            </span>
+
+                            <h3>
+                                Open Intakes
+                            </h3>
+
+                        </div>
+
+
+                        {% if perms.students.view_intake %}
+
+                        <a href="{% url 'intake_list' %}"
+                           class="section-link">
+
+                            View All
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="intake-list">
+
+                        {% for intake in active_intakes %}
+
+                        <div class="intake-item">
+
+                            <div class="intake-icon">
+
+                                <i class="fa-solid fa-calendar-check"></i>
+
+                            </div>
+
+
+                            <div class="intake-info">
+
+                                <strong>
+                                    {{ intake.name }}
+                                </strong>
+
+                                <span>
+                                    {{ intake.academic_year }}
+                                </span>
+
+                                <small>
+                                    Starts
+                                    {{ intake.start_date|date:"d M Y" }}
+                                </small>
+
+                            </div>
+
+
+                            <span class="open-badge">
+                                OPEN
+                            </span>
+
+                        </div>
+
+                        {% empty %}
+
+                        <div class="empty-intakes">
+
+                            <i class="fa-solid fa-calendar-xmark"></i>
+
+                            <p>
+                                No open intakes currently.
+                            </p>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================================================
+             ADMISSION PIPELINE FOOTER
+        ========================================================== -->
+
+        <div class="admission-footer">
+
+            <div>
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <span>
+                    Admissions workspace
+                </span>
+
+            </div>
+
+
+            <p>
+                Keep applicant records accurate and up to date
+                throughout the admission cycle.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

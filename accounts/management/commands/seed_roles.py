@@ -1,11 +1,15 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 
 
 class Command(BaseCommand):
     help = "Creates and synchronizes ERP default roles and permissions."
 
     def handle(self, *args, **kwargs):
+
+        # ==========================================================
+        # PERMISSION HELPERS
+        # ==========================================================
 
         def perms(app_label, *codenames):
             return Permission.objects.filter(
@@ -19,7 +23,7 @@ class Command(BaseCommand):
             )
 
         # ==========================================================
-        # REGISTRAR
+        # REGISTRAR PERMISSIONS
         # ==========================================================
 
         registrar_models = [
@@ -72,6 +76,49 @@ class Command(BaseCommand):
                 perms(
                     "students",
                     *registrar_permissions,
+                ),
+
+            # ------------------------------------------------------
+            # PRINCIPAL
+            # ------------------------------------------------------
+
+            "Principal":
+                list(
+                    perms(
+                        "students",
+
+                        "view_student",
+
+                        "view_department",
+                        "view_programme",
+                        "view_programmelevel",
+
+                        "view_course",
+                        "view_unit",
+                        "view_unitoffering",
+
+                        "view_semesterenrollment",
+                        "view_registration",
+
+                        "view_lecturerassignment",
+
+                        "view_result",
+                        "view_resultbatch",
+
+                        "view_applicant",
+                        "view_intake",
+                    )
+                    |
+                    perms(
+                        "finance",
+                        "view_payment",
+                        "view_studentinvoice",
+                    )
+                    |
+                    perms(
+                        "graduation",
+                        "view_graduation",
+                    )
                 ),
 
             # ------------------------------------------------------
@@ -155,8 +202,15 @@ class Command(BaseCommand):
             # ICT OFFICER
             # ------------------------------------------------------
 
-            # Keep full technical administration access so ICT can
-            # administer the complete ERP.
+            # Full technical administration access.
+            #
+            # ICT receives all Django model permissions.
+            # Site Administration access is handled below by
+            # setting is_staff=True for users in this group.
+            #
+            # ICT users are NOT made superusers.
+            # Their access remains permission-based.
+
             "ICT Officer":
                 Permission.objects.all(),
 
@@ -173,11 +227,34 @@ class Command(BaseCommand):
                 ),
 
             # ------------------------------------------------------
+            # ADMISSION OFFICER
+            # ------------------------------------------------------
+
+            "Admission Officer":
+                perms(
+                    "students",
+
+                    "view_applicant",
+                    "add_applicant",
+                    "change_applicant",
+
+                    "view_intake",
+                    "add_intake",
+                    "change_intake",
+
+                    "view_programme",
+                    "view_programmelevel",
+                    "view_department",
+                    "view_course",
+                ),
+
+            # ------------------------------------------------------
             # STUDENT
             # ------------------------------------------------------
 
             # Students use ownership-based views.
             # They do NOT receive model CRUD permissions.
+
             "Student":
                 Permission.objects.none(),
 
@@ -199,12 +276,12 @@ class Command(BaseCommand):
                 name=role_name
             )
 
+            # Synchronize permissions
             group.permissions.set(permissions)
 
             count = group.permissions.count()
 
             if created:
-
                 self.stdout.write(
                     self.style.SUCCESS(
                         f"Created: {role_name} "
@@ -213,13 +290,41 @@ class Command(BaseCommand):
                 )
 
             else:
-
                 self.stdout.write(
                     self.style.SUCCESS(
                         f"Updated: {role_name} "
                         f"({count} permissions)"
                     )
                 )
+
+        # ==========================================================
+        # ICT OFFICER — DJANGO SITE ADMINISTRATION
+        # ==========================================================
+
+        # Users assigned to the ICT Officer group are allowed
+        # to access Django Site Administration (/admin/).
+        #
+        # They remain normal users and are NOT superusers.
+
+        ict_users = User.objects.filter(
+            groups__name="ICT Officer"
+        )
+
+        ict_updated = ict_users.update(
+            is_staff=True,
+            is_active=True,
+        )
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"ICT Officers enabled for Site Administration: "
+                f"{ict_updated}"
+            )
+        )
+
+        # ==========================================================
+        # FINAL MESSAGE
+        # ==========================================================
 
         self.stdout.write(
             self.style.SUCCESS(

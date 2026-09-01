@@ -1,0 +1,1257 @@
+/* =========================================================
+   XORADEX EDUCORE
+   ADMISSION OFFICER DASHBOARD
+   Modern SaaS Dashboard
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.admissions-dashboard{
+    min-height:100vh;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.admissions-hero{
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #012169 0%,
+            #003087 55%,
+            #0b4aa2 100%
+        );
+
+    border-radius:26px;
+
+    padding:34px;
+
+    margin-bottom:28px;
+
+    color:#fff;
+
+    box-shadow:
+        0 16px 40px rgba(1,33,105,.18);
+
+}
+
+
+.admissions-hero::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:280px;
+    height:280px;
+
+    right:-90px;
+    top:-120px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+
+}
+
+
+.admissions-hero::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:180px;
+    height:180px;
+
+    right:170px;
+    bottom:-120px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.05);
+
+}
+
+
+.admissions-hero-content{
+
+    position:relative;
+
+    z-index:2;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:30px;
+
+}
+
+
+.admissions-eyebrow{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    letter-spacing:1.5px;
+
+    opacity:.82;
+
+    margin-bottom:10px;
+
+}
+
+
+.admissions-hero h1{
+
+    margin:0;
+
+    font-size:34px;
+
+    font-weight:800;
+
+    letter-spacing:-.5px;
+
+    color: #b26a00;
+
+}
+
+
+.admissions-hero p{
+
+    margin:10px 0 0;
+
+    max-width:650px;
+
+    font-size:15px;
+
+    line-height:1.7;
+
+    opacity:.88;
+
+     color: #ffffff;
+
+}
+
+
+/* =========================================================
+   SESSION
+========================================================= */
+
+.admissions-session{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    min-width:245px;
+
+    padding:18px 20px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.13);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    backdrop-filter:blur(12px);
+
+}
+
+
+.session-icon{
+
+    width:48px;
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.16);
+
+    font-size:20px;
+
+}
+
+
+.admissions-session span{
+
+    display:block;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+
+    opacity:.72;
+
+}
+
+
+.admissions-session strong{
+
+    display:block;
+
+    margin-top:3px;
+
+    font-size:15px;
+
+}
+
+
+.admissions-session small{
+
+    display:block;
+
+    margin-top:2px;
+
+    font-size:12px;
+
+    opacity:.78;
+
+}
+
+
+/* =========================================================
+   KPI CARDS
+========================================================= */
+
+.admission-kpi{
+
+    height:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:17px;
+
+    padding:22px;
+
+    background:#fff;
+
+    border:1px solid #edf2f7;
+
+    border-radius:20px;
+
+    box-shadow:0 6px 20px rgba(0,0,0,.05);
+
+    transition:.3s ease;
+
+}
+
+
+.admission-kpi:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:
+        0 14px 32px rgba(0,0,0,.10);
+
+}
+
+
+.kpi-icon{
+
+    width:60px;
+    height:60px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:17px;
+
+    font-size:24px;
+
+}
+
+
+.kpi-applicants{
+
+    background:#e0f2fe;
+    color:#0284c7;
+
+}
+
+
+.kpi-pending{
+
+    background:#fef3c7;
+    color:#d97706;
+
+}
+
+
+.kpi-approved{
+
+    background:#dcfce7;
+    color:#16a34a;
+
+}
+
+
+.kpi-intakes{
+
+    background:#ede9fe;
+    color:#7c3aed;
+
+}
+
+
+.kpi-content{
+
+    min-width:0;
+
+}
+
+
+.kpi-content span{
+
+    display:block;
+
+    color:#64748b;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+
+.kpi-content h2{
+
+    margin:4px 0;
+
+    color:#0f172a;
+
+    font-size:30px;
+
+    line-height:1.1;
+
+    font-weight:800;
+
+}
+
+
+.kpi-content small{
+
+    color:#34415b;
+
+    font-size:11px;
+
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.dashboard-section{
+
+    height:100%;
+
+    background:#fff;
+
+    border:1px solid #edf2f7;
+
+    border-radius:22px;
+
+    box-shadow:0 6px 20px rgba(0,0,0,.05);
+
+    overflow:hidden;
+
+}
+
+
+.section-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    padding:23px 24px;
+
+    border-bottom:1px solid #eef2f7;
+
+}
+
+
+.section-eyebrow{
+
+    display:block;
+
+    margin-bottom:4px;
+
+    color:#64748b;
+
+    font-size:10px;
+
+    font-weight:800;
+
+    letter-spacing:1.2px;
+
+}
+
+.section-header h3{
+
+    margin:0;
+
+    color:#0f172a;
+
+    font-size:18px;
+
+    font-weight:800;
+
+}
+
+
+.section-description{
+
+    color:#11141a;
+
+    font-size:12px;
+
+}
+
+
+.section-link{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    color:#003087;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    text-decoration:none;
+
+}
+
+
+.section-link:hover{
+
+    color:#012169;
+
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick-actions{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:15px;
+
+    padding:22px;
+
+}
+
+
+.quick-action{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    justify-content:center;
+
+    min-height:135px;
+
+    padding:20px;
+
+    background:#f8fafc;
+
+    border:1px solid #e7edf4;
+
+    border-radius:17px;
+
+    color:#0f172a;
+
+    text-decoration:none;
+
+    transition:.3s ease;
+
+}
+
+
+.quick-action:hover{
+
+    background:#f1f5f9;
+
+    border-color:#cbd5e1;
+
+    transform:translateY(-4px);
+
+}
+
+
+.quick-action-icon{
+
+    width:44px;
+    height:44px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    margin-bottom:12px;
+
+    border-radius:13px;
+
+    background:#e8efff;
+
+    color:#003087;
+
+    font-size:18px;
+
+}
+
+
+.quick-action strong{
+
+    font-size:14px;
+
+    font-weight:800;
+
+}
+
+
+.quick-action span{
+
+    margin-top:4px;
+
+    color:#677592;
+
+    font-size:11px;
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-section{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+.status-list{
+
+    padding:15px 22px;
+
+}
+
+
+.status-row{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:15px 0;
+
+    border-bottom:1px solid #f1f5f9;
+
+}
+
+
+.status-row:last-child{
+
+    border-bottom:0;
+
+}
+
+
+.status-label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:#475569;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+
+.status-row strong{
+
+    color:#0f172a;
+
+    font-size:18px;
+
+    font-weight:800;
+
+}
+
+
+.status-dot{
+
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+
+}
+
+
+.status-dot.pending{
+    background:#f59e0b;
+}
+
+
+.status-dot.approved{
+    background:#22c55e;
+}
+
+
+.status-dot.rejected{
+    background:#ef4444;
+}
+
+
+.status-total{
+
+    margin-top:auto;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 22px;
+
+    background:#f8fafc;
+
+    color:#64748b;
+
+    font-size:12px;
+
+}
+
+
+.status-total strong{
+
+    color:#0f172a;
+
+    font-size:18px;
+
+}
+
+
+/* =========================================================
+   APPLICATION TABLE
+========================================================= */
+
+.table-responsive{
+
+    width:100%;
+
+    overflow-x:auto;
+
+}
+
+
+.admissions-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+
+.admissions-table th{
+
+    padding:13px 20px;
+
+    background:#f8fafc;
+
+    color:#64748b;
+
+    font-size:10px;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    letter-spacing:.7px;
+
+    white-space:nowrap;
+
+}
+
+
+.admissions-table td{
+
+    padding:15px 20px;
+
+    border-top:1px solid #f1f5f9;
+
+    color:#475569;
+
+    font-size:12px;
+
+    vertical-align:middle;
+
+}
+
+
+.admissions-table tbody tr{
+
+    transition:.2s ease;
+
+}
+
+
+.admissions-table tbody tr:hover{
+
+    background:#fafcff;
+
+}
+
+
+.application-number{
+
+    display:block;
+
+    color:#003087;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    text-decoration:none;
+
+}
+
+
+.admissions-table td small{
+
+    display:block;
+
+    margin-top:3px;
+
+    color:#94a3b8;
+
+    font-size:10px;
+
+}
+
+
+.applicant-name{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    min-width:170px;
+
+}
+
+
+.applicant-avatar{
+
+    width:34px;
+    height:34px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:#e8efff;
+
+    color:#003087;
+
+    font-size:12px;
+
+    font-weight:800;
+
+}
+
+
+.applicant-name strong{
+
+    color:#1e293b;
+
+    font-size:12px;
+
+    font-weight:700;
+
+}
+
+
+.programme-name{
+
+    display:block;
+
+    max-width:180px;
+
+    color:#475569;
+
+    line-height:1.4;
+
+}
+
+
+/* =========================================================
+   APPLICATION STATUS BADGES
+========================================================= */
+
+.application-status{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:5px 9px;
+
+    border-radius:20px;
+
+    font-size:9px;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+}
+
+
+.application-status.pending{
+
+    background:#fef3c7;
+
+    color:#b45309;
+
+}
+
+
+.application-status.approved{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+}
+
+
+.application-status.rejected{
+
+    background:#fee2e2;
+
+    color:#b91c1c;
+
+}
+
+
+/* =========================================================
+   OPEN INTAKES
+========================================================= */
+
+.intake-list{
+
+    padding:8px 22px 20px;
+
+}
+
+
+.intake-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:11px;
+
+    padding:15px 0;
+
+    border-bottom:1px solid #f1f5f9;
+
+}
+
+
+.intake-item:last-child{
+
+    border-bottom:0;
+
+}
+
+
+.intake-icon{
+
+    width:40px;
+    height:40px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:12px;
+
+    background:#ede9fe;
+
+    color:#7c3aed;
+
+}
+
+
+.intake-info{
+
+    flex:1;
+
+    min-width:0;
+
+}
+
+
+.intake-info strong{
+
+    display:block;
+
+    color:#1e293b;
+
+    font-size:12px;
+
+    font-weight:800;
+
+}
+
+
+.intake-info span{
+
+    display:block;
+
+    margin-top:2px;
+
+    color:#64748b;
+
+    font-size:10px;
+
+}
+
+
+.intake-info small{
+
+    display:block;
+
+    margin-top:2px;
+
+    color:#94a3b8;
+
+    font-size:10px;
+
+}
+
+
+.open-badge{
+
+    padding:5px 8px;
+
+    border-radius:20px;
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    letter-spacing:.6px;
+
+}
+
+
+.empty-intakes{
+
+    padding:45px 20px;
+
+    text-align:center;
+
+    color:#94a3b8;
+
+}
+
+
+.empty-intakes i{
+
+    margin-bottom:10px;
+
+    font-size:25px;
+
+}
+
+
+.empty-intakes p{
+
+    margin:0;
+
+    font-size:12px;
+
+}
+
+
+/* =========================================================
+   EMPTY TABLE
+========================================================= */
+
+.empty-state{
+
+    padding:45px 20px !important;
+
+    text-align:center;
+
+    color:#94a3b8 !important;
+
+}
+
+
+.empty-state i{
+
+    margin-right:8px;
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.admission-footer{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    margin-top:4px;
+
+    padding:18px 22px;
+
+    border-radius:18px;
+
+    background:#f8fafc;
+
+    border:1px solid #edf2f7;
+
+}
+
+
+.admission-footer div{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    color:#003087;
+
+    font-size:12px;
+
+    font-weight:800;
+
+}
+
+
+.admission-footer p{
+
+    margin:0;
+
+    color:var(--navy);
+
+    font-size:11px;
+
+    font-weight: 500;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1100px){
+
+    .admissions-hero-content{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+    .admissions-session{
+
+        width:100%;
+
+    }
+
+}
+
+
+@media(max-width:768px){
+
+    .admissions-hero{
+
+        padding:25px;
+
+        border-radius:20px;
+
+    }
+
+
+    .admissions-hero h1{
+
+        font-size:27px;
+
+    }
+
+
+    .quick-actions{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .section-header{
+
+        padding:19px;
+
+    }
+
+
+    .admissions-table th,
+    .admissions-table td{
+
+        padding-left:14px;
+
+        padding-right:14px;
+
+    }
+
+
+    .admission-footer{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+}
+
+
+@media(max-width:576px){
+
+    .admissions-dashboard .container-fluid{
+
+        padding-left:12px !important;
+
+        padding-right:12px !important;
+
+    }
+
+
+    .admission-kpi{
+
+        padding:18px;
+
+    }
+
+
+    .kpi-icon{
+
+        width:52px;
+        height:52px;
+
+        font-size:21px;
+
+    }
+
+
+    .kpi-content h2{
+
+        font-size:26px;
+
+    }
+
+}

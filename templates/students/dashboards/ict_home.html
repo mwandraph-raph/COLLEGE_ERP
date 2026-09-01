@@ -1,0 +1,810 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}ICT Dashboard | Xoradex EduCore{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/ict_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="ict-dashboard">
+
+<!-- ========================================================= -->
+<!-- ICT HERO                                                   -->
+<!-- ========================================================= -->
+
+<section class="ict-hero mb-4">
+
+    <div class="ict-hero-content">
+
+        <div>
+            <div class="ict-eyebrow">
+                <i class="fa-solid fa-microchip"></i>
+                ICT OPERATIONS
+            </div>
+
+            <h1 class="ict-title">
+                ICT Control Centre
+            </h1>
+
+            <p class="ict-subtitle">
+                Monitor users, access, student systems and the
+                digital infrastructure of Xoradex EduCore.
+            </p>
+
+            <div class="ict-status-row">
+
+                <span class="ict-status-badge">
+                    <span class="status-dot"></span>
+                    System Operational
+                </span>
+
+            </div>
+        </div>
+
+<div class="ict-hero-right">
+
+    <div class="ict-hero-icon">
+        <i class="fa-solid fa-server"></i>
+    </div>
+
+    <div class="ict-session-details">
+
+        <div>
+            <span>Academic Year</span>
+            <strong>{{ active_year|default:"Not Set" }}</strong>
+        </div>
+
+        <div>
+            <span>Semester</span>
+            <strong>{{ active_semester|default:"Not Set" }}</strong>
+        </div>
+
+    </div>
+
+</div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- KPI CARDS                                                  -->
+<!-- ========================================================= -->
+
+<section class="mb-4">
+
+    <div class="row g-3">
+
+        <!-- USERS -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="ict-kpi-card">
+
+                <div class="ict-kpi-top">
+                    <div class="ict-kpi-icon blue">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <span class="ict-kpi-label">
+                        SYSTEM USERS
+                    </span>
+                </div>
+
+                <div class="ict-kpi-value">
+                    {{ total_users|default:"0" }}
+                </div>
+
+                <div class="ict-kpi-footer">
+                    Registered ERP accounts
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE USERS -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="ict-kpi-card">
+
+                <div class="ict-kpi-top">
+                    <div class="ict-kpi-icon green">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+
+                    <span class="ict-kpi-label">
+                        ACTIVE ACCOUNTS
+                    </span>
+                </div>
+
+                <div class="ict-kpi-value">
+                    {{ active_users|default:"0" }}
+                </div>
+
+                <div class="ict-kpi-footer">
+                    Currently enabled accounts
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STAFF -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="ict-kpi-card">
+
+                <div class="ict-kpi-top">
+                    <div class="ict-kpi-icon purple">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+
+                    <span class="ict-kpi-label">
+                        STAFF ACCOUNTS
+                    </span>
+                </div>
+
+                <div class="ict-kpi-value">
+                    {{ total_staff|default:"0" }}
+                </div>
+
+                <div class="ict-kpi-footer">
+                    Staff with ERP access
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- GROUPS -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="ict-kpi-card">
+
+                <div class="ict-kpi-top">
+                    <div class="ict-kpi-icon orange">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+
+                    <span class="ict-kpi-label">
+                        ROLES & GROUPS
+                    </span>
+                </div>
+
+                <div class="ict-kpi-value">
+                    {{ total_groups|default:"0" }}
+                </div>
+
+                <div class="ict-kpi-footer">
+                    Permission groups configured
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- QUICK ACTIONS + SYSTEM OVERVIEW                           -->
+<!-- ========================================================= -->
+
+<div class="row g-4 mb-4">
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="col-xl-7">
+
+        <div class="ict-panel h-100">
+
+            <div class="ict-panel-header">
+
+                <div>
+                    <h3>
+                        <i class="fa-solid fa-bolt"></i>
+                        Quick Actions
+                    </h3>
+
+                    <p>
+                        Frequently used ICT administration tools
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="ict-actions-grid">
+
+
+                {% if perms.auth.view_user %}
+
+                <a href="{% url 'accounts:user_list' %}"
+                   class="ict-action">
+
+                    <div class="action-icon blue">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <div>
+                        <strong>System Users</strong>
+
+                        <span>
+                            View and manage ERP user accounts
+                        </span>
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+                </a>
+
+                {% endif %}
+
+
+                {% if perms.auth.view_group %}
+
+                <a href="{% url 'accounts:group_list' %}"
+                   class="ict-action">
+
+                    <div class="action-icon purple">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+
+                    <div>
+                        <strong>Roles & Groups</strong>
+
+                        <span>
+                            Manage roles and permission groups
+                        </span>
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+                </a>
+
+                {% endif %}
+
+
+                {% if perms.students.view_student %}
+
+                <a href="{% url 'student_list' %}"
+                   class="ict-action">
+
+                    <div class="action-icon green">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+
+                    <div>
+                        <strong>Student Records</strong>
+
+                        <span>
+                            Access student information and records
+                        </span>
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+                </a>
+
+                {% endif %}
+
+
+                <a href="{% url 'home' %}"
+                   class="ict-action">
+
+                    <div class="action-icon orange">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+
+                    <div>
+                        <strong>ERP Dashboard</strong>
+
+                        <span>
+                            Return to the main ERP dashboard
+                        </span>
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SYSTEM OVERVIEW -->
+
+    <div class="col-xl-5">
+
+        <div class="ict-panel h-100">
+
+            <div class="ict-panel-header">
+
+                <div>
+                    <h3>
+                        <i class="fa-solid fa-server"></i>
+                        System Overview
+                    </h3>
+
+                    <p>
+                        Current platform status
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="system-status-list">
+
+
+                <div class="system-status-item">
+
+                    <div class="system-status-left">
+                        <div class="mini-status-icon">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+
+                        <div>
+                            <strong>ERP Platform</strong>
+                            <span>Application services</span>
+                        </div>
+                    </div>
+
+                    <span class="status-pill online">
+                        Online
+                    </span>
+
+                </div>
+
+
+                <div class="system-status-item">
+
+                    <div class="system-status-left">
+                        <div class="mini-status-icon">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+
+                        <div>
+                            <strong>Database</strong>
+                            <span>Core data services</span>
+                        </div>
+                    </div>
+
+                    <span class="status-pill online">
+                        Connected
+                    </span>
+
+                </div>
+
+
+                <div class="system-status-item">
+
+                    <div class="system-status-left">
+                        <div class="mini-status-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+
+                        <div>
+                            <strong>Access Control</strong>
+                            <span>Role-based permissions</span>
+                        </div>
+                    </div>
+
+                    <span class="status-pill online">
+                        Active
+                    </span>
+
+                </div>
+
+
+                <div class="system-status-item">
+
+                    <div class="system-status-left">
+                        <div class="mini-status-icon">
+                            <i class="fa-solid fa-user-lock"></i>
+                        </div>
+
+                        <div>
+                            <strong>Account Security</strong>
+                            <span>User authentication</span>
+                        </div>
+                    </div>
+
+                    <span class="status-pill online">
+                        Protected
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- ACCESS CONTROL + ERP STATISTICS                           -->
+<!-- ========================================================= -->
+
+<div class="row g-4 mb-4">
+
+
+    <!-- ACCESS CONTROL -->
+
+    <div class="col-lg-6">
+
+        <div class="ict-panel h-100">
+
+            <div class="ict-panel-header">
+
+                <div>
+                    <h3>
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Access Control
+                    </h3>
+
+                    <p>
+                        Maintain secure access to ERP modules
+                    </p>
+                </div>
+
+                <span class="section-badge">
+                    RBAC
+                </span>
+
+            </div>
+
+
+            <div class="security-grid">
+
+                <div class="security-card">
+
+                    <i class="fa-solid fa-users-gear"></i>
+
+                    <strong>
+                        User Management
+                    </strong>
+
+                    <span>
+                        Control system accounts
+                    </span>
+
+                </div>
+
+
+                <div class="security-card">
+
+                    <i class="fa-solid fa-key"></i>
+
+                    <strong>
+                        Permissions
+                    </strong>
+
+                    <span>
+                        Control module access
+                    </span>
+
+                </div>
+
+
+                <div class="security-card">
+
+                    <i class="fa-solid fa-user-shield"></i>
+
+                    <strong>
+                        Roles
+                    </strong>
+
+                    <span>
+                        Assign operational roles
+                    </span>
+
+                </div>
+
+
+                <div class="security-card">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <strong>
+                        Security
+                    </strong>
+
+                    <span>
+                        Protect sensitive records
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ERP ACCESS SUMMARY -->
+
+    <div class="col-lg-6">
+
+        <div class="ict-panel h-100">
+
+            <div class="ict-panel-header">
+
+                <div>
+                    <h3>
+                        <i class="fa-solid fa-chart-pie"></i>
+                        ERP Access Summary
+                    </h3>
+
+                    <p>
+                        Key platform account indicators
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="access-summary">
+
+
+                <div class="access-summary-row">
+
+                    <div class="summary-label">
+                        <span class="summary-icon blue">
+                            <i class="fa-solid fa-users"></i>
+                        </span>
+
+                        <span>
+                            Total Users
+                        </span>
+                    </div>
+
+                    <strong>
+                        {{ total_users|default:"0" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="access-summary-row">
+
+                    <div class="summary-label">
+                        <span class="summary-icon green">
+                            <i class="fa-solid fa-user-check"></i>
+                        </span>
+
+                        <span>
+                            Active Users
+                        </span>
+                    </div>
+
+                    <strong>
+                        {{ active_users|default:"0" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="access-summary-row">
+
+                    <div class="summary-label">
+                        <span class="summary-icon purple">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </span>
+
+                        <span>
+                            Staff Accounts
+                        </span>
+                    </div>
+
+                    <strong>
+                        {{ total_staff|default:"0" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="access-summary-row">
+
+                    <div class="summary-label">
+                        <span class="summary-icon orange">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </span>
+
+                        <span>
+                            Students
+                        </span>
+                    </div>
+
+                    <strong>
+                        {{ total_students|default:"0" }}
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- ICT RESPONSIBILITIES                                      -->
+<!-- ========================================================= -->
+
+<section class="ict-panel mb-4">
+
+    <div class="ict-panel-header">
+
+        <div>
+            <h3>
+                <i class="fa-solid fa-list-check"></i>
+                ICT Responsibilities
+            </h3>
+
+            <p>
+                Core areas requiring regular ICT attention
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="row g-3">
+
+
+        <div class="col-md-3">
+
+            <div class="responsibility-card">
+
+                <div class="responsibility-number">
+                    01
+                </div>
+
+                <i class="fa-solid fa-user-shield"></i>
+
+                <strong>
+                    Access Management
+                </strong>
+
+                <span>
+                    Maintain users, roles and permissions.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="responsibility-card">
+
+                <div class="responsibility-number">
+                    02
+                </div>
+
+                <i class="fa-solid fa-network-wired"></i>
+
+                <strong>
+                    Infrastructure
+                </strong>
+
+                <span>
+                    Monitor network and ICT equipment.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="responsibility-card">
+
+                <div class="responsibility-number">
+                    03
+                </div>
+
+                <i class="fa-solid fa-database"></i>
+
+                <strong>
+                    Data Protection
+                </strong>
+
+                <span>
+                    Protect institutional digital records.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="responsibility-card">
+
+                <div class="responsibility-number">
+                    04
+                </div>
+
+                <i class="fa-solid fa-headset"></i>
+
+                <strong>
+                    User Support
+                </strong>
+
+                <span>
+                    Support staff using the ERP.
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- ICT NOTICE                                                -->
+<!-- ========================================================= -->
+
+<section class="ict-notice">
+
+    <div class="notice-icon">
+        <i class="fa-solid fa-circle-info"></i>
+    </div>
+
+    <div>
+
+        <strong>
+            ICT Administration
+        </strong>
+
+        <p>
+            Use this dashboard to manage ERP access, maintain
+            user accounts, monitor system availability and
+            support the institution's digital operations.
+        </p>
+
+    </div>
+
+</section>
+
+
+</div>
+
+{% endblock %}
