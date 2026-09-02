@@ -100,19 +100,21 @@ class Graduation(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Automatically generate certificate number.
+        Automatically generate certificate number from the
+        graduation academic year.
 
         Example:
-        CERT/2027/00001
+        Academic Year 2027 -> CERT/2027/00001
         """
 
         if not self.certificate_number:
 
-            year = self.graduation_date.year
+            year = self.academic_year.year_name
             prefix = f"CERT/{year}/"
 
             last_record = (
-                Graduation.objects.filter(
+                Graduation.objects
+                .filter(
                     certificate_number__startswith=prefix
                 )
                 .order_by("-id")
