@@ -108,7 +108,7 @@ from datetime import timedelta
 
 @login_required
 def home(request):
-
+    principal_dashboard_requested = request.path == "/principal-dashboard/"
     context = {
         "active_year": AcademicYear.objects.filter(is_active=True).first(),
         "active_semester": Semester.objects.filter(is_active=True).first(),
@@ -212,7 +212,7 @@ def home(request):
     # ADMIN
     # ======================================================
 
-    elif request.user.is_superuser:
+    elif request.user.is_superuser and not principal_dashboard_requested:
 
         context.update({
 
@@ -238,9 +238,17 @@ def home(request):
     # ======================================================
     # PRINCIPAL
     # ======================================================
-
-    elif request.user.groups.filter(name="Principal").exists():
-
+    elif (
+        request.user.groups.filter(name="Principal").exists()
+        or (
+            principal_dashboard_requested
+            and (
+                request.user.is_superuser
+                or request.user.groups.filter(name="Administrator").exists()
+                or request.user.groups.filter(name="ICT Officer").exists()
+            )
+        )
+    ):
         # ==================================================
         # CURRENT / SELECTED ACADEMIC PERIOD
         # ==================================================
@@ -1532,10 +1540,10 @@ def home(request):
     # ICT OFFICER
     # ======================================================
 
-    elif request.user.groups.filter(
-        name="ICT Officer"
-    ).exists():
-
+    elif (
+        request.user.groups.filter(name="ICT Officer").exists()
+        and not principal_dashboard_requested
+    ):
         # --------------------------------------------------
         # ICT SYSTEM SUMMARY
         # --------------------------------------------------
@@ -1636,6 +1644,7 @@ def home(request):
         template,
         context,
     )
+
 
 
 @login_required
@@ -7223,5 +7232,6 @@ def lecturer_submission_detail(request, lecturer_id):
         context
 
     )
+
 
 

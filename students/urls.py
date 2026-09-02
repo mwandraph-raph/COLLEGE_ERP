@@ -17,6 +17,12 @@ urlpatterns = [
     ),
 
     path(
+        "principal-dashboard/",
+        views.home,
+        name="principal_dashboard",
+    ),
+
+    path(
         "students/",
         views.student_list,
         name="student_list",
