@@ -7,7 +7,7 @@ from students.models import (
 )
 
 from finance.models import FinancialClearance
-
+from students.services import sync_final_academic_completion
 
 # ==========================================================
 # ENROLLMENT HELPERS
@@ -868,27 +868,72 @@ def graduation_assessment(student):
         2. Financial clearance
         3. Programme / semester completion
 
-    Classification is calculated only after the student
-    satisfies all graduation requirements.
+    Before assessment begins, the system synchronizes the
+    student's final academic enrollment to COMPLETED when
+    the final semester has genuinely been completed.
+
+    IMPORTANT:
+
+    COMPLETED and APPROVED are separate workflow states.
+
+    COMPLETED
+        = Academic programme completion.
+
+    APPROVED
+        = Graduation approval.
     """
+
+    # ------------------------------------------------------
+    # SYNCHRONIZE FINAL ACADEMIC COMPLETION
+    # ------------------------------------------------------
+    #
+    # This does NOT approve graduation.
+    #
+    # It only ensures that when the student's final academic
+    # requirements are genuinely complete, the final
+    # SemesterEnrollment is marked COMPLETED.
+    #
+    sync_final_academic_completion(
+        student
+    )
+
+    # ------------------------------------------------------
+    # ACADEMIC ASSESSMENT
+    # ------------------------------------------------------
 
     academic = academic_assessment(
         student
     )
 
+    # ------------------------------------------------------
+    # FINANCIAL ASSESSMENT
+    # ------------------------------------------------------
+
     finance = finance_assessment(
         student
     )
 
+    # ------------------------------------------------------
+    # PROGRESSION / SEMESTER COMPLETION
+    # ------------------------------------------------------
+
     progression = progression_assessment(
         student
     )
+
+    # ------------------------------------------------------
+    # FINAL ELIGIBILITY
+    # ------------------------------------------------------
 
     eligible = (
         academic["status"]
         and finance["status"]
         and progression["status"]
     )
+
+    # ------------------------------------------------------
+    # COLLECT ALL ISSUES
+    # ------------------------------------------------------
 
     issues = []
 
@@ -919,6 +964,10 @@ def graduation_assessment(student):
         classification = graduation_classification(
             student
         )
+
+    # ------------------------------------------------------
+    # FINAL ASSESSMENT RESPONSE
+    # ------------------------------------------------------
 
     return {
         "eligible": eligible,

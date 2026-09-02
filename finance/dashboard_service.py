@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from decimal import Decimal
 import json
 
-from django.db.models import Sum, DecimalField
+from django.db.models import Sum, DecimalField, Count
 from django.db.models.functions import Coalesce, ExtractMonth
 
 from finance.models import (
@@ -55,7 +55,10 @@ def money_sum(queryset, field="amount"):
 # FINANCE DASHBOARD DATA
 # ==========================================================
 
-def get_finance_dashboard_data():
+def get_finance_dashboard_data(
+    selected_academic_year=None,
+    selected_semester=None,
+):
     """
     Central source of financial dashboard statistics.
 
@@ -122,6 +125,20 @@ def get_finance_dashboard_data():
             )
             .first()
         )
+
+    # ======================================================
+    # SELECTED FINANCE PERFORMANCE PERIOD
+    # ======================================================
+
+    performance_year = (
+        selected_academic_year
+        or active_academic_year
+    )
+
+    performance_semester = (
+        selected_semester
+        or active_semester
+    )
 
     # ======================================================
     # POSTED PAYMENTS
@@ -550,6 +567,271 @@ def get_finance_dashboard_data():
     ]
 
     # ======================================================
+    # FINANCE PERIOD PERFORMANCE
+    #
+    # Used by the Finance Period Performance section.
+    #
+    # This is deliberately separate from the main dashboard
+    # active-period KPIs so the Finance Officer can analyse
+    # another academic year / semester without changing the
+    # main dashboard's active-period logic.
+    # ======================================================
+
+    performance_invoices = posted_invoices
+
+    if performance_year:
+        performance_invoices = performance_invoices.filter(
+            enrollment__academic_year=performance_year
+        )
+
+    if performance_semester:
+        performance_invoices = performance_invoices.filter(
+            enrollment__semester=performance_semester
+        )
+
+    performance_payments = posted_payments
+
+    if performance_year:
+        performance_payments = performance_payments.filter(
+            invoice__enrollment__academic_year=performance_year
+        )
+
+    if performance_semester:
+        performance_payments = performance_payments.filter(
+            invoice__enrollment__semester=performance_semester
+        )
+
+    # ------------------------------------------------------
+    # PERIOD BILLING
+    # ------------------------------------------------------
+
+    period_gross_invoiced = money_sum(
+        performance_invoices,
+        "invoice_total",
+    )
+
+    period_collected = money_sum(
+        performance_payments,
+    )
+
+    period_outstanding = money_sum(
+        performance_invoices,
+        "balance_cached",
+    )
+
+    if period_outstanding < ZERO:
+        period_outstanding = ZERO
+
+    # ------------------------------------------------------
+    # PERIOD CREDIT
+    # ------------------------------------------------------
+
+    performance_student_ids = (
+        performance_invoices
+        .values_list(
+            "student_id",
+            flat=True,
+        )
+        .distinct()
+    )
+
+    period_credits_applied = money_sum(
+        StudentCredit.objects.filter(
+            student_id__in=performance_student_ids,
+            used_amount__gt=ZERO,
+        ),
+        "used_amount",
+    )
+
+    if period_credits_applied < ZERO:
+        period_credits_applied = ZERO
+
+    # ------------------------------------------------------
+    # PERIOD SETTLEMENT
+    # ------------------------------------------------------
+
+    period_settled_value = (
+        period_collected
+        + period_credits_applied
+    )
+
+    # ------------------------------------------------------
+    # PERIOD COLLECTION RATE
+    # ------------------------------------------------------
+
+    if period_gross_invoiced > ZERO:
+
+        period_collection_rate = round(
+            (
+                period_settled_value
+                / period_gross_invoiced
+            ) * Decimal("100"),
+            2,
+        )
+
+        period_collection_rate = min(
+            period_collection_rate,
+            Decimal("100.00"),
+        )
+
+    else:
+
+        period_collection_rate = ZERO
+
+    # ------------------------------------------------------
+    # PERIOD INVOICE COUNTS
+    # ------------------------------------------------------
+
+    period_pending_invoices = (
+        performance_invoices
+        .filter(
+            balance_cached__gt=ZERO
+        )
+        .count()
+    )
+
+    period_cleared_invoices = (
+        performance_invoices
+        .filter(
+            balance_cached__lte=ZERO
+        )
+        .count()
+    )
+
+    period_invoice_count = performance_invoices.count()
+
+    # ======================================================
+    # PERIOD COMPARISON
+    #
+    # Compare academic periods using the actual
+    # AcademicYear -> Semester relationships.
+    # ======================================================
+
+    comparison_rows = []
+
+    comparison_semesters = (
+        Semester.objects
+        .select_related("academic_year")
+        .order_by(
+            "academic_year__id",
+            "id",
+        )
+    )
+
+    for semester in comparison_semesters:
+
+        comparison_invoices = posted_invoices.filter(
+            enrollment__semester=semester
+        )
+
+        comparison_payments = posted_payments.filter(
+            invoice__enrollment__semester=semester
+        )
+
+        billed = money_sum(
+            comparison_invoices,
+            "invoice_total",
+        )
+
+        collected = money_sum(
+            comparison_payments,
+        )
+
+        outstanding = money_sum(
+            comparison_invoices,
+            "balance_cached",
+        )
+
+        if outstanding < ZERO:
+            outstanding = ZERO
+
+        student_ids = (
+            comparison_invoices
+            .values_list(
+                "student_id",
+                flat=True,
+            )
+            .distinct()
+        )
+
+        credits = money_sum(
+            StudentCredit.objects.filter(
+                student_id__in=student_ids,
+                used_amount__gt=ZERO,
+            ),
+            "used_amount",
+        )
+
+        settled = collected + credits
+
+        if billed > ZERO:
+
+            rate = round(
+                (
+                    settled
+                    / billed
+                ) * Decimal("100"),
+                2,
+            )
+
+            rate = min(
+                rate,
+                Decimal("100.00"),
+            )
+
+        else:
+
+            rate = ZERO
+
+        comparison_rows.append({
+            "year": semester.academic_year.year_name,
+            "semester": semester.semester_name,
+            "label": (
+                f"{semester.academic_year.year_name}"
+                f" · "
+                f"{semester.semester_name}"
+            ),
+            "billed": billed,
+            "collected": collected,
+            "settled": settled,
+            "outstanding": outstanding,
+            "rate": rate,
+        })
+
+    # ------------------------------------------------------
+    # Keep the chart readable.
+    #
+    # Show the most recent periods when there are many.
+    # ------------------------------------------------------
+
+    comparison_rows = comparison_rows[-8:]
+
+    period_comparison_labels = [
+        item["label"]
+        for item in comparison_rows
+    ]
+
+    period_billed_values = [
+        float(item["billed"])
+        for item in comparison_rows
+    ]
+
+    period_collected_values = [
+        float(item["collected"])
+        for item in comparison_rows
+    ]
+
+    period_collection_rate_values = [
+        float(item["rate"])
+        for item in comparison_rows
+    ]
+
+    period_outstanding_values = [
+        float(item["outstanding"])
+        for item in comparison_rows
+    ]
+
+    # ======================================================
     # RETURN DASHBOARD CONTEXT
     # ======================================================
 
@@ -561,6 +843,50 @@ def get_finance_dashboard_data():
 
         "active_academic_year": active_academic_year,
         "active_semester": active_semester,
+
+        # ==================================================
+        # FINANCE PERIOD PERFORMANCE
+        # ==================================================
+
+        "performance_year": performance_year,
+        "performance_semester": performance_semester,
+
+        "period_gross_invoiced": period_gross_invoiced,
+        "period_collected": period_collected,
+        "period_outstanding": period_outstanding,
+
+        "period_credits_applied": period_credits_applied,
+        "period_settled_value": period_settled_value,
+
+        "period_collection_rate": period_collection_rate,
+
+        "period_pending_invoices": period_pending_invoices,
+        "period_cleared_invoices": period_cleared_invoices,
+        "period_invoice_count": period_invoice_count,
+
+        # ==================================================
+        # FINANCE PERIOD COMPARISON CHARTS
+        # ==================================================
+
+        "period_comparison_labels": json.dumps(
+            period_comparison_labels
+        ),
+
+        "period_billed_values": json.dumps(
+            period_billed_values
+        ),
+
+        "period_collected_values": json.dumps(
+            period_collected_values
+        ),
+
+        "period_collection_rate_values": json.dumps(
+            period_collection_rate_values
+        ),
+
+        "period_outstanding_values": json.dumps(
+            period_outstanding_values
+        ),
 
         # ==================================================
         # COLLECTIONS

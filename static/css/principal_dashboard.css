@@ -1728,3 +1728,414 @@
 
 }
 
+/* =========================================================
+   XORADEX EDUCORE
+   FINANCE PERIOD PERFORMANCE
+========================================================= */
+
+#finance-period-performance {
+    scroll-margin-top: 90px;
+}
+
+.finance-period-performance {
+    width: 100%;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.finance-period-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 18px;
+}
+
+.finance-period-eyebrow,
+.finance-chart-eyebrow {
+    margin-bottom: 5px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.finance-period-title {
+    margin: 0;
+    color: #0f172a;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+}
+
+.finance-period-description {
+    max-width: 650px;
+    margin: 6px 0 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.finance-period-current {
+    min-width: 175px;
+    padding: 13px 16px;
+    border: 1px solid #dbe4ef;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.finance-period-current span {
+    display: block;
+    margin-bottom: 3px;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+.finance-period-current strong {
+    display: block;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.finance-period-current small {
+    display: block;
+    margin-top: 2px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   FILTER PANEL
+========================================================= */
+
+.finance-period-filter {
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+    margin-bottom: 16px;
+}
+
+.finance-period-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr)
+                           minmax(0, 1fr)
+                           190px;
+    gap: 12px;
+    align-items: end;
+}
+
+.finance-period-field label {
+    display: block;
+    margin-bottom: 6px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.finance-period-field .form-select {
+    height: 42px;
+    padding: 0 13px;
+    border: 1px solid #d7e0ea;
+    border-radius: 9px;
+    color: #1e293b;
+    background-color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.finance-period-field .form-select:focus {
+    border-color: #012169;
+    box-shadow: 0 0 0 3px rgba(1, 33, 105, 0.08);
+}
+
+.finance-analyse-btn {
+    width: 100%;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 9px;
+    background: #012169;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+    transition:
+        background 0.18s ease,
+        transform 0.18s ease;
+}
+
+.finance-analyse-btn:hover {
+    background: #003087;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   KPI GRID
+========================================================= */
+
+.finance-period-kpis {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.finance-period-metric {
+    min-width: 0;
+    padding: 17px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+}
+
+.finance-period-metric-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.finance-period-metric-label {
+    color: #64748b;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.finance-period-metric-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #012169;
+    font-size: 12px;
+}
+
+.finance-period-metric-value {
+    display: block;
+    margin-top: 13px;
+    color: #0f172a;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.finance-period-metric-note {
+    display: block;
+    margin-top: 4px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   COLLECTION RATE
+========================================================= */
+
+.finance-period-progress {
+    height: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+    border-radius: 10px;
+    background: #e2e8f0;
+}
+
+.finance-period-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #012169;
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.finance-period-summary {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+    margin-bottom: 16px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.finance-period-summary > div {
+    min-width: 0;
+    padding: 15px 17px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.finance-period-summary > div:last-child {
+    border-right: 0;
+}
+
+.finance-period-summary span {
+    display: block;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.finance-period-summary strong {
+    display: block;
+    margin-top: 5px;
+    color: #0f172a;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.finance-period-summary small {
+    display: block;
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   CHART AREA
+========================================================= */
+
+.finance-period-charts {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.7fr)
+        minmax(300px, 1fr);
+    gap: 12px;
+}
+
+.finance-period-chart-card {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+}
+
+.finance-period-chart-heading {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.finance-period-chart-heading h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.finance-period-chart-heading p {
+    margin: 4px 0 0;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.finance-period-chart {
+    position: relative;
+    width: 100%;
+    height: 285px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .finance-period-kpis {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .finance-period-charts {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .finance-period-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .finance-period-current {
+        width: 100%;
+    }
+
+    .finance-period-form {
+        grid-template-columns: 1fr;
+    }
+
+    .finance-period-kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .finance-period-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .finance-period-summary > div:nth-child(2) {
+        border-right: 0;
+    }
+
+    .finance-period-summary > div:nth-child(-n+2) {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .finance-period-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .finance-period-summary > div {
+        border-right: 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .finance-period-summary > div:last-child {
+        border-bottom: 0;
+    }
+
+    .finance-period-title {
+        font-size: 21px;
+    }
+
+}

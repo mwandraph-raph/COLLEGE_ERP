@@ -326,6 +326,208 @@ def validate_year_boundary_progression(
 
 
 @transaction.atomic
+def sync_final_academic_completion(student, user=None):
+    """
+    Synchronize a student's final academic enrollment to COMPLETED.
+
+    This function does NOT approve graduation.
+
+    It only confirms that the student has academically completed
+    the final programme level.
+
+    Requirements:
+    - Student must have an enrollment.
+    - Final programme level must be reached.
+    - Final enrollment must have registered units.
+    - Every registered unit must have a result.
+    - Every result must belong to a PUBLISHED ResultBatch.
+    - Every published result must be PASS.
+
+    COMPLETED means academic programme completion.
+    It does NOT mean graduation approval.
+    """
+
+    from students.models import (
+        SemesterEnrollment,
+        ProgressionLog,
+        ProgrammeLevel,
+        ResultBatch,
+    )
+
+    # ======================================================
+    # 1. GET STUDENT ENROLLMENTS
+    # ======================================================
+
+    enrollments = (
+        SemesterEnrollment.objects
+        .filter(
+            student=student
+        )
+        .select_related(
+            "programme_level",
+            "academic_year",
+            "semester",
+        )
+        .order_by(
+            "-academic_year__id",
+            "-semester__id",
+            "-id",
+        )
+    )
+
+    if not enrollments.exists():
+        return None
+
+    # ======================================================
+    # 2. DETERMINE STUDENT'S PROGRAMME
+    # ======================================================
+
+    first_enrollment = enrollments.first()
+
+    if not first_enrollment.programme_level:
+        return None
+
+    programme = first_enrollment.programme_level.programme
+
+    if not programme:
+        return None
+
+    # ======================================================
+    # 3. DETERMINE FINAL PROGRAMME LEVEL
+    # ======================================================
+
+    final_level = (
+        ProgrammeLevel.objects
+        .filter(
+            programme=programme,
+            is_active=True,
+        )
+        .order_by(
+            "-progression_order"
+        )
+        .first()
+    )
+
+    if not final_level:
+        return None
+
+    # ======================================================
+    # 4. FIND FINAL-LEVEL ENROLLMENT
+    # ======================================================
+
+    final_enrollment = (
+        enrollments
+        .filter(
+            programme_level=final_level
+        )
+        .order_by(
+            "-id"
+        )
+        .first()
+    )
+
+    if not final_enrollment:
+        return None
+
+    # ======================================================
+    # 5. ALREADY COMPLETED
+    # ======================================================
+
+    if (
+        final_enrollment.status
+        == SemesterEnrollment.COMPLETED
+    ):
+        return final_enrollment
+
+    # ======================================================
+    # 6. GET FINAL SEMESTER REGISTRATIONS
+    # ======================================================
+
+    registrations = list(
+        final_enrollment.registrations.all()
+        .select_related(
+            "unit",
+            "unit_offering",
+            "unit_offering__unit",
+            "result",
+            "result__batch",
+        )
+    )
+
+    if not registrations:
+        return None
+
+    # ======================================================
+    # 7. VALIDATE EVERY FINAL-SEMESTER RESULT
+    # ======================================================
+
+    for registration in registrations:
+
+        result = getattr(
+            registration,
+            "result",
+            None,
+        )
+
+        # --------------------------------------------------
+        # Missing result
+        # --------------------------------------------------
+
+        if not result:
+            return None
+
+        # --------------------------------------------------
+        # Result must belong to a batch
+        # --------------------------------------------------
+
+        batch = getattr(
+            result,
+            "batch",
+            None,
+        )
+
+        if not batch:
+            return None
+
+        # --------------------------------------------------
+        # Result must be PUBLISHED
+        # --------------------------------------------------
+
+        if batch.status != ResultBatch.PUBLISHED:
+            return None
+
+        # --------------------------------------------------
+        # Result must be PASS
+        # --------------------------------------------------
+
+        if result.remarks != "PASS":
+            return None
+
+    # ======================================================
+    # 8. MARK FINAL ENROLLMENT COMPLETED
+    # ======================================================
+
+    final_enrollment.status = (
+        SemesterEnrollment.COMPLETED
+    )
+
+    final_enrollment.save(
+        update_fields=[
+            "status",
+        ]
+    )
+
+    # ======================================================
+    # 9. RECORD COMPLETION IN PROGRESSION LOG
+    # ======================================================
+    ProgressionLog.objects.create(
+        student=student,
+        from_enrollment=final_enrollment,
+        action=ProgressionLog.COMPLETED,
+    )
+    return final_enrollment
+
+@transaction.atomic
 def progress_student(
     enrollment,
     user=None,
@@ -357,6 +559,43 @@ def progress_student(
     The financial check is performed server-side here so that
     progression cannot be bypassed through the user interface.
     """
+    if enrollment.status != SemesterEnrollment.ENROLLED:
+        raise ValueError(
+            f"Cannot progress this enrollment because its status is "
+            f"{enrollment.get_status_display()}."
+        )
+
+    # ==========================================================
+    # 0. VALIDATE CURRENT SEMESTER ENROLLMENT
+    #
+    # An old enrollment must never be progressed through a
+    # stale URL. Only the student's latest academic enrollment
+    # can be progressed.
+    # ==========================================================
+
+    latest_enrollment = (
+        SemesterEnrollment.objects
+        .filter(
+            student=enrollment.student,
+        )
+        .order_by(
+            "-academic_year_id",
+            "-semester_id",
+        )
+        .first()
+    )
+
+    if latest_enrollment is None:
+        raise ValueError(
+            "Cannot progress this student because no current "
+            "semester enrollment was found."
+        )
+
+    if latest_enrollment.id != enrollment.id:
+        raise ValueError(
+            "Cannot progress this enrollment because it is not "
+            "the student's current semester enrollment."
+        )
 
     # ==========================================================
     # 1. VALIDATE RESULTS

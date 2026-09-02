@@ -615,6 +615,150 @@ def home(request):
         )
 
         # ==================================================
+        # FINANCIAL ANALYTICS — SELECTED ACADEMIC PERIOD
+        # ==================================================
+
+        from finance.dashboard_service import (
+            get_finance_dashboard_data,
+        )
+
+        principal_finance_data = (
+            get_finance_dashboard_data(
+                selected_academic_year=selected_year,
+                selected_semester=selected_semester,
+            )
+        )
+
+        # ==================================================
+        # FINANCIAL ANALYTICS — PREVIOUS SEMESTER CREDIT
+        # ==================================================
+
+        from decimal import Decimal
+        from finance.models import StudentCredit
+
+        previous_semester = None
+
+        previous_credit_applied = Decimal("0.00")
+
+        if selected_semester:
+
+            # --------------------------------------------------
+            # Find the semester immediately before the selected
+            # semester.
+            #
+            # Semester IDs are chronological in this ERP.
+            # This also works when the previous semester belongs
+            # to the previous academic year.
+            # --------------------------------------------------
+
+            previous_semester = (
+                Semester.objects
+                .filter(
+                    id__lt=selected_semester.id
+                )
+                .order_by("-id")
+                .first()
+            )
+
+        if previous_semester:
+
+            # --------------------------------------------------
+            # Credit created from payments in the previous
+            # semester and subsequently used.
+            # --------------------------------------------------
+
+            previous_credit_applied = (
+                StudentCredit.objects
+                .filter(
+                    source_payment__invoice__enrollment__semester=
+                        previous_semester,
+                    source_payment__invoice__status="POSTED",
+                    source_payment__posting_status="POSTED",
+                    source_payment__is_reversed=False,
+                    used_amount__gt=0,
+                )
+                .aggregate(
+                    total=Coalesce(
+                        Sum("used_amount"),
+                        Value(0),
+                        output_field=DecimalField(
+                            max_digits=12,
+                            decimal_places=2,
+                        ),
+                    )
+                )
+                ["total"]
+                or Decimal("0.00")
+            )
+
+        # ==================================================
+        # CORRECT PRINCIPAL PERIOD VALUES
+        # ==================================================
+
+        period_gross_invoiced = (
+            principal_finance_data.get(
+                "period_gross_invoiced",
+                Decimal("0.00")
+            )
+            or Decimal("0.00")
+        )
+
+        period_collected = (
+            principal_finance_data.get(
+                "period_collected",
+                Decimal("0.00")
+            )
+            or Decimal("0.00")
+        )
+
+        # --------------------------------------------------
+        # SETTLED VALUE
+        #
+        # Current payments
+        # +
+        # Previous semester credit applied
+        # --------------------------------------------------
+
+        period_settled_value = (
+            period_collected
+            + previous_credit_applied
+        )
+
+        # --------------------------------------------------
+        # OUTSTANDING
+        #
+        # Invoice
+        # -
+        # Current payment
+        # -
+        # Previous credit
+        # --------------------------------------------------
+
+        period_outstanding = (
+            period_gross_invoiced
+            - period_settled_value
+        )
+
+        if period_outstanding < Decimal("0.00"):
+            period_outstanding = Decimal("0.00")
+
+        # --------------------------------------------------
+        # COLLECTION / SETTLEMENT RATE
+        # --------------------------------------------------
+
+        period_collection_rate = 0
+
+        if period_gross_invoiced > 0:
+
+            period_collection_rate = round(
+                (
+                    period_settled_value
+                    / period_gross_invoiced
+                ) * 100,
+                2
+            )
+
+        # ==================================================
         # PRINCIPAL CONTEXT
         # ==================================================
 
@@ -660,6 +804,80 @@ def home(request):
             "expected_revenue": expected_revenue,
 
             # ----------------------------------------------
+            # FINANCIAL ANALYTICS — SELECTED PERIOD
+            # ----------------------------------------------
+
+            "period_gross_invoiced":
+                period_gross_invoiced,
+
+            "period_collected":
+                period_collected,
+
+            "period_outstanding":
+                period_outstanding,
+
+            "period_collection_rate":
+                period_collection_rate,
+
+            "period_settled_value":
+                period_settled_value,
+
+            "period_previous_credit_applied":
+                previous_credit_applied,
+
+            "period_pending_invoices":
+                principal_finance_data.get(
+                    "period_pending_invoices",
+                    0
+                ),
+
+            "period_cleared_invoices":
+                principal_finance_data.get(
+                    "period_cleared_invoices",
+                    0
+                ),
+
+            "period_invoice_count":
+                principal_finance_data.get(
+                    "period_invoice_count",
+                    0
+                ),
+
+            # ----------------------------------------------
+            # FINANCIAL ANALYTICS — COMPARISON CHART
+            # ----------------------------------------------
+
+            "period_comparison_labels":
+                principal_finance_data.get(
+                    "period_comparison_labels",
+                    "[]"
+                ),
+
+            "period_billed_values":
+                principal_finance_data.get(
+                    "period_billed_values",
+                    "[]"
+                ),
+
+            "period_collected_values":
+                principal_finance_data.get(
+                    "period_collected_values",
+                    "[]"
+                ),
+
+            "period_collection_rate_values":
+                principal_finance_data.get(
+                    "period_collection_rate_values",
+                    "[]"
+                ),
+
+            "period_outstanding_values":
+                principal_finance_data.get(
+                    "period_outstanding_values",
+                    "[]"
+                ),
+
+            # ----------------------------------------------
             # GRADUATION
             # ----------------------------------------------
 
@@ -696,6 +914,22 @@ def home(request):
             "semesters": semesters,
             "selected_year": selected_year,
             "selected_semester": selected_semester,
+
+            # ----------------------------------------------
+            # FINANCE PERIOD ANALYTICS SELECTOR
+            # ----------------------------------------------
+
+            "finance_academic_years":
+                academic_years,
+
+            "finance_semesters":
+                semesters,
+
+            "selected_finance_year":
+                selected_year,
+
+            "selected_finance_semester":
+                selected_semester,
 
             # ----------------------------------------------
             # SEMESTER ENROLMENT
@@ -760,22 +994,34 @@ def home(request):
         })
 
 
-   # ======================================================
+
+    # ======================================================
     # FINANCE OFFICER
     # ======================================================
-
-    elif request.user.groups.filter(name="Finance Officer").exists():
+    elif request.user.groups.filter(
+        name="Finance Officer"
+    ).exists():
 
         from finance.dashboard_service import (
             get_finance_dashboard_data,
         )
+
+        # ==================================================
+        # FINANCE DASHBOARD DATA
+        # ==================================================
+
+        finance_data = get_finance_dashboard_data()
+
+        # ==================================================
+        # FINANCE CONTEXT
+        # ==================================================
 
         context.update({
             "dashboard_type": "finance",
         })
 
         context.update(
-            get_finance_dashboard_data()
+            finance_data
         )
 
     # ======================================================

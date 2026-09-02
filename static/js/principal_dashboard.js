@@ -283,5 +283,285 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+  /* =========================================================
+       STICKY FINANCIAL ANALYTICS
+    ========================================================= */
+    const analyseButton =
+        document.getElementById("financeAnalyseBtn");
+
+    const academicYear =
+        document.getElementById("financeAcademicYear");
+
+    const semester =
+        document.getElementById("financeSemester");
+
+    if (!analyseButton || !academicYear || !semester) {
+        return;
+    }
+
+    analyseButton.addEventListener("click", function () {
+
+        const yearId = academicYear.value;
+        const semesterId = semester.value;
+
+        if (!yearId || !semesterId) {
+            return;
+        }
+
+        const url = new URL(
+            window.location.href
+        );
+
+        /*
+         * Remove the old period selections.
+         */
+        url.searchParams.set(
+            "academic_year",
+            yearId
+        );
+
+        url.searchParams.set(
+            "semester",
+            semesterId
+        );
+
+        /*
+         * Return directly to Financial Analytics
+         * after Django reloads the dashboard.
+         */
+        window.location.href =
+            url.pathname +
+            "?" +
+            url.searchParams.toString() +
+            "#finance-period-performance";
+
+    });
+
+    /* =====================================================
+       BILLING VS COLLECTION
+    ===================================================== */
+
+    const collectionCanvas =
+        document.getElementById(
+            "financePeriodCollectionChart"
+        );
+
+    if (collectionCanvas && typeof Chart !== "undefined") {
+
+        const labels = JSON.parse(
+            collectionCanvas.dataset.labels || "[]"
+        );
+
+        const billed = JSON.parse(
+            collectionCanvas.dataset.billed || "[]"
+        );
+
+        const collected = JSON.parse(
+            collectionCanvas.dataset.collected || "[]"
+        );
+
+        new Chart(collectionCanvas, {
+
+            type: "bar",
+
+            data: {
+                labels: labels,
+
+                datasets: [
+                    {
+                        label: "Billed",
+                        data: billed,
+
+                        borderWidth: 1,
+                        borderRadius: 8,
+
+                        barPercentage: 0.65,
+                        categoryPercentage: 0.7
+                    },
+
+                    {
+                        label: "Collected",
+                        data: collected,
+
+                        borderWidth: 1,
+                        borderRadius: 8,
+
+                        barPercentage: 0.65,
+                        categoryPercentage: 0.7
+                    }
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: true,
+                        position: "top"
+                    },
+
+                    tooltip: {
+
+                        callbacks: {
+
+                            label: function (context) {
+
+                                return (
+                                    context.dataset.label +
+                                    ": KSh " +
+                                    Number(
+                                        context.parsed.y || 0
+                                    ).toLocaleString(
+                                        "en-KE",
+                                        {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        }
+                                    )
+                                );
+                            }
+                        }
+                    }
+                },
+
+                scales: {
+
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            callback: function (value) {
+
+                                return (
+                                    "KSh " +
+                                    Number(value).toLocaleString(
+                                        "en-KE"
+                                    )
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    /* =====================================================
+       COLLECTION RATE
+    ===================================================== */
+
+    const rateCanvas =
+        document.getElementById(
+            "financePeriodRateChart"
+        );
+
+    if (rateCanvas && typeof Chart !== "undefined") {
+
+        const labels = JSON.parse(
+            rateCanvas.dataset.labels || "[]"
+        );
+
+        const rates = JSON.parse(
+            rateCanvas.dataset.values || "[]"
+        );
+
+        new Chart(rateCanvas, {
+
+            type: "line",
+
+            data: {
+
+                labels: labels,
+
+                datasets: [
+                    {
+                        label: "Collection Rate",
+
+                        data: rates,
+
+                        fill: true,
+
+                        tension: 0.35,
+
+                        borderWidth: 3,
+
+                        pointRadius: 4,
+
+                        pointHoverRadius: 6
+                    }
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: true,
+                        position: "top"
+                    },
+
+                    tooltip: {
+
+                        callbacks: {
+
+                            label: function (context) {
+
+                                return (
+                                    "Collection Rate: " +
+                                    Number(
+                                        context.parsed.y || 0
+                                    ).toFixed(2) +
+                                    "%"
+                                );
+                            }
+                        }
+                    }
+                },
+
+                scales: {
+
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        suggestedMax: 100,
+
+                        ticks: {
+
+                            callback: function (value) {
+
+                                return value + "%";
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 
 });
