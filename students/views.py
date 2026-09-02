@@ -49,7 +49,10 @@ from django.core.paginator import Paginator
 from .utils import generate_admission_no
 from django.db import transaction
 from django.db.models import Count
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
+User = get_user_model()
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import (
     login_required,
