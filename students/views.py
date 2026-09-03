@@ -7236,5 +7236,3 @@ def lecturer_submission_detail(request, lecturer_id):
 
     )
 
-
-
