@@ -1,47 +1,145 @@
 /* =========================================================
-   XOR ADEX EDUCORE
+   XORADEX EDUCORE
    FINANCE DASHBOARD
-   PREMIUM INTERACTIVE ERP UI
+   PREMIUM GLASSMORPHISM ERP UI
+   NIBS-INSPIRED VISUAL STYLE
    ========================================================= */
 
 .finance-dashboard-page {
     --erp-navy: #012169;
     --erp-blue: #003087;
+    --erp-blue-light: #1769d1;
     --erp-blue-soft: #eaf1ff;
+
     --finance-teal: #0f766e;
     --finance-teal-dark: #0b5f59;
+    --finance-teal-light: #16a394;
     --finance-teal-soft: #e8f7f5;
 
     --success: #198754;
     --warning: #c58a00;
     --danger: #dc3545;
+    --purple: #6750a4;
 
-    --surface: #ffffff;
+    --surface: rgba(255, 255, 255, 0.82);
+    --surface-solid: #ffffff;
     --surface-soft: #f7f9fc;
 
-    --border: #e3e8f0;
-    --border-soft: #edf1f5;
+    --border: rgba(210, 220, 235, 0.72);
+    --border-soft: rgba(225, 231, 240, 0.72);
 
     --text: #172033;
     --text-soft: #657184;
     --text-muted: #8b95a5;
 
-    --shadow-sm: 0 5px 18px rgba(1, 33, 105, 0.055);
-    --shadow-md: 0 14px 32px rgba(1, 33, 105, 0.12);
-    --shadow-lg: 0 22px 48px rgba(1, 33, 105, 0.17);
+    --shadow-sm:
+        0 8px 24px rgba(1, 33, 105, 0.055);
+
+    --shadow-md:
+        0 16px 38px rgba(1, 33, 105, 0.10);
+
+    --shadow-lg:
+        0 24px 55px rgba(1, 33, 105, 0.15);
 
     width: 100%;
     min-width: 0;
+    min-height: 100%;
     overflow-x: hidden;
-    background: #f5f7fb;
+
+    position: relative;
+    isolation: isolate;
+
+    background:
+        radial-gradient(
+            circle at 8% 8%,
+            rgba(0, 48, 135, 0.055),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 92% 18%,
+            rgba(15, 118, 110, 0.055),
+            transparent 23%
+        ),
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(0, 48, 135, 0.035),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+       
+        );
+
     color: var(--text);
+     
 }
+
+
+/* =========================================================
+   BACKGROUND ATMOSPHERE
+   ========================================================= */
+
+.finance-dashboard-page::before {
+    content: "";
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    top: 180px;
+    right: -240px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(15, 118, 110, 0.075),
+            transparent 68%
+        );
+
+    pointer-events: none;
+    z-index: -1;
+}
+
+.finance-dashboard-page::after {
+    content: "";
+    position: absolute;
+
+    width: 360px;
+    height: 360px;
+
+    left: -220px;
+    bottom: 200px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0, 48, 135, 0.06),
+            transparent 68%
+        );
+
+    pointer-events: none;
+    z-index: -1;
+}
+
+
+/* =========================================================
+   GLOBAL BOX SIZING
+   ========================================================= */
 
 .finance-dashboard-page *,
 .finance-dashboard-page *::before,
 .finance-dashboard-page *::after {
     box-sizing: border-box;
 }
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
 
 .finance-dashboard-page .container-fluid {
     width: 100%;
@@ -83,6 +181,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+
     margin-bottom: 7px;
 
     font-size: 0.68rem;
@@ -95,24 +194,30 @@
 
 .finance-panel-eyebrow::before {
     content: "";
+
     width: 24px;
     height: 3px;
+
     border-radius: 99px;
 
-    background: linear-gradient(
-        90deg,
-        var(--erp-navy),
-        var(--finance-teal)
-    );
+    background:
+        linear-gradient(
+            90deg,
+            var(--erp-navy),
+            var(--finance-teal)
+        );
 }
 
 .finance-section-heading h2 {
     margin: 0;
+
     color: var(--erp-navy);
 
     font-size: 1.35rem;
     font-weight: 800;
     line-height: 1.25;
+
+    letter-spacing: -0.02em;
 }
 
 .finance-section-heading p {
@@ -120,6 +225,7 @@
     margin: 7px 0 0;
 
     color: var(--text-soft);
+
     font-size: 0.84rem;
     line-height: 1.6;
 }
@@ -132,48 +238,61 @@
 .finance-hero {
     position: relative;
     overflow: hidden;
+
     min-height: 155px;
+
     padding: 15px 18px;
     margin: 0 0 20px;
-    border-radius: 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 24px;
+
     background:
         radial-gradient(
-            circle at 85% 15%,
-            rgba(255,255,255,0.15),
+            circle at 82% 15%,
+            rgba(255, 255, 255, 0.16),
             transparent 25%
         ),
         radial-gradient(
-            circle at 90% 100%,
-            rgba(15,118,110,0.40),
+            circle at 92% 100%,
+            rgba(15, 118, 110, 0.42),
             transparent 38%
+        ),
+        radial-gradient(
+            circle at 45% 120%,
+            rgba(23, 105, 209, 0.22),
+            transparent 35%
         ),
         linear-gradient(
             135deg,
-            var(--erp-navy) 0%,
-            var(--erp-blue) 52%,
+            #011b59 0%,
+            var(--erp-navy) 32%,
+            var(--erp-blue) 63%,
             #075e63 100%
         );
 
     color: #fff;
 
     box-shadow:
-        0 14px 35px rgba(1,33,105,0.18);
+        0 20px 48px rgba(1, 33, 105, 0.20),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 .finance-hero::before {
     content: "";
 
     position: absolute;
+
     width: 340px;
     height: 340px;
 
     right: -90px;
     top: -190px;
 
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid rgba(255, 255, 255, 0.13);
     border-radius: 50%;
 
-    background: rgba(255,255,255,0.025);
+    background: rgba(255, 255, 255, 0.025);
 
     animation: financeHeroFloat 7s ease-in-out infinite;
 }
@@ -182,6 +301,7 @@
     content: "";
 
     position: absolute;
+
     width: 220px;
     height: 220px;
 
@@ -190,9 +310,15 @@
 
     border-radius: 50%;
 
-    background: rgba(15,118,110,0.22);
+    background:
+        radial-gradient(
+            circle,
+            rgba(15, 118, 110, 0.28),
+            transparent 68%
+        );
 
-    animation: financeHeroFloat 9s ease-in-out infinite reverse;
+    animation:
+        financeHeroFloat 9s ease-in-out infinite reverse;
 }
 
 .finance-hero > .row {
@@ -207,7 +333,7 @@
 
     margin-bottom: 13px;
 
-    color: rgba(255,255,255,0.78);
+    color: rgba(255, 255, 255, 0.78);
 
     font-size: 0.70rem;
     font-weight: 800;
@@ -221,11 +347,15 @@
 
 .finance-hero-title {
     margin: 0;
+
     color: #fff;
+
     font-size: clamp(1.9rem, 3vw, 2.75rem);
     font-weight: 400;
-    line-height: 1.00;
-    letter-spacing: -0.03em;
+
+    line-height: 1;
+
+    letter-spacing: -0.035em;
 }
 
 .finance-hero-title .officer-name {
@@ -234,8 +364,11 @@
 
 .finance-hero-description {
     max-width: 680px;
+
     margin: 15px 0 24px;
-    color: rgba(255,255,255,0.74);
+
+    color: rgba(255, 255, 255, 0.74);
+
     font-size: 0.92rem;
     line-height: 1.65;
 }
@@ -252,30 +385,50 @@
     gap: 9px;
 
     min-height: 38px;
+
     padding: 8px 14px;
 
-    border: 1px solid rgba(255,255,255,0.14);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 999px;
 
-    background: rgba(255,255,255,0.08);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.12),
+            rgba(255, 255, 255, 0.045)
+        );
 
-    color: rgba(255,255,255,0.86);
+    color: rgba(255, 255, 255, 0.88);
 
     font-size: 0.74rem;
 
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.10);
 
     transition:
         transform 0.25s ease,
         background 0.25s ease,
-        border-color 0.25s ease;
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
 .finance-chip:hover {
     transform: translateY(-3px);
 
-    background: rgba(255,255,255,0.14);
-    border-color: rgba(255,255,255,0.25);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.18),
+            rgba(255, 255, 255, 0.08)
+        );
+
+    border-color: rgba(255, 255, 255, 0.27);
+
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
 .finance-chip i {
@@ -293,9 +446,11 @@
 
 .finance-hero-visual {
     position: relative;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     min-height: 190px;
 }
 
@@ -307,26 +462,37 @@
     width: 155px;
     height: 155px;
 
-    border: 1px solid rgba(255,255,255,0.16);
-    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 42px;
 
-    background: rgba(255,255,255,0.09);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.14),
+            rgba(255, 255, 255, 0.045)
+        );
 
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.12),
-        0 22px 45px rgba(0,0,0,0.16);
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+        0 24px 50px rgba(0, 0, 0, 0.18);
 
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 
-    animation: financeIconFloat 5s ease-in-out infinite;
+    animation:
+        financeIconFloat 5s ease-in-out infinite;
 }
 
 .finance-hero-icon-box i {
     color: #fff;
+
     font-size: 4.1rem;
 
     filter:
-        drop-shadow(0 8px 16px rgba(0,0,0,0.18));
+        drop-shadow(
+            0 8px 16px rgba(0, 0, 0, 0.18)
+        );
 }
 
 .finance-float-stat {
@@ -338,20 +504,26 @@
 
     padding: 10px 15px;
 
-    border: 1px solid rgba(255,255,255,0.16);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 999px;
 
-    background: rgba(255,255,255,0.12);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.15),
+            rgba(255, 255, 255, 0.055)
+        );
 
     color: #fff;
 
     font-size: 0.73rem;
     font-weight: 750;
 
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 
     box-shadow:
-        0 10px 24px rgba(0,0,0,0.12);
+        0 12px 28px rgba(0, 0, 0, 0.12);
 }
 
 .finance-float-stat.bottom {
@@ -365,43 +537,91 @@
 
 
 /* =========================================================
-   SERVICES
+   SERVICES SECTION
    ========================================================= */
 
 .finance-services-section {
+    position: relative;
+    overflow: hidden;
+
     padding: 28px;
 
-    border: 1px solid var(--border);
-    border-radius: 20px;
+    border: 1px solid rgba(214, 222, 235, 0.78);
+    border-radius: 24px;
 
-    background: #fff;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.90),
+            rgba(248, 251, 255, 0.76)
+        );
 
-    box-shadow: var(--shadow-sm);
+    box-shadow:
+        0 10px 32px rgba(1, 33, 105, 0.055),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
+
+.finance-services-section::before {
+    content: "";
+
+    position: absolute;
+
+    width: 240px;
+    height: 240px;
+
+    right: -120px;
+    top: -120px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(15, 118, 110, 0.06),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   SERVICE CARDS
+   ========================================================= */
 
 .finance-service-card {
     position: relative;
-
     display: flex;
     align-items: center;
     gap: 15px;
-
     width: 100%;
     min-height: 96px;
-
     padding: 18px;
-
-    border: 1px solid var(--border);
-    border-radius: 17px;
-
-    background: #fff;
+    border: 1px solid rgba(214, 223, 236, 0.72);
+    border-radius: 19px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.82),
+            rgba(246, 250, 255, 0.67)
+        );
 
     text-decoration: none;
 
     overflow: hidden;
 
+    box-shadow:
+        0 8px 22px rgba(1, 33, 105, 0.045),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
     transition:
-        transform 0.3s cubic-bezier(.2,.8,.2,1),
+        transform 0.3s cubic-bezier(.2, .8, .2, 1),
         box-shadow 0.3s ease,
         border-color 0.25s ease,
         background 0.25s ease;
@@ -411,6 +631,7 @@
     content: "";
 
     position: absolute;
+
     left: 0;
     top: 0;
     bottom: 0;
@@ -427,22 +648,62 @@
     transform: scaleY(0);
     transform-origin: center;
 
-    transition: transform 0.3s ease;
+    transition:
+        transform 0.3s ease;
 }
 
+.finance-service-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 120px;
+    height: 120px;
+
+    right: -65px;
+    bottom: -70px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(15, 118, 110, 0.10),
+            transparent 68%
+        );
+
+    opacity: 0;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.4s ease;
+}
+
+
 .finance-service-card:hover {
-    transform: translateY(-7px) scale(1.025);
+    transform: translateY(-7px) scale(1.018);
 
-    border-color: #cbd8ea;
+    border-color: rgba(0, 48, 135, 0.18);
 
-    background: #fbfdff;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.94),
+            rgba(243, 249, 255, 0.82)
+        );
 
     box-shadow:
-        0 18px 35px rgba(1,33,105,0.13);
+        0 20px 42px rgba(1, 33, 105, 0.12),
+        0 5px 15px rgba(15, 118, 110, 0.05);
 }
 
 .finance-service-card:hover::before {
     transform: scaleY(1);
+}
+
+.finance-service-card:hover::after {
+    opacity: 1;
+    transform: scale(1.4);
 }
 
 .finance-service-icon {
@@ -455,37 +716,61 @@
     width: 47px;
     height: 47px;
 
+    border: 1px solid rgba(0, 48, 135, 0.06);
     border-radius: 14px;
 
-    background: var(--erp-blue-soft);
+    background:
+        linear-gradient(
+            135deg,
+            #edf3ff,
+            #e4edff
+        );
+
     color: var(--erp-blue);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
     transition:
         transform 0.3s ease,
         background 0.3s ease,
-        color 0.3s ease;
+        color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 .finance-service-card:hover .finance-service-icon {
     transform: scale(1.14) rotate(-5deg);
 
-    background: var(--finance-teal-soft);
+    background:
+        linear-gradient(
+            135deg,
+            var(--finance-teal-soft),
+            #dff5f1
+        );
+
     color: var(--finance-teal);
+
+    box-shadow:
+        0 10px 22px rgba(15, 118, 110, 0.12);
 }
 
 .finance-service-content {
     display: flex;
     flex-direction: column;
     gap: 4px;
+
     min-width: 0;
     flex: 1;
 }
 
 .finance-service-content strong {
     color: var(--text);
+
     font-size: 0.86rem;
     font-weight: 800;
-    transition: color 0.2s ease;
+
+    transition:
+        color 0.2s ease;
 }
 
 .finance-service-card:hover .finance-service-content strong {
@@ -494,14 +779,18 @@
 
 .finance-service-content small {
     color: var(--text-soft);
-    font-size: 0.90rem;
+
+    font-size: 0.67rem;
     line-height: 1.45;
 }
 
 .finance-service-arrow {
     flex: 0 0 auto;
+
     color: #a2aab7;
+
     font-size: 0.72rem;
+
     transition:
         transform 0.3s ease,
         color 0.3s ease;
@@ -520,52 +809,76 @@
 
 .fin-kpi-link {
     display: block;
+
     height: 100%;
+
     color: inherit;
     text-decoration: none;
-    border-radius: 20px;
+
+    border-radius: 21px;
 }
 
 .fin-kpi-card {
+
     position: relative;
 
     display: flex;
+
     flex-direction: column;
 
     min-height: 190px;
 
     padding: 21px;
 
-    border: 1px solid var(--border);
-    border-radius: 19px;
+    border: 1px solid rgba(255, 255, 255, 0.58);
 
-    background: #fff;
+    border-radius: 21px;
 
-    box-shadow: var(--shadow-sm);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.48),
+            rgba(245, 250, 255, 0.30)
+        );
+
+    box-shadow:
+        0 12px 32px rgba(1, 33, 105, 0.075),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+
+    backdrop-filter: blur(20px) saturate(145%);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
 
     overflow: hidden;
 
     cursor: pointer;
 
-    transform: translateY(0) scale(1);
+    transform:
+        translateY(0)
+        scale(1);
 
     transition:
-        transform 0.32s cubic-bezier(.2,.8,.2,1),
+        transform 0.32s cubic-bezier(.2, .8, .2, 1),
         box-shadow 0.32s ease,
-        border-color 0.25s ease;
+        border-color 0.25s ease,
+        background 0.25s ease;
 }
 
 
-/* Top gradient line */
+/* KPI TOP GRADIENT LINE */
 
 .fin-kpi-card::before {
+
     content: "";
 
     position: absolute;
+
     left: 0;
+
     top: 0;
 
     width: 100%;
+
     height: 4px;
 
     background:
@@ -577,31 +890,41 @@
         );
 
     transform: scaleX(0);
+
     transform-origin: left;
 
     transition:
-        transform 0.4s cubic-bezier(.2,.8,.2,1);
+        transform 0.4s cubic-bezier(.2, .8, .2, 1);
 }
 
 
-/* Decorative glow */
+/* KPI DECORATIVE GLASS GLOW */
 
 .fin-kpi-card::after {
+
     content: "";
 
     position: absolute;
 
-    width: 150px;
-    height: 150px;
+    width: 190px;
 
-    right: -65px;
-    bottom: -65px;
+    height: 190px;
+
+    right: -85px;
+
+    bottom: -85px;
 
     border-radius: 50%;
 
-    background: currentColor;
+    background:
+        radial-gradient(
+            circle,
+            currentColor 0%,
+            rgba(255, 255, 255, 0.08) 35%,
+            transparent 70%
+        );
 
-    opacity: 0.035;
+    opacity: 0.055;
 
     transform: scale(1);
 
@@ -611,29 +934,47 @@
 }
 
 
-/* REAL CARD ZOOM */
+/* KPI HOVER */
 
 .fin-kpi-link:hover .fin-kpi-card {
-    transform: translateY(-9px) scale(1.045);
 
-    border-color: rgba(0,48,135,0.22);
+    transform:
+        translateY(-8px)
+        scale(1.025);
+
+    border-color:
+        rgba(255, 255, 255, 0.82);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.62),
+            rgba(241, 248, 255, 0.40)
+        );
 
     box-shadow:
-        0 22px 42px rgba(1,33,105,0.15),
-        0 4px 12px rgba(15,118,110,0.07);
+        0 22px 45px rgba(1, 33, 105, 0.13),
+        0 5px 18px rgba(15, 118, 110, 0.055),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
+
 .fin-kpi-link:hover .fin-kpi-card::before {
+
     transform: scaleX(1);
 }
 
+
 .fin-kpi-link:hover .fin-kpi-card::after {
-    transform: scale(1.6);
-    opacity: 0.065;
+
+    transform: scale(1.5);
+
+    opacity: 0.08;
 }
 
-
-/* KPI TOP */
+/* =========================================================
+   KPI TOP
+   ========================================================= */
 
 .fin-kpi-top {
     position: relative;
@@ -647,7 +988,9 @@
 }
 
 
-/* KPI ICON */
+/* =========================================================
+   KPI ICON
+   ========================================================= */
 
 .fin-kpi-icon {
     display: flex;
@@ -657,29 +1000,37 @@
     width: 44px;
     height: 44px;
 
+    border: 1px solid rgba(0, 48, 135, 0.05);
     border-radius: 13px;
 
     font-size: 1rem;
 
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
     transform: scale(1);
 
     transition:
-        transform 0.3s cubic-bezier(.2,.8,.2,1),
+        transform 0.3s cubic-bezier(.2, .8, .2, 1),
         border-radius 0.3s ease,
         box-shadow 0.3s ease;
 }
 
 .fin-kpi-link:hover .fin-kpi-icon {
-    transform: scale(1.17) rotate(-6deg);
+    transform:
+        scale(1.17)
+        rotate(-6deg);
 
     border-radius: 15px;
 
     box-shadow:
-        0 9px 20px rgba(1,33,105,0.14);
+        0 9px 20px rgba(1, 33, 105, 0.14);
 }
 
 
-/* KPI VALUE */
+/* =========================================================
+   KPI VALUE
+   ========================================================= */
 
 .fin-kpi-value {
     position: relative;
@@ -687,14 +1038,18 @@
 
     display: flex;
     align-items: baseline;
+
     gap: 6px;
 
     margin-top: 21px;
 
     color: var(--text);
 
-    font-size: clamp(1.35rem, 2vw, 1.85rem);
+    font-size:
+        clamp(1.35rem, 2vw, 1.85rem);
+
     font-weight: 850;
+
     line-height: 1.1;
 
     word-break: break-word;
@@ -718,7 +1073,9 @@
 }
 
 
-/* KPI LABEL */
+/* =========================================================
+   KPI LABEL
+   ========================================================= */
 
 .fin-kpi-label {
     position: relative;
@@ -738,11 +1095,14 @@
 
 .fin-kpi-link:hover .fin-kpi-label {
     color: var(--erp-blue);
+
     transform: translateX(2px);
 }
 
 
-/* KPI SUB */
+/* =========================================================
+   KPI SUB
+   ========================================================= */
 
 .fin-kpi-sub {
     position: relative;
@@ -754,7 +1114,8 @@
 
     font-size: 0.69rem;
 
-    transition: color 0.25s ease;
+    transition:
+        color 0.25s ease;
 }
 
 .fin-kpi-link:hover .fin-kpi-sub {
@@ -762,7 +1123,9 @@
 }
 
 
-/* KPI STATUS */
+/* =========================================================
+   KPI STATUS
+   ========================================================= */
 
 .fin-kpi-trend {
     position: relative;
@@ -770,13 +1133,16 @@
 
     display: inline-flex;
     align-items: center;
+
     gap: 5px;
 
     padding: 5px 9px;
 
+    border: 1px solid rgba(100, 116, 139, 0.08);
     border-radius: 999px;
 
-    background: #f2f5f8;
+    background:
+        rgba(242, 245, 248, 0.78);
 
     color: #687385;
 
@@ -792,8 +1158,11 @@
 .fin-kpi-link:hover .fin-kpi-trend {
     transform: translateY(-3px);
 
-    background: var(--finance-teal-soft);
-    color: var(--finance-teal);
+    background:
+        var(--finance-teal-soft);
+
+    color:
+        var(--finance-teal);
 }
 
 
@@ -806,7 +1175,13 @@
 }
 
 .fin-kpi-primary .fin-kpi-icon {
-    background: var(--erp-blue-soft);
+    background:
+        linear-gradient(
+            135deg,
+            #edf3ff,
+            #e2ecff
+        );
+
     color: var(--erp-blue);
 }
 
@@ -815,7 +1190,13 @@
 }
 
 .fin-kpi-danger .fin-kpi-icon {
-    background: #fff0f1;
+    background:
+        linear-gradient(
+            135deg,
+            #fff3f4,
+            #ffe8ea
+        );
+
     color: var(--danger);
 }
 
@@ -824,7 +1205,13 @@
 }
 
 .fin-kpi-warning .fin-kpi-icon {
-    background: #fff7e4;
+    background:
+        linear-gradient(
+            135deg,
+            #fff9eb,
+            #fff1cf
+        );
+
     color: var(--warning);
 }
 
@@ -833,7 +1220,13 @@
 }
 
 .fin-kpi-success .fin-kpi-icon {
-    background: var(--finance-teal-soft);
+    background:
+        linear-gradient(
+            135deg,
+            #eaf9f6,
+            #dcf4ef
+        );
+
     color: var(--finance-teal);
 }
 
@@ -842,7 +1235,13 @@
 }
 
 .fin-kpi-info .fin-kpi-icon {
-    background: var(--erp-blue-soft);
+    background:
+        linear-gradient(
+            135deg,
+            #edf3ff,
+            #e2ecff
+        );
+
     color: var(--erp-blue);
 }
 
@@ -851,7 +1250,13 @@
 }
 
 .fin-kpi-secondary .fin-kpi-icon {
-    background: #f0f3f7;
+    background:
+        linear-gradient(
+            135deg,
+            #f3f5f8,
+            #e9edf2
+        );
+
     color: #64748b;
 }
 
@@ -860,7 +1265,13 @@
 }
 
 .fin-kpi-gold .fin-kpi-icon {
-    background: #fff7e7;
+    background:
+        linear-gradient(
+            135deg,
+            #fff9ed,
+            #fff0d1
+        );
+
     color: #b7791f;
 }
 
@@ -869,7 +1280,13 @@
 }
 
 .fin-kpi-purple .fin-kpi-icon {
-    background: var(--erp-blue-soft);
+    background:
+        linear-gradient(
+            135deg,
+            #edf3ff,
+            #e2ecff
+        );
+
     color: var(--erp-blue);
 }
 
@@ -887,12 +1304,22 @@
     width: 100%;
     min-width: 0;
 
-    border: 1px solid var(--border);
-    border-radius: 19px;
+    border: 1px solid rgba(214, 223, 236, 0.72);
+    border-radius: 21px;
 
-    background: #fff;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.87),
+            rgba(248, 251, 255, 0.72)
+        );
 
-    box-shadow: var(--shadow-sm);
+    box-shadow:
+        0 9px 28px rgba(1, 33, 105, 0.055),
+        inset 0 1px 0 rgba(255, 255, 255, 0.94);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 
     overflow: hidden;
 
@@ -905,21 +1332,31 @@
 .fin-widget:hover {
     transform: translateY(-4px);
 
-    border-color: #d5dfed;
+    border-color:
+        rgba(0, 48, 135, 0.15);
 
     box-shadow:
-        0 16px 34px rgba(1,33,105,0.10);
+        0 19px 38px rgba(1, 33, 105, 0.10);
 }
 
 .fin-widget-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+
     gap: 20px;
 
     padding: 21px 22px;
 
-    border-bottom: 1px solid var(--border-soft);
+    border-bottom:
+        1px solid rgba(225, 231, 240, 0.75);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.34),
+            rgba(246, 249, 253, 0.18)
+        );
 }
 
 .fin-widget-title {
@@ -946,6 +1383,7 @@
 
 .fin-widget-body {
     flex: 1;
+
     min-width: 0;
 
     padding: 22px;
@@ -961,10 +1399,15 @@
 
     padding: 15px;
 
-    border: 1px solid var(--border-soft);
-    border-radius: 14px;
+    border: 1px solid rgba(225, 231, 240, 0.72);
+    border-radius: 15px;
 
-    background: var(--surface-soft);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(247, 249, 252, 0.82),
+            rgba(255, 255, 255, 0.62)
+        );
 
     transition:
         transform 0.25s ease,
@@ -976,12 +1419,14 @@
 .fin-mini-stat:hover {
     transform: translateY(-4px);
 
-    border-color: #d3deec;
+    border-color:
+        rgba(0, 48, 135, 0.14);
 
-    background: #fff;
+    background:
+        rgba(255, 255, 255, 0.90);
 
     box-shadow:
-        0 8px 20px rgba(1,33,105,0.07);
+        0 10px 24px rgba(1, 33, 105, 0.07);
 }
 
 .fin-mini-stat small {
@@ -1016,7 +1461,12 @@
 
     border-radius: 999px;
 
-    background: #e8edf4;
+    background:
+        linear-gradient(
+            90deg,
+            #e8edf4,
+            #edf1f6
+        );
 }
 
 .fin-progress-bar {
@@ -1030,7 +1480,11 @@
             var(--finance-teal)
         );
 
-    animation: financeProgress 1.2s ease-out;
+    box-shadow:
+        0 0 10px rgba(15, 118, 110, 0.18);
+
+    animation:
+        financeProgress 1.2s ease-out;
 }
 
 .fin-progress-sm {
@@ -1040,23 +1494,44 @@
 
     border-radius: 999px;
 
-    background: #edf0f4;
+    background:
+        #edf0f4;
 }
 
 .fin-progress-bar-mpesa {
-    background: var(--finance-teal);
+    background:
+        linear-gradient(
+            90deg,
+            #0f766e,
+            #16a394
+        );
 }
 
 .fin-progress-bar-bank {
-    background: var(--erp-blue);
+    background:
+        linear-gradient(
+            90deg,
+            #012169,
+            #1769d1
+        );
 }
 
 .fin-progress-bar-cash {
-    background: var(--warning);
+    background:
+        linear-gradient(
+            90deg,
+            #c58a00,
+            #d9a62b
+        );
 }
 
 .fin-progress-bar-other {
-    background: #64748b;
+    background:
+        linear-gradient(
+            90deg,
+            #64748b,
+            #8492a6
+        );
 }
 
 
@@ -1067,12 +1542,14 @@
 .fin-legend {
     display: flex;
     flex-direction: column;
+
     gap: 13px;
 }
 
 .fin-legend-item {
     display: flex;
     align-items: center;
+
     gap: 8px;
 
     min-width: 0;
@@ -1084,6 +1561,7 @@
     flex: 0 0 105px;
 
     color: #596476;
+
     font-weight: 600;
 }
 
@@ -1112,18 +1590,30 @@
 
 .fin-dot-mpesa {
     background: var(--finance-teal);
+
+    box-shadow:
+        0 0 0 4px rgba(15, 118, 110, 0.08);
 }
 
 .fin-dot-bank {
     background: var(--erp-blue);
+
+    box-shadow:
+        0 0 0 4px rgba(0, 48, 135, 0.07);
 }
 
 .fin-dot-cash {
     background: var(--warning);
+
+    box-shadow:
+        0 0 0 4px rgba(197, 138, 0, 0.08);
 }
 
 .fin-dot-other {
     background: #64748b;
+
+    box-shadow:
+        0 0 0 4px rgba(100, 116, 139, 0.07);
 }
 
 
@@ -1164,7 +1654,7 @@
     transform: scale(1.13);
 
     box-shadow:
-        0 7px 15px rgba(1,33,105,0.10);
+        0 7px 15px rgba(1, 33, 105, 0.10);
 }
 
 .fin-billing-stat strong {
@@ -1191,7 +1681,8 @@
 
     padding: 12px 0;
 
-    border-bottom: 1px solid var(--border-soft);
+    border-bottom:
+        1px solid var(--border-soft);
 
     font-size: 0.74rem;
 }
@@ -1207,11 +1698,13 @@
 
 .fin-stat-mini span i {
     margin-right: 7px;
+
     color: var(--erp-blue);
 }
 
 .fin-stat-mini strong {
     color: var(--erp-navy);
+
     font-weight: 800;
 }
 
@@ -1237,6 +1730,7 @@
 
 .fin-link:hover {
     color: var(--finance-teal);
+
     transform: translateX(3px);
 }
 
@@ -1246,6 +1740,7 @@
 
     padding: 6px 10px;
 
+    border: 1px solid rgba(15, 118, 110, 0.08);
     border-radius: 999px;
 
     font-size: 0.63rem;
@@ -1255,8 +1750,11 @@
 }
 
 .fin-pill.success {
-    background: var(--finance-teal-soft);
-    color: var(--finance-teal);
+    background:
+        var(--finance-teal-soft);
+
+    color:
+        var(--finance-teal);
 }
 
 
@@ -1275,6 +1773,7 @@
 
 .fin-chart-box-sm {
     height: 320px;
+
     min-height: 320px;
 }
 
@@ -1315,12 +1814,22 @@
 
     margin-bottom: 16px;
 
+    border: 1px solid rgba(0, 48, 135, 0.05);
     border-radius: 18px;
 
-    background: var(--erp-blue-soft);
+    background:
+        linear-gradient(
+            135deg,
+            #edf3ff,
+            #e3edff
+        );
+
     color: var(--erp-blue);
 
     font-size: 1.35rem;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
     transition:
         transform 0.3s ease,
@@ -1329,10 +1838,19 @@
 }
 
 .fin-empty-state:hover .fin-empty-icon {
-    transform: scale(1.1) translateY(-4px);
+    transform:
+        scale(1.1)
+        translateY(-4px);
 
-    background: var(--finance-teal-soft);
-    color: var(--finance-teal);
+    background:
+        linear-gradient(
+            135deg,
+            var(--finance-teal-soft),
+            #dcf5f0
+        );
+
+    color:
+        var(--finance-teal);
 }
 
 .fin-empty-state h3 {
@@ -1358,52 +1876,82 @@
    ========================================================= */
 
 .finance-dashboard-page .btn-outline-primary {
-    border-color: #c8d5e8;
+    border: 1px solid #c8d5e8;
+    border-radius: 10px;
 
-    background: #fff;
+    background:
+        rgba(255, 255, 255, 0.72);
 
     color: var(--erp-blue);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
     transition:
         transform 0.25s ease,
         background 0.25s ease,
         color 0.25s ease,
+        border-color 0.25s ease,
         box-shadow 0.25s ease;
 }
 
 .finance-dashboard-page .btn-outline-primary:hover {
     transform: translateY(-3px);
 
-    border-color: var(--erp-blue);
+    border-color:
+        var(--erp-blue);
 
-    background: var(--erp-blue);
+    background:
+        linear-gradient(
+            135deg,
+            var(--erp-blue),
+            var(--erp-navy)
+        );
+
     color: #fff;
 
     box-shadow:
-        0 8px 18px rgba(1,33,105,0.15);
+        0 10px 22px rgba(1, 33, 105, 0.15);
 }
 
 .finance-dashboard-page .btn-primary {
-    border-color: var(--erp-blue);
+    border: 1px solid var(--erp-blue);
+    border-radius: 10px;
 
-    background: var(--erp-blue);
+    background:
+        linear-gradient(
+            135deg,
+            var(--erp-blue),
+            var(--erp-navy)
+        );
+
     color: #fff;
+
+    box-shadow:
+        0 8px 18px rgba(1, 33, 105, 0.13);
 
     transition:
         transform 0.25s ease,
         background 0.25s ease,
+        border-color 0.25s ease,
         box-shadow 0.25s ease;
 }
 
 .finance-dashboard-page .btn-primary:hover {
     transform: translateY(-3px);
 
-    border-color: var(--erp-navy);
+    border-color:
+        var(--erp-navy);
 
-    background: var(--erp-navy);
+    background:
+        linear-gradient(
+            135deg,
+            #00399f,
+            #012169
+        );
 
     box-shadow:
-        0 10px 22px rgba(1,33,105,0.20);
+        0 12px 25px rgba(1, 33, 105, 0.20);
 }
 
 
@@ -1454,11 +2002,15 @@
 @keyframes financeIconFloat {
     0%,
     100% {
-        transform: translateY(0) rotate(0deg);
+        transform:
+            translateY(0)
+            rotate(0deg);
     }
 
     50% {
-        transform: translateY(-8px) rotate(1deg);
+        transform:
+            translateY(-8px)
+            rotate(1deg);
     }
 }
 
@@ -1530,8 +2082,11 @@
 
     .finance-hero {
         min-height: auto;
+
         margin-bottom: 32px;
+
         padding: 28px 22px;
+
         border-radius: 20px;
     }
 
@@ -1549,11 +2104,13 @@
 
     .finance-chip {
         width: 100%;
+
         justify-content: flex-start;
     }
 
     .finance-section-heading {
         align-items: flex-start;
+
         flex-direction: column;
 
         gap: 12px;
@@ -1567,26 +2124,35 @@
 
     .finance-services-section {
         padding: 18px;
-        border-radius: 17px;
+
+        border-radius: 19px;
     }
 
     .finance-service-card {
         min-height: 82px;
+
         padding: 14px;
+
+        border-radius: 17px;
     }
 
     .fin-kpi-card {
         min-height: 170px;
+
         padding: 18px;
+
+        border-radius: 19px;
     }
 
-    /* Smaller hover effect on mobile */
     .fin-kpi-link:hover .fin-kpi-card {
-        transform: translateY(-4px) scale(1.015);
+        transform:
+            translateY(-4px)
+            scale(1.015);
     }
 
     .fin-kpi-value {
         margin-top: 15px;
+
         font-size: 1.35rem;
     }
 
@@ -1645,6 +2211,7 @@
 
     .finance-service-icon {
         flex-basis: 40px;
+
         width: 40px;
         height: 40px;
     }
@@ -1654,11 +2221,12 @@
     }
 
     .finance-service-content small {
-        font-size: 1.67rem;
+        font-size: 0.67rem;
     }
 
     .fin-kpi-card {
         min-height: 155px;
+
         padding: 15px;
     }
 
@@ -1676,6 +2244,7 @@
 
     .fin-legend-label {
         flex-basis: 72px;
+
         font-size: 0.65rem;
     }
 
@@ -1693,7 +2262,9 @@
 
 .fin-kpi-link:focus-visible,
 .finance-service-card:focus-visible {
-    outline: 3px solid rgba(15,118,110,0.30);
+    outline:
+        3px solid rgba(15, 118, 110, 0.30);
+
     outline-offset: 4px;
 }
 
@@ -1708,6 +2279,8 @@
     .finance-dashboard-page *::before,
     .finance-dashboard-page *::after {
         animation: none !important;
-        transition-duration: 0.01ms !important;
+
+        transition-duration:
+            0.01ms !important;
     }
 }

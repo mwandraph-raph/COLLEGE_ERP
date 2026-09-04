@@ -1,34 +1,36 @@
-/*====================================================
-    XORADEX EDUCORE ERP
-    LAYOUT
-====================================================*/
 
-/*====================================================
-    GLOBAL
-====================================================*/
+/* =========================================================
+   XORADEX EDUCORE ERP
+   GENERAL LAYOUT & VISUAL UTILITIES
+   ========================================================= */
 
-*,
-*::before,
-*::after{
-    box-sizing:border-box;
-}
 
-html,
-body{
-    height:100%;
-    margin:0;
-    padding:0;
-}
+/* =========================================================
+   BODY VISUAL BACKGROUND
+   ========================================================= */
 
-/*====================================================
-    BODY
-====================================================*/
+body {
 
-body{
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(13, 110, 253, 0.08),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(0, 123, 255, 0.06),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(25, 135, 84, 0.04),
+            transparent 35%
+        ),
+        var(--background, #f5f7fb);
 
-    background:var(--background);
-
-    color:var(--text);
+    color:
+        var(--text, #172033);
 
     font-family:
         "Inter",
@@ -36,218 +38,274 @@ body{
         Arial,
         sans-serif;
 
-    font-size:14px;
+    font-size: 14px;
 
-    line-height:1.5;
+    line-height: 1.5;
 
-    overflow-x:hidden;
+    -webkit-font-smoothing: antialiased;
 
-    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
-    -moz-osx-font-smoothing:grayscale;
-
+    text-rendering: optimizeLegibility;
 }
 
-/*====================================================
-    LINKS
-====================================================*/
 
-a{
+/* =========================================================
+   BACKGROUND LIGHT EFFECT
+   ========================================================= */
 
-    color:inherit;
+body::before {
 
-    text-decoration:none;
+    content: "";
 
-    transition:var(--transition);
+    position: fixed;
 
+    inset: 0;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.35),
+            transparent 35%,
+            rgba(255, 255, 255, 0.18)
+        );
+
+    pointer-events: none;
+
+    z-index: -1;
 }
 
-a:hover{
 
-    text-decoration:none;
+/* =========================================================
+   BACKGROUND ORB
+   ========================================================= */
 
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    width: 420px;
+    height: 420px;
+
+    top: -180px;
+    right: -120px;
+
+    background:
+        rgba(13, 110, 253, 0.06);
+
+    border-radius: 50%;
+
+    filter: blur(80px);
+
+    pointer-events: none;
+
+    z-index: -1;
 }
 
-/*====================================================
-    IMAGES
-====================================================*/
 
-img{
+/* =========================================================
+   PAGE CONTAINER
+   ========================================================= */
 
-    max-width:100%;
+.page-container {
 
-    height:auto;
+    width: 100%;
 
-    display:block;
+    max-width: 1600px;
 
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/*====================================================
-    APPLICATION WRAPPER
-====================================================*/
 
-.erp-wrapper{
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
 
-    display:flex;
+.page-header {
 
-    min-height:100vh;
-    width:100%;
+    display: flex;
 
-    background:var(--background);
+    justify-content: space-between;
 
+    align-items: center;
+
+    margin-bottom: 24px;
+
+    gap: 16px;
+
+    flex-wrap: wrap;
 }
 
-/*====================================================
-    MAIN AREA
-====================================================*/
 
-.erp-main{
-    margin-left:var(--sidebar-width);
-    min-height:100vh;
-    width:calc(100% - var(--sidebar-width));
+/* =========================================================
+   PAGE TITLE
+   ========================================================= */
 
-    display:flex;
-    flex-direction:column;
+.page-title {
+
+    margin: 0;
+
+    color:
+        var(--navy, #012169);
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+
+/* =========================================================
+   PAGE SUBTITLE
+   ========================================================= */
+
+.page-subtitle {
+
+    color:
+        var(--muted, #6c757d);
+
+    margin-top: 4px;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   GENERAL LINKS
+   ========================================================= */
+
+a {
+
+    color: inherit;
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   GLOBAL GLASS CARD
+   ========================================================= */
+
+.card {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 18px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 10px 30px rgba(1, 33, 105, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+    overflow: hidden;
 
     transition:
-        margin-left var(--transition),
-        width var(--transition);
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
 }
 
-/*====================================================
-    SIDEBAR COLLAPSED
-====================================================*/
+.card:hover {
+    transform: translateY(-2px);
 
-.erp-sidebar.collapsed ~ .erp-main{
-    margin-left:var(--sidebar-collapsed-width);
-    width:calc(100% - var(--sidebar-collapsed-width));
+    box-shadow:
+        0 16px 38px rgba(1, 33, 105, 0.11),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    border-color: rgba(255, 255, 255, 0.9);
 }
 
-/*====================================================
-    CONTENT
-====================================================*/
+/* =========================================================
+   SHADOW UTILITY
+   ========================================================= */
 
-.erp-content{
-    flex:1;
-    width:100%;
-    padding:24px;
-    box-sizing:border-box;
+.shadow-card {
+
+    box-shadow:
+        var(--shadow, 0 8px 24px rgba(1, 33, 105, 0.08));
 }
 
-/*====================================================
-    PAGE CONTAINER
-====================================================*/
 
-.page-container{
+/* =========================================================
+   ROUNDED CARD
+   ========================================================= */
 
-    width:100%;
+.rounded-card {
 
-    max-width:1600px;
-
-    margin:auto;
-
+    border-radius:
+        var(--radius, 16px);
 }
 
-/*====================================================
-    MOBILE
-====================================================*/
 
-@media (max-width:992px){
+/* =========================================================
+   CARD BACKGROUND
+   ========================================================= */
 
-    .erp-main{
-        margin-left:0;
-        width:100%;
+.bg-card {
+
+    background:
+        var(--card, #ffffff);
+}
+
+
+/* =========================================================
+   MUTED TEXT
+   ========================================================= */
+
+.text-muted {
+
+    color:
+        var(--muted, #6c757d) !important;
+}
+
+
+/* =========================================================
+   PRIMARY TEXT
+   ========================================================= */
+
+.text-primary {
+
+    color:
+        var(--navy, #012169) !important;
+}
+
+
+/* =========================================================
+   SOFT BORDER
+   ========================================================= */
+
+.border-soft {
+
+    border:
+        1px solid
+        var(--border, #e1e7f0);
+}
+
+
+/* =========================================================
+   RESPONSIVE PAGE HEADER
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .page-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        margin-bottom: 20px;
     }
 
-    .erp-sidebar.collapsed ~ .erp-main{
-        margin-left:0;
-        width:100%;
+
+    .page-title {
+
+        font-size: 24px;
     }
-
-    .erp-content{
-        padding:20px 16px;
-    }
-
 }
 
-/*====================================================
-    PAGE HEADER
-====================================================*/
-
-.page-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:24px;
-
-    gap:16px;
-
-    flex-wrap:wrap;
-
-}
-
-.page-title{
-
-    margin:0;
-
-    color:var(--navy);
-
-    font-size:28px;
-
-    font-weight:700;
-
-}
-
-.page-subtitle{
-
-    color:var(--muted);
-
-    margin-top:4px;
-
-    font-size:14px;
-
-}
-
-/*====================================================
-    UTILITIES
-====================================================*/
-
-.shadow-card{
-
-    box-shadow:var(--shadow);
-
-}
-
-.rounded-card{
-
-    border-radius:var(--radius);
-
-}
-
-.bg-card{
-
-    background:var(--card);
-
-}
-
-.text-muted{
-
-    color:var(--muted)!important;
-
-}
-
-.text-primary{
-
-    color:var(--navy)!important;
-
-}
-
-.border-soft{
-
-    border:1px solid var(--border);
-
-}

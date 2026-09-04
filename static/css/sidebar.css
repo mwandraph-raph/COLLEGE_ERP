@@ -7,32 +7,43 @@
     SIDEBAR CONTAINER
 ====================================================*/
 
-.erp-sidebar{
-    width:var(--sidebar-width);
-    height:100vh;
+.erp-sidebar {
+    width: var(--sidebar-width);
+    flex: 0 0 var(--sidebar-width);
 
-    background:linear-gradient(
-        180deg,
-        var(--navy) 0%,
-        var(--blue-dark) 100%
-    );
+    height: 100%;
 
-    color:var(--light-text);
-    display:flex;
-    flex-direction:column;
+    background:
+            linear-gradient(
+                180deg,
+                #071A3D 0%,
+                #012169 55%,
+                #003087 100%
+            );
+    color: #FFFFFF;
+   
+    display: flex;
+    flex-direction: column;
 
-    transition:all var(--transition);
-    box-shadow:var(--shadow-lg);
+    transition:
+        width var(--transition),
+        flex-basis var(--transition);
 
-    overflow-y:auto;
-    overflow-x:hidden;
+    box-shadow: var(--shadow-lg);
 
-    /* FIXED SIDEBAR */
-    position:fixed;
-    top:0;
-    left:0;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-    z-index:1040;
+    /*
+        IMPORTANT:
+        Sidebar now belongs to the workspace.
+        It no longer covers the header or footer.
+    */
+    position: relative;
+
+    z-index: 900;
+
+    min-height: 0;
 }
 
 /*====================================================
@@ -298,11 +309,9 @@
 
 .sidebar-menu a.active{
 
-    background:#FFFFFF;
-
-    color:var(--navy);
-
-    font-weight:600;
+    background: rgba(255, 255, 255, 0.12);
+    border-left: 3px solid #16A394;
+    color: #FFFFFF;
 
 }
 
@@ -364,9 +373,11 @@
     COLLAPSED
 ====================================================*/
 
-.erp-sidebar.collapsed{
+.erp-sidebar.collapsed {
 
-    width:var(--sidebar-collapsed-width);
+    width: var(--sidebar-collapsed-width);
+
+    flex-basis: var(--sidebar-collapsed-width);
 
 }
 
@@ -436,27 +447,35 @@
     MOBILE
 ====================================================*/
 
-@media (max-width:992px){
+/*====================================================
+    MOBILE
+====================================================*/
 
-    .erp-sidebar{
+@media (max-width: 992px) {
 
-        position:fixed;
+    .erp-sidebar {
 
-        left:-100%;
+        position: fixed;
 
-        top:0;
+        top: 0;
+        left: -100%;
 
-        height:100vh;
+        width: var(--sidebar-width);
 
-        z-index:1055;
+        height: 100vh;
 
+        flex: none;
+
+        z-index: 1055;
+
+        transition:
+            left var(--transition);
     }
 
-    .erp-sidebar.show{
+    .erp-sidebar.show {
 
-        left:0;
+        left: 0;
 
     }
 
 }
-

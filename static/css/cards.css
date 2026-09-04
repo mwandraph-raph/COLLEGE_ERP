@@ -384,3 +384,37 @@
     }
 
 }
+
+/* =========================================================
+   GLOBAL GLASS CARD
+   ========================================================= */
+
+.card {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 18px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 10px 30px rgba(1, 33, 105, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 38px rgba(1, 33, 105, 0.11),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    border-color: rgba(255, 255, 255, 0.9);
+}

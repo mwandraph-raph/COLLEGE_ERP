@@ -4,56 +4,143 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta name="theme-color" content="#012169">
+
     <title>
         {% block title %}
             Xorami College ERP
         {% endblock %}
     </title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet">
-    <link rel="icon" href="{% static 'images/favicon.png' %}">
-    <link rel="stylesheet" href="{% static 'css/erp.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/exam_dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    {% block extra_css %}
-    <style>
-.alert-success {
-    background: #eaf1ff;
-    border: 1px solid #003087;
-    color: #012169;
-}
 
-.alert-error,
-.alert-danger {
-    background: #f5f7fb;
-    border: 1px solid #012169;
-    color: #012169;
-}
-</style>
-{% endblock %}
+
+    <!-- =====================================================
+         BOOTSTRAP
+    ====================================================== -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         FONT AWESOME
+    ====================================================== -->
+
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         GOOGLE FONT
+    ====================================================== -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         FAVICON
+    ====================================================== -->
+
+    <link
+        rel="icon"
+        href="{% static 'images/favicon.png' %}"
+    >
+
+
+    <!-- =====================================================
+         XORADEX BASE / APPLICATION CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/base.css' %}"
+    >
+
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+    
+    <link
+        rel="stylesheet"
+        href="{% static 'css/erp.css' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/dashboard.css' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/topbar.css' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/exam_dashboard.css' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/footer.css' %}"
+    >
+
+
+    <!-- =====================================================
+         PAGE-SPECIFIC CSS
+    ====================================================== -->
+
+    {% block extra_css %}
+    {% endblock %}
+
 </head>
+
 
 <body class="erp-body">
 
-<div id="app" class="erp-wrapper">
+<div
+    id="app"
+    class="erp-wrapper"
+>
 
-    {% include "includes/sidebar.html" %}
 
-    <div class="erp-main">
+    <!-- =====================================================
+         FULL-WIDTH HEADER
+    ====================================================== -->
+
+    <header class="erp-header">
 
         {% include "includes/topbar.html" %}
+
+    </header>
+
+
+    <!-- =====================================================
+         SIDEBAR + MAIN CONTENT
+    ====================================================== -->
+
+    <div class="erp-workspace">
+
+
+        <!-- SIDEBAR -->
+
+        {% include "includes/sidebar.html" %}
+
+
+        <!-- MAIN CONTENT -->
 
         <main class="erp-content">
 
@@ -64,19 +151,46 @@
 
         </main>
 
-        {% include "includes/footer.html" %}
 
     </div>
 
+
+    <!-- =====================================================
+         FULL-WIDTH FOOTER
+    ====================================================== -->
+<!--
+    <footer class="erp-footer">
+
+        {% include "includes/footer.html" %}
+
+    </footer>
+-->
+
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+</script>
+
 <script src="{% static 'js/sidebar.js' %}"></script>
+
 <script src="{% static 'js/app.js' %}"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script src="{% static 'js/dashboard.js' %}"></script>
-{% block extra_js %}{% endblock %}
+
+
+{% block extra_js %}
+{% endblock %}
+
 
 </body>
 
 </html>
+

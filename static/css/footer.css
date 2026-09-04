@@ -5,7 +5,7 @@
 
 .footer {
     width: 100%;
-    background: var(--primary-navy, #012169);
+    background: var(--navy, #0a45b1);
     color: #ffffff;
 
     padding: 16px 24px;
