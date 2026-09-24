@@ -25,3 +25,12 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Django generated files
+staticfiles/
+
+# Local database backups
+backups/
+
+# Local database migration backups
+db_before_postgresql*.json

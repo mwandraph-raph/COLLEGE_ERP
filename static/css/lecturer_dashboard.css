@@ -1,12 +1,23 @@
 /* =========================================================
    XORADEX EDUCORE
    LECTURER DASHBOARD
-   Modern SaaS • Spacious • Readable • Professional
+   Page-Specific Styles
+   Modern SaaS • Spacious • Professional
    =========================================================
+   OWNERSHIP
+   ---------------------------------------------------------
+   This file controls ONLY the Lecturer Dashboard.
 
-   BRAND
-   Primary Navy : #012169
-   Primary Blue : #003087
+   Global foundation:
+   - tokens.css
+   - base.css
+   - layout.css
+   - buttons.css
+   - cards.css
+   - tables.css
+   - forms.css
+
+   This file does NOT redefine global Bootstrap components.
    ========================================================= */
 
 
@@ -16,11 +27,10 @@
 
 .lecturer-dashboard-page {
     width: 100%;
-    min-height: 100vh;
+    min-height: 100%;
     padding: 0 0 60px;
-    background: #f8fafc;
-    color: #0f172a;
-    font-family: inherit;
+    background: var(--background);
+    color: var(--text);
 }
 
 .lecturer-dashboard-page *,
@@ -53,34 +63,24 @@
     width: 100%;
     margin-bottom: 28px;
     padding: 26px 30px;
-
-    background:#012169;
-
-    border: 1px solid #e2e8f0;
-    border-radius: 18px;
-
-    box-shadow:
-        0 2px 8px rgba(15, 23, 42, 0.025),
-        0 10px 28px rgba(15, 23, 42, 0.035);
-
+    background: var(--navy);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
     overflow: hidden;
 }
 
 .modern-header::after {
     content: "";
     position: absolute;
-
     width: 280px;
     height: 280px;
-
     top: -170px;
     right: -150px;
-
     border-radius: 50%;
-
-    background: #012169;
-    opacity: 0.035;
-
+    background: #ffffff;
+    opacity: 0.06;
     pointer-events: none;
 }
 
@@ -90,7 +90,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     gap: 40px;
 }
 
@@ -101,10 +100,8 @@
 
 .header-left {
     min-width: 0;
-
     display: flex;
     align-items: center;
-
     gap: 18px;
     flex: 1;
 }
@@ -116,25 +113,18 @@
 .avatar-circle {
     width: 60px;
     height: 60px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 16px;
-
     background: linear-gradient(
         135deg,
-        #012169,
-        #003087
+        var(--blue),
+        var(--navy)
     );
-
     color: #ffffff;
-
     font-size: 22px;
-
-    box-shadow:
-        0 8px 20px rgba(1, 33, 105, 0.18);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
 }
 
 .header-content {
@@ -144,9 +134,9 @@
 .dashboard-overline {
     display: block;
     margin-bottom: 7px;
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.68);
     font-size: 11px;
-    font-weight: 400;
+    font-weight: 600;
     letter-spacing: 0.15em;
     text-transform: uppercase;
 }
@@ -155,72 +145,63 @@
     margin-bottom: 7px;
     color: #ffffff;
     font-size: clamp(1.35rem, 2vw, 1.8rem);
-    font-weight: 400;
+    font-weight: 600;
     line-height: 1.3;
 }
 
 .dashboard-title span {
     color: #ffffff;
-    font-weight: 400;
+    font-weight: 600;
 }
 
 .dashboard-subtitle {
     max-width: 720px;
-
     margin-bottom: 0;
-
-    color: #64748b;
-
+    color: rgba(255, 255, 255, 0.72);
     font-size: 14px;
     line-height: 1.7;
 }
 
 
 /* =========================================================
-   4. CURRENT SESSION CARD
+   4. CURRENT ACADEMIC SESSION
    ========================================================= */
 
 .academic-summary-card {
     flex: 0 0 320px;
-
     padding: 19px 21px;
-
-    background: #f8fafc;
-
-    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 15px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
 }
 
 .summary-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     padding-bottom: 13px;
     margin-bottom: 15px;
-
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
 }
 
 .summary-label {
-    color: #012169;
-
+    color: var(--navy);
     font-size: 11px;
     font-weight: 800;
-
     letter-spacing: 0.1em;
     text-transform: uppercase;
 }
 
 .summary-top i {
-    color: #003087;
+    color: var(--blue);
     font-size: 17px;
 }
 
 .summary-body {
     display: flex;
     align-items: stretch;
-
     gap: 18px;
 }
 
@@ -230,30 +211,23 @@
 
 .summary-item small {
     display: block;
-
     margin-bottom: 5px;
-
-    color: #64748b;
-
+    color: var(--muted);
     font-size: 11px;
     font-weight: 600;
 }
 
 .summary-item h6 {
     margin: 0;
-
-    color: #0f172a;
-
+    color: var(--heading);
     font-size: 14px;
-    font-weight: 750;
-
+    font-weight: 700;
     line-height: 1.4;
 }
 
 .summary-divider {
     width: 1px;
-
-    background: #dbe2ea;
+    background: var(--border);
 }
 
 
@@ -263,45 +237,33 @@
 
 .modern-hero {
     position: relative;
-
     width: 100%;
     padding: 0;
-
-    background: #ffffff;
-
-    border: 1px solid #e2e8f0;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 20px;
-
-    box-shadow:
-        0 3px 10px rgba(15, 23, 42, 0.025),
-        0 12px 30px rgba(15, 23, 42, 0.035);
-
+    box-shadow: var(--shadow);
     overflow: hidden;
 }
 
 .hero-inner {
     display: grid;
-
     grid-template-columns:
         minmax(0, 1.55fr)
         minmax(320px, 0.75fr);
-
     gap: 0;
-
     min-height: 340px;
 }
 
 
 /* =========================================================
-   6. HERO LEFT — NOTIFICATIONS
+   6. HERO NOTIFICATIONS
    ========================================================= */
 
 .hero-main {
     min-width: 0;
-
     padding: 34px 38px;
-
-    background: #ffffff;
+    background: var(--card);
 }
 
 .hero-notifications {
@@ -316,11 +278,10 @@
 }
 
 .notification-panel-header {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .notification-panel-header > div:first-child {
@@ -333,14 +294,10 @@
 
 .notification-panel-header h3 {
     margin: 0;
-    color: #0f172a;
+    color: var(--heading);
     font-size: 17px;
     font-weight: 600;
     line-height: 1.3;
-}
-
-.notification-panel-header::before {
-    content: "";
 }
 
 .notification-bell {
@@ -351,34 +308,27 @@
     justify-content: center;
     border-radius: 12px;
     background: #eff6ff;
-    color: #012169;
+    color: var(--navy);
     font-size: 16px;
-    box-shadow:
-        0 4px 12px rgba(1, 33, 105, 0.08);
+    box-shadow: 0 4px 12px rgba(1, 33, 105, 0.08);
 }
 
 .notification-list {
     display: flex;
     flex-direction: column;
-
-    border-top: 1px solid #edf1f5;
+    border-top: 1px solid var(--border-light);
 }
 
 .notification-item {
     display: flex;
     align-items: center;
-
     gap: 15px;
-
     min-height: 76px;
-
     padding: 15px 4px;
-
-    border-bottom: 1px solid #edf1f5;
-
+    border-bottom: 1px solid var(--border-light);
     transition:
-        background 0.18s ease,
-        padding-left 0.18s ease;
+        background 0.2s ease,
+        padding-left 0.2s ease;
 }
 
 .notification-item:hover {
@@ -389,15 +339,11 @@
 .notification-icon {
     width: 40px;
     height: 40px;
-
     flex: 0 0 40px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 11px;
-
     font-size: 14px;
 }
 
@@ -423,53 +369,37 @@
 
 .notification-content > strong {
     display: block;
-
     margin-bottom: 5px;
-
     color: #1e293b;
-
     font-size: 13px;
-    font-weight: 750;
-
+    font-weight: 700;
     line-height: 1.4;
 }
 
 .notification-content span {
     display: block;
-
-    color: #64748b;
-
+    color: var(--muted);
     font-size: 12px;
-
     line-height: 1.6;
 }
 
 .notification-content span strong {
     display: inline;
-
     margin: 0;
-
     color: #334155;
-
     font-size: inherit;
 }
 
 .status-badge {
     flex: 0 0 auto;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-width: 72px;
-
     padding: 6px 11px;
-
     border-radius: 999px;
-
     font-size: 10px;
-    font-weight: 750;
-
+    font-weight: 700;
     line-height: 1.2;
 }
 
@@ -490,111 +420,83 @@
 
 
 /* =========================================================
-   7. QUICK ACTIONS SIDE
+   7. QUICK ACTIONS SIDE PANEL
    ========================================================= */
 
 .hero-actions {
     display: flex;
     align-items: stretch;
-
     padding: 26px;
-
     background: #f8fafc;
-
-    border-left: 1px solid #e2e8f0;
+    border-left: 1px solid var(--border);
 }
 
 .quick-panel {
     width: 100%;
-
     display: flex;
     flex-direction: column;
-
     padding: 25px;
-
-    background: #ffffff;
-
-    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid var(--border);
     border-radius: 17px;
-
-    box-shadow:
-        0 4px 14px rgba(15, 23, 42, 0.035);
+    box-shadow: var(--shadow-sm);
 }
 
 .quick-panel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     gap: 15px;
-
     margin-bottom: 10px;
 }
 
 .quick-panel-header h5 {
     margin: 0;
-
-    color: #0f172a;
-
+    color: var(--heading);
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .quick-panel-icon {
     width: 40px;
     height: 40px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 11px;
-
     background: #eff6ff;
-    color: #012169;
-
+    color: var(--navy);
     font-size: 15px;
 }
 
 .quick-panel-description {
     margin-bottom: 21px;
-
-    color: #64748b;
-
+    color: var(--muted);
     font-size: 12px;
-
     line-height: 1.65;
 }
 
 .quick-buttons {
     display: flex;
     flex-direction: column;
-
     gap: 11px;
 }
 
 .quick-btn {
     width: 100%;
-
     display: flex;
     align-items: center;
-
     gap: 11px;
-
     min-height: 48px;
-
     padding: 12px 15px;
-
     border-radius: 11px;
-
     font-size: 13px;
-    font-weight: 750;
-
+    font-weight: 700;
     transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        background 0.18s ease,
-        border-color 0.18s ease;
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .quick-btn:hover {
@@ -602,67 +504,53 @@
 }
 
 .quick-btn-primary {
-    background: #012169;
+    background: var(--navy);
     color: #ffffff;
-
-    box-shadow:
-        0 7px 16px rgba(1, 33, 105, 0.16);
+    box-shadow: 0 7px 16px rgba(1, 33, 105, 0.16);
 }
 
 .quick-btn-primary:hover {
-    background: #003087;
+    background: var(--blue-dark);
     color: #ffffff;
-
-    box-shadow:
-        0 9px 20px rgba(1, 33, 105, 0.2);
+    box-shadow: 0 9px 20px rgba(1, 33, 105, 0.2);
 }
 
 .quick-btn-outline {
     background: #ffffff;
-    color: #012169;
-
-    border: 1px solid #cbd5e1;
+    color: var(--navy);
+    border: 1px solid var(--border);
 }
 
 .quick-btn-outline:hover {
     background: #f8fafc;
-    color: #012169;
-
-    border-color: #012169;
+    color: var(--navy);
+    border-color: var(--navy);
 }
 
 .quick-summary {
     display: grid;
-
     grid-template-columns: 1fr auto 1fr;
-
     align-items: center;
-
     gap: 15px;
-
     margin-top: auto;
     padding-top: 18px;
-
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border);
 }
 
 .quick-summary > div:not(.quick-summary-divider) {
     display: flex;
     flex-direction: column;
-
     gap: 4px;
 }
 
 .quick-summary span {
-    color: #64748b;
-
+    color: var(--muted);
     font-size: 10px;
     font-weight: 600;
 }
 
 .quick-summary strong {
-    color: #0f172a;
-
+    color: var(--heading);
     font-size: 19px;
     font-weight: 800;
 }
@@ -670,8 +558,7 @@
 .quick-summary-divider {
     width: 1px;
     height: 34px;
-
-    background: #dbe2ea;
+    background: var(--border);
 }
 
 
@@ -700,35 +587,34 @@
 
 .dashboard-widget {
     position: relative;
-
-    background: #ffffff;
-
-    border: 1px solid #e2e8f0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border);
     border-radius: 17px;
-
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
+}
 
-    box-shadow:
-        0 2px 8px rgba(15, 23, 42, 0.025),
-        0 8px 22px rgba(15, 23, 42, 0.025);
+.dashboard-widget:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    border-color: rgba(23, 105, 209, 0.18);
 }
 
 .dashboard-widget .card-header {
     min-height: 60px;
-
     display: flex;
     align-items: center;
-
     padding: 17px 22px;
-
-    background: #ffffff;
-
-    border-bottom: 1px solid #edf1f5;
-
+    background: transparent;
+    border-bottom: 1px solid var(--border-light);
     color: #1e293b;
-
     font-size: 14px;
-    font-weight: 750;
+    font-weight: 700;
 }
 
 .dashboard-widget .card-header i {
@@ -746,46 +632,37 @@
 
 .overview-stat {
     min-height: 105px;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     padding: 20px 12px;
-
     background: #f8fafc;
-
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     border-radius: 13px;
-
     transition:
-        transform 0.18s ease,
-        border-color 0.18s ease,
-        box-shadow 0.18s ease;
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
 .overview-stat:hover {
-    transform: translateY(-2px);
-
-    border-color: #cbd5e1;
-
-    box-shadow:
-        0 6px 16px rgba(15, 23, 42, 0.05);
+    transform: translateY(-3px);
+    border-color: rgba(23, 105, 209, 0.25);
+    background: #ffffff;
+    box-shadow: var(--shadow-sm);
 }
 
 .overview-stat h2 {
     margin-bottom: 6px;
-
-    color: #012169;
-
+    color: var(--navy);
     font-size: 27px;
     font-weight: 800;
 }
 
 .overview-stat span {
-    color: #64748b;
-
+    color: var(--muted);
     font-size: 11px;
     font-weight: 600;
 }
@@ -793,31 +670,21 @@
 .overview-message {
     display: flex;
     align-items: flex-start;
-
     gap: 10px;
-
     margin-top: 21px;
-
     padding: 15px 17px;
-
     background: #f8fafc;
-
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     border-radius: 11px;
-
-    color: #64748b;
-
+    color: var(--muted);
     font-size: 12px;
-
     line-height: 1.65;
 }
 
 .overview-message i {
     flex: 0 0 auto;
-
     margin-top: 2px;
-
-    color: #012169;
+    color: var(--navy);
 }
 
 .overview-message strong {
@@ -832,12 +699,9 @@
 .calendar-item {
     display: flex;
     align-items: center;
-
     gap: 15px;
-
     padding: 15px 0;
-
-    border-bottom: 1px solid #edf1f5;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .calendar-item:first-child {
@@ -852,107 +716,76 @@
 .calendar-icon {
     width: 40px;
     height: 40px;
-
     flex: 0 0 40px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 11px;
-
     color: #ffffff;
-
     font-size: 14px;
 }
 
 .calendar-item small {
     display: block;
-
     margin-bottom: 4px;
-
-    color: #64748b;
-
+    color: var(--muted);
     font-size: 10px;
     font-weight: 600;
 }
 
 .calendar-item h6 {
     margin: 0;
-
     color: #1e293b;
-
     font-size: 13px;
-    font-weight: 750;
+    font-weight: 700;
 }
 
 
 /* =========================================================
-   12. LECTURER SERVICES
+   12. LECTURER SERVICES / QUICK ACTIONS
    ========================================================= */
 
 .quick-actions {
     display: grid;
-
-    grid-template-columns:
-        repeat(6, minmax(0, 1fr));
-
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 14px;
 }
 
 .quick-action {
     min-height: 100px;
-
     display: flex;
     flex-direction: column;
-
     align-items: center;
     justify-content: center;
-
     gap: 10px;
-
     padding: 16px 10px;
-
-    background: #ffffff;
-
-    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border);
     border-radius: 13px;
-
     color: #475569;
-
     font-size: 11px;
     font-weight: 700;
-
     text-align: center;
-
     transition:
-        transform 0.18s ease,
-        border-color 0.18s ease,
-        box-shadow 0.18s ease,
-        color 0.18s ease,
-        background 0.18s ease;
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        color 0.2s ease,
+        background 0.2s ease;
 }
 
 .quick-action i {
-    color: #012169;
-
+    color: var(--navy);
     font-size: 19px;
-
-    transition:
-        transform 0.18s ease;
+    transition: transform 0.2s ease;
 }
 
 .quick-action:hover {
     transform: translateY(-3px);
-
-    background: #fbfdff;
-
-    border-color: #b8c7df;
-
-    color: #012169;
-
-    box-shadow:
-        0 8px 20px rgba(15, 23, 42, 0.06);
+    background: #ffffff;
+    border-color: rgba(23, 105, 209, 0.25);
+    color: var(--navy);
+    box-shadow: var(--shadow-sm);
 }
 
 .quick-action:hover i {
@@ -961,7 +794,7 @@
 
 
 /* =========================================================
-   13. GENERAL SPACING
+   13. PAGE-SCOPED SPACING
    ========================================================= */
 
 .lecturer-dashboard-page .mb-4 {
@@ -998,8 +831,7 @@
     }
 
     .quick-actions {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
@@ -1016,15 +848,12 @@
 
     .lec-header {
         flex-direction: column;
-
         align-items: stretch;
-
         gap: 22px;
     }
 
     .academic-summary-card {
         width: 100%;
-
         flex: 0 0 auto;
     }
 
@@ -1034,13 +863,11 @@
 
     .hero-actions {
         border-left: 0;
-
-        border-top: 1px solid #e2e8f0;
+        border-top: 1px solid var(--border);
     }
 
     .quick-actions {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
@@ -1057,22 +884,18 @@
 
     .modern-header {
         padding: 20px;
-
         border-radius: 15px;
     }
 
     .header-left {
         align-items: flex-start;
-
         gap: 13px;
     }
 
     .avatar-circle {
         width: 50px;
         height: 50px;
-
         border-radius: 13px;
-
         font-size: 18px;
     }
 
@@ -1102,18 +925,14 @@
 
     .notification-item {
         align-items: flex-start;
-
         gap: 11px;
-
         padding: 15px 2px;
     }
 
     .notification-icon {
         width: 36px;
         height: 36px;
-
         flex-basis: 36px;
-
         border-radius: 10px;
     }
 
@@ -1126,8 +945,7 @@
     }
 
     .quick-actions {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -1165,7 +983,6 @@
 
     .summary-body {
         flex-direction: column;
-
         gap: 12px;
     }
 
@@ -1188,9 +1005,7 @@
 
     .status-badge {
         min-width: 62px;
-
         padding: 5px 8px;
-
         font-size: 9px;
     }
 
@@ -1216,7 +1031,6 @@
 
     .overview-stat {
         min-height: 90px;
-
         padding: 15px 7px;
     }
 
@@ -1237,15 +1051,12 @@
     }
 
     .quick-actions {
-        grid-template-columns:
-            repeat(2, 1fr);
-
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
 
     .quick-action {
         min-height: 86px;
-
         padding: 13px 8px;
     }
 
@@ -1283,9 +1094,40 @@
 
     .quick-btn {
         min-height: 44px;
-
         padding: 10px 12px;
-
         font-size: 12px;
     }
 }
+
+
+/* =========================================================
+   19. ACCESSIBILITY
+   ========================================================= */
+
+.lecturer-dashboard-page
+.quick-btn:focus-visible,
+.lecturer-dashboard-page
+.quick-action:focus-visible,
+.lecturer-dashboard-page
+.notification-item:focus-visible {
+    outline: 3px solid rgba(23, 105, 209, 0.28);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   20. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .lecturer-dashboard-page .notification-item,
+    .lecturer-dashboard-page .quick-btn,
+    .lecturer-dashboard-page .dashboard-widget,
+    .lecturer-dashboard-page .overview-stat,
+    .lecturer-dashboard-page .quick-action,
+    .lecturer-dashboard-page .quick-action i {
+        transition: none;
+    }
+}
+

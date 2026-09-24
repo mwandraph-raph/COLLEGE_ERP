@@ -1,328 +1,528 @@
-/*====================================================
-    XORADEX EDUCORE ERP
-    TOPBAR
-====================================================*/
+/* =========================================================
+   XORADEX EDUCORE ERP
+   TOPBAR
+   ---------------------------------------------------------
+   RESPONSIBILITY:
+   - Topbar appearance
+   - Topbar layout
+   - Sidebar toggle
+   - Topbar title
+   - Topbar actions
+   - Notification indicator
+   - User profile area
+   - Dropdown menus
+   - Responsive topbar
 
-/*====================================================
-    TOPBAR
-====================================================*/
+   IMPORTANT:
+   This file does NOT control:
+   - Sidebar
+   - Main content
+   - Cards
+   - Tables
+   - Buttons globally
+   - Forms
+   - Dashboards
+   ========================================================= */
 
-.topbar{
 
-    height:var(--topbar-height);
+/* =========================================================
+   TOPBAR
+   ========================================================= */
 
-    background:var(--topbar);
+.topbar {
+    width: 100%;
+    height: var(--topbar-height);
 
-    border-bottom:1px solid var(--border);
+    display: flex;
 
-    display:flex;
+    align-items: center;
+    justify-content: space-between;
 
-    align-items:center;
+    gap: 16px;
 
-    justify-content:space-between;
+    padding: 0 24px;
 
-    padding:0 24px;
+    background: var(--topbar);
 
-    box-shadow:var(--shadow-sm);
+    border-bottom:
+        1px solid var(--border);
 
-    position:sticky;
+    box-shadow:
+        0 2px 10px rgba(1, 33, 105, .06);
 
-    top:0;
+    position: sticky;
 
-    z-index:1030;
+    top: 0;
 
+    z-index: 1030;
 }
 
-/*====================================================
-    LEFT SECTION
-====================================================*/
 
-.topbar-left{
+/* =========================================================
+   LEFT SECTION
+   ========================================================= */
 
-    display:flex;
+.topbar-left {
+    min-width: 0;
 
-    align-items:center;
+    display: flex;
 
-    gap:16px;
+    align-items: center;
 
+    gap: 16px;
 }
 
-.sidebar-toggle{
 
-    width:42px;
+/* =========================================================
+   SIDEBAR TOGGLE
+   ========================================================= */
 
-    height:42px;
+.sidebar-toggle {
+    width: 42px;
+    height: 42px;
 
-    border:none;
+    flex: 0 0 42px;
 
-    border-radius:10px;
+    display: inline-flex;
 
-    background:#F4F7FB;
+    align-items: center;
+    justify-content: center;
 
-    color:var(--navy);
+    padding: 0;
 
-    display:flex;
+    border: 1px solid var(--border);
 
-    align-items:center;
+    border-radius: 10px;
 
-    justify-content:center;
+    background: #F4F7FB;
 
-    cursor:pointer;
+    color: var(--navy);
 
-    transition:var(--transition);
+    cursor: pointer;
 
+    transition:
+        background-color .2s ease,
+        color .2s ease,
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
 }
 
-.sidebar-toggle:hover{
+.sidebar-toggle:hover {
+    background: var(--navy);
 
-    background:var(--navy);
+    border-color: var(--navy);
 
-    color:#FFFFFF;
+    color: #FFFFFF;
 
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 12px rgba(1, 33, 105, .16);
 }
 
-.topbar-title{
+.sidebar-toggle:focus-visible {
+    outline: 3px solid rgba(23, 105, 209, .22);
 
-    display:flex;
-
-    flex-direction:column;
-
+    outline-offset: 2px;
 }
 
-.topbar-title h4{
 
-    margin:0;
+/* =========================================================
+   TOPBAR TITLE
+   ========================================================= */
 
-    font-size:20px;
+.topbar-title {
+    min-width: 0;
 
-    font-weight:700;
+    display: flex;
 
-    color:var(--navy);
-
+    flex-direction: column;
 }
 
-.topbar-title small{
+.topbar-title h4 {
+    margin: 0;
 
-    color:var(--muted);
+    color: var(--navy);
 
-    font-size:13px;
+    font-size: 20px;
 
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
-/*====================================================
-    RIGHT SECTION
-====================================================*/
+.topbar-title small {
+    margin-top: 2px;
 
-.topbar-right{
+    color: var(--muted);
 
-    display:flex;
+    font-size: 12px;
 
-    align-items:center;
+    line-height: 1.3;
 
-    gap:14px;
+    white-space: nowrap;
 
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
-/*====================================================
-    ICON BUTTONS
-====================================================*/
 
-.topbar-icon{
+/* =========================================================
+   RIGHT SECTION
+   ========================================================= */
 
-    width:42px;
+.topbar-right {
+    flex: 0 0 auto;
 
-    height:42px;
+    display: flex;
 
-    border-radius:10px;
+    align-items: center;
 
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    color:var(--navy);
-
-    background:#F8FAFD;
-
-    border:1px solid var(--border);
-
-    transition:var(--transition);
-
-    position:relative;
-
-    cursor:pointer;
-
+    gap: 10px;
 }
 
-.topbar-icon:hover{
 
-    background:var(--navy);
+/* =========================================================
+   TOPBAR ICON ACTION
+   ========================================================= */
 
-    color:#FFFFFF;
+.topbar-icon {
+    width: 42px;
+    height: 42px;
 
+    flex: 0 0 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    padding: 0;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: #F8FAFD;
+
+    color: var(--navy);
+
+    cursor: pointer;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease,
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
 }
 
-/*====================================================
-    BADGES
-====================================================*/
+.topbar-icon:hover {
+    background: var(--navy);
 
-.topbar-badge{
+    border-color: var(--navy);
 
-    position:absolute;
+    color: #FFFFFF;
 
-    top:6px;
+    transform: translateY(-1px);
 
-    right:6px;
-
-    width:8px;
-
-    height:8px;
-
-    border-radius:50%;
-
-    background:#DC3545;
-
+    box-shadow:
+        0 4px 12px rgba(1, 33, 105, .14);
 }
 
-/*====================================================
-    USER PROFILE
-====================================================*/
+.topbar-icon:focus-visible {
+    outline: 3px solid rgba(23, 105, 209, .22);
 
-.topbar-user{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    padding-left:18px;
-
-    border-left:1px solid var(--border);
-
+    outline-offset: 2px;
 }
 
-.topbar-user-avatar{
 
-    width:42px;
+/* =========================================================
+   NOTIFICATION BADGE
+   ========================================================= */
 
-    height:42px;
+.topbar-badge {
+    position: absolute;
 
-    border-radius:50%;
+    top: 6px;
+    right: 6px;
 
-    background:var(--navy);
+    width: 8px;
+    height: 8px;
 
-    color:#FFFFFF;
+    border-radius: 50%;
 
-    display:flex;
+    background: var(--danger);
 
-    align-items:center;
-
-    justify-content:center;
-
-    font-weight:700;
-
+    border:
+        2px solid var(--topbar);
 }
 
-.topbar-user-info{
 
-    display:flex;
+/* =========================================================
+   USER AREA
+   ========================================================= */
 
-    flex-direction:column;
+.topbar-user {
+    min-width: 0;
 
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding-left: 16px;
+
+    margin-left: 4px;
+
+    border-left:
+        1px solid var(--border);
 }
 
-.topbar-user-info strong{
 
-    color:var(--text);
+/* =========================================================
+   USER AVATAR
+   ========================================================= */
 
-    font-size:14px;
+.topbar-user-avatar {
+    width: 42px;
+    height: 42px;
 
+    flex: 0 0 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--navy),
+            var(--blue-dark)
+        );
+
+    color: #FFFFFF;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 4px 12px rgba(1, 33, 105, .14);
 }
 
-.topbar-user-info small{
 
-    color:var(--muted);
+/* =========================================================
+   USER INFORMATION
+   ========================================================= */
 
-    font-size:12px;
+.topbar-user-info {
+    min-width: 0;
 
+    display: flex;
+
+    flex-direction: column;
 }
 
-/*====================================================
-    LINKS
-====================================================*/
+.topbar-user-info strong {
+    color: var(--text);
 
-.topbar a{
+    font-size: 14px;
 
-    color:inherit;
+    font-weight: 600;
 
-    text-decoration:none;
+    line-height: 1.3;
 
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
-.topbar a:hover{
+.topbar-user-info small {
+    margin-top: 2px;
 
-    text-decoration:none;
+    color: var(--muted);
 
+    font-size: 12px;
+
+    line-height: 1.3;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
-/*====================================================
-    DROPDOWNS
-====================================================*/
 
-.topbar .dropdown-menu{
+/* =========================================================
+   TOPBAR LINKS
+   ========================================================= */
 
-    border:none;
+.topbar a {
+    color: inherit;
 
-    border-radius:12px;
-
-    box-shadow:var(--shadow-lg);
-
-    padding:8px;
-
+    text-decoration: none;
 }
 
-.topbar .dropdown-item{
+.topbar a:hover {
+    color: inherit;
 
-    border-radius:8px;
-
-    padding:10px 14px;
-
-    transition:var(--transition);
-
+    text-decoration: none;
 }
 
-.topbar .dropdown-item:hover{
 
-    background:#EEF4FB;
+/* =========================================================
+   DROPDOWN MENU
+   ---------------------------------------------------------
+   Bootstrap controls dropdown positioning/behavior.
+   This file only provides the Xoradex visual treatment.
+   ========================================================= */
 
-    color:var(--navy);
+.topbar .dropdown-menu {
+    min-width: 180px;
 
+    margin-top: 8px;
+
+    padding: 8px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 12px;
+
+    background: #FFFFFF;
+
+    box-shadow:
+        0 14px 35px rgba(1, 33, 105, .12);
 }
 
-/*====================================================
-    MOBILE
-====================================================*/
+.topbar .dropdown-item {
+    padding: 10px 14px;
 
-@media(max-width:992px){
+    border-radius: 8px;
 
-    .topbar{
+    color: var(--text);
 
-        padding:0 16px;
+    font-size: 13px;
 
+    transition:
+        background-color .2s ease,
+        color .2s ease;
+}
+
+.topbar .dropdown-item:hover,
+.topbar .dropdown-item:focus {
+    background: #EEF4FB;
+
+    color: var(--navy);
+}
+
+
+/* =========================================================
+   DROPDOWN DIVIDERS
+   ========================================================= */
+
+.topbar .dropdown-divider {
+    border-top-color: var(--border-light);
+}
+
+
+/* =========================================================
+   RESPONSIVE TOPBAR
+   ========================================================= */
+
+@media (max-width: 992px) {
+
+    .topbar {
+        padding: 0 16px;
     }
 
-    .topbar-title{
-
-        display:none;
-
+    .topbar-title {
+        display: none;
     }
 
-    .topbar-user-info{
+    .topbar-user-info {
+        display: none;
+    }
 
-        display:none;
+    .topbar-user {
+        padding-left: 12px;
+    }
 
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .topbar {
+        height: 60px;
+
+        padding:
+            0 12px;
+    }
+
+    .topbar-left,
+    .topbar-right {
+        gap: 8px;
+    }
+
+    .sidebar-toggle,
+    .topbar-icon {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+    }
+
+    .topbar-user-avatar {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+    }
+
+    .topbar-user {
+        gap: 8px;
+
+        padding-left: 8px;
+
+        margin-left: 0;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sidebar-toggle,
+    .topbar-icon,
+    .topbar .dropdown-item {
+        transition: none;
     }
 
 }

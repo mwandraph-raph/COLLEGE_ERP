@@ -1,460 +1,615 @@
-/*====================================================
-    XORADEX EDUCORE ERP
-    SIDEBAR
-====================================================*/
+/* =========================================================
+   XORADEX EDUCORE ERP
+   SIDEBAR
+   ---------------------------------------------------------
+   RESPONSIBILITY:
+   - Sidebar appearance
+   - Sidebar branding
+   - Sidebar user profile
+   - Navigation menu
+   - Submenus
+   - Active states
+   - Collapsed state
+   - Sidebar scrollbar
+   - Mobile sidebar behavior
 
-/*====================================================
-    SIDEBAR CONTAINER
-====================================================*/
+   IMPORTANT:
+   This file does NOT control:
+   - Main content
+   - Topbar
+   - Cards
+   - Tables
+   - Buttons
+   - Forms
+   - Dashboard components
+   ========================================================= */
+
+
+/* =========================================================
+   SIDEBAR FOUNDATION
+   ========================================================= */
 
 .erp-sidebar {
     width: var(--sidebar-width);
     flex: 0 0 var(--sidebar-width);
 
     height: 100%;
+    min-height: 0;
 
-    background:
-            linear-gradient(
-                180deg,
-                #071A3D 0%,
-                #012169 55%,
-                #003087 100%
-            );
-    color: #FFFFFF;
-   
     display: flex;
     flex-direction: column;
+
+    position: relative;
+    z-index: 900;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    color: #FFFFFF;
+
+    background:
+        linear-gradient(
+            180deg,
+            #071A3D 0%,
+            #012169 55%,
+            #003087 100%
+        );
+
+    box-shadow:
+        8px 0 24px rgba(1, 33, 105, .10);
 
     transition:
         width var(--transition),
         flex-basis var(--transition);
-
-    box-shadow: var(--shadow-lg);
-
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    /*
-        IMPORTANT:
-        Sidebar now belongs to the workspace.
-        It no longer covers the header or footer.
-    */
-    position: relative;
-
-    z-index: 900;
-
-    min-height: 0;
-}
-
-/*====================================================
-    BRAND
-====================================================*/
-
-.sidebar-brand{
-
-    padding:22px 20px;
-
-    border-bottom:1px solid rgba(255,255,255,.10);
-
-}
-
-.brand-link{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    color:#FFFFFF;
-
-}
-
-.brand-link:hover{
-
-    color:#FFFFFF;
-
-}
-
-.brand-logo{
-
-    width:52px;
-
-    height:52px;
-
-    border-radius:12px;
-
-    background:rgba(255,255,255,.12);
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    flex-shrink:0;
-
-}
-
-.brand-logo i{
-
-    font-size:24px;
-
-    color:var(--darkorange);
-
-}
-
-.brand-name{
-
-    display:flex;
-
-    flex-direction:column;
-
-}
-
-.brand-name h5{
-
-    margin:0;
-
-    color:#FFFFFF;
-
-    font-size:20px;
-
-    font-weight:700;
-
-}
-
-.brand-name small{
-
-    color:rgba(255,255,255,.75);
-
-    font-size:13px;
-
-    letter-spacing:.5px;
-
-}
-
-/*====================================================
-    USER PANEL
-====================================================*/
-
-.sidebar-user{
-
-    padding:20px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    border-bottom:1px solid rgba(255,255,255,.10);
-
-}
-
-.avatar{
-
-    width:48px;
-
-    height:48px;
-
-    border-radius:50%;
-
-    background:#FFFFFF;
-
-    color:var(--navy);
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    font-size:18px;
-
-    flex-shrink:0;
-
-}
-
-.sidebar-user strong{
-
-    color:#FFFFFF;
-
-    font-size:14px;
-
-    display:block;
-
-}
-
-.sidebar-user small{
-
-    color:rgba(255,255,255,.70);
-
-}
-
-/*====================================================
-    MENU
-====================================================*/
-
-.sidebar-menu{
-
-    list-style:none;
-
-    padding:14px 0;
-
-    margin:0;
-
-    flex:1;
-
-}
-
-.sidebar-menu li{
-
-    margin:2px 12px;
-
-}
-
-.menu-title{
-
-    color:rgba(255,255,255,.55);
-
-    text-transform:uppercase;
-
-    font-size:11px;
-
-    font-weight:700;
-
-    letter-spacing:1px;
-
-    padding:18px 14px 8px;
-
-}
-
-/*====================================================
-    MENU LINKS
-====================================================*/
-
-.sidebar-menu a{
-
-    display:flex;
-
-    align-items:center;
-
-    padding:11px 14px;
-
-    border-radius:10px;
-
-    color:#E8EEF7;
-
-    transition:all .25s ease;
-
-    font-size:14px;
-
-    font-weight:500;
-
-    gap:12px;
-
 }
 
 
-/* Dropdown menus with arrows */
+/* =========================================================
+   BRAND AREA
+   ========================================================= */
 
-.sidebar-menu a.justify-content-between{
+.sidebar-brand {
+    flex: 0 0 auto;
 
-    justify-content:space-between;
+    padding: 22px 20px;
 
+    border-bottom:
+        1px solid rgba(255, 255, 255, .10);
 }
 
+.brand-link {
+    display: flex;
 
-/* Icon alignment */
+    align-items: center;
 
-.sidebar-menu a > i:first-child{
+    gap: 14px;
 
-    width:20px;
-
-    min-width:20px;
-
-    text-align:center;
-
-}
-
-
-/* Text wrapper */
-
-.sidebar-menu a span{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-}
-
-
-/* Icons inside text wrapper */
-
-.sidebar-menu a span i{
-
-    width:20px;
-
-    min-width:20px;
-
-    text-align:center;
-
-}
-/*====================================================
-    ACTIVE
-====================================================*/
-
-.sidebar-menu a.active{
-
-    background: rgba(255, 255, 255, 0.12);
-    border-left: 3px solid #16A394;
     color: #FFFFFF;
 
+    text-decoration: none;
 }
 
-.sidebar-menu a.active i{
+.brand-link:hover {
+    color: #FFFFFF;
 
-    color:var(--blue);
-
+    text-decoration: none;
 }
 
-/*====================================================
-    SUBMENU
-====================================================*/
 
-.sidebar-submenu{
+/* =========================================================
+   BRAND LOGO
+   ========================================================= */
 
-    list-style:none;
+.brand-logo {
+    width: 52px;
+    height: 52px;
 
-    padding:6px 0 6px 18px;
+    flex: 0 0 52px;
 
-    margin:4px 0;
+    display: flex;
 
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, .10);
+
+    border:
+        1px solid rgba(255, 255, 255, .08);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .08);
 }
 
-.sidebar-submenu li{
+.brand-logo i {
+    font-size: 24px;
 
-    margin:2px 0;
-
+    color: var(--gold);
 }
 
-.sidebar-submenu a{
 
-    padding:9px 14px;
+/* =========================================================
+   BRAND NAME
+   ========================================================= */
 
-    border-radius:8px;
+.brand-name {
+    min-width: 0;
 
-    color:#D7E4F3;
-
-    font-size:13px;
-
-    font-weight:400;
-
+    display: flex;
+    flex-direction: column;
 }
 
-.sidebar-submenu a:hover{
+.brand-name h5 {
+    margin: 0;
 
-    background:rgba(255,255,255,.08);
+    color: #FFFFFF;
 
+    font-size: 20px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
 }
 
-.sidebar-submenu a.active{
+.brand-name small {
+    margin-top: 3px;
 
-    background:rgba(255,255,255,.18);
+    color: rgba(255, 255, 255, .72);
 
-    color:#FFFFFF;
+    font-size: 12px;
 
+    letter-spacing: .04em;
+
+    line-height: 1.3;
+
+    white-space: nowrap;
 }
 
-/*====================================================
-    COLLAPSED
-====================================================*/
+
+/* =========================================================
+   SIDEBAR USER AREA
+   ========================================================= */
+
+.sidebar-user {
+    flex: 0 0 auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 20px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, .10);
+}
+
+.sidebar-user > div {
+    min-width: 0;
+}
+
+.sidebar-user strong {
+    display: block;
+
+    color: #FFFFFF;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    line-height: 1.35;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.sidebar-user small {
+    display: block;
+
+    margin-top: 2px;
+
+    color: rgba(255, 255, 255, .68);
+
+    font-size: 12px;
+
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   USER AVATAR
+   ========================================================= */
+
+.avatar {
+    width: 48px;
+    height: 48px;
+
+    flex: 0 0 48px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #FFFFFF;
+
+    color: var(--navy);
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, .12);
+}
+
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+   ========================================================= */
+
+.sidebar-menu {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    list-style: none;
+
+    margin: 0;
+
+    padding: 14px 0;
+}
+
+.sidebar-menu li {
+    margin: 2px 12px;
+}
+
+
+/* =========================================================
+   MENU SECTION TITLE
+   ========================================================= */
+
+.menu-title {
+    padding: 18px 14px 8px;
+
+    color: rgba(255, 255, 255, .52);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: .10em;
+
+    line-height: 1.3;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   MAIN MENU LINKS
+   ========================================================= */
+
+.sidebar-menu a {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 44px;
+
+    padding: 11px 14px;
+
+    border-radius: 10px;
+
+    color: #E8EEF7;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    line-height: 1.3;
+
+    text-decoration: none;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.sidebar-menu a:hover {
+    color: #FFFFFF;
+
+    background:
+        rgba(255, 255, 255, .075);
+
+    text-decoration: none;
+
+    transform: translateX(2px);
+}
+
+
+/* =========================================================
+   BOOTSTRAP JUSTIFY-CONTENT SUPPORT
+   ---------------------------------------------------------
+   Preserves existing Bootstrap classes used by menu links.
+   ========================================================= */
+
+.sidebar-menu a.justify-content-between {
+    justify-content: space-between;
+}
+
+
+/* =========================================================
+   MENU ICONS
+   ========================================================= */
+
+.sidebar-menu a > i:first-child {
+    width: 20px;
+    min-width: 20px;
+
+    text-align: center;
+
+    font-size: 15px;
+}
+
+.sidebar-menu a span {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 0;
+}
+
+.sidebar-menu a span i {
+    width: 20px;
+    min-width: 20px;
+
+    text-align: center;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   ACTIVE MENU ITEM
+   ========================================================= */
+
+.sidebar-menu a.active {
+    color: #FFFFFF;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, .14),
+            rgba(255, 255, 255, .07)
+        );
+
+    border-left:
+        3px solid var(--teal-light);
+
+    padding-left: 11px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+
+.sidebar-menu a.active:hover {
+    transform: none;
+}
+
+.sidebar-menu a.active i {
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   SIDEBAR SUBMENUS
+   ========================================================= */
+
+.sidebar-submenu {
+    list-style: none;
+
+    margin: 4px 0;
+
+    padding: 6px 0 6px 18px;
+}
+
+.sidebar-submenu li {
+    margin: 2px 0;
+}
+
+.sidebar-submenu a {
+    min-height: 38px;
+
+    padding: 9px 14px;
+
+    border-radius: 8px;
+
+    color: #D7E4F3;
+
+    font-size: 13px;
+
+    font-weight: 400;
+}
+
+.sidebar-submenu a:hover {
+    color: #FFFFFF;
+
+    background:
+        rgba(255, 255, 255, .07);
+
+    transform: none;
+}
+
+.sidebar-submenu a.active {
+    color: #FFFFFF;
+
+    background:
+        rgba(255, 255, 255, .13);
+
+    border-left: 2px solid var(--teal-light);
+
+    padding-left: 12px;
+}
+
+
+/* =========================================================
+   SIDEBAR FOOTER
+   ========================================================= */
+
+.sidebar-footer {
+    flex: 0 0 auto;
+
+    padding: 16px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, .10);
+
+    color: rgba(255, 255, 255, .60);
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   COLLAPSED SIDEBAR
+   ========================================================= */
 
 .erp-sidebar.collapsed {
-
     width: var(--sidebar-collapsed-width);
 
     flex-basis: var(--sidebar-collapsed-width);
-
 }
+
+
+/* Hide text content when collapsed */
 
 .erp-sidebar.collapsed .brand-name,
-
-.erp-sidebar.collapsed .sidebar-user div,
-
+.erp-sidebar.collapsed .sidebar-user > div,
 .erp-sidebar.collapsed .menu-title,
-
 .erp-sidebar.collapsed .sidebar-menu span,
-
-.erp-sidebar.collapsed .sidebar-submenu{
-
-    display:none;
-
+.erp-sidebar.collapsed .sidebar-submenu {
+    display: none;
 }
 
-.erp-sidebar.collapsed .sidebar-menu a{
 
-    justify-content:center;
+/* Center the brand */
 
+.erp-sidebar.collapsed .sidebar-brand {
+    padding-left: 9px;
+    padding-right: 9px;
 }
 
-.erp-sidebar.collapsed .sidebar-menu li{
-
-    margin:4px 8px;
-
+.erp-sidebar.collapsed .brand-link {
+    justify-content: center;
 }
 
-/*====================================================
-    FOOTER
-====================================================*/
 
-.sidebar-footer{
+/* Center user avatar */
 
-    border-top:1px solid rgba(255,255,255,.10);
+.erp-sidebar.collapsed .sidebar-user {
+    justify-content: center;
 
-    padding:16px;
-
-    text-align:center;
-
-    color:rgba(255,255,255,.65);
-
-    font-size:12px;
-
+    padding-left: 9px;
+    padding-right: 9px;
 }
 
-/*====================================================
-    SCROLLBAR
-====================================================*/
 
-.erp-sidebar::-webkit-scrollbar{
+/* Center menu icons */
 
-    width:6px;
-
+.erp-sidebar.collapsed .sidebar-menu li {
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
-.erp-sidebar::-webkit-scrollbar-thumb{
+.erp-sidebar.collapsed .sidebar-menu a {
+    justify-content: center;
 
-    background:rgba(255,255,255,.20);
-
-    border-radius:20px;
-
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-/*====================================================
-    MOBILE
-====================================================*/
+.erp-sidebar.collapsed .sidebar-menu a.active {
+    padding-left: 7px;
+}
 
-/*====================================================
-    MOBILE
-====================================================*/
+.erp-sidebar.collapsed .sidebar-menu a > i:first-child {
+    margin: 0;
+}
+
+
+/* Hide footer text when collapsed */
+
+.erp-sidebar.collapsed .sidebar-footer {
+    padding-left: 8px;
+    padding-right: 8px;
+
+    font-size: 0;
+}
+
+
+/* =========================================================
+   SIDEBAR SCROLLBAR
+   ========================================================= */
+
+.erp-sidebar {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(255, 255, 255, .20)
+        transparent;
+}
+
+.erp-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.erp-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.erp-sidebar::-webkit-scrollbar-thumb {
+    background:
+        rgba(255, 255, 255, .20);
+
+    border-radius: 20px;
+}
+
+.erp-sidebar::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(255, 255, 255, .32);
+}
+
+
+/* =========================================================
+   MOBILE SIDEBAR
+   ---------------------------------------------------------
+   On smaller screens the sidebar becomes an overlay.
+   ========================================================= */
 
 @media (max-width: 992px) {
 
     .erp-sidebar {
-
         position: fixed;
 
         top: 0;
@@ -473,9 +628,70 @@
     }
 
     .erp-sidebar.show {
-
         left: 0;
+    }
 
+    /*
+       Mobile sidebar should always display its full
+       navigation when opened.
+    */
+
+    .erp-sidebar.collapsed {
+        width: var(--sidebar-width);
+
+        flex-basis: auto;
+    }
+
+    .erp-sidebar.collapsed .brand-name,
+    .erp-sidebar.collapsed .sidebar-user > div,
+    .erp-sidebar.collapsed .menu-title,
+    .erp-sidebar.collapsed .sidebar-menu span,
+    .erp-sidebar.collapsed .sidebar-submenu {
+        display: initial;
+    }
+
+    .erp-sidebar.collapsed .brand-link {
+        justify-content: flex-start;
+    }
+
+    .erp-sidebar.collapsed .sidebar-user {
+        justify-content: flex-start;
+    }
+
+    .erp-sidebar.collapsed .sidebar-menu li {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+
+    .erp-sidebar.collapsed .sidebar-menu a {
+        justify-content: flex-start;
+
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .erp-sidebar.collapsed .sidebar-menu a.active {
+        padding-left: 11px;
+    }
+
+    .erp-sidebar.collapsed .sidebar-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .erp-sidebar {
+        width: min(280px, 88vw);
     }
 
 }

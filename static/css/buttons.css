@@ -1,599 +1,622 @@
-/*====================================================
-    XORADEX EDUCORE ERP
-    GLOBAL BUTTON SYSTEM
-    Enterprise SaaS • Clean • Consistent
-====================================================*/
+/* =========================================================
+   XORADEX EDUCORE ERP
+   BUTTONS
+   ---------------------------------------------------------
+   RESPONSIBILITY:
+   - Global button appearance
+   - Bootstrap button variants
+   - Button sizes
+   - Icon buttons
+   - Button groups
+   - Page action buttons
+   - Button states
+   - Responsive button behavior
+
+   IMPORTANT:
+   This file does NOT control:
+   - Tables
+   - Cards
+   - Forms
+   - Sidebar
+   - Topbar
+   - Dashboard components
+   ========================================================= */
 
 
-/*====================================================
-    BASE BUTTON
-====================================================*/
+/* =========================================================
+   BASE BUTTON
+   ========================================================= */
 
-.btn{
+.btn {
+    display: inline-flex;
 
-    display:inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    align-items:center;
-    justify-content:center;
+    gap: 7px;
 
-    gap:6px;
+    min-height: 38px;
 
-    min-height:36px;
+    padding:
+        8px 15px;
 
-    padding:8px 14px;
+    border-radius:
+        var(--radius-sm);
 
-    border-radius:7px;
+    font-size: 13px;
 
-    font-size:13px;
+    font-weight: 600;
 
-    font-weight:600;
+    line-height: 1.3;
 
-    line-height:1.2;
+    text-decoration: none;
 
-    white-space:nowrap;
+    white-space: nowrap;
 
-    vertical-align:middle;
+    vertical-align: middle;
 
     transition:
-        background-color .15s ease,
-        border-color .15s ease,
-        color .15s ease,
-        box-shadow .15s ease;
+        background-color .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
 
-    box-shadow:none;
+.btn:hover {
+    text-decoration: none;
 
+    transform:
+        translateY(-1px);
+}
+
+.btn:focus {
+    box-shadow:
+        0 0 0 3px rgba(23, 105, 209, .12);
+}
+
+.btn:focus-visible {
+    outline:
+        3px solid rgba(23, 105, 209, .20);
+
+    outline-offset: 2px;
+}
+
+.btn:active {
+    transform:
+        translateY(0);
 }
 
 
-/*====================================================
-    FOCUS
-====================================================*/
+/* =========================================================
+   PRIMARY
+   ========================================================= */
 
-.btn:focus,
-.btn:focus-visible{
+.btn-primary {
+    background:
+        var(--navy);
 
-    box-shadow:0 0 0 3px rgba(13,110,253,.12);
+    border-color:
+        var(--navy);
 
+    color:
+        #FFFFFF;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background:
+        var(--blue-dark);
+
+    border-color:
+        var(--blue-dark);
+
+    color:
+        #FFFFFF;
+}
+
+.btn-primary:active {
+    background:
+        var(--navy-dark) !important;
+
+    border-color:
+        var(--navy-dark) !important;
+
+    color:
+        #FFFFFF !important;
 }
 
 
-/*====================================================
-    PRIMARY
-====================================================*/
+/* =========================================================
+   SUCCESS
+   ========================================================= */
 
-.btn-primary{
+.btn-success {
+    background:
+        var(--success);
 
-    background:var(--blue);
+    border-color:
+        var(--success);
 
-    border:1px solid var(--blue);
-
-    color:#FFFFFF;
-
+    color:
+        #FFFFFF;
 }
 
-.btn-primary:hover{
+.btn-success:hover,
+.btn-success:focus {
+    background:
+        #157347;
 
-    background:var(--blue-dark);
+    border-color:
+        #157347;
 
-    border-color:var(--blue-dark);
-
-    color:#FFFFFF;
-
-}
-
-
-/*====================================================
-    SUCCESS
-====================================================*/
-
-.btn-success{
-
-    background:#198754;
-
-    border:1px solid #198754;
-
-    color:#FFFFFF;
-
-}
-
-.btn-success:hover{
-
-    background:#157347;
-
-    border-color:#157347;
-
-    color:#FFFFFF;
-
+    color:
+        #FFFFFF;
 }
 
 
-/*====================================================
-    WARNING
-====================================================*/
+/* =========================================================
+   WARNING
+   ========================================================= */
 
-.btn-warning{
+.btn-warning {
+    background:
+        var(--warning);
 
-    background:#F59E0B;
+    border-color:
+        var(--warning);
 
-    border:1px solid #F59E0B;
-
-    color:#FFFFFF;
-
+    color:
+        #FFFFFF;
 }
 
-.btn-warning:hover{
+.btn-warning:hover,
+.btn-warning:focus {
+    background:
+        #92400E;
 
-    background:#D97706;
+    border-color:
+        #92400E;
 
-    border-color:#D97706;
-
-    color:#FFFFFF;
-
-}
-
-
-/*====================================================
-    DANGER
-====================================================*/
-
-.btn-danger{
-
-    background:#DC3545;
-
-    border:1px solid #DC3545;
-
-    color:#FFFFFF;
-
-}
-
-.btn-danger:hover{
-
-    background:#BB2D3B;
-
-    border-color:#BB2D3B;
-
-    color:#FFFFFF;
-
+    color:
+        #FFFFFF;
 }
 
 
-/*====================================================
-    SECONDARY
-====================================================*/
+/* =========================================================
+   DANGER
+   ========================================================= */
 
-.btn-secondary{
+.btn-danger {
+    background:
+        var(--danger);
 
-    background:#FFFFFF;
+    border-color:
+        var(--danger);
 
-    border:1px solid #D0D5DD;
-
-    color:#344054;
-
+    color:
+        #FFFFFF;
 }
 
-.btn-secondary:hover{
+.btn-danger:hover,
+.btn-danger:focus {
+    background:
+        #BB2D3B;
 
-    background:#F8FAFC;
+    border-color:
+        #BB2D3B;
 
-    border-color:#98A2B3;
-
-    color:#1D2939;
-
-}
-
-
-/*====================================================
-    OUTLINE PRIMARY
-====================================================*/
-
-.btn-outline-primary{
-
-    background:#FFFFFF;
-
-    border:1px solid #B2DDFF;
-
-    color:#175CD3;
-
-}
-
-.btn-outline-primary:hover{
-
-    background:#EFF8FF;
-
-    border-color:#84CAFF;
-
-    color:#1849A9;
-
+    color:
+        #FFFFFF;
 }
 
 
-/*====================================================
-    OUTLINE SUCCESS
-====================================================*/
+/* =========================================================
+   SECONDARY
+   ========================================================= */
 
-.btn-outline-success{
+.btn-secondary {
+    background:
+        #667085;
 
-    background:#FFFFFF;
+    border-color:
+        #667085;
 
-    border:1px solid #ABEFC6;
-
-    color:#027A48;
-
+    color:
+        #FFFFFF;
 }
 
-.btn-outline-success:hover{
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background:
+        #475467;
 
-    background:#ECFDF3;
+    border-color:
+        #475467;
 
-    border-color:#75E0A7;
-
-    color:#05603A;
-
-}
-
-
-/*====================================================
-    OUTLINE DANGER
-====================================================*/
-
-.btn-outline-danger{
-
-    background:#FFFFFF;
-
-    border:1px solid #FDA29B;
-
-    color:#B42318;
-
-}
-
-.btn-outline-danger:hover{
-
-    background:#FEF3F2;
-
-    border-color:#F97066;
-
-    color:#912018;
-
+    color:
+        #FFFFFF;
 }
 
 
-/*====================================================
-    LIGHT
-====================================================*/
+/* =========================================================
+   OUTLINE PRIMARY
+   ========================================================= */
 
-.btn-light{
+.btn-outline-primary {
+    background:
+        transparent;
 
-    background:#F8FAFC;
+    border-color:
+        var(--navy);
 
-    border:1px solid #E4E7EC;
-
-    color:#344054;
-
+    color:
+        var(--navy);
 }
 
-.btn-light:hover{
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background:
+        var(--navy);
 
-    background:#F2F4F7;
+    border-color:
+        var(--navy);
 
-    border-color:#D0D5DD;
-
-    color:#1D2939;
-
-}
-
-
-/*====================================================
-    LINK BUTTON
-====================================================*/
-
-.btn-link{
-
-    background:transparent;
-
-    border:0;
-
-    color:#175CD3;
-
-    padding:6px 8px;
-
-    text-decoration:none;
-
-}
-
-.btn-link:hover{
-
-    color:#1849A9;
-
-    background:#EFF8FF;
-
-    text-decoration:none;
-
+    color:
+        #FFFFFF;
 }
 
 
-/*====================================================
-    SMALL BUTTON
-====================================================*/
+/* =========================================================
+   OUTLINE SUCCESS
+   ========================================================= */
 
-.btn-sm{
+.btn-outline-success {
+    background:
+        transparent;
 
-    min-height:32px;
+    border-color:
+        var(--success);
 
-    padding:6px 11px;
+    color:
+        var(--success);
+}
 
-    border-radius:6px;
+.btn-outline-success:hover,
+.btn-outline-success:focus {
+    background:
+        var(--success);
 
-    font-size:12px;
+    border-color:
+        var(--success);
 
-    gap:5px;
-
+    color:
+        #FFFFFF;
 }
 
 
-/*====================================================
-    LARGE BUTTON
-====================================================*/
+/* =========================================================
+   OUTLINE DANGER
+   ========================================================= */
 
-.btn-lg{
+.btn-outline-danger {
+    background:
+        transparent;
 
-    min-height:42px;
+    border-color:
+        var(--danger);
 
-    padding:10px 18px;
+    color:
+        var(--danger);
+}
 
-    border-radius:8px;
+.btn-outline-danger:hover,
+.btn-outline-danger:focus {
+    background:
+        var(--danger);
 
-    font-size:14px;
+    border-color:
+        var(--danger);
 
+    color:
+        #FFFFFF;
 }
 
 
-/*====================================================
-    ICON BUTTON
-====================================================*/
+/* =========================================================
+   LIGHT BUTTON
+   ========================================================= */
 
-.btn-icon{
+.btn-light {
+    background:
+        #F4F7FB;
 
-    width:36px;
+    border-color:
+        var(--border);
 
-    height:36px;
-
-    min-height:36px;
-
-    padding:0;
-
-    border-radius:7px;
-
-    gap:0;
-
+    color:
+        var(--text);
 }
 
-.btn-icon i{
+.btn-light:hover,
+.btn-light:focus {
+    background:
+        #EAF0F7;
 
-    margin:0;
+    border-color:
+        #CBD5E1;
 
-}
-
-
-/*====================================================
-    SMALL ICON BUTTON
-====================================================*/
-
-.btn-icon.btn-sm{
-
-    width:32px;
-
-    height:32px;
-
-    min-height:32px;
-
-    padding:0;
-
+    color:
+        var(--navy);
 }
 
 
-/*====================================================
-    BUTTON GROUPS
-====================================================*/
+/* =========================================================
+   LINK BUTTON
+   ========================================================= */
 
-.btn-group-actions{
+.btn-link {
+    min-height: auto;
 
-    display:flex;
+    padding:
+        4px 6px;
 
-    align-items:center;
+    border:
+        none;
 
-    gap:6px;
+    background:
+        transparent;
 
-    flex-wrap:wrap;
+    color:
+        var(--navy);
 
+    font-weight: 600;
+
+    text-decoration: none;
+
+    box-shadow: none;
+}
+
+.btn-link:hover,
+.btn-link:focus {
+    background:
+        transparent;
+
+    color:
+        var(--blue);
+
+    text-decoration: underline;
+
+    box-shadow: none;
 }
 
 
-/*====================================================
-    PAGE ACTION BAR
-====================================================*/
+/* =========================================================
+   SMALL BUTTON
+   ========================================================= */
 
-.page-actions{
+.btn-sm {
+    min-height: 32px;
 
-    display:flex;
+    padding:
+        6px 11px;
 
-    justify-content:flex-end;
+    border-radius:
+        var(--radius-sm);
 
-    align-items:center;
+    font-size: 12px;
 
-    gap:8px;
-
-    margin-bottom:20px;
-
-    flex-wrap:wrap;
-
+    gap: 5px;
 }
 
 
-/*====================================================
-    TABLE ACTION AREA
-    IMPORTANT FOR ENROLLMENT TABLE
-====================================================*/
+/* =========================================================
+   LARGE BUTTON
+   ========================================================= */
 
-.table td:last-child{
+.btn-lg {
+    min-height: 46px;
 
-    vertical-align:middle;
+    padding:
+        10px 20px;
 
-    white-space:nowrap;
+    border-radius:
+        var(--radius);
 
+    font-size: 14px;
 }
 
 
-/*====================================================
-    TABLE ACTION BUTTONS
-====================================================*/
+/* =========================================================
+   ICON-ONLY BUTTON
+   ========================================================= */
 
-.table td:last-child .btn{
+.btn-icon {
+    width: 38px;
+    height: 38px;
 
-    display:inline-flex;
+    min-width: 38px;
+    min-height: 38px;
 
-    align-items:center;
+    padding: 0;
 
-    justify-content:center;
+    display: inline-flex;
 
-    vertical-align:middle;
+    align-items: center;
+    justify-content: center;
 
-    height:32px;
+    border-radius:
+        var(--radius-sm);
+}
 
-    min-height:32px;
+.btn-icon.btn-sm {
+    width: 32px;
+    height: 32px;
 
-    padding:6px 10px;
+    min-width: 32px;
+    min-height: 32px;
+}
 
-    margin:0 3px 0 0;
+.btn-icon.btn-lg {
+    width: 46px;
+    height: 46px;
 
-    border-radius:6px;
-
-    font-size:11px;
-
-    font-weight:600;
-
-    line-height:1;
-
-    white-space:nowrap;
-
+    min-width: 46px;
+    min-height: 46px;
 }
 
 
-/*====================================================
-    REMOVE EXTRA SPACE AFTER LAST BUTTON
-====================================================*/
+/* =========================================================
+   BUTTON ICONS
+   ========================================================= */
 
-.table td:last-child .btn:last-child{
+.btn i,
+.btn svg {
+    flex: 0 0 auto;
 
-    margin-right:0;
+    font-size: .95em;
+}
 
+.btn-icon i,
+.btn-icon svg {
+    margin: 0;
+
+    font-size: 14px;
 }
 
 
-/*====================================================
-    KEEP ALL ACTIONS ON ONE LINE
-====================================================*/
+/* =========================================================
+   BUTTON GROUP ACTIONS
+   ========================================================= */
 
-.table td:last-child{
+.btn-group-actions {
+    display: flex;
 
-    width:1%;
+    align-items: center;
 
+    gap: 8px;
+
+    flex-wrap: wrap;
 }
 
 
-/*====================================================
-    BUTTON ICONS
-====================================================*/
+/* =========================================================
+   PAGE ACTIONS
+   ========================================================= */
 
-.btn i{
+.page-actions {
+    display: flex;
 
-    font-size:.9em;
+    align-items: center;
 
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
 }
 
-.btn-sm i{
 
-    font-size:.85em;
-
-}
-
-
-/*====================================================
-    DISABLED
-====================================================*/
+/* =========================================================
+   DISABLED BUTTONS
+   ========================================================= */
 
 .btn:disabled,
-.btn.disabled{
+.btn.disabled {
+    opacity: .60;
 
-    opacity:.55;
+    cursor: not-allowed;
 
-    cursor:not-allowed;
+    transform: none !important;
 
-    pointer-events:none;
+    box-shadow: none !important;
+}
+
+.btn:disabled:hover,
+.btn.disabled:hover {
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   BOOTSTRAP BUTTON GROUP COMPATIBILITY
+   ========================================================= */
+
+.btn-group > .btn,
+.btn-group-vertical > .btn {
+    margin: 0;
+}
+
+.btn-group > .btn:hover,
+.btn-group-vertical > .btn:hover {
+    transform: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE BUTTONS
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .page-actions {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+    .btn-group-actions {
+        width: 100%;
+    }
 
 }
 
 
-/*====================================================
-    RESPONSIVE
-====================================================*/
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
 
-@media(max-width:768px){
+@media (max-width: 575.98px) {
 
-    .page-actions{
+    .btn {
+        min-height: 36px;
 
-        justify-content:stretch;
+        padding:
+            7px 12px;
 
+        font-size: 12px;
     }
 
-    .page-actions .btn{
+    .btn-lg {
+        min-height: 42px;
 
-        flex:1 1 auto;
+        padding:
+            9px 16px;
 
+        font-size: 13px;
+    }
+
+    .page-actions .btn {
+        flex: 1 1 auto;
     }
 
 }
 
 
-/*====================================================
-    MOBILE
-====================================================*/
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
-@media(max-width:480px){
+@media (prefers-reduced-motion: reduce) {
 
-    .btn{
-
-        min-height:36px;
-
-        padding:8px 12px;
-
-        font-size:12px;
-
+    .btn {
+        transition: none;
     }
 
-    .btn-lg{
-
-        min-height:40px;
-
-        padding:9px 15px;
-
-    }
-
-    .btn-group-actions{
-
-        width:100%;
-
-    }
-
-    /*
-       Enrollment/action tables can scroll
-       on very small screens rather than
-       squeezing buttons.
-    */
-
-    .table td:last-child{
-
-        white-space:nowrap;
-
+    .btn:hover {
+        transform: none;
     }
 
 }

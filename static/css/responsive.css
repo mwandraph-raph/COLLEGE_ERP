@@ -1,140 +1,320 @@
-/*====================================================
-    XORADEX EDUCORE ERP
-    RESPONSIVE
-====================================================*/
+/* =========================================================
+   XORADEX EDUCORE ERP
+   GLOBAL RESPONSIVE STYLES
+   ========================================================= */
 
-/*====================================================
-    LARGE TABLETS
-====================================================*/
 
-@media(max-width:1200px){
+/* =========================================================
+   LARGE TABLETS / SMALL DESKTOPS
+   ========================================================= */
 
-    .erp-content{
+@media (max-width: 1200px) {
 
-        padding:20px;
-
+    .erp-content {
+        padding: 20px;
     }
 
 }
 
-/*====================================================
-    TABLETS
-====================================================*/
 
-@media(max-width:992px){
+/* =========================================================
+   TABLETS
+   ========================================================= */
 
-    .erp-sidebar{
+@media (max-width: 992px) {
 
-        width:80px;
+    .erp-sidebar {
+        width: 230px;
+        flex: 0 0 230px;
+    }
+
+    .erp-workspace {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .erp-content {
+        min-width: 0;
+        width: 100%;
+        padding: 18px 20px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .erp-content > * {
+        width: 100%;
+        max-width: 1400px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    /* -----------------------------------------------------
+       WORKSPACE
+       ----------------------------------------------------- */
+
+    .erp-workspace {
+        position: relative;
+
+        display: block;
+
+        width: 100%;
+        min-width: 0;
+    }
+
+
+    /* -----------------------------------------------------
+       MAIN CONTENT
+       ----------------------------------------------------- */
+
+    .erp-content {
+
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+
+        margin: 0;
+        padding: 15px;
+
+        display: block;
+
+        overflow-x: hidden;
+        overflow-y: visible;
+    }
+
+    .erp-content > * {
+
+        width: 100%;
+        max-width: 100%;
+    }
+
+
+    /* -----------------------------------------------------
+       FULL-SCREEN MOBILE SIDEBAR
+       ----------------------------------------------------- */
+
+    .erp-sidebar {
+
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 3000;
+
+        width: 100%;
+        max-width: 100%;
+
+        height: 100vh;
+        height: 100dvh;
+
+        min-height: 100vh;
+        min-height: 100dvh;
+
+        margin: 0;
+
+        transform: translateX(-100%);
+
+        transition:
+            transform 0.25s ease;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        flex: none;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE SIDEBAR OPEN
+       ----------------------------------------------------- */
+
+    .erp-sidebar.mobile-open {
+
+        transform: translateX(0);
 
     }
+
+
+    /* -----------------------------------------------------
+       FULL SCREEN MUST IGNORE DESKTOP COLLAPSED WIDTH
+       ----------------------------------------------------- */
+
+    .erp-sidebar.collapsed {
+
+        width: 100%;
+        max-width: 100%;
+
+    }
+
+
+    /* -----------------------------------------------------
+       RESTORE SIDEBAR CONTENT WHEN MOBILE
+       ----------------------------------------------------- */
 
     .erp-sidebar .brand-name,
-
-    .erp-sidebar .sidebar-user div,
-
+    .erp-sidebar .sidebar-user > div,
     .erp-sidebar .menu-title,
+    .erp-sidebar .sidebar-menu span {
 
-    .erp-sidebar .sidebar-menu span{
-
-        display:none;
-
-    }
-
-    .sidebar-menu a{
-
-        justify-content:center;
+        display: initial;
 
     }
 
-    .sidebar-submenu{
 
-        padding-left:12px;
+    .erp-sidebar .sidebar-menu a {
+
+        justify-content: flex-start;
 
     }
 
-    .erp-content{
 
-        padding:18px;
+    /* -----------------------------------------------------
+       MOBILE OVERLAY
+       ----------------------------------------------------- */
 
+    .erp-sidebar-overlay {
+
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 2999;
+
+        display: none;
+
+        background: rgba(
+            15,
+            23,
+            42,
+            0.35
+        );
+    }
+
+
+    .erp-sidebar-overlay.active {
+
+        display: block;
+
+    }
+
+
+    /* -----------------------------------------------------
+       KEEP TOGGLE ABOVE SIDEBAR
+       ----------------------------------------------------- */
+
+    #sidebarToggle {
+
+        position: relative;
+
+        z-index: 4000;
+
+    }
+
+
+    /* -----------------------------------------------------
+       CARDS
+       ----------------------------------------------------- */
+
+    .card {
+
+        width: 100%;
+        max-width: 100%;
+
+        margin-bottom: 18px;
+    }
+
+
+    /* -----------------------------------------------------
+       TABLES
+       ----------------------------------------------------- */
+
+    .table-responsive {
+
+        width: 100%;
+        max-width: 100%;
+
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+
+        font-size: 13px;
+    }
+
+
+    /* -----------------------------------------------------
+       MEDIA
+       ----------------------------------------------------- */
+
+    .erp-content img,
+    .erp-content canvas,
+    .erp-content iframe {
+
+        max-width: 100%;
     }
 
 }
 
-/*====================================================
-    MOBILE
-====================================================*/
 
-@media(max-width:768px){
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
 
-    .erp-wrapper{
+@media (max-width: 576px) {
 
-        flex-direction:column;
+    .erp-content {
 
+        width: 100%;
+        padding: 12px;
     }
 
-    .erp-sidebar{
-
-        width:100%;
-
-        min-height:auto;
-
+    h1 {
+        font-size: 26px;
     }
 
-    .erp-main{
-
-        width:100%;
-
+    h2 {
+        font-size: 22px;
     }
 
-    .erp-content{
-
-        padding:15px;
-
+    h3 {
+        font-size: 20px;
     }
 
-    .card{
-
-        margin-bottom:18px;
-
-    }
-
-    .table-responsive{
-
-        font-size:13px;
-
+    .btn {
+        width: 100%;
     }
 
 }
 
-/*====================================================
-    SMALL PHONES
-====================================================*/
 
-@media(max-width:576px){
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
 
-    h1{
+@media (max-width: 400px) {
 
-        font-size:26px;
+    .erp-content {
 
+        padding: 10px;
     }
 
-    h2{
-
-        font-size:22px;
-
+    h1 {
+        font-size: 23px;
     }
 
-    h3{
-
-        font-size:20px;
-
+    h2 {
+        font-size: 20px;
     }
 
-    .btn{
-
-        width:100%;
-
+    h3 {
+        font-size: 18px;
     }
 
 }

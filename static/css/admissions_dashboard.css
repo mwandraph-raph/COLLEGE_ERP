@@ -2,27 +2,28 @@
    XORADEX EDUCORE
    ADMISSION OFFICER DASHBOARD
    Modern SaaS Dashboard
-========================================================= */
+   ========================================================= */
 
 
 /* =========================================================
    PAGE
-========================================================= */
+   ========================================================= */
 
-.admissions-dashboard{
-    min-height:100vh;
+.admissions-dashboard {
+    min-height: 100vh;
 }
 
 
 /* =========================================================
    HERO
-========================================================= */
+   ========================================================= */
 
-.admissions-hero{
-
-    position:relative;
-
-    overflow:hidden;
+.admissions-hero {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 28px;
+    padding: 34px;
+    color: #fff;
 
     background:
         linear-gradient(
@@ -32,1226 +33,929 @@
             #0b4aa2 100%
         );
 
-    border-radius:26px;
-
-    padding:34px;
-
-    margin-bottom:28px;
-
-    color:#fff;
+    border-radius: 26px;
 
     box-shadow:
-        0 16px 40px rgba(1,33,105,.18);
-
+        0 16px 40px rgba(1, 33, 105, 0.18);
 }
 
+.admissions-hero::before {
+    content: "";
+    position: absolute;
+    top: -120px;
+    right: -90px;
 
-.admissions-hero::before{
+    width: 280px;
+    height: 280px;
 
-    content:"";
-
-    position:absolute;
-
-    width:280px;
-    height:280px;
-
-    right:-90px;
-    top:-120px;
-
-    border-radius:50%;
-
-    background:rgba(255,255,255,.08);
-
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
 }
 
+.admissions-hero::after {
+    content: "";
+    position: absolute;
+    right: 170px;
+    bottom: -120px;
 
-.admissions-hero::after{
+    width: 180px;
+    height: 180px;
 
-    content:"";
-
-    position:absolute;
-
-    width:180px;
-    height:180px;
-
-    right:170px;
-    bottom:-120px;
-
-    border-radius:50%;
-
-    background:rgba(255,255,255,.05);
-
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
 }
 
+.admissions-hero-content {
+    position: relative;
+    z-index: 2;
 
-.admissions-hero-content{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    position:relative;
-
-    z-index:2;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:30px;
-
+    gap: 30px;
 }
 
+.admissions-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 
-.admissions-eyebrow{
+    margin-bottom: 10px;
 
-    display:inline-flex;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
 
-    align-items:center;
-
-    gap:8px;
-
-    font-size:12px;
-
-    font-weight:800;
-
-    letter-spacing:1.5px;
-
-    opacity:.82;
-
-    margin-bottom:10px;
-
+    opacity: 0.82;
 }
 
+.admissions-hero h1 {
+    margin: 0;
 
-.admissions-hero h1{
+    color: #fff;
 
-    margin:0;
-
-    font-size:34px;
-
-    font-weight:800;
-
-    letter-spacing:-.5px;
-
-    color: #b26a00;
-
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
+.admissions-hero p {
+    max-width: 650px;
+    margin: 10px 0 0;
 
-.admissions-hero p{
+    color: #fff;
 
-    margin:10px 0 0;
+    font-size: 15px;
+    line-height: 1.7;
 
-    max-width:650px;
-
-    font-size:15px;
-
-    line-height:1.7;
-
-    opacity:.88;
-
-     color: #ffffff;
-
+    opacity: 0.88;
 }
 
 
 /* =========================================================
    SESSION
-========================================================= */
+   ========================================================= */
 
-.admissions-session{
+.admissions-session {
+    display: flex;
+    align-items: center;
 
-    display:flex;
+    min-width: 245px;
+    padding: 18px 20px;
 
-    align-items:center;
+    gap: 14px;
 
-    gap:14px;
+    background: rgba(255, 255, 255, 0.13);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
 
-    min-width:245px;
-
-    padding:18px 20px;
-
-    border-radius:18px;
-
-    background:rgba(255,255,255,.13);
-
-    border:1px solid rgba(255,255,255,.15);
-
-    backdrop-filter:blur(12px);
-
+    backdrop-filter: blur(12px);
 }
 
+.session-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.session-icon{
+    width: 48px;
+    height: 48px;
 
-    width:48px;
-    height:48px;
+    flex-shrink: 0;
 
-    display:flex;
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
 
-    align-items:center;
-    justify-content:center;
-
-    border-radius:14px;
-
-    background:rgba(255,255,255,.16);
-
-    font-size:20px;
-
+    font-size: 20px;
 }
 
+.admissions-session span {
+    display: block;
 
-.admissions-session span{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 
-    display:block;
-
-    font-size:11px;
-
-    text-transform:uppercase;
-
-    letter-spacing:1px;
-
-    opacity:.72;
-
+    opacity: 0.72;
 }
 
+.admissions-session strong {
+    display: block;
 
-.admissions-session strong{
+    margin-top: 3px;
 
-    display:block;
-
-    margin-top:3px;
-
-    font-size:15px;
-
+    font-size: 15px;
 }
 
+.admissions-session small {
+    display: block;
 
-.admissions-session small{
+    margin-top: 2px;
 
-    display:block;
+    font-size: 12px;
 
-    margin-top:2px;
-
-    font-size:12px;
-
-    opacity:.78;
-
+    opacity: 0.78;
 }
 
 
 /* =========================================================
    KPI CARDS
-========================================================= */
+   ========================================================= */
 
-.admission-kpi{
+.admission-kpi {
+    display: flex;
+    align-items: center;
 
-    height:100%;
+    height: 100%;
+    min-width: 0;
 
-    display:flex;
+    gap: 17px;
+    padding: 22px;
 
-    align-items:center;
-
-    gap:17px;
-
-    padding:22px;
-
-    background:#fff;
-
-    border:1px solid #edf2f7;
-
-    border-radius:20px;
-
-    box-shadow:0 6px 20px rgba(0,0,0,.05);
-
-    transition:.3s ease;
-
-}
-
-
-.admission-kpi:hover{
-
-    transform:translateY(-5px);
+    background: #fff;
+    border: 1px solid #edf2f7;
+    border-radius: 20px;
 
     box-shadow:
-        0 14px 32px rgba(0,0,0,.10);
+        0 6px 20px rgba(0, 0, 0, 0.05);
 
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
+.admission-kpi:hover {
+    transform: translateY(-5px);
 
-.kpi-icon{
-
-    width:60px;
-    height:60px;
-
-    flex-shrink:0;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    border-radius:17px;
-
-    font-size:24px;
-
+    box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.10);
 }
 
+.kpi-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.kpi-applicants{
+    width: 60px;
+    height: 60px;
 
-    background:#e0f2fe;
-    color:#0284c7;
+    flex-shrink: 0;
 
+    border-radius: 17px;
+
+    font-size: 24px;
 }
 
-
-.kpi-pending{
-
-    background:#fef3c7;
-    color:#d97706;
-
+.kpi-applicants {
+    background: #e0f2fe;
+    color: #0284c7;
 }
 
-
-.kpi-approved{
-
-    background:#dcfce7;
-    color:#16a34a;
-
+.kpi-pending {
+    background: #fef3c7;
+    color: #d97706;
 }
 
-
-.kpi-intakes{
-
-    background:#ede9fe;
-    color:#7c3aed;
-
+.kpi-approved {
+    background: #dcfce7;
+    color: #16a34a;
 }
 
-
-.kpi-content{
-
-    min-width:0;
-
+.kpi-intakes {
+    background: #ede9fe;
+    color: #7c3aed;
 }
 
-
-.kpi-content span{
-
-    display:block;
-
-    color:#64748b;
-
-    font-size:13px;
-
-    font-weight:600;
-
+.kpi-content {
+    min-width: 0;
 }
 
+.kpi-content span {
+    display: block;
 
-.kpi-content h2{
+    color: #64748b;
 
-    margin:4px 0;
-
-    color:#0f172a;
-
-    font-size:30px;
-
-    line-height:1.1;
-
-    font-weight:800;
-
+    font-size: 13px;
+    font-weight: 600;
 }
 
+.kpi-content h2 {
+    margin: 4px 0;
 
-.kpi-content small{
+    color: #0f172a;
 
-    color:#34415b;
+    font-size: 30px;
+    line-height: 1.1;
+    font-weight: 800;
+}
 
-    font-size:11px;
-
+.kpi-content small {
+    color: #34415b;
+    font-size: 11px;
 }
 
 
 /* =========================================================
    SECTIONS
-========================================================= */
+   ========================================================= */
 
-.dashboard-section{
+.dashboard-section {
+    height: 100%;
 
-    height:100%;
+    overflow: hidden;
 
-    background:#fff;
+    background: #fff;
+    border: 1px solid #edf2f7;
+    border-radius: 22px;
 
-    border:1px solid #edf2f7;
-
-    border-radius:22px;
-
-    box-shadow:0 6px 20px rgba(0,0,0,.05);
-
-    overflow:hidden;
-
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-.section-header{
+    gap: 20px;
+    padding: 23px 24px;
 
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    gap:20px;
-
-    padding:23px 24px;
-
-    border-bottom:1px solid #eef2f7;
-
+    border-bottom: 1px solid #eef2f7;
 }
 
+.section-eyebrow {
+    display: block;
 
-.section-eyebrow{
+    margin-bottom: 4px;
 
-    display:block;
+    color: #64748b;
 
-    margin-bottom:4px;
-
-    color:#64748b;
-
-    font-size:10px;
-
-    font-weight:800;
-
-    letter-spacing:1.2px;
-
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
 }
 
-.section-header h3{
+.section-header h3 {
+    margin: 0;
 
-    margin:0;
+    color: #0f172a;
 
-    color:#0f172a;
-
-    font-size:18px;
-
-    font-weight:800;
-
+    font-size: 18px;
+    font-weight: 800;
 }
 
-
-.section-description{
-
-    color:#11141a;
-
-    font-size:12px;
-
+.section-description {
+    color: #11141a;
+    font-size: 12px;
 }
 
+.section-link {
+    display: inline-flex;
+    align-items: center;
 
-.section-link{
+    gap: 7px;
 
-    display:inline-flex;
+    color: #003087;
 
-    align-items:center;
+    font-size: 12px;
+    font-weight: 700;
 
-    gap:7px;
-
-    color:#003087;
-
-    font-size:12px;
-
-    font-weight:700;
-
-    text-decoration:none;
-
+    text-decoration: none;
 }
 
-
-.section-link:hover{
-
-    color:#012169;
-
+.section-link:hover {
+    color: #012169;
 }
 
 
 /* =========================================================
    QUICK ACTIONS
-========================================================= */
+   ========================================================= */
 
-.quick-actions{
+.quick-actions {
+    display: grid;
 
-    display:grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap:15px;
-
-    padding:22px;
-
+    gap: 15px;
+    padding: 22px;
 }
 
+.quick-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
 
-.quick-action{
+    min-height: 135px;
+    min-width: 0;
 
-    display:flex;
+    padding: 20px;
 
-    flex-direction:column;
+    background: #f8fafc;
+    border: 1px solid #e7edf4;
+    border-radius: 17px;
 
-    align-items:flex-start;
+    color: #0f172a;
+    text-decoration: none;
 
-    justify-content:center;
-
-    min-height:135px;
-
-    padding:20px;
-
-    background:#f8fafc;
-
-    border:1px solid #e7edf4;
-
-    border-radius:17px;
-
-    color:#0f172a;
-
-    text-decoration:none;
-
-    transition:.3s ease;
-
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease;
 }
 
+.quick-action:hover {
+    transform: translateY(-4px);
 
-.quick-action:hover{
-
-    background:#f1f5f9;
-
-    border-color:#cbd5e1;
-
-    transform:translateY(-4px);
-
+    background: #f1f5f9;
+    border-color: #cbd5e1;
 }
 
+.quick-action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.quick-action-icon{
+    width: 44px;
+    height: 44px;
 
-    width:44px;
-    height:44px;
+    margin-bottom: 12px;
 
-    display:flex;
+    border-radius: 13px;
 
-    align-items:center;
-    justify-content:center;
+    background: #e8efff;
+    color: #003087;
 
-    margin-bottom:12px;
-
-    border-radius:13px;
-
-    background:#e8efff;
-
-    color:#003087;
-
-    font-size:18px;
-
+    font-size: 18px;
 }
 
-
-.quick-action strong{
-
-    font-size:14px;
-
-    font-weight:800;
-
+.quick-action strong {
+    font-size: 14px;
+    font-weight: 800;
 }
 
+.quick-action span {
+    margin-top: 4px;
 
-.quick-action span{
+    color: #677592;
 
-    margin-top:4px;
-
-    color:#677592;
-
-    font-size:11px;
-
+    font-size: 11px;
 }
 
 
 /* =========================================================
    STATUS
-========================================================= */
+   ========================================================= */
 
-.status-section{
-
-    display:flex;
-
-    flex-direction:column;
-
+.status-section {
+    display: flex;
+    flex-direction: column;
 }
 
-
-.status-list{
-
-    padding:15px 22px;
-
+.status-list {
+    padding: 15px 22px;
 }
 
+.status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-.status-row{
+    padding: 15px 0;
 
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    padding:15px 0;
-
-    border-bottom:1px solid #f1f5f9;
-
+    border-bottom: 1px solid #f1f5f9;
 }
 
-
-.status-row:last-child{
-
-    border-bottom:0;
-
+.status-row:last-child {
+    border-bottom: 0;
 }
 
+.status-label {
+    display: flex;
+    align-items: center;
 
-.status-label{
+    gap: 10px;
 
-    display:flex;
+    color: #475569;
 
-    align-items:center;
-
-    gap:10px;
-
-    color:#475569;
-
-    font-size:13px;
-
-    font-weight:600;
-
+    font-size: 13px;
+    font-weight: 600;
 }
 
+.status-row strong {
+    color: #0f172a;
 
-.status-row strong{
-
-    color:#0f172a;
-
-    font-size:18px;
-
-    font-weight:800;
-
+    font-size: 18px;
+    font-weight: 800;
 }
 
+.status-dot {
+    width: 9px;
+    height: 9px;
 
-.status-dot{
+    flex-shrink: 0;
 
-    width:9px;
-    height:9px;
-
-    border-radius:50%;
-
+    border-radius: 50%;
 }
 
-
-.status-dot.pending{
-    background:#f59e0b;
+.status-dot.pending {
+    background: #f59e0b;
 }
 
-
-.status-dot.approved{
-    background:#22c55e;
+.status-dot.approved {
+    background: #22c55e;
 }
 
-
-.status-dot.rejected{
-    background:#ef4444;
+.status-dot.rejected {
+    background: #ef4444;
 }
 
+.status-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-.status-total{
+    margin-top: auto;
+    padding: 18px 22px;
 
-    margin-top:auto;
+    background: #f8fafc;
 
-    display:flex;
+    color: #64748b;
 
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:18px 22px;
-
-    background:#f8fafc;
-
-    color:#64748b;
-
-    font-size:12px;
-
+    font-size: 12px;
 }
 
-
-.status-total strong{
-
-    color:#0f172a;
-
-    font-size:18px;
-
+.status-total strong {
+    color: #0f172a;
+    font-size: 18px;
 }
 
 
 /* =========================================================
    APPLICATION TABLE
-========================================================= */
+   ========================================================= */
 
-.table-responsive{
+.table-responsive {
+    width: 100%;
 
-    width:100%;
-
-    overflow-x:auto;
-
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
+.admissions-table {
+    width: 100%;
 
-.admissions-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
+    border-collapse: collapse;
 }
 
+.admissions-table th {
+    padding: 13px 20px;
 
-.admissions-table th{
+    background: #f8fafc;
 
-    padding:13px 20px;
+    color: #64748b;
 
-    background:#f8fafc;
+    font-size: 10px;
+    font-weight: 800;
 
-    color:#64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
 
-    font-size:10px;
-
-    font-weight:800;
-
-    text-transform:uppercase;
-
-    letter-spacing:.7px;
-
-    white-space:nowrap;
-
+    white-space: nowrap;
 }
 
+.admissions-table td {
+    padding: 15px 20px;
 
-.admissions-table td{
+    border-top: 1px solid #f1f5f9;
 
-    padding:15px 20px;
+    color: #475569;
 
-    border-top:1px solid #f1f5f9;
+    font-size: 12px;
 
-    color:#475569;
-
-    font-size:12px;
-
-    vertical-align:middle;
-
+    vertical-align: middle;
 }
 
-
-.admissions-table tbody tr{
-
-    transition:.2s ease;
-
+.admissions-table tbody tr {
+    transition: background 0.2s ease;
 }
 
-
-.admissions-table tbody tr:hover{
-
-    background:#fafcff;
-
+.admissions-table tbody tr:hover {
+    background: #fafcff;
 }
 
+.application-number {
+    display: block;
 
-.application-number{
+    color: #003087;
 
-    display:block;
+    font-size: 12px;
+    font-weight: 800;
 
-    color:#003087;
-
-    font-size:12px;
-
-    font-weight:800;
-
-    text-decoration:none;
-
+    text-decoration: none;
 }
 
+.admissions-table td small {
+    display: block;
 
-.admissions-table td small{
+    margin-top: 3px;
 
-    display:block;
+    color: #94a3b8;
 
-    margin-top:3px;
-
-    color:#94a3b8;
-
-    font-size:10px;
-
+    font-size: 10px;
 }
 
+.applicant-name {
+    display: flex;
+    align-items: center;
 
-.applicant-name{
+    gap: 10px;
 
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    min-width:170px;
-
+    min-width: 170px;
 }
 
+.applicant-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.applicant-avatar{
+    width: 34px;
+    height: 34px;
 
-    width:34px;
-    height:34px;
+    flex-shrink: 0;
 
-    flex-shrink:0;
+    border-radius: 10px;
 
-    display:flex;
+    background: #e8efff;
+    color: #003087;
 
-    align-items:center;
-    justify-content:center;
-
-    border-radius:10px;
-
-    background:#e8efff;
-
-    color:#003087;
-
-    font-size:12px;
-
-    font-weight:800;
-
+    font-size: 12px;
+    font-weight: 800;
 }
 
+.applicant-name strong {
+    color: #1e293b;
 
-.applicant-name strong{
-
-    color:#1e293b;
-
-    font-size:12px;
-
-    font-weight:700;
-
+    font-size: 12px;
+    font-weight: 700;
 }
 
+.programme-name {
+    display: block;
 
-.programme-name{
+    max-width: 180px;
 
-    display:block;
+    color: #475569;
 
-    max-width:180px;
-
-    color:#475569;
-
-    line-height:1.4;
-
+    line-height: 1.4;
 }
 
 
 /* =========================================================
    APPLICATION STATUS BADGES
-========================================================= */
+   ========================================================= */
 
-.application-status{
+.application-status {
+    display: inline-flex;
+    align-items: center;
 
-    display:inline-flex;
+    padding: 5px 9px;
 
-    align-items:center;
+    border-radius: 20px;
 
-    padding:5px 9px;
+    font-size: 9px;
+    font-weight: 800;
 
-    border-radius:20px;
-
-    font-size:9px;
-
-    font-weight:800;
-
-    text-transform:uppercase;
-
-    letter-spacing:.5px;
-
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-
-.application-status.pending{
-
-    background:#fef3c7;
-
-    color:#b45309;
-
+.application-status.pending {
+    background: #fef3c7;
+    color: #b45309;
 }
 
-
-.application-status.approved{
-
-    background:#dcfce7;
-
-    color:#15803d;
-
+.application-status.approved {
+    background: #dcfce7;
+    color: #15803d;
 }
 
-
-.application-status.rejected{
-
-    background:#fee2e2;
-
-    color:#b91c1c;
-
+.application-status.rejected {
+    background: #fee2e2;
+    color: #b91c1c;
 }
 
 
 /* =========================================================
    OPEN INTAKES
-========================================================= */
+   ========================================================= */
 
-.intake-list{
-
-    padding:8px 22px 20px;
-
+.intake-list {
+    padding: 8px 22px 20px;
 }
 
+.intake-item {
+    display: flex;
+    align-items: center;
 
-.intake-item{
+    gap: 11px;
+    padding: 15px 0;
 
-    display:flex;
-
-    align-items:center;
-
-    gap:11px;
-
-    padding:15px 0;
-
-    border-bottom:1px solid #f1f5f9;
-
+    border-bottom: 1px solid #f1f5f9;
 }
 
-
-.intake-item:last-child{
-
-    border-bottom:0;
-
+.intake-item:last-child {
+    border-bottom: 0;
 }
 
+.intake-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.intake-icon{
+    width: 40px;
+    height: 40px;
 
-    width:40px;
-    height:40px;
+    flex-shrink: 0;
 
-    flex-shrink:0;
+    border-radius: 12px;
 
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    border-radius:12px;
-
-    background:#ede9fe;
-
-    color:#7c3aed;
-
+    background: #ede9fe;
+    color: #7c3aed;
 }
 
-
-.intake-info{
-
-    flex:1;
-
-    min-width:0;
-
+.intake-info {
+    flex: 1;
+    min-width: 0;
 }
 
+.intake-info strong {
+    display: block;
 
-.intake-info strong{
+    color: #1e293b;
 
-    display:block;
-
-    color:#1e293b;
-
-    font-size:12px;
-
-    font-weight:800;
-
+    font-size: 12px;
+    font-weight: 800;
 }
 
+.intake-info span {
+    display: block;
 
-.intake-info span{
+    margin-top: 2px;
 
-    display:block;
+    color: #64748b;
 
-    margin-top:2px;
-
-    color:#64748b;
-
-    font-size:10px;
-
+    font-size: 10px;
 }
 
+.intake-info small {
+    display: block;
 
-.intake-info small{
+    margin-top: 2px;
 
-    display:block;
+    color: #94a3b8;
 
-    margin-top:2px;
-
-    color:#94a3b8;
-
-    font-size:10px;
-
+    font-size: 10px;
 }
 
+.open-badge {
+    padding: 5px 8px;
 
-.open-badge{
+    border-radius: 20px;
 
-    padding:5px 8px;
+    background: #dcfce7;
+    color: #15803d;
 
-    border-radius:20px;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
 
-    background:#dcfce7;
-
-    color:#15803d;
-
-    font-size:8px;
-
-    font-weight:800;
-
-    letter-spacing:.6px;
-
+    white-space: nowrap;
 }
 
+.empty-intakes {
+    padding: 45px 20px;
 
-.empty-intakes{
+    text-align: center;
 
-    padding:45px 20px;
-
-    text-align:center;
-
-    color:#94a3b8;
-
+    color: #94a3b8;
 }
 
+.empty-intakes i {
+    margin-bottom: 10px;
 
-.empty-intakes i{
-
-    margin-bottom:10px;
-
-    font-size:25px;
-
+    font-size: 25px;
 }
 
+.empty-intakes p {
+    margin: 0;
 
-.empty-intakes p{
-
-    margin:0;
-
-    font-size:12px;
-
+    font-size: 12px;
 }
 
 
 /* =========================================================
    EMPTY TABLE
-========================================================= */
+   ========================================================= */
 
-.empty-state{
+.empty-state {
+    padding: 45px 20px !important;
 
-    padding:45px 20px !important;
+    text-align: center;
 
-    text-align:center;
-
-    color:#94a3b8 !important;
-
+    color: #94a3b8 !important;
 }
 
-
-.empty-state i{
-
-    margin-right:8px;
-
+.empty-state i {
+    margin-right: 8px;
 }
 
 
 /* =========================================================
    FOOTER
-========================================================= */
+   ========================================================= */
 
-.admission-footer{
+.admission-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    display:flex;
+    gap: 20px;
 
-    align-items:center;
+    margin-top: 4px;
+    padding: 18px 22px;
 
-    justify-content:space-between;
-
-    gap:20px;
-
-    margin-top:4px;
-
-    padding:18px 22px;
-
-    border-radius:18px;
-
-    background:#f8fafc;
-
-    border:1px solid #edf2f7;
-
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+    border-radius: 18px;
 }
 
+.admission-footer div {
+    display: flex;
+    align-items: center;
 
-.admission-footer div{
+    gap: 9px;
 
-    display:flex;
+    color: #003087;
 
-    align-items:center;
-
-    gap:9px;
-
-    color:#003087;
-
-    font-size:12px;
-
-    font-weight:800;
-
+    font-size: 12px;
+    font-weight: 800;
 }
 
+.admission-footer p {
+    margin: 0;
 
-.admission-footer p{
+    color: var(--navy);
 
-    margin:0;
-
-    color:var(--navy);
-
-    font-size:11px;
-
+    font-size: 11px;
     font-weight: 500;
-
 }
 
 
 /* =========================================================
    RESPONSIVE
-========================================================= */
+   ========================================================= */
 
-@media(max-width:1100px){
+@media (max-width: 1100px) {
 
-    .admissions-hero-content{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
+    .admissions-hero-content {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
-    .admissions-session{
-
-        width:100%;
-
+    .admissions-session {
+        width: 100%;
+        min-width: 0;
     }
-
 }
 
 
-@media(max-width:768px){
+@media (max-width: 768px) {
 
-    .admissions-hero{
-
-        padding:25px;
-
-        border-radius:20px;
-
+    .admissions-hero {
+        padding: 25px;
+        border-radius: 20px;
     }
 
-
-    .admissions-hero h1{
-
-        font-size:27px;
-
+    .admissions-hero h1 {
+        font-size: 27px;
     }
 
-
-    .quick-actions{
-
-        grid-template-columns:1fr;
-
+    .admissions-hero p {
+        font-size: 14px;
     }
 
-
-    .section-header{
-
-        padding:19px;
-
+    .quick-actions {
+        grid-template-columns: 1fr;
     }
 
+    .section-header {
+        align-items: flex-start;
+        padding: 19px;
+    }
+
+    .section-link {
+        flex-shrink: 0;
+    }
 
     .admissions-table th,
-    .admissions-table td{
-
-        padding-left:14px;
-
-        padding-right:14px;
-
+    .admissions-table td {
+        padding-right: 14px;
+        padding-left: 14px;
     }
 
-
-    .admission-footer{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
+    .admission-footer {
+        flex-direction: column;
+        align-items: flex-start;
     }
-
 }
 
 
-@media(max-width:576px){
+@media (max-width: 576px) {
 
-    .admissions-dashboard .container-fluid{
-
-        padding-left:12px !important;
-
-        padding-right:12px !important;
-
+    .admission-kpi {
+        padding: 18px;
     }
 
+    .kpi-icon {
+        width: 52px;
+        height: 52px;
 
-    .admission-kpi{
-
-        padding:18px;
-
+        font-size: 21px;
     }
 
-
-    .kpi-icon{
-
-        width:52px;
-        height:52px;
-
-        font-size:21px;
-
+    .kpi-content h2 {
+        font-size: 26px;
     }
 
-
-    .kpi-content h2{
-
-        font-size:26px;
-
+    .admissions-session {
+        padding: 15px;
     }
 
+    .session-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .section-header {
+        flex-wrap: wrap;
+    }
+
+    .section-link {
+        width: 100%;
+    }
+
+    .intake-list {
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+}
+
+
+@media (max-width: 400px) {
+
+    .admissions-hero {
+        padding: 20px;
+    }
+
+    .admissions-hero h1 {
+        font-size: 24px;
+    }
+
+    .admission-kpi {
+        gap: 12px;
+        padding: 15px;
+    }
+
+    .kpi-icon {
+        width: 46px;
+        height: 46px;
+
+        font-size: 18px;
+    }
+
+    .kpi-content h2 {
+        font-size: 23px;
+    }
 }

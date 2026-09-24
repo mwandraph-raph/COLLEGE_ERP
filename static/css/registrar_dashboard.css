@@ -1,31 +1,39 @@
 /* =========================================================
    XORadex EduCore
    REGISTRAR DASHBOARD
+   Page-specific styles only
    Modern SaaS / ERP
 ========================================================= */
 
+
+/* =========================================================
+   01. PAGE FOUNDATION
+========================================================= */
+
 .registrar-dashboard {
+    width: 100%;
     padding: 0 0 40px;
 }
 
 
 /* =========================================================
-   HERO
+   02. HERO
 ========================================================= */
 
 .registrar-hero {
     margin-bottom: 28px;
     padding: 32px;
+    border: 1px solid rgba(255, 255, 255, .12);
     border-radius: 24px;
-    background:
-        linear-gradient(
-            135deg,
-            #012169 0%,
-            #003087 55%,
-            #0057b8 100%
-        );
+    background: linear-gradient(
+        135deg,
+        var(--navy-dark) 0%,
+        var(--navy) 55%,
+        var(--blue-dark) 100%
+    );
     color: #ffffff;
-    box-shadow: 0 12px 35px rgba(1, 33, 105, 0.16);
+    box-shadow: 0 12px 35px rgba(1, 33, 105, .16);
+    overflow: hidden;
 }
 
 .registrar-hero-content {
@@ -39,30 +47,32 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, .78);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 1.2px;
-    opacity: 0.82;
-    margin-bottom: 10px;
 }
 
 .registrar-hero h1 {
     margin: 0;
+    color: #ffffff;
     font-size: 30px;
     font-weight: 750;
-    color: #b26a00;
+    line-height: 1.25;
 }
 
 .registrar-hero p {
-    margin: 10px 0 0;
     max-width: 650px;
-    color: rgba(255,255,255,.82);
+    margin: 10px 0 0;
+    color: rgba(255, 255, 255, .82);
     font-size: 14px;
+    line-height: 1.6;
 }
 
 
 /* =========================================================
-   SESSION
+   03. CURRENT SESSION
 ========================================================= */
 
 .registrar-session {
@@ -71,41 +81,45 @@
     gap: 14px;
     min-width: 240px;
     padding: 16px 18px;
-    border: 1px solid rgba(255,255,255,.18);
+    border: 1px solid rgba(255, 255, 255, .18);
     border-radius: 16px;
-    background: rgba(255,255,255,.10);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, .10);
 }
 
 .session-icon {
     width: 44px;
     height: 44px;
     display: grid;
+    flex: 0 0 44px;
     place-items: center;
     border-radius: 12px;
-    background: rgba(255,255,255,.14);
+    background: rgba(255, 255, 255, .14);
+    color: #ffffff;
     font-size: 18px;
 }
 
 .registrar-session span,
 .registrar-session small {
     display: block;
-    color: rgba(255,255,255,.68);
+    color: rgba(255, 255, 255, .68);
 }
 
 .registrar-session strong {
     display: block;
     margin-top: 3px;
+    color: #ffffff;
     font-size: 14px;
+    font-weight: 700;
 }
 
 .registrar-session small {
     margin-top: 2px;
+    font-size: 11px;
 }
 
 
 /* =========================================================
-   KPI CARDS
+   04. KPI SECTION
 ========================================================= */
 
 .registrar-kpis {
@@ -118,24 +132,29 @@
     align-items: center;
     gap: 16px;
     padding: 22px;
-    border: 1px solid #e8edf5;
+    border: 1px solid var(--border);
     border-radius: 18px;
-    background: #ffffff;
-    box-shadow: 0 6px 22px rgba(15, 23, 42, .055);
-    transition: transform .2s ease,
-                box-shadow .2s ease;
+    background: rgba(255, 255, 255, .88);
+    box-shadow: var(--shadow-sm);
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease,
+        background .22s ease;
 }
 
 .registrar-kpi:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 28px rgba(15, 23, 42, .09);
+    transform: translateY(-4px);
+    border-color: #cbd8ed;
+    background: #ffffff;
+    box-shadow: var(--shadow);
 }
 
 .kpi-icon {
     width: 52px;
     height: 52px;
-    flex: 0 0 52px;
     display: grid;
+    flex: 0 0 52px;
     place-items: center;
     border-radius: 15px;
     font-size: 20px;
@@ -143,7 +162,7 @@
 
 .kpi-icon.students {
     background: #e8f0ff;
-    color: #012169;
+    color: var(--navy);
 }
 
 .kpi-icon.applicants {
@@ -153,7 +172,7 @@
 
 .kpi-icon.enrollments {
     background: #fff5df;
-    color: #b26a00;
+    color: var(--darkorange);
 }
 
 .kpi-icon.registrations {
@@ -167,7 +186,7 @@
 }
 
 .registrar-kpi span {
-    color: #64748b;
+    color: var(--muted);
     font-size: 12px;
     font-weight: 600;
 }
@@ -175,8 +194,9 @@
 .registrar-kpi strong {
     display: block;
     margin: 3px 0;
-    color: #0f172a;
+    color: var(--heading);
     font-size: 27px;
+    font-weight: 700;
     line-height: 1.1;
 }
 
@@ -187,7 +207,7 @@
 
 
 /* =========================================================
-   SECTIONS
+   05. SECTION HEADINGS
 ========================================================= */
 
 .registrar-section {
@@ -201,7 +221,7 @@
 .section-eyebrow {
     display: block;
     margin-bottom: 4px;
-    color: #64748b;
+    color: var(--muted);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 1px;
@@ -211,13 +231,17 @@
 .section-heading h2,
 .panel-header h3 {
     margin: 0;
-    color: #0f172a;
+    color: var(--heading);
     font-weight: 750;
+}
+
+.section-heading h2 {
+    font-size: 20px;
 }
 
 
 /* =========================================================
-   QUICK ACTIONS
+   06. QUICK ACTIONS
 ========================================================= */
 
 .registrar-action {
@@ -226,31 +250,46 @@
     align-items: center;
     gap: 14px;
     padding: 20px;
-    border: 1px solid #e8edf5;
+    border: 1px solid var(--border);
     border-radius: 18px;
-    background: #ffffff;
+    background: rgba(255, 255, 255, .88);
     color: inherit;
     text-decoration: none;
-    box-shadow: 0 5px 20px rgba(15,23,42,.045);
-    transition: all .2s ease;
+    box-shadow: var(--shadow-sm);
+    transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease,
+        background .22s ease,
+        color .22s ease;
 }
 
 .registrar-action:hover {
-    color: inherit;
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     border-color: #cbd8ed;
-    box-shadow: 0 12px 28px rgba(15,23,42,.09);
+    background: #ffffff;
+    color: inherit;
+    box-shadow: var(--shadow);
 }
 
 .action-icon {
     width: 46px;
     height: 46px;
     display: grid;
-    place-items: center;
     flex: 0 0 46px;
+    place-items: center;
     border-radius: 13px;
     background: #edf3ff;
-    color: #012169;
+    color: var(--navy);
+    font-size: 16px;
+    transition:
+        transform .22s ease,
+        background .22s ease,
+        color .22s ease;
+}
+
+.registrar-action:hover .action-icon {
+    transform: scale(1.05);
 }
 
 .registrar-action strong,
@@ -259,33 +298,44 @@
 }
 
 .registrar-action strong {
-    color: #172033;
+    color: var(--text);
     font-size: 14px;
+    font-weight: 700;
 }
 
 .registrar-action span {
     margin-top: 3px;
-    color: #64748b;
+    color: var(--muted);
     font-size: 12px;
+    line-height: 1.45;
 }
 
 .action-arrow {
     margin-left: auto;
     color: #94a3b8;
+    font-size: 11px;
+    transition:
+        transform .22s ease,
+        color .22s ease;
+}
+
+.registrar-action:hover .action-arrow {
+    transform: translateX(3px);
+    color: var(--blue);
 }
 
 
 /* =========================================================
-   PANELS
+   07. PANELS
 ========================================================= */
 
 .registrar-panel {
     height: 100%;
     overflow: hidden;
-    border: 1px solid #e8edf5;
+    border: 1px solid var(--border);
     border-radius: 20px;
-    background: #ffffff;
-    box-shadow: 0 6px 22px rgba(15,23,42,.05);
+    background: rgba(255, 255, 255, .88);
+    box-shadow: var(--shadow-sm);
 }
 
 .panel-header {
@@ -294,45 +344,54 @@
     justify-content: space-between;
     gap: 20px;
     padding: 20px 22px;
-    border-bottom: 1px solid #edf1f6;
+    border-bottom: 1px solid var(--border-light);
+    background: rgba(255, 255, 255, .72);
 }
 
 .panel-header h3 {
     font-size: 17px;
+    line-height: 1.3;
 }
 
 .panel-header a {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: #003087;
+    color: var(--blue-dark);
     font-size: 12px;
     font-weight: 700;
     text-decoration: none;
+    transition:
+        color .2s ease,
+        gap .2s ease;
 }
 
 .panel-header a:hover {
-    text-decoration: underline;
+    color: var(--blue);
+    text-decoration: none;
+    gap: 8px;
 }
 
 
 /* =========================================================
-   TABLE
+   08. REGISTRAR TABLE
 ========================================================= */
 
 .registrar-table {
+    width: 100%;
     margin: 0;
 }
 
 .registrar-table thead th {
     padding: 13px 20px;
-    border-bottom: 1px solid #edf1f6;
-    color: #64748b;
+    border-bottom: 1px solid var(--border-light);
     background: #f8fafc;
+    color: var(--muted);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: .5px;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .registrar-table tbody td {
@@ -347,27 +406,34 @@
     border-bottom: 0;
 }
 
+.registrar-table tbody tr {
+    transition: background-color .18s ease;
+}
+
 .registrar-table tbody tr:hover {
     background: #fafcff;
 }
 
 .registrar-table strong {
-    color: #1e293b;
+    color: var(--text);
+    font-weight: 700;
 }
 
 .admission-badge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     padding: 5px 9px;
     border-radius: 7px;
     background: #edf3ff;
-    color: #012169;
+    color: var(--navy);
     font-size: 11px;
     font-weight: 700;
+    white-space: nowrap;
 }
 
 
 /* =========================================================
-   APPLICANTS
+   09. APPLICANT LIST
 ========================================================= */
 
 .applicant-list {
@@ -380,6 +446,7 @@
     gap: 12px;
     padding: 13px 0;
     border-bottom: 1px solid #f1f4f8;
+    transition: background-color .18s ease;
 }
 
 .applicant-row:last-child {
@@ -390,11 +457,16 @@
     width: 38px;
     height: 38px;
     display: grid;
-    place-items: center;
     flex: 0 0 38px;
+    place-items: center;
     border-radius: 11px;
     background: #eefcf6;
     color: #087f5b;
+    font-size: 14px;
+}
+
+.applicant-info {
+    min-width: 0;
 }
 
 .applicant-info strong,
@@ -403,19 +475,23 @@
 }
 
 .applicant-info strong {
-    color: #1e293b;
+    overflow: hidden;
+    color: var(--text);
     font-size: 13px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .applicant-info span {
     margin-top: 3px;
-    color: #64748b;
+    color: var(--muted);
     font-size: 11px;
 }
 
 
 /* =========================================================
-   STRUCTURE STATS
+   10. STRUCTURE STATISTICS
 ========================================================= */
 
 .structure-stat {
@@ -423,18 +499,33 @@
     align-items: center;
     gap: 13px;
     padding: 18px;
+    border: 1px solid transparent;
     border-radius: 14px;
     background: #f8fafc;
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+}
+
+.structure-stat:hover {
+    transform: translateY(-2px);
+    border-color: var(--border);
+    background: #ffffff;
+    box-shadow: var(--shadow-sm);
 }
 
 .structure-stat > i {
     width: 42px;
     height: 42px;
     display: grid;
+    flex: 0 0 42px;
     place-items: center;
     border-radius: 11px;
     background: #edf3ff;
-    color: #012169;
+    color: var(--navy);
+    font-size: 15px;
 }
 
 .structure-stat span,
@@ -443,19 +534,20 @@
 }
 
 .structure-stat span {
-    color: #64748b;
+    color: var(--muted);
     font-size: 11px;
 }
 
 .structure-stat strong {
     margin-top: 2px;
-    color: #0f172a;
+    color: var(--heading);
     font-size: 20px;
+    font-weight: 700;
 }
 
 
 /* =========================================================
-   EMPTY
+   11. EMPTY STATE
 ========================================================= */
 
 .empty-state {
@@ -466,14 +558,18 @@
 
 
 /* =========================================================
-   RESPONSIVE
+   12. RESPONSIVE — TABLET
 ========================================================= */
 
-@media (max-width: 991px) {
+@media (max-width: 991.98px) {
+
+    .registrar-hero {
+        padding: 28px;
+    }
 
     .registrar-hero-content {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
     }
 
     .registrar-session {
@@ -482,10 +578,20 @@
 
 }
 
-@media (max-width: 575px) {
+
+/* =========================================================
+   13. RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .registrar-dashboard {
+        padding-bottom: 30px;
+    }
 
     .registrar-hero {
-        padding: 24px;
+        margin-bottom: 22px;
+        padding: 24px 20px;
         border-radius: 18px;
     }
 
@@ -493,8 +599,97 @@
         font-size: 24px;
     }
 
+    .registrar-hero p {
+        font-size: 13px;
+    }
+
+    .registrar-session {
+        min-width: 0;
+        padding: 14px 15px;
+    }
+
+    .registrar-kpis {
+        margin-bottom: 24px;
+    }
+
     .registrar-kpi {
         padding: 18px;
+        border-radius: 15px;
+    }
+
+    .kpi-icon {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+        border-radius: 13px;
+        font-size: 17px;
+    }
+
+    .registrar-kpi strong {
+        font-size: 24px;
+    }
+
+    .registrar-action {
+        min-height: 92px;
+        padding: 16px;
+        border-radius: 15px;
+    }
+
+    .registrar-panel {
+        border-radius: 16px;
+    }
+
+    .panel-header {
+        padding: 16px 17px;
+    }
+
+    .panel-header h3 {
+        font-size: 15px;
+    }
+
+    .registrar-table thead th {
+        padding: 11px 14px;
+    }
+
+    .registrar-table tbody td {
+        padding: 13px 14px;
+        font-size: 12px;
+    }
+
+    .applicant-list {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .structure-stat {
+        padding: 15px;
+    }
+
+}
+
+
+/* =========================================================
+   14. ACCESSIBILITY / REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .registrar-kpi,
+    .registrar-action,
+    .action-icon,
+    .action-arrow,
+    .panel-header a,
+    .structure-stat,
+    .registrar-table tbody tr {
+        transition: none;
+    }
+
+    .registrar-kpi:hover,
+    .registrar-action:hover,
+    .structure-stat:hover,
+    .registrar-action:hover .action-icon,
+    .registrar-action:hover .action-arrow {
+        transform: none;
     }
 
 }

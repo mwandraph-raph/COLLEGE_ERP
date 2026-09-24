@@ -1,103 +1,171 @@
-/*====================================================
-    XORADEX EDUCORE ERP
-    DESIGN TOKENS
-====================================================*/
+:root {
 
-:root{
+    /* =====================================================
+       XORADEX EDUCORE ERP
+       GLOBAL DESIGN TOKENS
+       -----------------------------------------------------
+       This is the authoritative application palette.
 
-    /*==================================================
-        BRAND COLORS
-    ==================================================*/
+       IMPORTANT:
+       - Main content background = --background
+       - Cards = --card
+       - Sidebar = --sidebar
+       - Topbar = --topbar
+       - Shared borders/shadows use the tokens below
+       ===================================================== */
 
-    --navy:#3184e2;
-    --blue:#0a45b1;
-    --blue-dark:#001F5C;
-    --gold:#FFC107;
-    --darkorange:#b26a00;
 
-    /*==================================================
-        LAYOUT COLORS
-    ==================================================*/
+    /* =====================================================
+       BRAND COLORS
+       ===================================================== */
 
-    --sidebar:#012169;
-    --sidebar-alt:#69013f;
+    --navy: #012169;
+    --navy-dark: #071A3D;
 
-    --topbar:#8abdff;
+    --blue: #1769D1;
+    --blue-dark: #003087;
 
-    --background:#8abdff;
+    --teal: #0F766E;
+    --teal-light: #16A394;
 
-    --card:#FFFFFF;
+    --gold: #FFC107;
+    --darkorange: #B26A00;
 
-    --footer:#001233;
 
-    /*==================================================
-        TEXT
-    ==================================================*/
+    /* =====================================================
+       APPLICATION SURFACES
+       -----------------------------------------------------
+       Main canvas is intentionally darker than white cards
+       so cards remain clearly visible.
+       ===================================================== */
 
-    --text:#212529;
+    /* Main ERP content canvas */
+    --background: #f6f7f8;
 
-    --muted:#6C757D;
+    /* Top navigation */
+    --topbar: #FFFFFF;
 
-    --light-text:#D9E2EC;
+    /* Primary card surface */
+    --card: #FFFFFF;
 
-    /*==================================================
-        BORDER
-    ==================================================*/
+    /* Footer */
+    --footer: #001233;
 
-    --border:#DEE2E6;
+    /* Sidebar */
+    --sidebar: #012169;
 
-    /*==================================================
-        SHADOWS
-    ==================================================*/
+    /* Alternate sidebar surface */
+    --sidebar-alt: #071A3D;
 
-    --shadow-sm:0 2px 8px rgba(0,0,0,.05);
 
-    --shadow:0 4px 15px rgba(0,0,0,.08);
+    /* =====================================================
+       TEXT COLORS
+       ===================================================== */
 
-    --shadow-lg:0 8px 24px rgba(0,0,0,.12);
+    /* Primary body text */
+    --text: #172033;
 
-    /*==================================================
-        BORDER RADIUS
-    ==================================================*/
+    /* Strong headings */
+    --heading: #0F172A;
 
-    --radius-sm:6px;
+    /* Secondary / supporting text */
+    --muted: #64748B;
 
-    --radius:10px;
+    /* Text on dark surfaces */
+    --light-text: #E2E8F0;
 
-    --radius-lg:14px;
 
-    /*==================================================
-        SPACING
-    ==================================================*/
+    /* =====================================================
+       BORDER COLORS
+       -----------------------------------------------------
+       Strong enough to separate cards without looking heavy.
+       ===================================================== */
 
-    --space-xs:4px;
+    /* Standard borders */
+    --border: #D4DEEA;
 
-    --space-sm:8px;
+    /* Very subtle separators */
+    --border-light: #E5EBF3;
 
-    --space-md:16px;
 
-    --space-lg:24px;
+    /* =====================================================
+       STATUS COLORS
+       ===================================================== */
 
-    --space-xl:32px;
+    --success: #15803D;
 
-    /*==================================================
-        SIDEBAR
-    ==================================================*/
+    --warning: #B45309;
 
-    --sidebar-width:280px;
+    --danger: #DC3545;
 
-    --sidebar-collapsed-width:70px;
+    --info: #1D4ED8;
 
-    /*==================================================
-        TOPBAR
-    ==================================================*/
 
-    --topbar-height:65px;
+    /* =====================================================
+       SHADOWS
+       -----------------------------------------------------
+       Blue-tinted shadows reinforce the Xoradex brand.
+       ===================================================== */
 
-    /*==================================================
-        TRANSITIONS
-    ==================================================*/
+    /* Small elevation */
+    --shadow-sm:
+        0 2px 8px rgba(1, 33, 105, .07);
 
-    --transition:.25s ease;
+    /* Standard card elevation */
+    --shadow:
+        0 8px 24px rgba(1, 33, 105, .10);
+
+    /* Large elevation */
+    --shadow-lg:
+        0 16px 40px rgba(1, 33, 105, .14);
+
+
+    /* =====================================================
+       BORDER RADIUS
+       ===================================================== */
+
+    --radius-sm: 6px;
+
+    --radius: 10px;
+
+    --radius-lg: 16px;
+
+
+    /* =====================================================
+       SPACING
+       ===================================================== */
+
+    --space-xs: 4px;
+
+    --space-sm: 8px;
+
+    --space-md: 16px;
+
+    --space-lg: 24px;
+
+    --space-xl: 32px;
+
+
+    /* =====================================================
+       SIDEBAR DIMENSIONS
+       ===================================================== */
+
+    --sidebar-width: 280px;
+
+    --sidebar-collapsed-width: 70px;
+
+
+    /* =====================================================
+       TOPBAR DIMENSIONS
+       ===================================================== */
+
+    --topbar-height: 65px;
+
+
+    /* =====================================================
+       TRANSITIONS
+       ===================================================== */
+
+    --transition: .25s ease;
 
 }

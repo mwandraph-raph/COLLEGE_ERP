@@ -1,21 +1,16 @@
-/*====================================================
-    XORADEX EDUCORE ERP
-    ADMIN DASHBOARD
-====================================================*/
+/* =========================================================
+   XORADEX EDUCORE ERP
+   ADMIN DASHBOARD
+   Modern SaaS Dashboard
+   ========================================================= */
 
-
-/*====================================================
-    DASHBOARD HEADER
-====================================================*/
 
 /* =========================================================
    ADMIN DASHBOARD HERO
-========================================================= */
+   ========================================================= */
 
 .dashboard-hero {
-
     margin-bottom: 28px;
-
     padding: 32px;
 
     border-radius: 24px;
@@ -32,436 +27,583 @@
 
     box-shadow:
         0 12px 35px rgba(1, 33, 105, 0.16);
-
 }
 
-
 .dashboard-hero-content {
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 30px;
-    
-
 }
-
 
 .dashboard-eyebrow {
     display: inline-flex;
     align-items: center;
+
     gap: 8px;
     margin-bottom: 10px;
+
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 1.2px;
-    opacity: .82;
 
+    opacity: 0.82;
 }
-
 
 .dashboard-hero h1 {
     margin: 0;
+
+    color: #ffffff;
+
     font-size: 30px;
-    font-weight: 750;
-    color: #b26a00;
+    font-weight: 800;
+    letter-spacing: -0.4px;
 }
 
-
 .dashboard-hero p {
+    max-width: 700px;
 
     margin: 10px 0 0;
 
-    max-width: 700px;
-
-    color: rgba(255,255,255,.82);
+    color: rgba(255, 255, 255, 0.82);
 
     font-size: 14px;
-
+    line-height: 1.6;
 }
 
-
 .dashboard-session {
-
     display: flex;
-
     align-items: center;
-
-    gap: 14px;
 
     min-width: 240px;
 
+    gap: 14px;
     padding: 16px 18px;
 
-    border: 1px solid rgba(255,255,255,.18);
-
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 16px;
 
-    background: rgba(255,255,255,.10);
-
     backdrop-filter: blur(10px);
-
 }
 
-
 .dashboard-session .session-icon {
+    display: grid;
+    place-items: center;
 
     width: 44px;
-
     height: 44px;
 
-    display: grid;
-
-    place-items: center;
+    flex-shrink: 0;
 
     border-radius: 12px;
 
-    background: rgba(255,255,255,.14);
+    background: rgba(255, 255, 255, 0.14);
 
     font-size: 18px;
-
 }
-
 
 .dashboard-session span,
 .dashboard-session small {
-
     display: block;
 
-    color: rgba(255,255,255,.68);
-
+    color: rgba(255, 255, 255, 0.68);
 }
 
-
 .dashboard-session strong {
-
     display: block;
 
     margin-top: 3px;
 
+    color: #ffffff;
+
     font-size: 14px;
-
 }
-
 
 .dashboard-session small {
-
     margin-top: 2px;
-
 }
 
+
+/* =========================================================
+   KPI CARDS
+   ========================================================= */
+
+.dashboard-card {
+    display: flex;
+    align-items: center;
+
+    height: 100%;
+    min-width: 0;
+
+    gap: 18px;
+    padding: 22px;
+
+    background: #ffffff;
+
+    border: 1px solid #edf2f7;
+    border-radius: 20px;
+
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.06);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-6px);
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 65px;
+    height: 65px;
+
+    flex-shrink: 0;
+
+    border-radius: 18px;
+
+    font-size: 28px;
+}
+
+.dashboard-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dashboard-info h6 {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.dashboard-info h2 {
+    margin: 6px 0;
+
+    color: #0f172a;
+
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.dashboard-info small {
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   KPI COLORS
+   ========================================================= */
+
+.card-students .dashboard-icon {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.card-applicants .dashboard-icon {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.card-enrollments .dashboard-icon {
+    background: #fef3c7;
+    color: #ca8a04;
+}
+
+.card-registrations .dashboard-icon {
+    background: #f3e8ff;
+    color: #7c3aed;
+}
+
+
+/* =========================================================
+   ADMIN CHARTS
+   ========================================================= */
+
+.chart-body {
+    position: relative;
+
+    height: 380px;
+
+    padding: 25px;
+}
+
+.chart-body canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+/* =========================================================
+   ADMIN QUICK ACTIONS
+   ========================================================= */
+
+.quick-actions {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    min-height: 120px;
+
+    padding: 22px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+
+    color: var(--navy);
+
+    text-align: center;
+    text-decoration: none;
+
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.quick-action:hover {
+    transform: translateY(-5px);
+
+    background: var(--blue);
+    color: #ffffff;
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.quick-action i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 56px;
+    height: 56px;
+
+    margin-bottom: 14px;
+
+    border-radius: 16px;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    font-size: 24px;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
+}
+
+.quick-action:hover i {
+    background: rgba(255, 255, 255, 0.20);
+    color: #ffffff;
+}
+
+.quick-action span {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ADMIN TABLES
+   ========================================================= */
+
+.table-borderless td {
+    padding: 14px 4px;
+
+    border: none;
+}
+
+.table-borderless tr:not(:last-child) {
+    border-bottom: 1px solid #edf2f7;
+}
+
+
+/* =========================================================
+   RECENT ACTIVITY CARD
+   ========================================================= */
+
+.activity-card {
+    overflow: hidden;
+
+    border-radius: 20px;
+}
+
+
+/* =========================================================
+   ACTIVITY HEADER
+   ========================================================= */
+
+.activity-header {
+    cursor: pointer;
+}
+
+.activity-header .btn-link {
+    color: var(--navy);
+}
+
+.activity-header .btn-link:hover {
+    color: var(--blue);
+}
+
+.activity-chevron {
+    transition: transform 0.3s ease;
+}
+
+.activity-header button[aria-expanded="false"] .activity-chevron {
+    transform: rotate(-90deg);
+}
+
+
+/* =========================================================
+   ACTIVITY ROW
+   ========================================================= */
+
+.activity-row {
+    display: flex;
+
+    gap: 15px;
+    padding: 18px 20px;
+
+    border-bottom: 1px solid #edf2f7;
+
+    transition: background 0.3s ease;
+}
+
+.activity-row:last-child {
+    border-bottom: none;
+}
+
+.activity-row:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================================================
+   ACTIVITY ICON
+   ========================================================= */
+
+.activity-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 45px;
+    height: 45px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   ACTIVITY CONTENT
+   ========================================================= */
+
+.activity-content {
+    flex: 1;
+    min-width: 0;
+
+    font-size: 14px;
+}
+
+.activity-content span {
+    color: #0f172a;
+}
+
+.activity-content div {
+    margin-top: 5px;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
 
 @media (max-width: 991px) {
 
     .dashboard-hero-content {
-
         flex-direction: column;
-
         align-items: flex-start;
-
     }
 
     .dashboard-session {
-
         width: 100%;
-
+        min-width: 0;
     }
 
-}
-
-/*====================================================
-    KPI CARDS
-====================================================*/
-
-.dashboard-card{
-    background:#fff;
-    border-radius:20px;
-    padding:22px;
-    display:flex;
-    align-items:center;
-    gap:18px;
-    height:100%;
-    border:1px solid #edf2f7;
-    box-shadow:0 6px 20px rgba(0,0,0,.06);
-    transition:.3s;
-}
-
-.dashboard-card:hover{
-    transform:translateY(-6px);
-    box-shadow:0 15px 35px rgba(0,0,0,.12);
-}
-
-.dashboard-icon{
-    width:65px;
-    height:65px;
-    border-radius:18px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:28px;
-    flex-shrink:0;
-}
-
-.dashboard-info{
-    flex:1;
-}
-
-.dashboard-info h6{
-    margin:0;
-    color:#64748b;
-    font-size:14px;
-    font-weight:600;
-}
-
-.dashboard-info h2{
-    margin:6px 0;
-    font-size:30px;
-    font-weight:800;
-    color:#0f172a;
-}
-
-.dashboard-info small{
-    color:#94a3b8;
+    .chart-body {
+        height: 340px;
+        padding: 20px;
+    }
 }
 
 
-/*====================================================
-    KPI COLORS
-====================================================*/
+@media (max-width: 768px) {
 
-.card-students .dashboard-icon{
-    background:#e0f2fe;
-    color:#0284c7;
-}
+    .dashboard-hero {
+        padding: 25px;
+        border-radius: 20px;
+    }
 
-.card-applicants .dashboard-icon{
-    background:#dcfce7;
-    color:#16a34a;
-}
+    .dashboard-hero h1 {
+        font-size: 27px;
+    }
 
-.card-enrollments .dashboard-icon{
-    background:#fef3c7;
-    color:#ca8a04;
-}
+    .dashboard-hero p {
+        font-size: 13px;
+    }
 
-.card-registrations .dashboard-icon{
-    background:#f3e8ff;
-    color:#7c3aed;
-}
+    .dashboard-card {
+        padding: 18px;
+    }
 
+    .dashboard-icon {
+        width: 55px;
+        height: 55px;
 
-/*====================================================
-    ADMIN CHARTS
-====================================================*/
+        border-radius: 15px;
 
-.chart-body{
-    height:380px;
-    position:relative;
-    padding:25px;
-}
+        font-size: 23px;
+    }
 
-.chart-body canvas{
-    width:100%!important;
-    height:100%!important;
-}
+    .dashboard-info h2 {
+        font-size: 27px;
+    }
 
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
 
-/*====================================================
-    ADMIN QUICK ACTIONS
-====================================================*/
+    .chart-body {
+        height: 300px;
+        padding: 15px;
+    }
 
-.quick-actions{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:18px;
-}
-
-.quick-action{
-    background:#fff;
-    border:1px solid #e5e7eb;
-    border-radius:18px;
-    padding:22px;
-    min-height:120px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    text-decoration:none;
-    color:var(--navy);
-    transition:.3s;
-}
-
-.quick-action:hover{
-    background:var(--blue);
-    color:#fff;
-    transform:translateY(-5px);
-    box-shadow:0 12px 28px rgba(0,0,0,.12);
-}
-
-.quick-action i{
-    width:56px;
-    height:56px;
-    border-radius:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#eff6ff;
-    color:#2563eb;
-    margin-bottom:14px;
-    font-size:24px;
-}
-
-.quick-action:hover i{
-    background:rgba(255,255,255,.2);
-    color:#fff;
-}
-
-.quick-action span{
-    font-size:14px;
-    font-weight:700;
-
+    .activity-row {
+        padding: 16px;
+    }
 }
 
 
-/*====================================================
-    ADMIN TABLES
-====================================================*/
+@media (max-width: 576px) {
 
-.table-borderless td{
-    padding:14px 4px;
-    border:none;
-}
+    .dashboard-hero {
+        padding: 20px;
+    }
 
-.table-borderless tr:not(:last-child){
-    border-bottom:1px solid #edf2f7;
-}
+    .dashboard-hero h1 {
+        font-size: 24px;
+    }
 
+    .dashboard-session {
+        padding: 14px;
+    }
 
+    .dashboard-session .session-icon {
+        width: 40px;
+        height: 40px;
 
+        font-size: 16px;
+    }
 
-/*====================================================
-    RECENT ACTIVITY
-====================================================*/
+    .dashboard-card {
+        gap: 13px;
+        padding: 16px;
+    }
 
-.activity-row{
-    display:flex;
-    gap:18px;
-    padding:18px 22px;
-    border-bottom:1px solid var(--border);
-    transition:.25s;
-}
+    .dashboard-icon {
+        width: 48px;
+        height: 48px;
 
-.activity-row:last-child{
-    border-bottom:none;
-}
+        border-radius: 13px;
 
-.activity-row:hover{
-    background:#f8fafc;
-}
+        font-size: 20px;
+    }
 
-.activity-icon{
-    width:48px;
-    height:48px;
-    border-radius:14px;
-    background:#eff6ff;
-    color:var(--blue);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-shrink:0;
-}
+    .dashboard-info h6 {
+        font-size: 13px;
+    }
 
-.activity-content{
-    flex:1;
-}
+    .dashboard-info h2 {
+        font-size: 24px;
+    }
 
-/*====================================================
-    ACTIVITY HEADER SPACING
-====================================================*/
-/*====================================================
-    RECENT ACTIVITY
-====================================================*/
+    .chart-body {
+        height: 260px;
+        padding: 10px;
+    }
 
-.activity-header{
-    cursor:pointer;
-}
+    .activity-row {
+        gap: 12px;
+        padding: 14px;
+    }
 
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+    }
 
-.activity-header .btn-link{
-    color:var(--navy);
+    .activity-content {
+        font-size: 13px;
+    }
 }
 
 
-.activity-header .btn-link:hover{
-    color:var(--blue);
-}
+@media (max-width: 400px) {
 
+    .dashboard-hero {
+        padding: 18px;
+    }
 
-.activity-chevron{
-    transition:.3s ease;
-}
+    .dashboard-hero h1 {
+        font-size: 22px;
+    }
 
+    .dashboard-card {
+        gap: 11px;
+        padding: 14px;
+    }
 
-.activity-header button[aria-expanded="false"] .activity-chevron{
-    transform:rotate(-90deg);
-}
+    .dashboard-icon {
+        width: 44px;
+        height: 44px;
 
+        font-size: 18px;
+    }
 
-
-.activity-card{
-    border-radius:20px;
-    overflow:hidden;
-}
-
-
-.activity-row{
-    display:flex;
-    gap:15px;
-    padding:18px 20px;
-    border-bottom:1px solid #edf2f7;
-    transition:.3s;
-}
-
-
-.activity-row:hover{
-    background:#f8fafc;
-}
-
-
-.activity-row:last-child{
-    border-bottom:none;
-}
-
-
-.activity-icon{
-    width:45px;
-    height:45px;
-    border-radius:50%;
-    background:#eff6ff;
-    color:#2563eb;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-shrink:0;
-}
-
-
-.activity-content{
-    flex:1;
-    font-size:14px;
-}
-
-
-.activity-content span{
-    color:#0f172a;
-}
-
-
-.activity-content div{
-    color:#475569;
-    margin-top:5px;
+    .dashboard-info h2 {
+        font-size: 22px;
+    }
 }

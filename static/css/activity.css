@@ -1,833 +1,689 @@
-/* =====================================================
-   Xoradex EduCore - Activity Log SaaS Styling
-===================================================== */
+/* =========================================================
+   XORADEX EDUCORE — ACTIVITY LOG
+   File: static/css/activity_log.css
+
+   RESPONSIBILITY:
+   - Activity Log page
+   - Activity Log header
+   - Activity Log exports
+   - Activity statistics
+   - Activity filters
+   - Activity table
+   - Activity badges/avatar
+   - Activity empty state
+   - Activity pagination
+   - Activity detail modal
+   - Activity integrity display
+
+   DOES NOT CONTROL:
+   - Global cards
+   - Global forms
+   - Global buttons
+   - Global tables
+   - Sidebar
+   - Topbar
+   - Dashboard components
+   ========================================================= */
 
 
-/* ============================
-   PAGE HEADER
-============================ */
-
+/* =========================================================
+   01. PAGE HEADER
+   ========================================================= */
 
 .activity-header h2 {
-
-    font-size:1.8rem;
-    letter-spacing:-0.5px;
-
+    margin: 0;
+    color: var(--heading);
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -.5px;
+    line-height: 1.2;
 }
-
 
 .activity-header p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: .95rem;
+    line-height: 1.5;
+}
 
-    font-size:.95rem;
-
+.activity-header .d-flex {
+    flex-wrap: wrap;
 }
 
 
-
-/* ============================
-   EXPORT BUTTONS
-============================ */
-
+/* =========================================================
+   02. EXPORT ACTIONS
+   ========================================================= */
 
 .activity-export-btn {
-
-    border-radius:10px;
-
-    padding:9px 16px;
-
-    font-weight:600;
-
-    transition:.25s ease;
-
+    min-height: 38px;
+    padding: 9px 16px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 600;
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background-color .2s ease;
 }
-
 
 .activity-export-btn:hover {
-
-    transform:translateY(-2px);
-
+    transform: translateY(-2px);
 }
 
 
-
-/* ============================
-   SUMMARY CARDS
-============================ */
-
+/* =========================================================
+   03. ACTIVITY SUMMARY CARDS
+   ========================================================= */
 
 .activity-stat-card {
-
-    border-radius:18px;
-
-    border:none;
-
-    background:#ffffff;
-
-    transition:.25s ease;
-
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, .88);
+    box-shadow: var(--shadow-sm);
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
 }
-
 
 .activity-stat-card:hover {
-
-    transform:translateY(-5px);
-
-    box-shadow:0 15px 35px rgba(0,0,0,.08)!important;
-
+    transform: translateY(-4px);
+    border-color: rgba(23, 105, 209, .16);
+    box-shadow: var(--shadow-lg) !important;
 }
-
 
 .activity-stat-card .card-body {
-
-    padding:22px;
-
+    padding: 22px;
 }
-
 
 .activity-stat-card h3 {
-
-    font-size:2rem;
-
+    margin-bottom: 0;
+    color: var(--heading);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
 }
 
 
-
-/* ============================
-   FILTER CARD
-============================ */
-
+/* =========================================================
+   04. ACTIVITY FILTER
+   ========================================================= */
 
 .activity-filter {
-
-    border-radius:18px;
-
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
 }
-
 
 .activity-filter .card-body {
-
-    padding:25px;
-
+    padding: 24px;
 }
-
 
 .activity-filter label {
-
-    font-weight:600;
-
-    letter-spacing:.3px;
-
+    margin-bottom: 6px;
+    color: var(--heading);
+    font-weight: 600;
+    letter-spacing: .2px;
 }
-
-
 
 .activity-filter .form-control,
 .activity-filter .form-select {
-
-
-    height:42px;
-
-    border-radius:10px;
-
-    border:1px solid #dee2e6;
-
-    transition:.2s ease;
-
+    min-height: 42px;
+    border-radius: var(--radius);
 }
-
-
 
 .activity-filter .form-control:focus,
 .activity-filter .form-select:focus {
-
-
-    box-shadow:0 0 0 .2rem rgba(13,110,253,.15);
-
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(23, 105, 209, .10);
 }
 
 
+/* =========================================================
+   05. ACTIVITY TABLE CARD
+   ========================================================= */
 
-/* =====================================================
-   ACTIVITY TABLE
-===================================================== */
-
-.activity-card{
-
-    border:none;
-
-    border-radius:18px;
-
-    overflow:hidden;
-
+.activity-card {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
 }
 
 
-/* Scroll on smaller screens */
+/* =========================================================
+   06. ACTIVITY TABLE WRAPPER
+   ========================================================= */
 
-.table-responsive{
-
-    overflow-x:auto;
-
-    overflow-y:hidden;
-
-    border-radius:18px;
-
+.activity-card .table-responsive {
+    width: 100%;
+    margin: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 0;
+    border-radius: 0;
+    -webkit-overflow-scrolling: touch;
 }
 
 
-/* Table */
+/* Activity-specific scrollbar */
 
-.activity-table{
+.activity-card .table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
 
-    width:100%;
+.activity-card .table-responsive::-webkit-scrollbar-track {
+    background: #F1F4F8;
+}
 
-    min-width:850px;
+.activity-card .table-responsive::-webkit-scrollbar-thumb {
+    background: #C7D0DD;
+    border-radius: 10px;
+}
 
-    border-collapse:separate;
-
-    border-spacing:0;
-
-    margin-bottom:0;
-
+.activity-card .table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #AAB5C4;
 }
 
 
-/* Header */
-
-.activity-table thead{
-
-    position:sticky;
-
-    top:0;
-
-    z-index:5;
-
-}
-
-
-.activity-table thead th{
-
-    background:#0d6efd;
-
-    color:#fff;
-
-    font-size:.80rem;
-
-    font-weight:700;
-
-    text-transform:uppercase;
-
-    letter-spacing:.4px;
-
-    padding:16px 18px;
-
-    white-space:nowrap;
-
-    border:none;
-
-}
-
-
-/* Body */
-
-.activity-table tbody td{
-
-    padding:16px 18px;
-
-    vertical-align:middle;
-
-    border-top:1px solid #eef2f7;
-
-}
-
-
-/* Hover */
-
-.activity-row{
-
-    cursor:pointer;
-
-    transition:all .20s ease;
-
-}
-
-
-.activity-row:hover{
-
-    background:#f8fbff !important;
-
-}
-
-
-/* Column widths */
-
-.activity-table th:nth-child(1),
-.activity-table td:nth-child(1){
-
-    width:120px;
-
-}
-
-
-.activity-table th:nth-child(2),
-.activity-table td:nth-child(2){
-
-    width:190px;
-
-}
-
-
-.activity-table th:nth-child(3),
-.activity-table td:nth-child(3){
-
-    width:150px;
-
-}
-
-
-.activity-table th:nth-child(4),
-.activity-table td:nth-child(4){
-
-    width:120px;
-
-}
-
-
-.activity-table th:nth-child(5),
-.activity-table td:nth-child(5){
-
-    width:120px;
-
-}
-
-
-/* Description */
-
-.activity-table th:nth-child(6),
-.activity-table td:nth-child(6){
-
-    min-width:320px;
-
-}
-
-
-/* User avatar */
-
-.activity-avatar{
-
-    width:38px;
-
-    height:38px;
-
-    border-radius:50%;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    font-weight:700;
-
-    font-size:.90rem;
-
-    flex-shrink:0;
-
-}
-
-
-/* Badges */
-
-.activity-badge{
-
-    padding:6px 12px;
-
-    font-size:.75rem;
-
-    font-weight:600;
-
-}
-
-
-/* Empty state */
-
-.activity-empty{
-
-    padding:70px 20px !important;
-
-    text-align:center;
-
-}
-
-
-/* Responsive */
-
-@media (max-width:992px){
-
-    .activity-table{
-
-        min-width:850px;
-
-    }
-
-}
-
-
-
-/* ============================
-   USER AVATAR
-============================ */
-
-
-.activity-avatar {
-
-
-    width:38px;
-
-    height:38px;
-
-    border-radius:50%;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    font-weight:700;
-
-    font-size:.9rem;
-
-    flex-shrink:0;
-
-}
-
-
-
-/* ============================
-   BADGES
-============================ */
-
-
-.activity-badge {
-
-
-    padding:7px 13px;
-
-    font-size:.75rem;
-
-    font-weight:600;
-
-    letter-spacing:.2px;
-
-}
-
-
-
-.activity-table .badge.bg-light {
-
-
-    padding:7px 12px;
-
-    border-radius:20px;
-
-    font-weight:600;
-
-}
-
-
-
-/* ============================
-   DESCRIPTION COLUMN
-============================ */
-
-
-.activity-table td:nth-child(6) {
-
-
-    max-width:350px;
-
-    color:#495057;
-
-}
-
-
-
-/* ============================
-   EMPTY STATE
-============================ */
-
-
-.activity-empty {
-
-
-    padding:70px 20px!important;
-
-    text-align:center;
-
-}
-
-
-
-.activity-empty i {
-
-
-    opacity:.5;
-
-}
-
-
-
-/* ============================
-   PAGINATION
-============================ */
-
-
-.pagination {
-
-
-    padding-bottom:20px;
-
-}
-
-
-
-.pagination .page-link {
-
-
-    border-radius:10px;
-
-    margin:0 3px;
-
-    border:none;
-
-    color:#495057;
-
-}
-
-
-
-.pagination .active .page-link {
-
-
-    background:#0d6efd;
-
-    color:white;
-
-}
-
-
-
-/* ============================
-   MODAL
-============================ */
-
-
-.activity-modal {
-
-
-    border-radius:20px;
-
-    border:none;
-
-    overflow:hidden;
-
-}
-
-
-
-.activity-modal .modal-header {
-
-
-    background:#f8faff;
-
-    border-bottom:1px solid #edf0f5;
-
-    padding:20px 25px;
-
-}
-
-
-
-.activity-modal .modal-body {
-
-
-    padding:30px;
-
-}
-
-
-
-.activity-modal label {
-
-
-    font-size:.75rem;
-
-    text-transform:uppercase;
-
-    letter-spacing:.5px;
-
-    font-weight:600;
-
-}
-
-
-
-.activity-modal h6 {
-
-
-    margin-top:8px;
-
-    font-weight:600;
-
-    color:#343a40;
-
-}
-
-
-
-.activity-modal .alert {
-
-
-    border-radius:12px;
-
-    border:none;
-
-    background:#f8f9fa;
-
-    padding:15px;
-
-}
-
-
-
-.activity-modal .activity-badge {
-
-
-    padding:8px 15px;
-
-}
-
-
-
-/* modal animation */
-
-
-.modal.fade .modal-dialog {
-
-
-    transform:translateY(-20px);
-
-    transition:.3s ease;
-
-}
-
-
-
-.modal.show .modal-dialog {
-
-
-    transform:translateY(0);
-
-}
-
-
-
-/* ============================
-   TABLE SCROLL
-============================ */
-
-.table-responsive{
-
-    width:100%;
-
-    overflow-x:auto;
-
-    overflow-y:hidden;
-
-    -webkit-overflow-scrolling:touch;
-
-    border-radius:18px;
-
-}
-
-
-/* Nice scrollbar */
-
-.table-responsive::-webkit-scrollbar{
-
-    height:8px;
-
-}
-
-
-.table-responsive::-webkit-scrollbar-track{
-
-    background:#f1f3f5;
-
-}
-
-
-.table-responsive::-webkit-scrollbar-thumb{
-
-    background:#cfd4da;
-
-    border-radius:10px;
-
-}
-
-
-.table-responsive::-webkit-scrollbar-thumb:hover{
-
-    background:#adb5bd;
-
-}
-
-
-
-/* ============================
-   RESPONSIVE
-============================ */
-
-.activity-header .d-flex{
-
-    flex-wrap:wrap;
-
-}
-
-
-@media (max-width:992px){
-
-    .activity-header{
-
-        flex-direction:column;
-
-        align-items:flex-start !important;
-
-        gap:15px;
-
-    }
-
-}
-
-
-@media (max-width:768px){
-
-    .activity-table{
-
-        min-width:900px;
-
-    }
-
-}
-
-
-@media (max-width:576px){
-
-    .activity-export-btn{
-
-        width:100%;
-
-    }
-
-}
-/* =====================================
-   FIX ACTIVITY TABLE HEADER VISIBILITY
-===================================== */
-
+/* =========================================================
+   07. ACTIVITY TABLE
+   ========================================================= */
 
 .activity-table {
-
-    width:100%;
-
-    min-width:1100px;
-
+    width: 100%;
+    min-width: 1100px;
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: var(--text);
+    font-size: 13px;
 }
 
 
+/* =========================================================
+   08. TABLE HEADER
+   ========================================================= */
 
 .activity-table thead {
-
-    display:table-header-group;
-
+    display: table-header-group;
 }
-
-
 
 .activity-table thead tr {
-
-    display:table-row;
-
+    display: table-row;
 }
-
-
 
 .activity-table thead th {
+    display: table-cell !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 
-    display:table-cell !important;
+    position: sticky;
+    top: 0;
+    z-index: 5;
 
-    visibility:visible !important;
+    padding: 15px 18px;
 
-    opacity:1 !important;
+    background: var(--navy);
+    color: #FFFFFF;
 
-    background:#0d6efd;
-
-    color:white;
-
-    padding:15px;
-
-    font-weight:700;
-
-    white-space:nowrap;
-
+    border: 0;
+    font-size: .78rem;
+    font-weight: 700;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    white-space: nowrap;
 }
 
 
+/* =========================================================
+   09. TABLE BODY
+   ========================================================= */
 
 .activity-table tbody tr {
-
-    display:table-row;
-
+    display: table-row;
 }
-
-
 
 .activity-table tbody td {
+    display: table-cell;
 
-    display:table-cell;
+    padding: 15px 18px;
+    vertical-align: middle;
 
+    border-top: 1px solid var(--border-light);
+
+    color: var(--text);
+    line-height: 1.5;
 }
 
-/* =====================================
-   INTEGRITY SECTION
-===================================== */
+
+/* Activity row */
+
+.activity-row {
+    cursor: pointer;
+    transition:
+        background-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.activity-row:hover {
+    background: #F7FAFF !important;
+}
+
+
+/* =========================================================
+   10. ACTIVITY TABLE COLUMN WIDTHS
+   ========================================================= */
+
+.activity-table th:nth-child(1),
+.activity-table td:nth-child(1) {
+    width: 120px;
+}
+
+.activity-table th:nth-child(2),
+.activity-table td:nth-child(2) {
+    width: 190px;
+}
+
+.activity-table th:nth-child(3),
+.activity-table td:nth-child(3) {
+    width: 150px;
+}
+
+.activity-table th:nth-child(4),
+.activity-table td:nth-child(4) {
+    width: 120px;
+}
+
+.activity-table th:nth-child(5),
+.activity-table td:nth-child(5) {
+    width: 120px;
+}
+
+
+/* Description column */
+
+.activity-table th:nth-child(6),
+.activity-table td:nth-child(6) {
+    min-width: 320px;
+}
+
+.activity-table td:nth-child(6) {
+    max-width: 350px;
+    color: #49566A;
+}
+
+
+/* =========================================================
+   11. ACTIVITY USER AVATAR
+   ========================================================= */
+
+.activity-avatar {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 50%;
+
+    background: linear-gradient(
+        135deg,
+        var(--blue),
+        var(--navy)
+    );
+
+    color: #FFFFFF;
+
+    font-size: .9rem;
+    font-weight: 700;
+
+    box-shadow: 0 4px 12px rgba(1, 33, 105, .12);
+}
+
+
+/* =========================================================
+   12. ACTIVITY BADGES
+   ========================================================= */
+
+.activity-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 12px;
+
+    border-radius: 999px;
+
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: .2px;
+    white-space: nowrap;
+}
+
+
+/* Bootstrap light badge used by Activity Log */
+
+.activity-table .badge.bg-light {
+    padding: 6px 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 999px;
+
+    background: #F7F9FC !important;
+    color: var(--text) !important;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   13. ACTIVITY STATUS BADGES
+   ========================================================= */
+
+.activity-table .badge.bg-success {
+    background: rgba(25, 135, 84, .10) !important;
+    color: #137044 !important;
+}
+
+.activity-table .badge.bg-warning {
+    background: rgba(180, 83, 9, .10) !important;
+    color: #9A4A08 !important;
+}
+
+.activity-table .badge.bg-danger {
+    background: rgba(220, 53, 69, .10) !important;
+    color: #B42318 !important;
+}
+
+.activity-table .badge.bg-info {
+    background: rgba(29, 78, 216, .10) !important;
+    color: #1D4ED8 !important;
+}
+
+
+/* =========================================================
+   14. EMPTY STATE
+   ========================================================= */
+
+.activity-empty {
+    padding: 70px 20px !important;
+    text-align: center;
+    color: var(--muted);
+}
+
+.activity-empty i {
+    margin-bottom: 12px;
+    color: var(--muted);
+    opacity: .5;
+}
+
+.activity-empty h5,
+.activity-empty h6 {
+    margin-bottom: 6px;
+    color: var(--heading);
+}
+
+.activity-empty p {
+    margin-bottom: 0;
+    color: var(--muted);
+}
+
+
+/* =========================================================
+   15. ACTIVITY PAGINATION
+   ========================================================= */
+
+/*
+   Scoped deliberately to Activity Log.
+   This prevents pagination styling from affecting
+   Students, Finance, Graduation, or other modules.
+*/
+
+.activity-card + .pagination,
+.activity-pagination,
+.activity-page-pagination {
+    padding-bottom: 20px;
+}
+
+.activity-card + .pagination .page-link,
+.activity-pagination .page-link,
+.activity-page-pagination .page-link {
+    margin: 0 3px;
+
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+
+    background: #FFFFFF;
+    color: var(--text);
+
+    box-shadow: none;
+
+    transition:
+        background-color .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+.activity-card + .pagination .page-link:hover,
+.activity-pagination .page-link:hover,
+.activity-page-pagination .page-link:hover {
+    border-color: #C6D4E8;
+    background: #F7FAFF;
+    color: var(--blue);
+}
+
+.activity-card + .pagination .active .page-link,
+.activity-pagination .active .page-link,
+.activity-page-pagination .active .page-link {
+    border-color: var(--blue);
+    background: var(--blue);
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   16. ACTIVITY DETAIL MODAL
+   ========================================================= */
+
+.activity-modal {
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    overflow: hidden;
+
+    box-shadow: var(--shadow-lg);
+}
+
+.activity-modal .modal-header {
+    padding: 20px 25px;
+
+    background: #F7FAFF;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.activity-modal .modal-body {
+    padding: 30px;
+}
+
+.activity-modal label {
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1.3;
+
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.activity-modal h6 {
+    margin-top: 8px;
+    color: var(--heading);
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.activity-modal .alert {
+    padding: 15px;
+
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+
+    background: #F7F9FC;
+    color: var(--text);
+}
+
+
+/* Modal activity badge */
+
+.activity-modal .activity-badge {
+    padding: 8px 15px;
+}
+
+
+/* =========================================================
+   17. ACTIVITY MODAL ANIMATION
+   ========================================================= */
+
+/*
+   Scoped to the Activity modal only.
+   Avoids changing Bootstrap's global modal animation.
+*/
+
+.activity-modal.modal.fade .modal-dialog {
+    transform: translateY(-18px);
+    transition: transform .3s ease;
+}
+
+.activity-modal.modal.show .modal-dialog {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   18. INTEGRITY INFORMATION
+   ========================================================= */
 
 #modalIntegrity {
-
-    font-size: .85rem;
-
     padding: 8px 16px;
-
+    font-size: .85rem;
 }
 
 #modalHash {
-
-    word-break: break-all;
-
-    white-space: normal;
-
-    line-height: 1.6;
-
-    font-size: .80rem;
-
-    color: #495057;
-
     min-height: 60px;
 
-    background: #f8f9fa;
+    padding: 12px;
 
-    border: 1px solid #dee2e6;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+    white-space: normal;
 
-    border-radius: 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
 
+    background: #F7F9FC;
+    color: #49566A;
+
+    font-size: .8rem;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   19. RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 992px) {
+
+    .activity-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+
+    .activity-table {
+        min-width: 1100px;
+    }
+}
+
+
+/* =========================================================
+   20. RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .activity-stat-card .card-body {
+        padding: 18px;
+    }
+
+    .activity-filter .card-body {
+        padding: 18px;
+    }
+
+    .activity-table {
+        min-width: 900px;
+    }
+
+    .activity-modal .modal-body {
+        padding: 20px;
+    }
+}
+
+
+/* =========================================================
+   21. SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 576px) {
+
+    .activity-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .activity-export-btn {
+        width: 100%;
+    }
+
+    .activity-stat-card h3 {
+        font-size: 1.7rem;
+    }
+
+    .activity-modal .modal-header {
+        padding: 16px 18px;
+    }
+
+    .activity-modal .modal-body {
+        padding: 18px;
+    }
+}
+
+
+/* =========================================================
+   22. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .activity-stat-card,
+    .activity-export-btn,
+    .activity-row,
+    .activity-pagination .page-link,
+    .activity-page-pagination .page-link,
+    .activity-modal.modal.fade .modal-dialog {
+        transition: none;
+    }
+
+    .activity-stat-card:hover,
+    .activity-export-btn:hover {
+        transform: none;
+    }
 }
