@@ -4,7 +4,6 @@
    ---------------------------------------------------------
    RESPONSIBILITY:
    - Sidebar appearance
-   - Sidebar branding
    - Sidebar user profile
    - Navigation menu
    - Submenus
@@ -15,8 +14,8 @@
 
    IMPORTANT:
    This file does NOT control:
-   - Main content
    - Topbar
+   - Main content
    - Cards
    - Tables
    - Buttons
@@ -42,8 +41,7 @@
     position: relative;
     z-index: 900;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
 
     color: #FFFFFF;
 
@@ -65,112 +63,6 @@
 
 
 /* =========================================================
-   BRAND AREA
-   ========================================================= */
-
-.sidebar-brand {
-    flex: 0 0 auto;
-
-    padding: 22px 20px;
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, .10);
-}
-
-.brand-link {
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    color: #FFFFFF;
-
-    text-decoration: none;
-}
-
-.brand-link:hover {
-    color: #FFFFFF;
-
-    text-decoration: none;
-}
-
-
-/* =========================================================
-   BRAND LOGO
-   ========================================================= */
-
-.brand-logo {
-    width: 52px;
-    height: 52px;
-
-    flex: 0 0 52px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 12px;
-
-    background:
-        rgba(255, 255, 255, .10);
-
-    border:
-        1px solid rgba(255, 255, 255, .08);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, .08);
-}
-
-.brand-logo i {
-    font-size: 24px;
-
-    color: var(--gold);
-}
-
-
-/* =========================================================
-   BRAND NAME
-   ========================================================= */
-
-.brand-name {
-    min-width: 0;
-
-    display: flex;
-    flex-direction: column;
-}
-
-.brand-name h5 {
-    margin: 0;
-
-    color: #FFFFFF;
-
-    font-size: 20px;
-
-    font-weight: 700;
-
-    line-height: 1.2;
-
-    white-space: nowrap;
-}
-
-.brand-name small {
-    margin-top: 3px;
-
-    color: rgba(255, 255, 255, .72);
-
-    font-size: 12px;
-
-    letter-spacing: .04em;
-
-    line-height: 1.3;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
    SIDEBAR USER AREA
    ========================================================= */
 
@@ -178,12 +70,11 @@
     flex: 0 0 auto;
 
     display: flex;
-
     align-items: center;
 
     gap: 14px;
 
-    padding: 20px;
+    padding: 18px 20px;
 
     border-bottom:
         1px solid rgba(255, 255, 255, .10);
@@ -199,22 +90,19 @@
     color: #FFFFFF;
 
     font-size: 14px;
-
     font-weight: 600;
 
     line-height: 1.35;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
 .sidebar-user small {
     display: block;
 
-    margin-top: 2px;
+    margin-top: 3px;
 
     color: rgba(255, 255, 255, .68);
 
@@ -229,13 +117,12 @@
    ========================================================= */
 
 .avatar {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
 
-    flex: 0 0 48px;
+    flex: 0 0 44px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
@@ -245,8 +132,7 @@
 
     color: var(--navy);
 
-    font-size: 18px;
-
+    font-size: 17px;
     font-weight: 700;
 
     box-shadow:
@@ -259,15 +145,16 @@
    ========================================================= */
 
 .sidebar-menu {
-    flex: 1 1 auto;
+    flex: 1 1 0;
 
     min-height: 0;
-
-    list-style: none;
+    width: 100%;
 
     margin: 0;
+    padding: 8px 0;
 
-    padding: 14px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .sidebar-menu li {
@@ -285,7 +172,6 @@
     color: rgba(255, 255, 255, .52);
 
     font-size: 11px;
-
     font-weight: 700;
 
     letter-spacing: .10em;
@@ -302,7 +188,6 @@
 
 .sidebar-menu a {
     display: flex;
-
     align-items: center;
 
     gap: 12px;
@@ -316,7 +201,6 @@
     color: #E8EEF7;
 
     font-size: 14px;
-
     font-weight: 500;
 
     line-height: 1.3;
@@ -328,7 +212,16 @@
         color .2s ease,
         border-color .2s ease,
         transform .2s ease;
+
+    pointer-events: auto;
+
+    cursor: pointer;
 }
+
+
+/* =========================================================
+   MENU HOVER
+   ========================================================= */
 
 .sidebar-menu a:hover {
     color: #FFFFFF;
@@ -343,9 +236,7 @@
 
 
 /* =========================================================
-   BOOTSTRAP JUSTIFY-CONTENT SUPPORT
-   ---------------------------------------------------------
-   Preserves existing Bootstrap classes used by menu links.
+   COLLAPSIBLE MENU ALIGNMENT
    ========================================================= */
 
 .sidebar-menu a.justify-content-between {
@@ -368,7 +259,6 @@
 
 .sidebar-menu a span {
     display: flex;
-
     align-items: center;
 
     gap: 12px;
@@ -444,7 +334,6 @@
     color: #D7E4F3;
 
     font-size: 13px;
-
     font-weight: 400;
 }
 
@@ -463,7 +352,8 @@
     background:
         rgba(255, 255, 255, .13);
 
-    border-left: 2px solid var(--teal-light);
+    border-left:
+        2px solid var(--teal-light);
 
     padding-left: 12px;
 }
@@ -476,12 +366,18 @@
 .sidebar-footer {
     flex: 0 0 auto;
 
-    padding: 16px;
+    margin-top: auto;
+    margin-bottom: 0;
+
+    width: 100%;
+
+    padding: 14px 16px;
 
     border-top:
         1px solid rgba(255, 255, 255, .10);
 
-    color: rgba(255, 255, 255, .60);
+    color:
+        rgba(255, 255, 255, .60);
 
     font-size: 12px;
 
@@ -498,34 +394,14 @@
 .erp-sidebar.collapsed {
     width: var(--sidebar-collapsed-width);
 
-    flex-basis: var(--sidebar-collapsed-width);
+    flex-basis:
+        var(--sidebar-collapsed-width);
 }
 
 
-/* Hide text content when collapsed */
-
-.erp-sidebar.collapsed .brand-name,
-.erp-sidebar.collapsed .sidebar-user > div,
-.erp-sidebar.collapsed .menu-title,
-.erp-sidebar.collapsed .sidebar-menu span,
-.erp-sidebar.collapsed .sidebar-submenu {
-    display: none;
-}
-
-
-/* Center the brand */
-
-.erp-sidebar.collapsed .sidebar-brand {
-    padding-left: 9px;
-    padding-right: 9px;
-}
-
-.erp-sidebar.collapsed .brand-link {
-    justify-content: center;
-}
-
-
-/* Center user avatar */
+/* =========================================================
+   COLLAPSED USER AREA
+   ========================================================= */
 
 .erp-sidebar.collapsed .sidebar-user {
     justify-content: center;
@@ -534,8 +410,26 @@
     padding-right: 9px;
 }
 
+.erp-sidebar.collapsed .sidebar-user > div:not(.avatar) {
+    display: none;
+}
 
-/* Center menu icons */
+
+/* =========================================================
+   COLLAPSED MENU
+   ========================================================= */
+
+.erp-sidebar.collapsed .menu-title {
+    display: none;
+}
+
+.erp-sidebar.collapsed .sidebar-menu span {
+    display: none;
+}
+
+.erp-sidebar.collapsed .sidebar-submenu {
+    display: none;
+}
 
 .erp-sidebar.collapsed .sidebar-menu li {
     margin-left: 8px;
@@ -558,7 +452,9 @@
 }
 
 
-/* Hide footer text when collapsed */
+/* =========================================================
+   COLLAPSED FOOTER
+   ========================================================= */
 
 .erp-sidebar.collapsed .sidebar-footer {
     padding-left: 8px;
@@ -572,7 +468,7 @@
    SIDEBAR SCROLLBAR
    ========================================================= */
 
-.erp-sidebar {
+.sidebar-menu {
     scrollbar-width: thin;
 
     scrollbar-color:
@@ -580,22 +476,22 @@
         transparent;
 }
 
-.erp-sidebar::-webkit-scrollbar {
+.sidebar-menu::-webkit-scrollbar {
     width: 6px;
 }
 
-.erp-sidebar::-webkit-scrollbar-track {
+.sidebar-menu::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.erp-sidebar::-webkit-scrollbar-thumb {
+.sidebar-menu::-webkit-scrollbar-thumb {
     background:
         rgba(255, 255, 255, .20);
 
     border-radius: 20px;
 }
 
-.erp-sidebar::-webkit-scrollbar-thumb:hover {
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
     background:
         rgba(255, 255, 255, .32);
 }
@@ -604,64 +500,174 @@
 /* =========================================================
    MOBILE SIDEBAR
    ---------------------------------------------------------
-   On smaller screens the sidebar becomes an overlay.
+   767.98px and below
+
+   Mobile behavior:
+   - Sidebar becomes an off-canvas drawer
+   - Sidebar starts hidden
+   - .mobile-open opens it
+   - Sidebar itself handles vertical scrolling
+   - Overlay appears behind it
+   - Desktop collapsed state is disabled
    ========================================================= */
 
-@media (max-width: 992px) {
+@media (max-width: 767.98px) {
+
+    /* -----------------------------------------------------
+       MOBILE SIDEBAR
+       ----------------------------------------------------- */
 
     .erp-sidebar {
         position: fixed;
 
         top: 0;
-        left: -100%;
+        left: 0;
 
-        width: var(--sidebar-width);
+        width: min(320px, 88vw);
+        max-width: 320px;
 
         height: 100vh;
+        height: 100dvh;
 
         flex: none;
 
-        z-index: 1055;
+        z-index: 3000;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        -webkit-overflow-scrolling: touch;
+
+        touch-action: pan-y;
+
+        pointer-events: auto;
+
+        transform: translateX(-105%);
 
         transition:
-            left var(--transition);
+            transform .25s ease;
+
+        box-shadow:
+            8px 0 30px rgba(0, 0, 0, .20);
     }
 
-    .erp-sidebar.show {
-        left: 0;
+
+    /* -----------------------------------------------------
+       OPEN MOBILE SIDEBAR
+       ----------------------------------------------------- */
+
+    .erp-sidebar.mobile-open {
+        transform: translateX(0);
+
+        pointer-events: auto;
     }
 
-    /*
-       Mobile sidebar should always display its full
-       navigation when opened.
-    */
+
+    /* -----------------------------------------------------
+       MOBILE MENU
+       -----------------------------------------------------
+       The sidebar is the ONLY scrolling container.
+       ----------------------------------------------------- */
+
+    .erp-sidebar .sidebar-menu {
+        flex: 0 0 auto;
+
+        min-height: auto;
+
+        width: 100%;
+
+        overflow: visible;
+
+        pointer-events: auto;
+
+        touch-action: pan-y;
+    }
+
+
+    .erp-sidebar .sidebar-menu a {
+        pointer-events: auto;
+
+        touch-action: manipulation;
+
+        cursor: pointer;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE COLLAPSED STATE
+       ----------------------------------------------------- */
 
     .erp-sidebar.collapsed {
-        width: var(--sidebar-width);
+        width: min(320px, 88vw);
+
+        max-width: 320px;
 
         flex-basis: auto;
+
+        transform: translateX(-105%);
     }
 
-    .erp-sidebar.collapsed .brand-name,
-    .erp-sidebar.collapsed .sidebar-user > div,
-    .erp-sidebar.collapsed .menu-title,
-    .erp-sidebar.collapsed .sidebar-menu span,
-    .erp-sidebar.collapsed .sidebar-submenu {
-        display: initial;
+
+    .erp-sidebar.collapsed.mobile-open {
+        transform: translateX(0);
+
+        pointer-events: auto;
     }
 
-    .erp-sidebar.collapsed .brand-link {
-        justify-content: flex-start;
-    }
+
+    /* -----------------------------------------------------
+       MOBILE USER AREA
+       ----------------------------------------------------- */
 
     .erp-sidebar.collapsed .sidebar-user {
         justify-content: flex-start;
+
+        padding-left: 20px;
+        padding-right: 20px;
     }
+
+
+    .erp-sidebar.collapsed .sidebar-user > div:not(.avatar) {
+        display: block;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE MENU TITLES
+       ----------------------------------------------------- */
+
+    .erp-sidebar.collapsed .menu-title {
+        display: block;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE MENU TEXT
+       ----------------------------------------------------- */
+
+    .erp-sidebar.collapsed .sidebar-menu span {
+        display: flex;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE SUBMENUS
+       ----------------------------------------------------- */
+
+    .erp-sidebar.collapsed .sidebar-submenu {
+        display: block;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE MENU ITEMS
+       ----------------------------------------------------- */
 
     .erp-sidebar.collapsed .sidebar-menu li {
         margin-left: 12px;
         margin-right: 12px;
     }
+
 
     .erp-sidebar.collapsed .sidebar-menu a {
         justify-content: flex-start;
@@ -670,9 +676,15 @@
         padding-right: 14px;
     }
 
+
     .erp-sidebar.collapsed .sidebar-menu a.active {
         padding-left: 11px;
     }
+
+
+    /* -----------------------------------------------------
+       MOBILE FOOTER
+       ----------------------------------------------------- */
 
     .erp-sidebar.collapsed .sidebar-footer {
         padding-left: 16px;
@@ -681,17 +693,102 @@
         font-size: 12px;
     }
 
+
+    /* -----------------------------------------------------
+       MOBILE OVERLAY
+       ----------------------------------------------------- */
+
+    .erp-sidebar-overlay {
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 2990;
+
+        background:
+            rgba(0, 0, 0, .45);
+
+        opacity: 0;
+
+        visibility: hidden;
+
+        pointer-events: none;
+
+        transition:
+            opacity .25s ease,
+            visibility .25s ease;
+    }
+
+
+    .erp-sidebar-overlay.active {
+        opacity: 1;
+
+        visibility: visible;
+
+        pointer-events: auto;
+    }
+
+
+    /* -----------------------------------------------------
+       SIDEBAR ABOVE OVERLAY
+       ----------------------------------------------------- */
+
+    .erp-sidebar,
+    .erp-sidebar.mobile-open {
+        z-index: 3000;
+    }
+
+
+    /* -----------------------------------------------------
+       PREVENT PAGE SCROLL WHEN SIDEBAR IS OPEN
+       ----------------------------------------------------- */
+
+    body.sidebar-mobile-open {
+        overflow: hidden;
+    }
+
+
+    /* -----------------------------------------------------
+       SIDEBAR TOGGLE
+       ----------------------------------------------------- */
+
+    #sidebarToggle {
+        position: relative;
+
+        z-index: 5000;
+
+        pointer-events: auto;
+
+        touch-action: manipulation;
+    }
+
 }
 
 
 /* =========================================================
-   SMALL MOBILE
+   TABLET / DESKTOP
+   ---------------------------------------------------------
+   768px and above
    ========================================================= */
 
-@media (max-width: 575.98px) {
+@media (min-width: 768px) {
 
-    .erp-sidebar {
-        width: min(280px, 88vw);
+    .erp-sidebar-overlay {
+        display: none !important;
+    }
+
+
+    body.sidebar-mobile-open {
+        overflow: auto;
+    }
+
+
+    #sidebarToggle {
+        position: relative;
+
+        z-index: 1100;
+
+        pointer-events: auto;
     }
 
 }

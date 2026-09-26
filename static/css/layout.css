@@ -1,34 +1,11 @@
 /* =========================================================
    XORADEX EDUCORE ERP
-   APPLICATION LAYOUT
-   ---------------------------------------------------------
-   RESPONSIBILITY:
-   - Application wrapper
-   - Header positioning
-   - Workspace structure
-   - Sidebar/content relationship
-   - Main content scrolling
-   - Footer positioning
-   - Page container
-   - Page header
-   - Layout utilities
-   - Layout responsiveness
-
-   IMPORTANT:
-   This file does NOT control:
-   - Typography
-   - Cards
-   - Buttons
-   - Tables
-   - Forms
-   - Sidebar appearance
-   - Topbar appearance
-   - Dashboard components
+   LAYOUT
    ========================================================= */
 
 
 /* =========================================================
-   APPLICATION WRAPPER
+   MAIN WRAPPER
    ========================================================= */
 
 .erp-wrapper {
@@ -47,8 +24,6 @@
 
 /* =========================================================
    HEADER
-   ---------------------------------------------------------
-   The header occupies the full application width.
    ========================================================= */
 
 .erp-header {
@@ -63,87 +38,90 @@
 
 
 /* =========================================================
-   MAIN WORKSPACE
-   ---------------------------------------------------------
-   Sidebar and content live beside each other here.
+   WORKSPACE
    ========================================================= */
 
 .erp-workspace {
-    width: 100%;
-
-    flex: 1 1 auto;
-
-    min-height: 0;
+    position: relative;
 
     display: flex;
 
-    position: relative;
+    flex: 1 1 auto;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
 
     overflow: hidden;
 }
 
 
 /* =========================================================
-   SIDEBAR LAYOUT SLOT
-   ---------------------------------------------------------
-   sidebar.css controls the visual appearance.
-   layout.css controls only its position in the workspace.
+   SIDEBAR
    ========================================================= */
 
 .erp-workspace .erp-sidebar {
     flex: 0 0 var(--sidebar-width, 280px);
 
     width: var(--sidebar-width, 280px);
+    min-width: var(--sidebar-width, 280px);
+    max-width: var(--sidebar-width, 280px);
 
     height: 100%;
-
-    min-height: 0;
 
     position: relative;
 
     z-index: 900;
 
-    transition:
-        width var(--transition, .25s ease),
-        flex-basis var(--transition, .25s ease);
+    flex-shrink: 0;
 }
 
 
 /* =========================================================
-   COLLAPSED SIDEBAR LAYOUT
+   COLLAPSED SIDEBAR
    ========================================================= */
 
 .erp-workspace .erp-sidebar.collapsed {
-    flex-basis:
-        var(--sidebar-collapsed-width, 70px);
+    flex: 0 0 var(--sidebar-collapsed-width, 70px);
 
-    width:
-        var(--sidebar-collapsed-width, 70px);
+    width: var(--sidebar-collapsed-width, 70px);
+    min-width: var(--sidebar-collapsed-width, 70px);
+    max-width: var(--sidebar-collapsed-width, 70px);
+
+    flex-shrink: 0;
 }
 
 
 /* =========================================================
    MAIN CONTENT
-   ---------------------------------------------------------
-   ONLY .erp-content scrolls vertically.
    ========================================================= */
 
 .erp-content {
-    flex: 1 1 auto;
-
-    width: 100%;
-
-    min-width: 0;
-    min-height: 0;
-
-    padding: 24px;
+    display: block !important;
 
     position: relative;
 
-    z-index: 1;
+    flex: 1 1 auto !important;
+    flex-basis: 0;
 
-    overflow-y: auto;
+    width: auto !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    margin: 0;
+
+    padding: 24px;
+
+    z-index: 10;
+
     overflow-x: hidden;
+    overflow-y: auto;
+
+    scrollbar-gutter: stable;
+
+    visibility: visible !important;
+    opacity: 1 !important;
 
     background:
         radial-gradient(
@@ -157,52 +135,87 @@
             transparent 30%
         ),
         var(--background);
-
-    scrollbar-width: thin;
-
-    scrollbar-color:
-        rgba(1, 33, 105, .25)
-        transparent;
 }
 
 
 /* =========================================================
-   CONTENT SCROLLBAR
+   CONTENT CHILDREN
    ========================================================= */
 
-.erp-content::-webkit-scrollbar {
-    width: 7px;
-}
+.erp-content > * {
+    visibility: visible;
+    opacity: 1;
 
-.erp-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.erp-content::-webkit-scrollbar-thumb {
-    background: rgba(1, 33, 105, .25);
-
-    border-radius: 20px;
-}
-
-.erp-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(1, 33, 105, .40);
+    min-width: 0;
+    max-width: 100%;
 }
 
 
 /* =========================================================
-   FOOTER
+   GLOBAL CONTENT CONTAINMENT
    ---------------------------------------------------------
-   Footer remains outside the scrolling content area.
+   Scoped ONLY to the ERP content area.
    ========================================================= */
 
-.erp-footer {
-    width: 100%;
+.erp-content .container,
+.erp-content .container-fluid,
+.erp-content .page-container {
+    min-width: 0;
+    max-width: 100%;
+}
 
-    flex: 0 0 auto;
 
-    position: relative;
+.erp-content .row {
+    min-width: 0;
+}
 
-    z-index: 1000;
+
+.erp-content [class*="col-"] {
+    min-width: 0;
+    max-width: 100%;
+}
+
+
+.erp-content section,
+.erp-content article,
+.erp-content nav,
+.erp-content main,
+.erp-content header,
+.erp-content footer {
+    min-width: 0;
+    max-width: 100%;
+}
+
+
+.erp-content img,
+.erp-content svg,
+.erp-content video,
+.erp-content canvas,
+.erp-content iframe {
+    max-width: 100%;
+}
+
+
+.erp-content table {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   FLEX / GRID CONTENT PROTECTION
+   ========================================================= */
+
+.erp-content .d-flex,
+.erp-content .d-inline-flex {
+    min-width: 0;
+}
+
+
+.erp-content [style*="display:flex"],
+.erp-content [style*="display: flex"],
+.erp-content [style*="display:grid"],
+.erp-content [style*="display: grid"] {
+    min-width: 0;
 }
 
 
@@ -211,9 +224,12 @@
    ========================================================= */
 
 .page-container {
-    width: 100%;
+    display: block;
 
+    width: 100%;
     max-width: 1600px;
+
+    min-width: 0;
 
     margin-left: auto;
     margin-right: auto;
@@ -228,7 +244,6 @@
     display: flex;
 
     justify-content: space-between;
-
     align-items: center;
 
     gap: 16px;
@@ -236,15 +251,11 @@
     margin-bottom: 24px;
 
     flex-wrap: wrap;
+
+    min-width: 0;
+    max-width: 100%;
 }
 
-
-/* =========================================================
-   PAGE TITLE
-   ---------------------------------------------------------
-   Kept here because this is page-layout positioning.
-   Detailed typography can be overridden by style.css.
-   ========================================================= */
 
 .page-title {
     margin: 0;
@@ -252,16 +263,13 @@
     color: var(--navy);
 
     font-size: 28px;
-
     font-weight: 700;
 
     line-height: 1.2;
+
+    max-width: 100%;
 }
 
-
-/* =========================================================
-   PAGE SUBTITLE
-   ========================================================= */
 
 .page-subtitle {
     margin-top: 4px;
@@ -269,32 +277,28 @@
     color: var(--muted);
 
     font-size: 14px;
+
+    max-width: 100%;
 }
 
 
 /* =========================================================
-   LAYOUT UTILITIES
+   FOOTER
    ========================================================= */
 
-.shadow-card {
-    box-shadow: var(--shadow);
-}
+.erp-footer {
+    width: 100%;
 
-.rounded-card {
-    border-radius: var(--radius);
-}
+    flex: 0 0 auto;
 
-.bg-card {
-    background: var(--card);
-}
+    position: relative;
 
-.border-soft {
-    border: 1px solid var(--border);
+    z-index: 1000;
 }
 
 
 /* =========================================================
-   LARGE TABLET / SMALL DESKTOP
+   TABLET
    ========================================================= */
 
 @media (max-width: 992px) {
@@ -307,10 +311,211 @@
 
 
 /* =========================================================
-   TABLET / MOBILE
+   MOBILE
+   ---------------------------------------------------------
+   THIS IS THE IMPORTANT FIX.
+   ---------------------------------------------------------
+   Mobile must NOT remain trapped inside a 100vh wrapper.
+   The document must be allowed to grow beyond the viewport.
    ========================================================= */
 
-@media (max-width: 768px) {
+@media (max-width: 767.98px) {
+
+    /* -----------------------------------------------------
+       MOBILE ERP WRAPPER
+       ----------------------------------------------------- */
+
+    .erp-wrapper {
+        width: 100%;
+
+        /*
+         * IMPORTANT:
+         * Do not lock the application shell to viewport height
+         * on mobile.
+         *
+         * This prevents the bottom of long pages from being
+         * clipped by the parent's overflow:hidden.
+         */
+        height: auto;
+
+        min-height: 100vh;
+        min-height: 100dvh;
+
+        display: flex;
+        flex-direction: column;
+
+        overflow: visible;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE WORKSPACE
+       ----------------------------------------------------- */
+
+    .erp-workspace {
+        display: block;
+
+        position: relative;
+
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+
+        /*
+         * Mobile page grows naturally.
+         */
+        height: auto;
+
+        overflow: visible;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE SIDEBAR
+       ----------------------------------------------------- */
+
+    .erp-workspace .erp-sidebar {
+        position: fixed !important;
+
+        top: 0;
+        left: 0;
+
+        width: min(320px, 88vw) !important;
+        max-width: 320px !important;
+
+        height: 100vh;
+        height: 100dvh;
+
+        min-width: 0;
+
+        flex: none !important;
+        flex-basis: auto !important;
+
+        transform: translateX(-105%);
+
+        z-index: 5000;
+
+        transition:
+            transform var(--transition, .25s ease);
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE SIDEBAR OPEN
+       ----------------------------------------------------- */
+
+    .erp-workspace .erp-sidebar.mobile-open {
+        transform: translateX(0) !important;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE COLLAPSED STATE
+       ----------------------------------------------------- */
+
+    .erp-workspace .erp-sidebar.collapsed {
+        width: min(320px, 88vw) !important;
+        max-width: 320px !important;
+
+        flex: none !important;
+        flex-basis: auto !important;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE MAIN CONTENT
+       ----------------------------------------------------- */
+
+    .erp-content {
+        display: block !important;
+
+        position: relative;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        min-width: 0 !important;
+
+        /*
+         * Allow content to determine its own height.
+         */
+        min-height: 0 !important;
+        height: auto !important;
+
+        flex: none !important;
+        flex-basis: auto !important;
+
+        margin: 0;
+
+        padding: 15px;
+
+        /*
+         * IMPORTANT:
+         * No vertical scrolling container on mobile.
+         * The browser/document handles scrolling.
+         */
+        overflow-x: hidden;
+        overflow-y: visible;
+
+        scrollbar-gutter: auto;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        z-index: 10;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE CONTENT CHILDREN
+       ----------------------------------------------------- */
+
+    .erp-content > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE BOOTSTRAP CONTAINERS
+       ----------------------------------------------------- */
+
+    .erp-content .container,
+    .erp-content .container-fluid {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+
+    .erp-content .row {
+        min-width: 0;
+    }
+
+
+    .erp-content [class*="col-"] {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+
+    /* -----------------------------------------------------
+       PAGE CONTAINER
+       ----------------------------------------------------- */
+
+    .page-container {
+        display: block;
+
+        width: 100%;
+        max-width: 100%;
+
+        min-width: 0;
+    }
+
+
+    /* -----------------------------------------------------
+       PAGE HEADER
+       ----------------------------------------------------- */
 
     .page-header {
         align-items: flex-start;
@@ -319,6 +524,7 @@
 
         margin-bottom: 20px;
     }
+
 
     .page-title {
         font-size: 24px;
@@ -335,6 +541,19 @@
 
     .erp-content {
         padding: 16px 12px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .erp-content {
+        padding: 10px;
     }
 
 }

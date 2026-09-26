@@ -4,14 +4,20 @@
 
 <div class="container mt-4">
 
-    <!-- PAGE HEADER -->
+    <!-- =========================================================
+         PAGE HEADER
+         ========================================================= -->
+
     <div class="d-flex justify-content-between align-items-center mb-3">
 
         <div>
+
             <h4 class="mb-0">
                 Results Approval Queue
             </h4>
+
         </div>
+
 
         <div class="d-flex gap-2">
 
@@ -25,7 +31,210 @@
     </div>
 
 
-    <!-- RESULTS CARD -->
+<!-- =========================================================
+     SEARCH AND FILTER AREA
+     ========================================================= -->
+
+<div class="card shadow-sm mb-3">
+
+    <div class="card-body">
+
+        <!-- =====================================================
+             SEARCH
+             ===================================================== -->
+
+        <div class="mb-3">
+
+            <label
+                for="resultsSearch"
+                class="form-label fw-semibold"
+            >
+                Search Results
+            </label>
+
+            <input
+                type="text"
+                id="resultsSearch"
+                class="form-control"
+                placeholder="Search by unit, submitted by, academic year, semester, status..."
+                autocomplete="off"
+            >
+
+            <small class="text-muted">
+                You can search using any part of the unit, submitted by name,
+                academic year, semester or status.
+            </small>
+
+        </div>
+
+
+        <!-- =====================================================
+             FILTERS
+             ===================================================== -->
+
+        <div class="row g-3 align-items-end">
+
+
+            <!-- ACADEMIC YEAR -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <label
+                    for="resultsYearFilter"
+                    class="form-label fw-semibold"
+                >
+                    Academic Year
+                </label>
+
+                <select
+                    id="resultsYearFilter"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Years
+                    </option>
+
+                    {% for year in academic_years %}
+
+                        <option value="{{ year }}">
+                            {{ year }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- SEMESTER -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <label
+                    for="resultsSemesterFilter"
+                    class="form-label fw-semibold"
+                >
+                    Semester
+                </label>
+
+                <select
+                    id="resultsSemesterFilter"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Semesters
+                    </option>
+
+                    <option value="Jan - March">
+                        Jan - March
+                    </option>
+
+                    <option value="April - June">
+                        April - June
+                    </option>
+
+                    <option value="July - September">
+                        July - September
+                    </option>
+
+                    <option value="October - December">
+                        October - December
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <label
+                    for="resultsStatusFilter"
+                    class="form-label fw-semibold"
+                >
+                    Status
+                </label>
+
+                <select
+                    id="resultsStatusFilter"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option value="draft">
+                        Draft
+                    </option>
+
+                    <option value="submitted">
+                        Submitted
+                    </option>
+
+                    <option value="approved">
+                        Approved
+                    </option>
+
+                    <option value="published">
+                        Published
+                    </option>
+
+                    <option value="returned">
+                        Returned
+                    </option>
+
+                    <option value="unlocked">
+                        Unlocked
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="button"
+                        id="resultsFilterBtn"
+                        class="btn btn-primary flex-fill"
+                    >
+                        Filter
+                    </button>
+
+                    <button
+                        type="button"
+                        id="resultsClearBtn"
+                        class="btn btn-secondary flex-fill"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+    <!-- =========================================================
+         RESULTS CARD
+         ========================================================= -->
+
     <div class="card shadow">
 
         <div class="card-body">
@@ -37,51 +246,117 @@
                     <thead>
 
                         <tr>
-                            <th>Unit</th>
-                            <th>Academic Year</th>
-                            <th>Semester</th>
-                            <th>Status</th>
-                            <th>Submitted By</th>
-                            <th>Submitted At</th>
-                            <th>Actions</th>
+
+                            <th>
+                                Unit
+                            </th>
+
+                            <th>
+                                Academic Year
+                            </th>
+
+                            <th>
+                                Semester
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Submitted By
+                            </th>
+
+                            <th>
+                                Submitted At
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
                         </tr>
 
                     </thead>
 
+
                     <tbody>
+
 
                         {% for batch in batches %}
 
-                        <tr>
+                        <tr
+                            class="results-approval-row"
 
-                            <!-- UNIT -->
+                            data-search="
+                                {{ batch.unit_offering.unit.code }}
+                                {{ batch.unit_offering.unit.name }}
+                                {{ batch.unit_offering.academic_year }}
+                                {{ batch.unit_offering.semester.semester_name }}
+                                {{ batch.status }}
+                                {{ batch.submitted_by }}
+                                {{ batch.submitted_at }}
+                            "
+
+                            data-year="{{ batch.unit_offering.academic_year }}"
+
+                            data-semester="{{ batch.unit_offering.semester.semester_name }}"
+
+                            data-status="{{ batch.status }}"
+                        >
+
+
+                            <!-- =================================================
+                                 UNIT
+                                 ================================================= -->
+
                             <td>
+
                                 <strong>
+
                                     {{ batch.unit_offering.unit.code }}
+
                                 </strong>
 
                                 <br>
 
                                 <span class="results-unit-name">
+
                                     {{ batch.unit_offering.unit.name }}
+
                                 </span>
+
                             </td>
 
 
-                            <!-- ACADEMIC YEAR -->
+                            <!-- =================================================
+                                 ACADEMIC YEAR
+                                 ================================================= -->
+
                             <td>
+
                                 {{ batch.unit_offering.academic_year }}
+
                             </td>
 
 
-                            <!-- SEMESTER -->
+                            <!-- =================================================
+                                 SEMESTER
+                                 ================================================= -->
+
                             <td>
+
                                 {{ batch.unit_offering.semester.semester_name }}
+
                             </td>
 
 
-                            <!-- STATUS -->
+                            <!-- =================================================
+                                 STATUS
+                                 ================================================= -->
+
                             <td>
+
 
                                 {% if batch.status == "draft" %}
 
@@ -89,11 +364,13 @@
                                         Draft
                                     </span>
 
+
                                 {% elif batch.status == "submitted" %}
 
                                     <span class="badge bg-primary">
                                         Submitted
                                     </span>
+
 
                                 {% elif batch.status == "approved" %}
 
@@ -101,17 +378,20 @@
                                         Approved
                                     </span>
 
+
                                 {% elif batch.status == "published" %}
 
                                     <span class="badge bg-dark">
                                         Published
                                     </span>
 
+
                                 {% elif batch.status == "returned" %}
 
                                     <span class="badge bg-warning text-dark">
                                         Returned
                                     </span>
+
 
                                 {% elif batch.status == "unlocked" %}
 
@@ -121,43 +401,67 @@
 
                                 {% endif %}
 
+
                             </td>
 
 
-                            <!-- SUBMITTED BY -->
+                            <!-- =================================================
+                                 SUBMITTED BY
+                                 ================================================= -->
+
                             <td>
+
                                 {{ batch.submitted_by }}
+
                             </td>
 
 
-                            <!-- SUBMITTED AT -->
+                            <!-- =================================================
+                                 SUBMITTED AT
+                                 ================================================= -->
+
                             <td>
+
                                 <span class="results-date">
+
                                     {{ batch.submitted_at }}
+
                                 </span>
+
                             </td>
 
 
-                            <!-- ACTIONS -->
+                            <!-- =================================================
+                                 ACTIONS
+                                 ================================================= -->
+
                             <td>
 
                                 <div class="results-actions">
 
-                                    <a href="{% url 'batch_details' batch.id %}"
-                                       class="btn btn-info btn-sm">
+
+                                    <a
+                                        href="{% url 'batch_details' batch.id %}"
+                                        class="btn btn-info btn-sm"
+                                    >
                                         View
                                     </a>
 
 
                                     {% if batch.status == "submitted" %}
 
-                                        <a href="{% url 'approve_results' batch.id %}"
-                                           class="btn btn-success btn-sm">
+                                        <a
+                                            href="{% url 'approve_results' batch.id %}"
+                                            class="btn btn-success btn-sm"
+                                        >
                                             Approve
                                         </a>
 
-                                        <a href="{% url 'return_results' batch.id %}"
-                                           class="btn btn-warning btn-sm">
+
+                                        <a
+                                            href="{% url 'return_results' batch.id %}"
+                                            class="btn btn-warning btn-sm"
+                                        >
                                             Return
                                         </a>
 
@@ -166,8 +470,10 @@
 
                                     {% if batch.status == "approved" %}
 
-                                        <a href="{% url 'publish_results' batch.id %}"
-                                           class="btn btn-success btn-sm text-white">
+                                        <a
+                                            href="{% url 'publish_results' batch.id %}"
+                                            class="btn btn-success btn-sm text-white"
+                                        >
                                             Publish
                                         </a>
 
@@ -176,16 +482,20 @@
 
                                     {% if batch.status == "returned" %}
 
-                                        <a href="{% url 'unlock_batch' batch.id %}"
-                                           class="btn btn-secondary btn-sm">
+                                        <a
+                                            href="{% url 'unlock_batch' batch.id %}"
+                                            class="btn btn-secondary btn-sm"
+                                        >
                                             Unlock
                                         </a>
 
                                     {% endif %}
 
+
                                 </div>
 
                             </td>
+
 
                         </tr>
 
@@ -193,7 +503,10 @@
 
                         <tr>
 
-                            <td colspan="7" class="text-center py-4">
+                            <td
+                                colspan="7"
+                                class="text-center py-4"
+                            >
 
                                 No result batches available.
 
@@ -202,6 +515,28 @@
                         </tr>
 
                         {% endfor %}
+
+
+                        <!-- =====================================================
+                             NO FILTER RESULTS
+                             ===================================================== -->
+
+                        <tr
+                            id="resultsNoFilterResults"
+                            class="d-none"
+                        >
+
+                            <td
+                                colspan="7"
+                                class="text-center text-muted py-4"
+                            >
+
+                                No result batches match the selected search or filters.
+
+                            </td>
+
+                        </tr>
+
 
                     </tbody>
 
@@ -216,4 +551,3 @@
 </div>
 
 {% endblock %}
-

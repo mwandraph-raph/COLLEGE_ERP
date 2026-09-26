@@ -25,4 +25,9 @@ urlpatterns = [
     name="activity_export_pdf"
     ),
 
+    path("search/", 
+    views.global_search, 
+    name="global_search"
+    ),
+
 ]

@@ -4,236 +4,249 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
 
-<h2>Student Management</h2>
+    <h2>Student Management</h2>
 
-<a href="{% url 'student_create' %}"
-   class="btn btn-primary">
-    Add Student
-</a>
+    <a
+        href="{% url 'student_create' %}"
+        class="btn btn-primary">
+        Add Student
+    </a>
 
 </div>
+
 
 <form method="GET" class="row mb-3">
 
-<div class="col-md-10">
+    <div class="col-md-10">
 
-    <input
-        type="text"
-        name="q"
-        class="form-control"
-        placeholder="Search by admission number, first name or last name..."
-        value="{{ query|default:'' }}">
+        <input
+            type="text"
+            name="q"
+            class="form-control"
+            placeholder="Search by admission number, first name or last name..."
+            value="{{ query|default:'' }}">
 
-</div>
+    </div>
 
-<div class="col-md-2">
+    <div class="col-md-2">
 
-    <button
-        class="btn btn-primary w-100"
-        type="submit">
+        <button
+            class="btn btn-primary w-100"
+            type="submit">
+            Search
+        </button>
 
-        Search
-
-    </button>
-
-</div>
+    </div>
 
 </form>
 
+
 <p class="text-muted">
 
-Total Students:
-<strong>{{ total_students }}</strong>
+    Total Students:
+    <strong>{{ total_students }}</strong>
 
 </p>
 
+
 <div class="table-responsive">
 
-<table class="table table-striped table-hover table-bordered align-middle">
+    <table class="table table-striped table-hover">
 
-<thead class="table-dark">
+        <thead>
 
-    <tr>
+            <tr>
 
-        <th>User Account</th>
+                <th>User Account</th>
 
-        <th>Admission No</th>
+                <th>Admission No</th>
 
-        <th>Student Name</th>
+                <th>Student Name</th>
 
-        <th>Programme</th>
+                <th>Programme</th>
 
-        <th>Department</th>
+                <th>Department</th>
 
-        <th>Phone</th>
+                <th>Phone</th>
 
-        <th>Enrollment</th>
+                <th>Enrollment</th>
 
-        <th width="280">Actions</th>
+                <th>Actions</th>
 
-    </tr>
+            </tr>
 
-</thead>
+        </thead>
 
-<tbody>
 
-{% for student in page_obj %}
+        <tbody>
 
-    <tr>
+        {% for student in page_obj %}
 
-        <td>{{ student.user }}</td>
+            <tr>
 
-        <td>{{ student.admission_no }}</td>
+                <td>
+                    {{ student.user }}
+                </td>
 
-        <td>
+                <td>
+                    {{ student.admission_no }}
+                </td>
 
-            {{ student.first_name }}
-            {{ student.last_name }}
+                <td>
+                    {{ student.first_name }}
+                    {{ student.last_name }}
+                </td>
 
-        </td>
+                <td>
+                    {{ student.programme.code }} -
+                    {{ student.programme.name }}
+                </td>
 
-        <td> {{ student.programme.code }} - {{ student.programme.name }}</td>
+                <td>
+                    {{ student.programme.course.department.name }}
+                </td>
 
-        <td>{{ student.programme.course.department.name }}</td>
+                <td>
+                    {{ student.phone }}
+                </td>
 
-        <td>{{ student.phone }}</td>
+                <td>
 
-        <td>
+                    {% if student.current_enrollment %}
 
-            {% if student.current_enrollment %}
+                        <span class="badge bg-success">
+                            Enrolled
+                        </span>
 
-                <span class="badge bg-success">
+                    {% else %}
 
-                    Enrolled
+                        <span class="badge bg-secondary">
+                            Not Enrolled
+                        </span>
 
-                </span>
+                    {% endif %}
 
-            {% else %}
+                </td>
 
-                <span class="badge bg-secondary">
 
-                    Not Enrolled
+                <td>
 
-                </span>
+                    <div class="table-actions">
 
-            {% endif %}
+                        <a
+                            href="{% url 'student_detail' student.id %}"
+                            class="btn btn-info btn-sm">
+                            View
+                        </a>
 
-        </td>
+                        <a
+                            href="{% url 'student_update' student.id %}"
+                            class="btn btn-warning btn-sm">
+                            Edit
+                        </a>
 
-        <td class="text-nowrap">
 
-            <a href="{% url 'student_detail' student.id %}"
-               class="btn btn-info btn-sm">
+                        {% if student.current_enrollment %}
 
-                View
+                            <a
+                                href="{% url 'semester_enrollment_detail' student.current_enrollment.id %}"
+                                class="btn btn-success btn-sm">
+                                Enrollment
+                            </a>
 
-            </a>
+                        {% else %}
 
-            <a href="{% url 'student_update' student.id %}"
-               class="btn btn-warning btn-sm">
+                            <a
+                                href="{% url 'enroll_student' student.id %}"
+                                class="btn btn-primary btn-sm">
+                                Enroll
+                            </a>
 
-                Edit
+                        {% endif %}
 
-            </a>
 
-            {% if student.current_enrollment %}
+                        <a
+                            href="{% url 'student_delete' student.id %}"
+                            class="btn btn-danger btn-sm">
+                            Delete
+                        </a>
 
-                <a href="{% url 'semester_enrollment_detail' student.current_enrollment.id %}"
-                   class="btn btn-success btn-sm">
+                    </div>
 
-                    Enrollment
+                </td>
 
-                </a>
+            </tr>
 
-            {% else %}
+        {% empty %}
 
-                <a href="{% url 'enroll_student' student.id %}"
-                   class="btn btn-primary btn-sm">
+            <tr>
 
-                    Enroll
+                <td colspan="8" class="table-empty">
 
-                </a>
+                    <strong>No students found.</strong>
 
-            {% endif %}
+                </td>
 
-            <a href="{% url 'student_delete' student.id %}"
-               class="btn btn-danger btn-sm">
+            </tr>
 
-                Delete
+        {% endfor %}
 
-            </a>
+        </tbody>
 
-        </td>
-
-    </tr>
-
-{% empty %}
-
-    <tr>
-
-        <td colspan="8" class="text-center">
-
-            No students found.
-
-        </td>
-
-    </tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
+    </table>
 
 </div>
 
+
 <nav>
 
-<ul class="pagination justify-content-center">
-{% if page_obj.has_previous %}
+    <ul class="pagination justify-content-center">
 
-    <li class="page-item">
+        {% if page_obj.has_previous %}
 
-        <a class="page-link"
-           href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+            <li class="page-item">
 
-            Previous
+                <a
+                    class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+                    Previous
+                </a>
 
-        </a>
+            </li>
 
-    </li>
+        {% endif %}
 
-{% endif %}
 
-<li class="page-item active">
+        <li class="page-item active">
 
-    <span class="page-link">
+            <span class="page-link">
 
-        Page {{ page_obj.number }}
-        of
-        {{ page_obj.paginator.num_pages }}
+                Page {{ page_obj.number }}
+                of
+                {{ page_obj.paginator.num_pages }}
 
-    </span>
+            </span>
 
-</li>
+        </li>
 
-{% if page_obj.has_next %}
 
-    <li class="page-item">
+        {% if page_obj.has_next %}
 
-        <a class="page-link"
-           href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+            <li class="page-item">
 
-            Next
+                <a
+                    class="page-link"
+                    href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+                    Next
+                </a>
 
-        </a>
+            </li>
 
-    </li>
+        {% endif %}
 
-{% endif %}
-
-</ul>
+    </ul>
 
 </nav>
 
 {% endblock %}
+

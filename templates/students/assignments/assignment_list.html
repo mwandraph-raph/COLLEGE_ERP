@@ -4,101 +4,528 @@
 
 <div class="container mt-4">
 
-    <div class="d-flex justify-content-between mb-3">
+    <!-- =========================================================
+         PAGE HEADER
+         ========================================================= -->
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>
+
+        <h4 class="mb-0">
             Lecturer Assignments
         </h4>
+
+        <div class="d-flex gap-2">
+
+            <a href="{% url 'lecturer_assignment_create' %}"
+               class="btn btn-primary">
+                Assign Unit
+            </a>
+
+            <a href="{% url 'home' %}"
+               class="btn btn-secondary btn-sm">
+                Back to Dashboard
+            </a>
+
+        </div>
+
     </div>
 
-        <a href="{% url 'lecturer_assignment_create' %}"
-           class="btn btn-primary">
-            Assign Unit
-        </a>
-        <a href="{% url 'home' %}"
-            class="btn btn-secondary btn-sm">
-            Back to Dashboard
-        </a>
+
+    <!-- =========================================================
+         LECTURER SEARCH
+         ========================================================= -->
+
+    <div class="card shadow-sm mb-3">
+
+        <div class="card-body">
+
+            <div class="row g-3 align-items-end">
+
+                <!-- SEARCH INPUT -->
+
+                <div class="col-md-6">
+
+                    <label
+                        for="lecturerSearch"
+                        class="form-label"
+                    >
+                        Search Lecturer
+                    </label>
+
+                    <input
+                        type="text"
+                        id="lecturerSearch"
+                        class="form-control"
+                        placeholder="Enter lecturer name..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <!-- SEARCH BUTTON -->
+
+                <div class="col-md-auto">
+
+                    <button
+                        type="button"
+                        id="lecturerSearchBtn"
+                        class="btn btn-primary"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+
+                <!-- CLEAR BUTTON -->
+
+                <div class="col-md-auto">
+
+                    <button
+                        type="button"
+                        id="lecturerSearchClearBtn"
+                        class="btn btn-secondary"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
+
+    <!-- =========================================================
+         LECTURER ASSIGNMENTS
+         ========================================================= -->
 
     <div class="card shadow">
 
         <div class="card-body">
 
-            <table class="table table-bordered table-striped">
+            <div class="table-responsive">
 
-                <thead>
+                <table class="table table-bordered table-striped align-middle">
 
-                    <tr>
-                        <th>Lecturer</th>
-                        <th>Unit</th>
-                        <th>Academic Year</th>
-                        <th>Semester</th>
-                        <th>Assigned By</th>
-                        <th>Actions</th>
-                    </tr>
+                    <thead>
 
-                </thead>
+                        <tr>
 
-                <tbody>
+                            <th>
+                                Lecturer
+                            </th>
 
-    {% for item in assignments %}
+                            <th>
+                                Units Assigned
+                            </th>
 
-    <tr>
+                            <th style="width: 120px;">
+                                Action
+                            </th>
 
-        <td>
-            {{ item.lecturer.get_full_name|default:item.lecturer.username }}
-        </td>
+                        </tr>
 
-        <td>
-            <strong>{{ item.unit_offering.unit.code }}</strong><br>
-            {{ item.unit_offering.unit.name }}
-        </td>
+                    </thead>
 
-        <td>
-            {{ item.unit_offering.academic_year }}
-        </td>
 
-        <td>
-            {{ item.unit_offering.semester }}
-        </td>
+                    <tbody>
 
-        <td>
-            {{ item.assigned_by }}
-        </td>
+                        {% regroup assignments|dictsort:"lecturer.username" by lecturer as lecturer_groups %}
 
-        <td>
 
-            <a href="{% url 'lecturer_assignment_update' item.pk %}"
-               class="btn btn-sm btn-warning">
-                Edit
-            </a>
+                        {% for lecturer_group in lecturer_groups %}
 
-            <a href="{% url 'lecturer_assignment_delete' item.pk %}"
-               class="btn btn-sm btn-danger">
-                Delete
-            </a>
+                        <!-- =====================================================
+                             LECTURER SUMMARY
+                             ===================================================== -->
 
-        </td>
+                        <tr
+                            class="lecturer-summary-row"
+                            data-lecturer-name="{{ lecturer_group.grouper.get_full_name|default:lecturer_group.grouper.username }}"
+                            data-lecturer-username="{{ lecturer_group.grouper.username }}"
+                        >
 
-    </tr>
+                            <td>
 
-    {% empty %}
+                                <strong>
+                                    {{ lecturer_group.grouper.get_full_name|default:lecturer_group.grouper.username }}
+                                </strong>
 
-    <tr>
+                            </td>
 
-        <td colspan="6" class="text-center">
-            No assignments found.
-        </td>
 
-    </tr>
+                            <td>
 
-    {% endfor %}
+                                <span class="badge bg-primary">
 
-</tbody>
+                                    {{ lecturer_group.list|length }}
+                                    Unit{{ lecturer_group.list|length|pluralize }}
 
-            </table>
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-info text-white"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#lecturer{{ lecturer_group.grouper.id }}"
+                                    aria-expanded="false"
+                                    aria-controls="lecturer{{ lecturer_group.grouper.id }}"
+                                >
+                                    View
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- =====================================================
+                             LECTURER DETAILS
+                             ===================================================== -->
+
+                        <tr
+                            class="lecturer-details-row"
+                            data-lecturer-details-for="{{ lecturer_group.grouper.id }}"
+                        >
+
+                            <td colspan="3" class="p-0 border-top-0">
+
+                                <div
+                                    class="collapse lecturer-details"
+                                    id="lecturer{{ lecturer_group.grouper.id }}"
+                                >
+
+                                    <div class="p-3 bg-light">
+
+
+                                        <!-- =================================================
+                                             FILTER AREA
+                                             ================================================= -->
+
+                                        <div class="card mb-3">
+
+                                            <div class="card-body">
+
+                                                <div class="row g-3 align-items-end">
+
+
+                                                    <!-- ACADEMIC YEAR -->
+
+                                                    <div class="col-md-4">
+
+                                                        <label
+                                                            class="form-label"
+                                                            for="year{{ lecturer_group.grouper.id }}"
+                                                        >
+                                                            Academic Year
+                                                        </label>
+
+
+                                                        <select
+                                                            id="year{{ lecturer_group.grouper.id }}"
+                                                            class="form-select assignment-year-filter"
+                                                        >
+
+                                                            <option value="">
+                                                                All Years
+                                                            </option>
+
+
+                                                            {% for item in lecturer_group.list %}
+
+                                                                <option
+                                                                    value="{{ item.unit_offering.academic_year }}"
+                                                                >
+                                                                    {{ item.unit_offering.academic_year }}
+                                                                </option>
+
+                                                            {% endfor %}
+
+                                                        </select>
+
+                                                    </div>
+
+
+                                                    <!-- SEMESTER -->
+
+                                                    <div class="col-md-4">
+
+                                                        <label
+                                                            class="form-label"
+                                                            for="semester{{ lecturer_group.grouper.id }}"
+                                                        >
+                                                            Semester
+                                                        </label>
+
+
+                                                        <select
+                                                            id="semester{{ lecturer_group.grouper.id }}"
+                                                            class="form-select assignment-semester-filter"
+                                                        >
+
+                                                            <option value="">
+                                                                All Semesters
+                                                            </option>
+
+
+                                                            <option value="Jan - March">
+                                                                Jan - March
+                                                            </option>
+
+
+                                                            <option value="April - June">
+                                                                April - June
+                                                            </option>
+
+
+                                                            <option value="July - September">
+                                                                July - September
+                                                            </option>
+
+
+                                                            <option value="October - December">
+                                                                October - December
+                                                            </option>
+
+                                                        </select>
+
+                                                    </div>
+
+
+                                                    <!-- FILTER BUTTON -->
+
+                                                    <div class="col-md-auto">
+
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-primary assignment-filter-btn"
+                                                        >
+                                                            Filter
+                                                        </button>
+
+                                                    </div>
+
+
+                                                    <!-- CLEAR BUTTON -->
+
+                                                    <div class="col-md-auto">
+
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-secondary assignment-clear-btn"
+                                                        >
+                                                            Clear
+                                                        </button>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <!-- =================================================
+                                             LECTURER HEADING
+                                             ================================================= -->
+
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                            <h6 class="mb-0">
+
+                                                Assignments for
+
+                                                <strong>
+                                                    {{ lecturer_group.grouper.get_full_name|default:lecturer_group.grouper.username }}
+                                                </strong>
+
+                                            </h6>
+
+                                        </div>
+
+
+                                        <!-- =================================================
+                                             ASSIGNMENT TABLE
+                                             ================================================= -->
+
+                                        <div class="table-responsive">
+
+                                            <table class="table table-bordered table-sm table-striped mb-0">
+
+                                                <thead>
+
+                                                    <tr>
+
+                                                        <th>
+                                                            Unit
+                                                        </th>
+
+                                                        <th>
+                                                            Academic Year
+                                                        </th>
+
+                                                        <th>
+                                                            Semester
+                                                        </th>
+
+                                                        <th>
+                                                            Assigned By
+                                                        </th>
+
+                                                        <th style="width: 150px;">
+                                                            Actions
+                                                        </th>
+
+                                                    </tr>
+
+                                                </thead>
+
+
+                                                <tbody class="assignment-table-body">
+
+
+                                                    {% for item in lecturer_group.list %}
+
+                                                    <tr
+                                                        class="assignment-row"
+                                                        data-year="{{ item.unit_offering.academic_year }}"
+                                                        data-semester="{{ item.unit_offering.semester }}"
+                                                    >
+
+                                                        <td>
+
+                                                            <strong>
+                                                                {{ item.unit_offering.unit.code }}
+                                                            </strong>
+
+                                                            <br>
+
+                                                            {{ item.unit_offering.unit.name }}
+
+                                                        </td>
+
+
+                                                        <td>
+                                                            {{ item.unit_offering.academic_year }}
+                                                        </td>
+
+
+                                                        <td>
+                                                            {{ item.unit_offering.semester }}
+                                                        </td>
+
+
+                                                        <td>
+                                                            {{ item.assigned_by }}
+                                                        </td>
+
+
+                                                        <td>
+
+                                                            <div class="d-flex gap-1 flex-wrap">
+
+                                                                <a
+                                                                    href="{% url 'lecturer_assignment_update' item.pk %}"
+                                                                    class="btn btn-sm btn-warning"
+                                                                >
+                                                                    Edit
+                                                                </a>
+
+
+                                                                <a
+                                                                    href="{% url 'lecturer_assignment_delete' item.pk %}"
+                                                                    class="btn btn-sm btn-danger"
+                                                                >
+                                                                    Delete
+                                                                </a>
+
+                                                            </div>
+
+                                                        </td>
+
+                                                    </tr>
+
+                                                    {% endfor %}
+
+
+                                                    <!-- NO ASSIGNMENT RESULTS -->
+
+                                                    <tr class="assignment-no-results d-none">
+
+                                                        <td
+                                                            colspan="5"
+                                                            class="text-center text-muted"
+                                                        >
+                                                            No assignments match the selected filters.
+                                                        </td>
+
+                                                    </tr>
+
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="3"
+                                class="text-center"
+                            >
+                                No lecturer assignments found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+
+                        <!-- =========================================================
+                             NO LECTURER SEARCH RESULTS
+                             ========================================================= -->
+
+                        <tr
+                            id="lecturerSearchNoResults"
+                            class="d-none"
+                        >
+
+                            <td
+                                colspan="3"
+                                class="text-center text-muted py-4"
+                            >
+                                No lecturers found matching your search.
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 

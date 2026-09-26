@@ -4,24 +4,15 @@
    ---------------------------------------------------------
    RESPONSIBILITY:
    - Topbar appearance
+   - Brand area
    - Topbar layout
    - Sidebar toggle
-   - Topbar title
+   - Search area
    - Topbar actions
    - Notification indicator
    - User profile area
    - Dropdown menus
    - Responsive topbar
-
-   IMPORTANT:
-   This file does NOT control:
-   - Sidebar
-   - Main content
-   - Cards
-   - Tables
-   - Buttons globally
-   - Forms
-   - Dashboards
    ========================================================= */
 
 
@@ -31,27 +22,24 @@
 
 .topbar {
     width: 100%;
-    height: var(--topbar-height);
+    min-height: var(--topbar-height);
 
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
     gap: 16px;
-
     padding: 0 24px;
 
     background: var(--topbar);
+    color: var(--text);
 
-    border-bottom:
-        1px solid var(--border);
+    border-bottom: 1px solid var(--border);
 
     box-shadow:
         0 2px 10px rgba(1, 33, 105, .06);
 
     position: sticky;
-
     top: 0;
 
     z-index: 1030;
@@ -59,14 +47,14 @@
 
 
 /* =========================================================
-   LEFT SECTION
+   TOPBAR CONTAINER
    ========================================================= */
 
-.topbar-left {
+.topbar .container-fluid {
+    width: 100%;
     min-width: 0;
 
     display: flex;
-
     align-items: center;
 
     gap: 16px;
@@ -74,31 +62,147 @@
 
 
 /* =========================================================
+   BRAND AREA
+   ========================================================= */
+
+.sidebar-brand {
+    width: var(--sidebar-width);
+    flex: 0 0 var(--sidebar-width);
+
+    display: flex;
+    align-items: center;
+
+    padding: 0;
+}
+
+
+/* =========================================================
+   BRAND LINK
+   ========================================================= */
+
+.brand-link {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    color: var(--navy);
+    text-decoration: none;
+
+    transition:
+        color .2s ease,
+        opacity .2s ease;
+}
+
+.brand-link:hover {
+    color: var(--navy);
+    text-decoration: none;
+    opacity: .92;
+}
+
+
+/* =========================================================
+   BRAND LOGO
+   ========================================================= */
+
+.brand-logo {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--navy),
+            var(--blue-dark)
+        );
+
+    color: var(--gold);
+
+    box-shadow:
+        0 4px 12px rgba(1, 33, 105, .14);
+}
+
+.brand-logo i {
+    font-size: 20px;
+    color: var(--gold);
+}
+
+
+/* =========================================================
+   BRAND NAME
+   ========================================================= */
+
+.brand-name {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name h5 {
+    margin: 0;
+
+    color: var(--navy);
+
+    font-size: 19px;
+    font-weight: 700;
+
+    line-height: 1.15;
+
+    white-space: nowrap;
+}
+
+.brand-name small {
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    font-weight: 500;
+
+    letter-spacing: .04em;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
    SIDEBAR TOGGLE
    ========================================================= */
 
-.sidebar-toggle {
+#sidebarToggle {
     width: 42px;
     height: 42px;
 
     flex: 0 0 42px;
 
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
 
     padding: 0;
 
     border: 1px solid var(--border);
-
     border-radius: 10px;
 
     background: #F4F7FB;
-
     color: var(--navy);
 
     cursor: pointer;
+
+    position: relative;
+
+    z-index: 5000;
 
     transition:
         background-color .2s ease,
@@ -108,7 +212,7 @@
         box-shadow .2s ease;
 }
 
-.sidebar-toggle:hover {
+#sidebarToggle:hover {
     background: var(--navy);
 
     border-color: var(--navy);
@@ -121,10 +225,58 @@
         0 4px 12px rgba(1, 33, 105, .16);
 }
 
-.sidebar-toggle:focus-visible {
+#sidebarToggle:focus-visible {
     outline: 3px solid rgba(23, 105, 209, .22);
-
     outline-offset: 2px;
+}
+
+
+/* =========================================================
+   SEARCH AREA
+   ========================================================= */
+
+.topbar form {
+    min-width: 120px;
+    margin: 0;
+}
+
+.topbar form .form-control {
+    min-width: 0;
+
+    height: 42px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: #F8FAFD;
+    color: var(--text);
+
+    font-size: 13px;
+
+    box-shadow: none;
+
+    transition:
+        border-color .2s ease,
+        background-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.topbar form .form-control::placeholder {
+    color: var(--muted);
+    opacity: .8;
+}
+
+.topbar form .form-control:hover {
+    background: #FFFFFF;
+}
+
+.topbar form .form-control:focus {
+    background: #FFFFFF;
+
+    border-color: var(--blue);
+
+    box-shadow:
+        0 0 0 3px rgba(23, 105, 209, .10);
 }
 
 
@@ -136,7 +288,6 @@
     min-width: 0;
 
     display: flex;
-
     flex-direction: column;
 }
 
@@ -146,15 +297,12 @@
     color: var(--navy);
 
     font-size: 20px;
-
     font-weight: 700;
 
     line-height: 1.2;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
@@ -168,10 +316,22 @@
     line-height: 1.3;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   LEFT SECTION
+   ========================================================= */
+
+.topbar-left {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
 }
 
 
@@ -183,7 +343,6 @@
     flex: 0 0 auto;
 
     display: flex;
-
     align-items: center;
 
     gap: 10px;
@@ -201,7 +360,6 @@
     flex: 0 0 42px;
 
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
 
@@ -210,11 +368,9 @@
     padding: 0;
 
     border: 1px solid var(--border);
-
     border-radius: 10px;
 
     background: #F8FAFD;
-
     color: var(--navy);
 
     cursor: pointer;
@@ -242,7 +398,6 @@
 
 .topbar-icon:focus-visible {
     outline: 3px solid rgba(23, 105, 209, .22);
-
     outline-offset: 2px;
 }
 
@@ -264,8 +419,7 @@
 
     background: var(--danger);
 
-    border:
-        2px solid var(--topbar);
+    border: 2px solid var(--topbar);
 }
 
 
@@ -277,17 +431,14 @@
     min-width: 0;
 
     display: flex;
-
     align-items: center;
 
     gap: 12px;
 
     padding-left: 16px;
-
     margin-left: 4px;
 
-    border-left:
-        1px solid var(--border);
+    border-left: 1px solid var(--border);
 }
 
 
@@ -302,7 +453,6 @@
     flex: 0 0 42px;
 
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
 
@@ -318,7 +468,6 @@
     color: #FFFFFF;
 
     font-size: 14px;
-
     font-weight: 700;
 
     box-shadow:
@@ -334,7 +483,6 @@
     min-width: 0;
 
     display: flex;
-
     flex-direction: column;
 }
 
@@ -342,15 +490,12 @@
     color: var(--text);
 
     font-size: 14px;
-
     font-weight: 600;
 
     line-height: 1.3;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
@@ -364,9 +509,7 @@
     line-height: 1.3;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
@@ -377,34 +520,57 @@
 
 .topbar a {
     color: inherit;
-
     text-decoration: none;
 }
 
 .topbar a:hover {
-    color: inherit;
-
     text-decoration: none;
 }
 
 
 /* =========================================================
+   BOOTSTRAP USER DROPDOWN
+   ========================================================= */
+
+.topbar .nav-link {
+    display: flex;
+    align-items: center;
+
+    min-height: 42px;
+
+    padding: 8px 10px;
+
+    border-radius: 9px;
+
+    color: var(--text);
+
+    font-size: 13px;
+    font-weight: 500;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease;
+}
+
+.topbar .nav-link:hover,
+.topbar .nav-link:focus {
+    background: #F4F7FB;
+    color: var(--navy);
+}
+
+
+/* =========================================================
    DROPDOWN MENU
-   ---------------------------------------------------------
-   Bootstrap controls dropdown positioning/behavior.
-   This file only provides the Xoradex visual treatment.
    ========================================================= */
 
 .topbar .dropdown-menu {
-    min-width: 180px;
+    min-width: 200px;
 
     margin-top: 8px;
 
     padding: 8px;
 
-    border:
-        1px solid var(--border);
-
+    border: 1px solid var(--border);
     border-radius: 12px;
 
     background: #FFFFFF;
@@ -412,6 +578,28 @@
     box-shadow:
         0 14px 35px rgba(1, 33, 105, .12);
 }
+
+
+/* =========================================================
+   DROPDOWN USERNAME
+   ========================================================= */
+
+.topbar .dropdown-item-text {
+    padding: 10px 14px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+    font-weight: 500;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   DROPDOWN ITEMS
+   ========================================================= */
 
 .topbar .dropdown-item {
     padding: 10px 14px;
@@ -430,7 +618,6 @@
 .topbar .dropdown-item:hover,
 .topbar .dropdown-item:focus {
     background: #EEF4FB;
-
     color: var(--navy);
 }
 
@@ -445,13 +632,17 @@
 
 
 /* =========================================================
-   RESPONSIVE TOPBAR
+   TABLET
    ========================================================= */
 
 @media (max-width: 992px) {
 
     .topbar {
         padding: 0 16px;
+    }
+
+    .topbar .container-fluid {
+        gap: 10px;
     }
 
     .topbar-title {
@@ -470,30 +661,261 @@
 
 
 /* =========================================================
-   SMALL MOBILE
+   MOBILE
+   ---------------------------------------------------------
+   The topbar becomes a controlled multi-row layout.
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .topbar {
+        min-height: 60px;
+
+        height: auto;
+
+        padding: 10px 12px;
+
+        position: sticky;
+
+        /*
+         * Keep the topbar below the mobile sidebar.
+         * sidebar.css uses z-index 3000.
+         */
+        z-index: 1000;
+    }
+
+
+    /* -----------------------------------------------------
+       MAIN CONTAINER
+       ----------------------------------------------------- */
+
+    .topbar .container-fluid {
+        width: 100%;
+
+        display: flex;
+        flex-wrap: wrap;
+
+        align-items: center;
+
+        gap: 10px;
+    }
+
+
+    /* -----------------------------------------------------
+       LEFT SECTION
+       ----------------------------------------------------- */
+
+    .topbar-left {
+        width: 100%;
+        min-width: 0;
+
+        display: flex;
+        flex-wrap: wrap;
+
+        align-items: center;
+
+        gap: 10px;
+    }
+
+
+    /* -----------------------------------------------------
+       BRAND
+       ----------------------------------------------------- */
+
+    .sidebar-brand {
+        width: auto;
+        flex: 1 1 auto;
+
+        min-width: 0;
+    }
+
+    .brand-link {
+        width: 100%;
+    }
+
+    .brand-name {
+        display: flex;
+    }
+
+    .brand-name h5 {
+        font-size: 16px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .brand-name small {
+        font-size: 9px;
+    }
+
+    .brand-logo {
+        width: 40px;
+        height: 40px;
+
+        flex: 0 0 40px;
+    }
+
+    .brand-logo i {
+        font-size: 18px;
+    }
+
+
+    /* -----------------------------------------------------
+       SIDEBAR TOGGLE
+       ----------------------------------------------------- */
+
+    #sidebarToggle {
+        width: 40px;
+        height: 40px;
+
+        flex: 0 0 40px;
+
+        margin: 0 !important;
+
+        z-index: 5000;
+    }
+
+
+    /* -----------------------------------------------------
+       SEARCH
+       ----------------------------------------------------- */
+
+    .topbar-left form,
+    .topbar form {
+        width: 100%;
+
+        min-width: 0;
+
+        flex: 0 0 100%;
+
+        order: 10;
+    }
+
+    .topbar form .form-control {
+        width: 100%;
+
+        height: 40px;
+
+        font-size: 13px;
+    }
+
+
+    /* -----------------------------------------------------
+       RIGHT SECTION
+       ----------------------------------------------------- */
+
+    .topbar-right {
+        width: 100%;
+
+        flex: 0 0 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        gap: 8px;
+    }
+
+
+    /* -----------------------------------------------------
+       USER
+       ----------------------------------------------------- */
+
+    .topbar-user {
+        margin-left: 0;
+
+        padding-left: 10px;
+    }
+
+    .topbar-user-info {
+        display: none;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
    ========================================================= */
 
 @media (max-width: 575.98px) {
 
     .topbar {
-        height: 60px;
-
-        padding:
-            0 12px;
+        padding: 8px 10px;
     }
 
-    .topbar-left,
-    .topbar-right {
+
+    /* -----------------------------------------------------
+       FIRST ROW
+       ----------------------------------------------------- */
+
+    .topbar-left {
         gap: 8px;
     }
 
-    .sidebar-toggle,
+    .sidebar-brand {
+        flex: 1 1 auto;
+    }
+
+    .brand-logo {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+    }
+
+    .brand-logo i {
+        font-size: 17px;
+    }
+
+    .brand-name h5 {
+        font-size: 15px;
+    }
+
+    .brand-name small {
+        display: none;
+    }
+
+
+    /* -----------------------------------------------------
+       TOGGLE
+       ----------------------------------------------------- */
+
+    #sidebarToggle {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+    }
+
+
+    /* -----------------------------------------------------
+       SEARCH
+       ----------------------------------------------------- */
+
+    .topbar form .form-control {
+        height: 38px;
+
+        font-size: 12px;
+    }
+
+
+    /* -----------------------------------------------------
+       TOPBAR ICONS
+       ----------------------------------------------------- */
+
     .topbar-icon {
         width: 38px;
         height: 38px;
 
         flex-basis: 38px;
     }
+
+
+    /* -----------------------------------------------------
+       USER AVATAR
+       ----------------------------------------------------- */
 
     .topbar-user-avatar {
         width: 38px;
@@ -506,8 +928,78 @@
         gap: 8px;
 
         padding-left: 8px;
+    }
 
-        margin-left: 0;
+
+    /* -----------------------------------------------------
+       USER NAVIGATION
+       ----------------------------------------------------- */
+
+    .topbar .nav-link {
+        min-height: 38px;
+
+        padding: 6px 4px;
+
+        font-size: 0;
+    }
+
+    .topbar .nav-link .fa-user-circle {
+        margin-right: 0 !important;
+
+        font-size: 20px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .topbar {
+        padding: 7px 8px;
+    }
+
+    .topbar .container-fluid {
+        gap: 8px;
+    }
+
+    .topbar-left {
+        gap: 7px;
+    }
+
+    .brand-logo {
+        width: 36px;
+        height: 36px;
+
+        flex-basis: 36px;
+    }
+
+    #sidebarToggle {
+        width: 36px;
+        height: 36px;
+
+        flex-basis: 36px;
+    }
+
+    .topbar form .form-control {
+        height: 36px;
+    }
+
+    .topbar-icon {
+        width: 36px;
+        height: 36px;
+
+        flex-basis: 36px;
+    }
+
+    .topbar-user-avatar {
+        width: 36px;
+        height: 36px;
+
+        flex-basis: 36px;
     }
 
 }
@@ -519,8 +1011,11 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .sidebar-toggle,
+    .brand-link,
+    #sidebarToggle,
     .topbar-icon,
+    .topbar form .form-control,
+    .topbar .nav-link,
     .topbar .dropdown-item {
         transition: none;
     }

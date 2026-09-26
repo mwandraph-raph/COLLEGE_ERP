@@ -1,115 +1,131 @@
-```django
 {% extends "base.html" %}
 
 {% block content %}
 
 <div class="container mt-4">
 
-    <h3>
-        Student Progression
-    </h3>
+    <div class="d-flex justify-content-between mb-3">
 
-    <table class="table table-bordered table-striped">
+        <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <thead>
+            <h4>
+                Student Progression
+            </h4>
 
-            <tr>
+        </div>
 
-                <th>Admission No</th>
+    </div>
 
-                <th>Student</th>
 
-                <th>Programme</th>
+    <div class="card shadow">
 
-                <th>Current Level</th>
+        <div class="card-body">
 
-                <th>Next Level</th>
+            <!-- =====================================================
+                 RESPONSIVE TABLE
+                 Allows horizontal scrolling on small screens
+                 ===================================================== -->
 
-                <th>Action</th>
+            <div class="table-responsive">
 
-            </tr>
+                <table class="table table-bordered table-striped">
 
-        </thead>
+                    <thead>
 
-        <tbody>
+                        <tr>
+                            <th>Admission No</th>
+                            <th>Student</th>
+                            <th>Programme</th>
+                            <th>Current Level</th>
+                            <th>Next Level</th>
+                            <th>Action</th>
+                        </tr>
 
-            {% for item in progression_data %}
+                    </thead>
 
-                <tr>
 
-                    <td>
-                        {{ item.enrollment.student.admission_no }}
-                    </td>
+                    <tbody>
 
-                    <td>
-                        {{ item.enrollment.student.first_name }}
-                        {{ item.enrollment.student.last_name }}
-                    </td>
+                        {% for item in progression_data %}
 
-                    <td>
-                        {{ item.enrollment.student.programme.name }}
-                    </td>
+                        <tr>
 
-                    <td>
-                        {{ item.enrollment.programme_level.name }}
-                    </td>
+                            <td>
+                                {{ item.enrollment.student.admission_no }}
+                            </td>
 
-                    <td>
+                            <td>
+                                {{ item.enrollment.student.first_name }}
+                                {{ item.enrollment.student.last_name }}
+                            </td>
 
-                        {% if item.next_level %}
+                            <td>
+                                {{ item.enrollment.student.programme.name }}
+                            </td>
 
-                            {{ item.next_level.name }}
+                            <td>
+                                {{ item.enrollment.programme_level.name }}
+                            </td>
 
-                        {% else %}
+                            <td>
 
-                            Completed
+                                {% if item.next_level %}
 
-                        {% endif %}
+                                    {{ item.next_level.name }}
 
-                    </td>
+                                {% else %}
 
-                    <td>
+                                    Completed
 
-                        {% if item.next_level %}
+                                {% endif %}
 
-                            <a
-                                href="{% url 'progress_student' item.enrollment.id %}"
-                                class="btn btn-success btn-sm"
-                            >
-                                Progress
-                            </a>
+                            </td>
 
-                        {% else %}
+                            <td>
 
-                            <span class="badge bg-primary">
-                                Ready for Graduation
-                            </span>
+                                {% if item.next_level %}
 
-                        {% endif %}
+                                    <a
+                                        href="{% url 'progress_student' item.enrollment.id %}"
+                                        class="btn btn-success btn-sm"
+                                    >
+                                        Progress
+                                    </a>
 
-                    </td>
+                                {% else %}
 
-                </tr>
+                                    <span class="badge bg-primary">
+                                        Ready for Graduation
+                                    </span>
 
-            {% empty %}
+                                {% endif %}
 
-                <tr>
+                            </td>
 
-                    <td colspan="6">
+                        </tr>
 
-                        No students available for progression.
+                        {% empty %}
 
-                    </td>
+                        <tr>
 
-                </tr>
+                            <td colspan="6" class="text-center">
+                                No students available for progression.
+                            </td>
 
-            {% endfor %}
+                        </tr>
 
-        </tbody>
+                        {% endfor %}
 
-    </table>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 {% endblock %}
-```

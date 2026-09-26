@@ -2,13 +2,9 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="theme-color" content="#012169">
 
     <title>
@@ -17,33 +13,20 @@
         {% endblock %}
     </title>
 
-
-    <!-- =====================================================
-         BOOTSTRAP
-    ====================================================== -->
-
+    <!-- Bootstrap -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
 
-
-    <!-- =====================================================
-         FONT AWESOME
-    ====================================================== -->
-
+    <!-- Font Awesome -->
     <link
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         rel="stylesheet"
     >
 
-
-    <!-- =====================================================
-         GOOGLE FONT
-    ====================================================== -->
-
+    <!-- ERP Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
@@ -51,96 +34,43 @@
         rel="stylesheet"
     >
 
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/favicon.png' %}">
 
     <!-- =====================================================
-         FAVICON
-    ====================================================== -->
+         XORADEX EDUCORE ERP
+         GLOBAL CSS
+         -----------------------------------------------------
+         erp.css is the central ERP-wide CSS aggregator.
+         Do NOT separately load files already imported by it.
+         ===================================================== -->
 
-    <link
-        rel="icon"
-        href="{% static 'images/favicon.png' %}"
-    >
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/erp.css' %}">
 
-
-    <!-- =====================================================
-         XORADEX BASE / APPLICATION CSS
-    ====================================================== -->
-
-    <link
-        rel="stylesheet"
-        href="{% static 'css/base.css' %}"
-    >
-
-    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
-    
-    <link
-        rel="stylesheet"
-        href="{% static 'css/erp.css' %}"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{% static 'css/dashboard.css' %}"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{% static 'css/topbar.css' %}"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{% static 'css/exam_dashboard.css' %}"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{% static 'css/footer.css' %}"
-    >
-
-
-    <!-- =====================================================
-         PAGE-SPECIFIC CSS
-    ====================================================== -->
-
+    <!-- Page-specific CSS -->
     {% block extra_css %}
     {% endblock %}
-
 </head>
-
 
 <body class="erp-body">
 
-<div
-    id="app"
-    class="erp-wrapper"
->
-
+<div id="app" class="erp-wrapper">
 
     <!-- =====================================================
-         FULL-WIDTH HEADER
-    ====================================================== -->
-
+         TOPBAR
+         ===================================================== -->
     <header class="erp-header">
-
         {% include "includes/topbar.html" %}
-
     </header>
 
 
     <!-- =====================================================
-         SIDEBAR + MAIN CONTENT
-    ====================================================== -->
-
+         ERP WORKSPACE
+         ===================================================== -->
     <div class="erp-workspace">
 
-
-        <!-- SIDEBAR -->
-
         {% include "includes/sidebar.html" %}
-
-
-        <!-- MAIN CONTENT -->
 
         <main class="erp-content">
 
@@ -151,46 +81,38 @@
 
         </main>
 
-
     </div>
-
-
-    <!-- =====================================================
-         FULL-WIDTH FOOTER
-    ====================================================== -->
-<!--
-    <footer class="erp-footer">
-
-        {% include "includes/footer.html" %}
-
-    </footer>
--->
 
 </div>
 
 
 <!-- =========================================================
-     JAVASCRIPT
-========================================================== -->
+     GLOBAL JAVASCRIPT
+     ========================================================= -->
 
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="{% static 'js/sidebar.js' %}"></script>
-
-<script src="{% static 'js/app.js' %}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script src="{% static 'js/dashboard.js' %}"></script>
 
+<script src="{% static 'js/registration_list.js' %}"></script>
+
+<script src="{% static 'js/semester_enrollments.js' %}"></script>
+
+<script src="{% static 'js/lecturer_assignments.js' %}?v=2"></script>
+
+<script src="{% static 'js/results_approval.js' %}?v=1"></script>
+
+<script src="{% static 'js/programme_list.js' %}?v=1"></script>
+
+<script src="{% static 'js/programme_levels.js' %}?v=1"></script>
+
 
 {% block extra_js %}
 {% endblock %}
 
-
 </body>
-
 </html>
-

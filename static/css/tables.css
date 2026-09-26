@@ -1,4 +1,4 @@
-/* =========================================================
+/* ========================================================
    XORADEX EDUCORE ERP
    TABLES
    ---------------------------------------------------------
@@ -17,14 +17,14 @@
    - Numeric/financial table values
    - Responsive tables
 
-   IMPORTANT:
-   This file does NOT control:
-   - Global buttons
-   - Cards
-   - Forms
-   - Sidebar
-   - Topbar
-   - Dashboard components
+   TABLE BEHAVIOUR STANDARD:
+   - Tables use available page width
+   - Normal text may wrap naturally
+   - Structured values remain readable
+   - Headers remain on one line
+   - Horizontal scrolling is a fallback for genuinely wide tables
+   - Actions remain horizontally aligned
+   - No artificial minimum table width
    ========================================================= */
 
 
@@ -86,6 +86,10 @@
 .table {
     width: 100%;
 
+    max-width: 100%;
+
+    min-width: 0;
+
     margin-bottom: 0;
 
     color: #344054;
@@ -97,6 +101,8 @@
     border-collapse: separate;
 
     border-spacing: 0;
+
+    table-layout: auto;
 }
 
 
@@ -111,7 +117,7 @@
 
 .table thead th {
     padding:
-        13px 16px;
+        10px 12px;
 
     background:
         #F7F9FC;
@@ -134,6 +140,10 @@
 
     text-transform: uppercase;
 
+    /*
+     * Headers remain readable and do not break
+     * into awkward individual words.
+     */
     white-space: nowrap;
 
     vertical-align: middle;
@@ -159,7 +169,7 @@
 
 .table tbody td {
     padding:
-        13px 16px;
+        9px 12px;
 
     border-bottom:
         1px solid var(--border-light);
@@ -170,10 +180,44 @@
     line-height: 1.45;
 
     vertical-align: middle;
+
+    /*
+     * Normal table content remains natural.
+     * Long descriptive text may wrap at sensible
+     * browser-defined break points.
+     */
+    white-space: normal;
+
+    word-break: normal;
+
+    overflow-wrap: break-word;
 }
 
 .table tbody tr:last-child td {
     border-bottom: none;
+}
+
+
+/* =========================================================
+   NON-WRAPPING TABLE VALUES
+   ---------------------------------------------------------
+   These values should remain intact because breaking them
+   reduces readability.
+   ========================================================= */
+
+.table .number,
+.table .amount,
+.table .currency,
+.table .phone,
+.table .admission,
+.table .date,
+.table .status,
+.table .text-nowrap {
+    white-space: nowrap;
+
+    overflow-wrap: normal;
+
+    word-break: normal;
 }
 
 
@@ -240,7 +284,7 @@
 /* =========================================================
    TABLE ACTIONS
    ---------------------------------------------------------
-   Moved here from buttons.css.
+   Actions remain horizontally aligned and do not wrap.
    ========================================================= */
 
 .table-actions {
@@ -252,7 +296,9 @@
 
     gap: 6px;
 
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+
+    white-space: nowrap;
 }
 
 .table td:last-child {
@@ -265,6 +311,10 @@
 
 .table td:last-child .btn:first-child {
     margin-left: 0;
+}
+
+.table-actions .btn {
+    flex: 0 0 auto;
 }
 
 
@@ -679,6 +729,11 @@
 
 /* =========================================================
    RESPONSIVE TABLES
+   ---------------------------------------------------------
+   Tables use the available width.
+   Normal text remains readable.
+   Structured values do not break.
+   Genuinely wide tables may scroll horizontally.
    ========================================================= */
 
 @media (max-width: 768px) {
@@ -691,21 +746,55 @@
     }
 
     .table {
-        min-width: 680px;
+        width: 100%;
+
+        max-width: 100%;
+
+        min-width: 0;
     }
 
     .table thead th {
         padding:
-            11px 12px;
+            9px 10px;
 
         font-size: 10px;
+
+        white-space: nowrap;
+
+        overflow-wrap: normal;
+
+        word-break: normal;
     }
 
     .table tbody td {
         padding:
-            11px 12px;
+            8px 10px;
 
         font-size: 12px;
+
+        white-space: normal;
+
+        overflow-wrap: break-word;
+
+        word-break: normal;
+    }
+
+    /*
+     * Structured values remain intact on mobile.
+     */
+    .table .number,
+    .table .amount,
+    .table .currency,
+    .table .phone,
+    .table .admission,
+    .table .date,
+    .table .status,
+    .table .text-nowrap {
+        white-space: nowrap;
+
+        overflow-wrap: normal;
+
+        word-break: normal;
     }
 
     .table-toolbar {
@@ -737,17 +826,59 @@
 @media (max-width: 480px) {
 
     .table {
-        min-width: 620px;
+        width: 100%;
+
+        max-width: 100%;
+
+        min-width: 0;
     }
 
-    .table thead th,
+    .table thead th {
+        padding:
+            8px 9px;
+
+        white-space: nowrap;
+
+        overflow-wrap: normal;
+
+        word-break: normal;
+    }
+
     .table tbody td {
         padding:
-            10px;
+            8px 9px;;
+
+        white-space: normal;
+
+        overflow-wrap: break-word;
+
+        word-break: normal;
+    }
+
+    /*
+     * Never break compact/structured values.
+     */
+    .table .number,
+    .table .amount,
+    .table .currency,
+    .table .phone,
+    .table .admission,
+    .table .date,
+    .table .status,
+    .table .text-nowrap {
+        white-space: nowrap;
+
+        overflow-wrap: normal;
+
+        word-break: normal;
     }
 
     .table-actions {
         justify-content: flex-start;
+
+        flex-wrap: nowrap;
+
+        white-space: nowrap;
     }
 
 }

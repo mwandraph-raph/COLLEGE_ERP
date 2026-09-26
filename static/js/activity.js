@@ -2,7 +2,6 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-
         // ==================================================
         // ACTIVITY DETAIL MODAL
         // ==================================================
@@ -11,57 +10,79 @@ document.addEventListener(
             "activityModal"
         );
 
+        let activeRow = null;
+
+
+        // ==================================================
+        // MOVE MODAL TO BODY
+        // ==================================================
+
+        /*
+         * The ERP content area has its own vertical scrolling.
+         * Bootstrap modals work more reliably when the modal
+         * is a direct child of <body>.
+         *
+         * We do not change the modal HTML.
+         * We simply move the existing modal element.
+         */
+
+        if (modal && modal.parentElement !== document.body) {
+
+            document.body.appendChild(modal);
+
+        }
+
 
         if (modal) {
-
 
             modal.addEventListener(
                 "show.bs.modal",
                 function (event) {
 
-
                     const row =
                         event.relatedTarget;
 
+                    if (!row) {
+                        return;
+                    }
+
+                    // Remember the row that opened the modal
+                    activeRow = row;
 
 
+                    // ==================================================
                     // BASIC DETAILS
+                    // ==================================================
 
                     setText(
                         "modalUser",
                         row.dataset.user
                     );
 
-
                     setText(
                         "modalDate",
                         row.dataset.date
                     );
-
 
                     setText(
                         "modalModule",
                         row.dataset.module
                     );
 
-
                     setText(
                         "modalObject",
                         row.dataset.object
                     );
-
 
                     setText(
                         "modalIP",
                         row.dataset.ip
                     );
 
-
                     setText(
                         "modalDescription",
                         row.dataset.description
                     );
-
 
                     setText(
                         "modalAgent",
@@ -69,21 +90,19 @@ document.addEventListener(
                     );
 
 
-
+                    // ==================================================
                     // SECURITY DETAILS
-
+                    // ==================================================
 
                     setText(
                         "modalRecordId",
                         row.dataset.id
                     );
 
-
                     setText(
                         "modalVerifiedAt",
                         row.dataset.verifiedAt
                     );
-
 
                     setText(
                         "modalHash",
@@ -91,14 +110,14 @@ document.addEventListener(
                     );
 
 
-
+                    // ==================================================
                     // BADGES
+                    // ==================================================
 
                     updateActionBadge(
                         "modalAction",
                         row.dataset.action
                     );
-
 
                     updateSeverityBadge(
                         "modalSeverity",
@@ -106,9 +125,9 @@ document.addEventListener(
                     );
 
 
-
+                    // ==================================================
                     // INTEGRITY CHECK
-
+                    // ==================================================
 
                     const integrity =
                         document.getElementById(
@@ -118,15 +137,12 @@ document.addEventListener(
 
                     if (integrity) {
 
-
                         if (
                             row.dataset.verified === "true"
                         ) {
 
-
                             integrity.className =
                                 "badge rounded-pill bg-success activity-badge";
-
 
                             integrity.innerHTML =
                                 `
@@ -134,15 +150,12 @@ document.addEventListener(
                                 Verified
                                 `;
 
-
                         }
 
                         else {
 
-
                             integrity.className =
                                 "badge rounded-pill bg-danger activity-badge";
-
 
                             integrity.innerHTML =
                                 `
@@ -154,20 +167,44 @@ document.addEventListener(
 
                     }
 
+                }
+            );
+
+
+            // ==================================================
+            // WHEN MODAL CLOSES
+            // ==================================================
+
+            modal.addEventListener(
+                "hidden.bs.modal",
+                function () {
+
+                    /*
+                     * Do NOT reload the page.
+                     * Do NOT redirect.
+                     * Do NOT move the user to the top.
+                     *
+                     * Simply return focus to the row
+                     * that opened the modal.
+                     */
+
+                    if (activeRow) {
+
+                        activeRow.focus({
+                            preventScroll: true
+                        });
+
+                    }
 
                 }
-
             );
 
         }
 
 
-
-
         // ==================================================
         // COPY HASH BUTTON
         // ==================================================
-
 
         const copyBtn =
             document.getElementById(
@@ -177,67 +214,69 @@ document.addEventListener(
 
         if (copyBtn) {
 
-
             copyBtn.addEventListener(
                 "click",
                 function () {
 
-
-                    const hash =
+                    const hashElement =
                         document.getElementById(
                             "modalHash"
-                        ).innerText;
+                        );
+
+                    if (!hashElement) {
+                        return;
+                    }
 
 
+                    const hash =
+                        hashElement.innerText;
 
-                    navigator.clipboard.writeText(
-                        hash
-                    );
+
+                    if (
+                        navigator.clipboard &&
+                        navigator.clipboard.writeText
+                    ) {
+
+                        navigator.clipboard.writeText(
+                            hash
+                        );
+
+                    }
 
 
                     copyBtn.innerHTML =
-                    `
-                    <i class="bi bi-check-circle"></i>
-                    Copied
-                    `;
-
+                        `
+                        <i class="bi bi-check-circle"></i>
+                        Copied
+                        `;
 
 
                     setTimeout(
                         function () {
 
-
                             copyBtn.innerHTML =
-                            `
-                            <i class="bi bi-clipboard"></i>
-                            Copy Hash
-                            `;
-
+                                `
+                                <i class="bi bi-clipboard"></i>
+                                Copy Hash
+                                `;
 
                         },
                         2000
                     );
 
-
                 }
-
             );
 
         }
-
-
-
 
 
         // ==================================================
         // ENTERPRISE AUDIT CHARTS
         // ==================================================
 
-
         if (
             typeof Chart !== "undefined"
         ) {
-
 
             createChart(
                 "actionChart",
@@ -245,13 +284,11 @@ document.addEventListener(
                 "action"
             );
 
-
             createChart(
                 "moduleChart",
                 moduleData,
                 "module"
             );
-
 
             createChart(
                 "severityChart",
@@ -259,29 +296,23 @@ document.addEventListener(
                 "severity"
             );
 
-
         }
-
-
-
 
 
         // ==================================================
         // HELPER FUNCTIONS
         // ==================================================
 
-
         function setText(
             id,
             value
-        ){
-
+        ) {
 
             const element =
                 document.getElementById(id);
 
 
-            if(element){
+            if (element) {
 
                 element.innerText =
                     value || "-";
@@ -291,23 +322,18 @@ document.addEventListener(
         }
 
 
-
-
-
         function updateActionBadge(
             id,
             value
-        ){
-
+        ) {
 
             const badge =
                 document.getElementById(id);
 
 
-
-            if(!badge)
+            if (!badge) {
                 return;
-
+            }
 
 
             badge.innerText =
@@ -318,9 +344,7 @@ document.addEventListener(
                 "badge rounded-pill activity-badge";
 
 
-
-            switch(value){
-
+            switch (value) {
 
                 case "Delete":
 
@@ -329,7 +353,6 @@ document.addEventListener(
                     );
 
                     break;
-
 
 
                 case "Update":
@@ -342,7 +365,6 @@ document.addEventListener(
                     break;
 
 
-
                 case "Create":
 
                     badge.classList.add(
@@ -350,7 +372,6 @@ document.addEventListener(
                     );
 
                     break;
-
 
 
                 case "Login":
@@ -362,7 +383,6 @@ document.addEventListener(
                     break;
 
 
-
                 case "Logout":
 
                     badge.classList.add(
@@ -370,7 +390,6 @@ document.addEventListener(
                     );
 
                     break;
-
 
 
                 default:
@@ -381,84 +400,68 @@ document.addEventListener(
 
             }
 
-
         }
-
-
-
 
 
         function updateSeverityBadge(
             id,
             value
-        ){
-
+        ) {
 
             const badge =
                 document.getElementById(id);
 
 
-
-            if(!badge)
+            if (!badge) {
                 return;
-
+            }
 
 
             badge.innerText =
                 value || "-";
 
 
-
             badge.className =
                 "badge rounded-pill activity-badge";
 
 
-
-            if(value === "Critical"){
-
+            if (value === "Critical") {
 
                 badge.classList.add(
                     "bg-danger"
                 );
 
-
             }
 
-            else if(value === "Warning"){
-
+            else if (value === "Warning") {
 
                 badge.classList.add(
                     "bg-warning",
                     "text-dark"
                 );
 
-
             }
 
             else {
-
 
                 badge.classList.add(
                     "bg-success"
                 );
 
-
             }
-
 
         }
 
 
-
-
-
+        // ==================================================
+        // CHART CREATION
+        // ==================================================
 
         function createChart(
             element,
             data,
             field
-        ){
-
+        ) {
 
             const canvas =
                 document.getElementById(
@@ -466,29 +469,23 @@ document.addEventListener(
                 );
 
 
-
-            if(
+            if (
                 !canvas ||
                 !data
-            ){
+            ) {
 
                 return;
 
             }
 
 
-
             new Chart(
                 canvas,
                 {
 
+                    type: "doughnut",
 
-                    type:"doughnut",
-
-
-
-                    data:{
-
+                    data: {
 
                         labels:
                             data.map(
@@ -496,10 +493,7 @@ document.addEventListener(
                                 item[field]
                             ),
 
-
-
-                        datasets:[{
-
+                        datasets: [{
 
                             data:
                                 data.map(
@@ -507,49 +501,32 @@ document.addEventListener(
                                     item.total
                                 )
 
-
                         }]
-
 
                     },
 
+                    options: {
 
+                        responsive: true,
 
-                    options:{
+                        maintainAspectRatio: false,
 
+                        plugins: {
 
-                        responsive:true,
+                            legend: {
 
-
-                        maintainAspectRatio:false,
-
-
-                        plugins:{
-
-
-                            legend:{
-
-
-                                position:"bottom"
-
+                                position: "bottom"
 
                             }
 
-
                         }
-
 
                     }
 
-
                 }
-
             );
 
-
         }
-
-
 
     }
 );

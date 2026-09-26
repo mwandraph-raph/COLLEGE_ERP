@@ -1,6 +1,10 @@
 /* =========================================================
    XORADEX EDUCORE ERP
    SIDEBAR JAVASCRIPT
+   ---------------------------------------------------------
+   Desktop / Tablet : collapsible sidebar
+   Mobile           : off-canvas sidebar
+   Breakpoint       : 768px
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -18,10 +22,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       CONFIGURATION
+       RESPONSIVE BREAKPOINT
        ===================================================== */
 
-    const MOBILE_BREAKPOINT = 768;
+    const MOBILE_QUERY = window.matchMedia(
+        "(max-width: 767.98px)"
+    );
+
+
+    function isMobile() {
+        return MOBILE_QUERY.matches;
+    }
 
 
     /* =====================================================
@@ -39,23 +50,42 @@ document.addEventListener("DOMContentLoaded", function () {
         overlay.className = "erp-sidebar-overlay";
 
         document.body.appendChild(overlay);
-
     }
 
 
     /* =====================================================
-       DEVICE CHECK
+       ARIA STATE
        ===================================================== */
 
-    function isMobile() {
+    function updateToggleState() {
 
-        return window.innerWidth <= MOBILE_BREAKPOINT;
+        if (!toggle) {
+            return;
+        }
 
+        if (isMobile()) {
+
+            toggle.setAttribute(
+                "aria-expanded",
+                sidebar.classList.contains("mobile-open")
+                    ? "true"
+                    : "false"
+            );
+
+        } else {
+
+            toggle.setAttribute(
+                "aria-expanded",
+                sidebar.classList.contains("collapsed")
+                    ? "false"
+                    : "true"
+            );
+        }
     }
 
 
     /* =====================================================
-       OPEN MOBILE NAVIGATION
+       OPEN MOBILE SIDEBAR
        ===================================================== */
 
     function openMobileSidebar() {
@@ -72,20 +102,12 @@ document.addEventListener("DOMContentLoaded", function () {
             "sidebar-mobile-open"
         );
 
-        if (toggle) {
-
-            toggle.setAttribute(
-                "aria-expanded",
-                "true"
-            );
-
-        }
-
+        updateToggleState();
     }
 
 
     /* =====================================================
-       CLOSE MOBILE NAVIGATION
+       CLOSE MOBILE SIDEBAR
        ===================================================== */
 
     function closeMobileSidebar() {
@@ -98,20 +120,12 @@ document.addEventListener("DOMContentLoaded", function () {
             "sidebar-mobile-open"
         );
 
-        if (toggle) {
-
-            toggle.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-
-        }
-
+        updateToggleState();
     }
 
 
     /* =====================================================
-       SIDEBAR TOGGLE
+       TOGGLE BUTTON
        ===================================================== */
 
     if (toggle) {
@@ -122,10 +136,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 event.preventDefault();
                 event.stopPropagation();
-
-                /* ---------------------------------------------
-                   MOBILE
-                   --------------------------------------------- */
 
                 if (isMobile()) {
 
@@ -140,41 +150,28 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else {
 
                         openMobileSidebar();
-
                     }
 
                     return;
                 }
 
 
-                /* ---------------------------------------------
+                /* -----------------------------------------
                    DESKTOP / TABLET
-                   --------------------------------------------- */
+                   ----------------------------------------- */
 
                 sidebar.classList.toggle(
                     "collapsed"
                 );
 
-
-                const collapsed =
-                    sidebar.classList.contains(
-                        "collapsed"
-                    );
-
-
-                toggle.setAttribute(
-                    "aria-expanded",
-                    String(!collapsed)
-                );
-
+                updateToggleState();
             }
         );
-
     }
 
 
     /* =====================================================
-       OVERLAY CLOSE
+       OVERLAY
        ===================================================== */
 
     overlay.addEventListener(
@@ -188,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       ESCAPE KEY
+       ESC KEY
        ===================================================== */
 
     document.addEventListener(
@@ -204,7 +201,77 @@ document.addEventListener("DOMContentLoaded", function () {
             ) {
 
                 closeMobileSidebar();
+            }
+        }
+    );
 
+
+    /* =====================================================
+       SIDEBAR LINKS
+       =====================================================
+
+       IMPORTANT:
+       We NEVER prevent normal Django navigation.
+
+       Examples:
+
+           /students/
+           /applicants/
+           /courses/
+           /exam/dashboard/
+
+       are allowed to navigate normally.
+
+       Only Bootstrap submenu links beginning with "#"
+       are ignored.
+       ===================================================== */
+
+    sidebar.addEventListener(
+        "click",
+        function (event) {
+
+            const link =
+                event.target.closest("a[href]");
+
+            if (!link || !sidebar.contains(link)) {
+                return;
+            }
+
+
+            const href =
+                link.getAttribute("href");
+
+
+            /* ---------------------------------------------
+               Ignore Bootstrap submenu links
+               --------------------------------------------- */
+
+            if (
+                !href ||
+                href === "#" ||
+                href.startsWith("#")
+            ) {
+                return;
+            }
+
+
+            /* ---------------------------------------------
+               Real Django navigation link
+               --------------------------------------------- */
+
+            if (isMobile()) {
+
+                /*
+                 * Close the drawer.
+                 *
+                 * We deliberately DO NOT call
+                 * event.preventDefault().
+                 *
+                 * The browser therefore continues
+                 * to the Django URL normally.
+                 */
+
+                closeMobileSidebar();
             }
 
         }
@@ -212,59 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       SIDEBAR LINKS
-       ===================================================== */
-
-    sidebar
-        .querySelectorAll("a[href]")
-        .forEach(function (link) {
-
-            link.addEventListener(
-                "click",
-                function () {
-
-                    if (!isMobile()) {
-                        return;
-                    }
-
-
-                    const href =
-                        link.getAttribute("href");
-
-
-                    /*
-                     * Bootstrap submenu triggers use "#menu".
-                     *
-                     * Do NOT close the full-screen sidebar when
-                     * clicking these. Bootstrap needs the click
-                     * to open/close the submenu.
-                     */
-
-                    if (
-                        !href ||
-                        href === "#" ||
-                        href.startsWith("#")
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Real navigation link.
-                     */
-
-                    closeMobileSidebar();
-
-                }
-            );
-
-        });
-
-
-    /* =====================================================
-       KEEP ACTIVE MENU OPEN
+       ACTIVE MENU
        ===================================================== */
 
     const currentPath =
@@ -283,10 +298,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let active = false;
 
 
-            /* -------------------------------------------------
-               CHECK LINKS
-               ------------------------------------------------- */
-
             links.forEach(function (link) {
 
                 const href =
@@ -298,9 +309,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     href === "#" ||
                     href.startsWith("#")
                 ) {
-
                     return;
-
                 }
 
 
@@ -315,33 +324,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     if (
                         currentPath === linkPath ||
-                        currentPath.startsWith(
-                            linkPath
-                        )
+                        currentPath.startsWith(linkPath)
                     ) {
 
                         active = true;
 
-                        link.classList.add(
-                            "active"
-                        );
-
+                        link.classList.add("active");
                     }
 
                 } catch (error) {
 
-                    /*
-                     * Ignore malformed URLs.
-                     */
+                    /* Ignore invalid URLs */
 
                 }
 
             });
 
 
-            /* -------------------------------------------------
-               OPEN PARENT MENU
-               ------------------------------------------------- */
+            /* ---------------------------------------------
+               Open parent submenu for active page
+               --------------------------------------------- */
 
             if (active) {
 
@@ -362,60 +364,46 @@ document.addEventListener("DOMContentLoaded", function () {
                         "aria-expanded",
                         "true"
                     );
-
                 }
-
             }
 
         });
 
 
     /* =====================================================
-       RESPONSIVE RESIZE
+       SCREEN SIZE CHANGE
        ===================================================== */
 
-    let wasMobile = isMobile();
+    function handleBreakpointChange() {
+
+        closeMobileSidebar();
 
 
-    window.addEventListener(
-        "resize",
-        function () {
+        if (isMobile()) {
 
-            const nowMobile = isMobile();
-
-
-            /*
-             * Desktop/tablet → mobile
-             */
-
-            if (
-                !wasMobile &&
-                nowMobile
-            ) {
-
-                closeMobileSidebar();
-
-            }
-
-
-            /*
-             * Mobile → desktop/tablet
-             */
-
-            if (
-                wasMobile &&
-                !nowMobile
-            ) {
-
-                closeMobileSidebar();
-
-            }
-
-
-            wasMobile = nowMobile;
-
+            sidebar.classList.remove(
+                "collapsed"
+            );
         }
-    );
+
+
+        updateToggleState();
+    }
+
+
+    if (MOBILE_QUERY.addEventListener) {
+
+        MOBILE_QUERY.addEventListener(
+            "change",
+            handleBreakpointChange
+        );
+
+    } else {
+
+        MOBILE_QUERY.addListener(
+            handleBreakpointChange
+        );
+    }
 
 
     /* =====================================================
@@ -424,22 +412,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (isMobile()) {
 
-        closeMobileSidebar();
-
-    }
-
-
-    /* =====================================================
-       ACCESSIBILITY
-       ===================================================== */
-
-    if (toggle) {
-
-        toggle.setAttribute(
-            "aria-expanded",
-            "false"
+        sidebar.classList.remove(
+            "collapsed"
         );
 
+        closeMobileSidebar();
     }
+
+
+    updateToggleState();
 
 });

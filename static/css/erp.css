@@ -1,9 +1,7 @@
 @import url("tokens.css");
-
 @import url("layout.css");
 @import url("sidebar.css");
 @import url("topbar.css");
-
 @import url("cards.css");
 @import url("tables.css");
 @import url("buttons.css");
@@ -17,6 +15,7 @@
 @import url("student_dashboard.css");
 
 @import url("footer.css");
-@import url("responsive.css");
-@import url(style.css);
 
+@import url("responsive.css");
+
+@import url("style.css");

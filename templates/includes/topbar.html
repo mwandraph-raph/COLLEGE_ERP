@@ -2,23 +2,62 @@
 
     <div class="container-fluid">
 
+        <!-- ====================================================== -->
+        <!-- BRAND -->
+        <!-- ====================================================== -->
+        <div class="sidebar-brand">
+
+            <a href="{% url 'home' %}" class="brand-link text-decoration-none">
+
+                <div class="brand-logo">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div class="brand-name">
+                    <h5 class="mb-0">Xoradex</h5>
+                    <small>EduCore</small>
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- ====================================================== -->
+        <!-- SIDEBAR TOGGLE -->
+        <!-- ====================================================== -->
         <button
+            type="button"
             class="btn btn-outline-primary me-3"
-            id="sidebarToggle">
+            id="sidebarToggle"
+            aria-label="Toggle sidebar">
 
             <i class="fa-solid fa-bars"></i>
 
         </button>
 
-        <form class="d-flex flex-grow-1">
+
+        <!-- ====================================================== -->
+        <!-- SEARCH -->
+        <!-- ====================================================== -->
+        <form class="d-flex flex-grow-1"
+            method="get"
+            action="{% url 'system:global_search' %}">
 
             <input
                 class="form-control"
                 type="search"
-                placeholder="Search students, units, invoices...">
+                name="q"
+                value="{{ request.GET.q|default:'' }}"
+                placeholder="Search students, units, invoices, lecturers..."
+                aria-label="Search">
 
         </form>
 
+
+        <!-- ====================================================== -->
+        <!-- USER MENU -->
+        <!-- ====================================================== -->
         <ul class="navbar-nav ms-3">
 
             <li class="nav-item dropdown">
@@ -27,7 +66,8 @@
                     class="nav-link dropdown-toggle"
                     href="#"
                     role="button"
-                    data-bs-toggle="dropdown">
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
 
                     <i class="fa-solid fa-user-circle me-2"></i>
 
@@ -38,33 +78,35 @@
                 <ul class="dropdown-menu dropdown-menu-end">
 
                     <li>
-
                         <span class="dropdown-item-text">
-
                             {{ request.user.username }}
-
                         </span>
-
                     </li>
 
                     <li>
-
                         <hr class="dropdown-divider">
-
                     </li>
 
                     <li>
+                        <a
+                            class="dropdown-item"
+                            href="{% url 'accounts:profile' %}">
 
+                            <i class="fa-solid fa-id-badge me-2"></i>
+                            My Profile
+
+                        </a>
+                    </li>
+
+                    <li>
                         <a
                             class="dropdown-item"
                             href="{% url 'accounts:logout' %}">
 
                             <i class="fa-solid fa-right-from-bracket me-2"></i>
-
                             Logout
 
                         </a>
-
                     </li>
 
                 </ul>

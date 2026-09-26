@@ -1,5 +1,5 @@
 from datetime import date
-
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import (
@@ -30,6 +30,510 @@ from django.contrib.auth.decorators import (
     login_required,
     permission_required,
 )
+from students.models import (
+    Applicant,
+    Department,
+    Course,
+    Programme,
+    AcademicYear,
+    Intake,
+    Semester,
+    ProgrammeLevel,
+    Unit,
+    Student,
+    SemesterEnrollment,
+    UnitOffering,
+    Registration,
+)
+
+from finance.models import (
+    StudentInvoice,
+    Payment,
+    Receipt,
+)
+
+from graduation.models import Graduation
+
+User = get_user_model()
+
+@login_required
+def global_search(request):
+    q = request.GET.get("q", "").strip()
+
+    results = []
+
+    if q:
+        # =========================================================
+        # STUDENTS
+        # =========================================================
+        students = Student.objects.filter(
+            Q(admission_no__icontains=q) |
+            Q(first_name__icontains=q) |
+            Q(middle_name__icontains=q) |
+            Q(last_name__icontains=q) |
+            Q(id_number__icontains=q) |
+            Q(phone__icontains=q) |
+            Q(email__icontains=q) |
+            Q(programme__name__icontains=q) |
+            Q(programme__code__icontains=q)
+        ).select_related("programme").distinct()[:10]
+
+        for student in students:
+            results.append({
+                "category": "Students",
+                "title": student.full_name,
+                "subtitle": (
+                    f"{student.admission_no} • "
+                    f"{student.programme.name if student.programme else 'No programme'}"
+                ),
+                "icon": "fa-user-graduate",
+                "object": student,
+                "url": "/semester-enrollments/",
+            })
+
+        # =========================================================
+        # APPLICANTS
+        # =========================================================
+        applicants = Applicant.objects.filter(
+            Q(application_no__icontains=q) |
+            Q(first_name__icontains=q) |
+            Q(middle_name__icontains=q) |
+            Q(last_name__icontains=q) |
+            Q(id_number__icontains=q) |
+            Q(phone_number__icontains=q) |
+            Q(email__icontains=q) |
+            Q(programme__name__icontains=q) |
+            Q(programme__code__icontains=q)
+        ).select_related("programme").distinct()[:10]
+
+        for applicant in applicants:
+            full_name = " ".join(
+                part for part in [
+                    applicant.first_name,
+                    applicant.middle_name,
+                    applicant.last_name,
+                ]
+                if part
+            )
+
+            results.append({
+                "category": "Applicants",
+                "title": full_name,
+                "subtitle": (
+                    f"{applicant.application_no} • "
+                    f"{applicant.programme.name if applicant.programme else 'No programme'}"
+                ),
+                "icon": "fa-file-signature",
+                "object": applicant,
+            })
+
+        # =========================================================
+        # PROGRAMMES
+        # =========================================================
+        programmes = Programme.objects.filter(
+            Q(code__icontains=q) |
+            Q(name__icontains=q) |
+            Q(award__icontains=q) |
+            Q(course__name__icontains=q) |
+            Q(course__code__icontains=q)
+        ).select_related("course").distinct()[:10]
+
+        for programme in programmes:
+            results.append({
+                "category": "Programmes",
+                "title": programme.name,
+                "subtitle": (
+                    f"{programme.code} • "
+                    f"{programme.award} • "
+                    f"{programme.course.name if programme.course else 'No course'}"
+                ),
+                "icon": "fa-book-open",
+                "object": programme,
+            })
+
+        # =========================================================
+        # COURSES
+        # =========================================================
+        courses = Course.objects.filter(
+            Q(code__icontains=q) |
+            Q(name__icontains=q) |
+            Q(department__name__icontains=q) |
+            Q(department__code__icontains=q)
+        ).select_related("department").distinct()[:10]
+
+        for course in courses:
+            results.append({
+                "category": "Courses",
+                "title": course.name,
+                "subtitle": (
+                    f"{course.code} • "
+                    f"{course.department.name if course.department else 'No department'}"
+                ),
+                "icon": "fa-layer-group",
+                "object": course,
+            })
+
+        # =========================================================
+        # DEPARTMENTS
+        # =========================================================
+        departments = Department.objects.filter(
+            Q(code__icontains=q) |
+            Q(name__icontains=q)
+        ).distinct()[:10]
+
+        for department in departments:
+            results.append({
+                "category": "Departments",
+                "title": department.name,
+                "subtitle": department.code,
+                "icon": "fa-building",
+                "object": department,
+            })
+
+        # =========================================================
+        # UNITS
+        # =========================================================
+        units = Unit.objects.filter(
+            Q(code__icontains=q) |
+            Q(name__icontains=q) |
+            Q(programme_level__name__icontains=q) |
+            Q(programme_level__programme__name__icontains=q) |
+            Q(programme_level__programme__code__icontains=q)
+        ).select_related(
+            "programme_level",
+            "programme_level__programme"
+        ).distinct()[:10]
+
+        for unit in units:
+            programme = unit.programme_level.programme
+
+            results.append({
+                "category": "Units",
+                "title": unit.name,
+                "subtitle": (
+                    f"{unit.code} • "
+                    f"{programme.name if programme else 'No programme'} • "
+                    f"{unit.programme_level.name if unit.programme_level else ''}"
+                ),
+                "icon": "fa-book",
+                "object": unit,
+            })
+
+        # =========================================================
+        # SEMESTER ENROLLMENTS
+        # =========================================================
+        enrollments = SemesterEnrollment.objects.filter(
+            Q(student__admission_no__icontains=q) |
+            Q(student__first_name__icontains=q) |
+            Q(student__middle_name__icontains=q) |
+            Q(student__last_name__icontains=q) |
+            Q(programme__name__icontains=q) |
+            Q(programme__code__icontains=q) |
+            Q(academic_year__year_name__icontains=q) |
+            Q(semester__semester_name__icontains=q) |
+            Q(status__icontains=q)
+        ).select_related(
+            "student",
+            "programme",
+            "academic_year",
+            "semester",
+            "programme_level",
+        ).distinct()[:10]
+
+        for enrollment in enrollments:
+            results.append({
+                "category": "Enrollments",
+                "title": enrollment.student.full_name,
+                "subtitle": (
+                    f"{enrollment.student.admission_no} • "
+                    f"{enrollment.academic_year.year_name} • "
+                    f"{enrollment.semester.semester_name} • "
+                    f"{enrollment.status}"
+                ),
+                "icon": "fa-user-check",
+                "object": enrollment,
+            })
+
+        # =========================================================
+        # UNIT OFFERINGS
+        # =========================================================
+        offerings = UnitOffering.objects.filter(
+            Q(unit__code__icontains=q) |
+            Q(unit__name__icontains=q) |
+            Q(academic_year__year_name__icontains=q) |
+            Q(semester__semester_name__icontains=q) |
+            Q(programme_level__name__icontains=q) |
+            Q(programme_level__programme__name__icontains=q)
+        ).select_related(
+            "unit",
+            "academic_year",
+            "semester",
+            "programme_level",
+            "programme_level__programme",
+        ).distinct()[:10]
+
+        for offering in offerings:
+            results.append({
+                "category": "Unit Offerings",
+                "title": f"{offering.unit.code} - {offering.unit.name}",
+                "subtitle": (
+                    f"{offering.academic_year.year_name} • "
+                    f"{offering.semester.semester_name} • "
+                    f"{offering.programme_level.name}"
+                ),
+                "icon": "fa-chalkboard",
+                "object": offering,
+            })
+
+        # =========================================================
+        # REGISTRATIONS
+        # =========================================================
+        registrations = Registration.objects.filter(
+            Q(enrollment__student__admission_no__icontains=q) |
+            Q(enrollment__student__first_name__icontains=q) |
+            Q(enrollment__student__middle_name__icontains=q) |
+            Q(enrollment__student__last_name__icontains=q) |
+            Q(unit_offering__unit__code__icontains=q) |
+            Q(unit_offering__unit__name__icontains=q) |
+            Q(unit__code__icontains=q) |
+            Q(unit__name__icontains=q) |
+            Q(status__icontains=q)
+        ).select_related(
+            "enrollment__student",
+            "unit_offering__unit",
+            "unit",
+        ).distinct()[:10]
+
+        for registration in registrations:
+            unit = registration.registered_unit
+
+            results.append({
+                "category": "Registrations",
+                "title": registration.enrollment.student.full_name,
+                "subtitle": (
+                    f"{registration.enrollment.student.admission_no} • "
+                    f"{unit.code if unit else 'No unit'} • "
+                    f"{registration.status}"
+                ),
+                "icon": "fa-clipboard-check",
+                "object": registration,
+            })
+
+        # =========================================================
+        # LECTURERS
+        # =========================================================
+        lecturers = User.objects.filter(
+            groups__name="Lecturer"
+        ).filter(
+            Q(username__icontains=q) |
+            Q(first_name__icontains=q) |
+            Q(last_name__icontains=q) |
+            Q(email__icontains=q)
+        ).distinct()[:10]
+
+        for lecturer in lecturers:
+            full_name = (
+                lecturer.get_full_name()
+                or lecturer.username
+            )
+
+            results.append({
+                "category": "Lecturers",
+                "title": full_name,
+                "subtitle": (
+                    f"{lecturer.username}"
+                    + (f" • {lecturer.email}" if lecturer.email else "")
+                ),
+                "icon": "fa-chalkboard-teacher",
+                "object": lecturer,
+            })
+
+        # =========================================================
+        # INVOICES
+        # =========================================================
+        invoices = StudentInvoice.objects.filter(
+            Q(invoice_number__icontains=q) |
+            Q(student__admission_no__icontains=q) |
+            Q(student__first_name__icontains=q) |
+            Q(student__middle_name__icontains=q) |
+            Q(student__last_name__icontains=q)
+        ).select_related(
+            "student"
+        ).distinct()[:10]
+
+        for invoice in invoices:
+            results.append({
+                "category": "Invoices",
+                "title": invoice.invoice_number,
+                "subtitle": (
+                    f"{invoice.student.full_name} • "
+                    f"Balance: KSh {invoice.balance:,.2f} • "
+                    f"{invoice.status}"
+                ),
+                "icon": "fa-file-invoice-dollar",
+                "object": invoice,
+            })
+
+        # =========================================================
+        # PAYMENTS
+        # =========================================================
+        payments = Payment.objects.filter(
+            Q(payment_number__icontains=q) |
+            Q(reference_number__icontains=q) |
+            Q(invoice__invoice_number__icontains=q) |
+            Q(invoice__student__admission_no__icontains=q) |
+            Q(invoice__student__first_name__icontains=q) |
+            Q(invoice__student__middle_name__icontains=q) |
+            Q(invoice__student__last_name__icontains=q)
+        ).select_related(
+            "invoice",
+            "invoice__student",
+        ).distinct()[:10]
+
+        for payment in payments:
+            results.append({
+                "category": "Payments",
+                "title": payment.payment_number,
+                "subtitle": (
+                    f"{payment.invoice.student.full_name} • "
+                    f"KSh {payment.amount:,.2f} • "
+                    f"{payment.reference_number or 'No reference'}"
+                ),
+                "icon": "fa-money-bill-wave",
+                "object": payment,
+            })
+
+        # =========================================================
+        # RECEIPTS
+        # =========================================================
+        receipts = Receipt.objects.filter(
+            Q(receipt_number__icontains=q) |
+            Q(payment__payment_number__icontains=q) |
+            Q(payment__invoice__invoice_number__icontains=q) |
+            Q(payment__invoice__student__admission_no__icontains=q) |
+            Q(payment__invoice__student__first_name__icontains=q) |
+            Q(payment__invoice__student__middle_name__icontains=q) |
+            Q(payment__invoice__student__last_name__icontains=q)
+        ).select_related(
+            "payment",
+            "payment__invoice",
+            "payment__invoice__student",
+        ).distinct()[:10]
+
+        for receipt in receipts:
+            results.append({
+                "category": "Receipts",
+                "title": receipt.receipt_number,
+                "subtitle": (
+                    f"{receipt.payment.invoice.student.full_name} • "
+                    f"{receipt.payment.payment_number}"
+                ),
+                "icon": "fa-receipt",
+                "object": receipt,
+            })
+
+        # =========================================================
+        # GRADUATION
+        # =========================================================
+        graduations = Graduation.objects.filter(
+            Q(certificate_number__icontains=q) |
+            Q(student__admission_no__icontains=q) |
+            Q(student__first_name__icontains=q) |
+            Q(student__middle_name__icontains=q) |
+            Q(student__last_name__icontains=q) |
+            Q(status__icontains=q)
+        ).select_related(
+            "student",
+            "academic_year",
+        ).distinct()[:10]
+
+        for graduation in graduations:
+            results.append({
+                "category": "Graduation",
+                "title": graduation.student.full_name,
+                "subtitle": (
+                    f"{graduation.certificate_number} • "
+                    f"{graduation.status}"
+                ),
+                "icon": "fa-graduation-cap",
+                "object": graduation,
+            })
+
+        # =========================================================
+        # ACADEMIC YEARS
+        # =========================================================
+        academic_years = AcademicYear.objects.filter(
+            Q(year_name__icontains=q)
+        ).distinct()[:10]
+
+        for year in academic_years:
+            results.append({
+                "category": "Academic Years",
+                "title": year.year_name,
+                "subtitle": (
+                    "Registration Open"
+                    if year.registration_open
+                    else "Registration Closed"
+                ),
+                "icon": "fa-calendar-alt",
+                "object": year,
+            })
+
+        # =========================================================
+        # INTAKES
+        # =========================================================
+        intakes = Intake.objects.filter(
+            Q(name__icontains=q) |
+            Q(academic_year__year_name__icontains=q)
+        ).select_related(
+            "academic_year"
+        ).distinct()[:10]
+
+        for intake in intakes:
+            results.append({
+                "category": "Intakes",
+                "title": intake.name,
+                "subtitle": (
+                    f"{intake.academic_year.year_name} • "
+                    f"{'Open' if intake.is_open else 'Closed'}"
+                ),
+                "icon": "fa-calendar-plus",
+                "object": intake,
+            })
+
+        # =========================================================
+        # SEMESTERS
+        # =========================================================
+        semesters = Semester.objects.filter(
+            Q(semester_name__icontains=q) |
+            Q(academic_year__year_name__icontains=q)
+        ).select_related(
+            "academic_year"
+        ).distinct()[:10]
+
+        for semester in semesters:
+            results.append({
+                "category": "Semesters",
+                "title": semester.semester_name,
+                "subtitle": (
+                    f"{semester.academic_year.year_name} • "
+                    f"{'Active' if semester.is_active else 'Inactive'}"
+                ),
+                "icon": "fa-calendar-week",
+                "object": semester,
+            })
+
+    context = {
+        "q": q,
+        "results": results,
+        "result_count": len(results),
+    }
+
+    return render(
+        request,
+        "system/global_search.html",
+        context
+    )
 
 @login_required
 @permission_required(

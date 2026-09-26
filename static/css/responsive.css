@@ -1,6 +1,22 @@
 /* =========================================================
    XORADEX EDUCORE ERP
    GLOBAL RESPONSIVE STYLES
+   ---------------------------------------------------------
+   RESPONSIBILITY:
+   - Responsive content sizing
+   - Tablet layout
+   - Mobile layout
+   - Main content positioning
+   - Tables and media responsiveness
+
+   IMPORTANT:
+   This file does NOT control:
+   - Sidebar colors
+   - Topbar colors
+   - Dashboard colors
+   - Cards
+   - Buttons
+   - Forms
    ========================================================= */
 
 
@@ -23,11 +39,6 @@
 
 @media (max-width: 992px) {
 
-    .erp-sidebar {
-        width: 230px;
-        flex: 0 0 230px;
-    }
-
     .erp-workspace {
         width: 100%;
         min-width: 0;
@@ -36,16 +47,21 @@
     .erp-content {
         min-width: 0;
         width: 100%;
+
         padding: 18px 20px;
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        display: block;
+
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
     .erp-content > * {
         width: 100%;
         max-width: 1400px;
+
+        margin-left: auto;
+        margin-right: auto;
     }
 
 }
@@ -53,21 +69,36 @@
 
 /* =========================================================
    MOBILE
+   ---------------------------------------------------------
+   767.98px and below
    ========================================================= */
 
-@media (max-width: 768px) {
+@media (max-width: 767.98px) {
 
     /* -----------------------------------------------------
        WORKSPACE
+       -----------------------------------------------------
+       On mobile the sidebar becomes fixed and is removed
+       from the normal document flow.
+
+       The workspace therefore remains a normal vertical
+       flex container so that the main content always has
+       its own available area.
        ----------------------------------------------------- */
 
     .erp-workspace {
+
         position: relative;
 
-        display: block;
+        display: flex;
+        flex-direction: column;
 
         width: 100%;
         min-width: 0;
+
+        min-height: calc(100vh - 60px);
+
+        overflow: visible;
     }
 
 
@@ -77,145 +108,104 @@
 
     .erp-content {
 
+        position: relative;
+
+        display: block;
+
+        flex: 1 1 auto;
+
         width: 100%;
         max-width: 100%;
         min-width: 0;
 
         margin: 0;
+
         padding: 15px;
 
-        display: block;
-
+        /*
+         * Do not create a second fixed-height scrolling
+         * container on mobile. The page itself should be
+         * allowed to continue vertically.
+         */
         overflow-x: hidden;
         overflow-y: visible;
+
+        /*
+         * Make sure page content remains rendered and
+         * stays underneath the mobile sidebar.
+         */
+        visibility: visible;
+        opacity: 1;
+
+        z-index: 1;
     }
+
+
+    /* -----------------------------------------------------
+       DIRECT CONTENT CHILDREN
+       ----------------------------------------------------- */
 
     .erp-content > * {
 
-        width: 100%;
-        max-width: 100%;
-    }
-
-
-    /* -----------------------------------------------------
-       FULL-SCREEN MOBILE SIDEBAR
-       ----------------------------------------------------- */
-
-    .erp-sidebar {
-
-        position: fixed;
-
-        inset: 0;
-
-        z-index: 3000;
-
-        width: 100%;
-        max-width: 100%;
-
-        height: 100vh;
-        height: 100dvh;
-
-        min-height: 100vh;
-        min-height: 100dvh;
-
-        margin: 0;
-
-        transform: translateX(-100%);
-
-        transition:
-            transform 0.25s ease;
-
-        overflow-x: hidden;
-        overflow-y: auto;
-
-        flex: none;
-    }
-
-
-    /* -----------------------------------------------------
-       MOBILE SIDEBAR OPEN
-       ----------------------------------------------------- */
-
-    .erp-sidebar.mobile-open {
-
-        transform: translateX(0);
-
-    }
-
-
-    /* -----------------------------------------------------
-       FULL SCREEN MUST IGNORE DESKTOP COLLAPSED WIDTH
-       ----------------------------------------------------- */
-
-    .erp-sidebar.collapsed {
-
-        width: 100%;
-        max-width: 100%;
-
-    }
-
-
-    /* -----------------------------------------------------
-       RESTORE SIDEBAR CONTENT WHEN MOBILE
-       ----------------------------------------------------- */
-
-    .erp-sidebar .brand-name,
-    .erp-sidebar .sidebar-user > div,
-    .erp-sidebar .menu-title,
-    .erp-sidebar .sidebar-menu span {
-
-        display: initial;
-
-    }
-
-
-    .erp-sidebar .sidebar-menu a {
-
-        justify-content: flex-start;
-
-    }
-
-
-    /* -----------------------------------------------------
-       MOBILE OVERLAY
-       ----------------------------------------------------- */
-
-    .erp-sidebar-overlay {
-
-        position: fixed;
-
-        inset: 0;
-
-        z-index: 2999;
-
-        display: none;
-
-        background: rgba(
-            15,
-            23,
-            42,
-            0.35
-        );
-    }
-
-
-    .erp-sidebar-overlay.active {
-
         display: block;
 
+        width: 100%;
+        max-width: 100%;
+
+        margin-left: auto;
+        margin-right: auto;
     }
 
 
     /* -----------------------------------------------------
-       KEEP TOGGLE ABOVE SIDEBAR
+       PAGE CONTAINERS
+       ----------------------------------------------------- */
+
+    .page-container {
+
+        width: 100%;
+        max-width: 100%;
+
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+
+    /* -----------------------------------------------------
+       PAGE HEADER
+       ----------------------------------------------------- */
+
+    .page-header {
+
+        width: 100%;
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        margin-bottom: 20px;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE SIDEBAR TOGGLE
        ----------------------------------------------------- */
 
     #sidebarToggle {
 
         position: relative;
 
-        z-index: 4000;
+        z-index: 5001;
+    }
 
+
+    /* -----------------------------------------------------
+       PREVENT BACKGROUND SCROLL WHILE SIDEBAR IS OPEN
+       ----------------------------------------------------- */
+
+    body.sidebar-mobile-open {
+
+        overflow: hidden;
     }
 
 
@@ -237,15 +227,16 @@
        ----------------------------------------------------- */
 
     .table-responsive {
-
         width: 100%;
         max-width: 100%;
-
         overflow-x: auto;
+        overflow-y: visible;
 
         -webkit-overflow-scrolling: touch;
 
-        font-size: 13px;
+        padding-bottom: 8px;
+
+        scrollbar-width: auto;
     }
 
 
@@ -255,9 +246,34 @@
 
     .erp-content img,
     .erp-content canvas,
-    .erp-content iframe {
+    .erp-content iframe,
+    .erp-content video {
 
         max-width: 100%;
+    }
+
+
+    /* -----------------------------------------------------
+       FORMS
+       ----------------------------------------------------- */
+
+    .erp-content input,
+    .erp-content select,
+    .erp-content textarea {
+
+        max-width: 100%;
+    }
+
+
+    /* -----------------------------------------------------
+       BUTTON GROUPS
+       ----------------------------------------------------- */
+
+    .erp-content .btn-group {
+
+        max-width: 100%;
+
+        flex-wrap: wrap;
     }
 
 }
@@ -272,23 +288,37 @@
     .erp-content {
 
         width: 100%;
+        max-width: 100%;
+
         padding: 12px;
     }
+
+
+    .page-container {
+
+        width: 100%;
+        max-width: 100%;
+    }
+
 
     h1 {
         font-size: 26px;
     }
 
+
     h2 {
         font-size: 22px;
     }
+
 
     h3 {
         font-size: 20px;
     }
 
+
     .btn {
-        width: 100%;
+
+        max-width: 100%;
     }
 
 }
@@ -302,16 +332,22 @@
 
     .erp-content {
 
+        width: 100%;
+        max-width: 100%;
+
         padding: 10px;
     }
+
 
     h1 {
         font-size: 23px;
     }
 
+
     h2 {
         font-size: 20px;
     }
+
 
     h3 {
         font-size: 18px;
