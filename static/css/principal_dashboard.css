@@ -1,766 +1,518 @@
 /* =========================================================
    XORADEX EDUCORE ERP
    PRINCIPAL DASHBOARD
-   Institutional Leadership • Executive Overview
+   ---------------------------------------------------------
+   RESPONSIBILITY:
+   - Principal dashboard presentation
+   - Executive hero
+   - Institutional KPI cards
+   - Institutional panels
+   - Financial analytics
+   - Academic analytics
+   - Responsive dashboard behavior
+
+   NOTE:
+   - Uses ERP-wide tokens from tokens.css
+   - Does not redefine body typography
+   - Does not impose viewport height
+   - Does not use page-level overflow locking
    ========================================================= */
 
 
 /* =========================================================
-   1. PAGE FOUNDATION
+   PRINCIPAL PAGE
    ========================================================= */
 
 .principal-page {
-    padding: 0 1.25rem 2rem;
-    color: #172033;
+    width: 100%;
+    min-width: 0;
+    color: var(--text);
+}
+
+.principal-page *,
+.principal-page *::before,
+.principal-page *::after {
+    box-sizing: border-box;
 }
 
 
 /* =========================================================
-   2. PRINCIPAL HERO
+   EXECUTIVE HERO
+   ---------------------------------------------------------
+   Follows the approved Admin dashboard hero architecture.
    ========================================================= */
 
 .principal-hero {
-    position: relative;
-    overflow: hidden;
-    padding: 1.35rem 2rem;
-    border-radius: 26px;
+    margin-bottom: 28px;
+    padding: 32px;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--navy) 0%,
+            var(--blue-dark) 55%,
+            #0057b8 100%
+        );
+
     color: #ffffff;
-    background: linear-gradient(
-        135deg,
-        #012169 0%,
-        #003087 52%,
-        #0057b8 100%
-    );
+
     box-shadow:
-        0 18px 45px rgba(1, 33, 105, 0.20);
+        0 12px 35px rgba(1, 33, 105, 0.16);
 }
 
-.principal-hero::before {
-    content: "";
-    position: absolute;
-    width: 320px;
-    height: 320px;
-    right: -120px;
-    top: -150px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.07);
-    animation:
-        principalHeroOrb 12s linear infinite;
-}
-
-.principal-hero::after {
-    content: "";
-    position: absolute;
-    width: 180px;
-    height: 180px;
-    right: 120px;
-    bottom: -130px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    animation:
-        principalHeroFloat 7s ease-in-out infinite;
-}
-
-.principal-hero .row {
-    position: relative;
-    z-index: 2;
-}
-
-
-/* =========================================================
-   3. HERO TEXT
-   ========================================================= */
-
-.principal-eyebrow {
+.principal-hero-content {
     display: flex;
     align-items: center;
-    margin-bottom: 0.7rem;
-    color: rgba(255, 255, 255, 0.78);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-}
+    justify-content: space-between;
 
-.principal-title {
-    margin: 0 0 0.55rem;
-    color: #b26a00;
-    font-size: 2rem;
-    line-height: 1.15;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-}
+    gap: 30px;
 
-.principal-subtitle {
-    max-width: 720px;
-    margin: 0 0 1.25rem;
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 0.94rem;
-    line-height: 1.7;
-}
-
-.principal-subtitle strong {
-    color: #ffffff;
-}
-
-
-/* =========================================================
-   4. HERO META BADGES
-   ========================================================= */
-
-.principal-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-}
-
-.principal-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.55rem 0.85rem;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
-    color: #ffffff;
-    font-size: 0.76rem;
-    font-weight: 700;
-    backdrop-filter: blur(8px);
-}
-
-.principal-status-dot {
-    width: 8px;
-    height: 8px;
-    display: inline-block;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: #4ade80;
-    box-shadow:
-        0 0 0 4px rgba(74, 222, 128, 0.12);
-    animation:
-        principalStatusPulse 2s ease-in-out infinite;
-}
-
-
-/* =========================================================
-   5. HERO RIGHT SIDE
-   ========================================================= */
-
-.principal-hero-right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    min-height: 140px;
-}
-
-
-/* =========================================================
-   6. ANIMATED ACADEMIC PERIOD CARD
-   ========================================================= */
-
-.principal-period-card {
-    position: relative;
-    width: 100%;
-    max-width: 340px;
-    min-height: 175px;
-    overflow: hidden;
-    padding: 1rem 1.15rem;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 22px;
-    background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.15),
-        rgba(255, 255, 255, 0.06)
-    );
-    box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.14);
-    backdrop-filter: blur(12px);
-    animation:
-        principalPanelFloat 5s ease-in-out infinite;
-}
-
-
-/* =========================================================
-   7. ANIMATED ORBITS
-   ========================================================= */
-
-.principal-orbit {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-}
-
-.principal-orbit.orbit-one {
-    width: 220px;
-    height: 220px;
-    right: -110px;
-    top: -90px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    animation:
-        principalOrbitOne 12s linear infinite;
-}
-
-.principal-orbit.orbit-two {
-    width: 150px;
-    height: 150px;
-    right: -65px;
-    bottom: -70px;
-    border: 1px dashed rgba(255, 255, 255, 0.14);
-    animation:
-        principalOrbitTwo 9s linear infinite reverse;
-}
-
-
-/* =========================================================
-   8. PERIOD CONTENT
-   ========================================================= */
-
-.principal-period-content {
-    position: relative;
-    z-index: 5;
-}
-
-.principal-period-icon {
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.55rem;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.13);
-    color: #ffffff;
-    font-size: 1.1rem;
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.10);
-    animation:
-        principalIconPulse 3s ease-in-out infinite;
-}
-
-.principal-period-heading {
-    margin-bottom: 0.8rem;
-    color: rgba(255, 255, 255, 0.68);
-    font-size: 0.67rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-}
-
-
-/* =========================================================
-   9. ACADEMIC PERIOD ITEMS
-   ========================================================= */
-
-.principal-period-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.42rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-}
-
-.principal-period-item:last-of-type {
-    border-bottom: none;
-}
-
-.principal-period-item > i {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: 9px;
-    background: rgba(255, 255, 255, 0.10);
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 0.8rem;
-}
-
-.principal-period-item-content {
-    display: flex;
-    flex-direction: column;
     min-width: 0;
 }
 
-.principal-period-item-content span {
-    margin-bottom: 0.08rem;
-    color: rgba(255, 255, 255, 0.60);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+.principal-hero-copy {
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
-.principal-period-item-content strong {
-    overflow: hidden;
-    color: #ffffff;
-    font-size: 0.88rem;
-    font-weight: 800;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   10. PERIOD STATUS
-   ========================================================= */
-
-.principal-period-status {
+.principal-eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    margin-top: 0.8rem;
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 0.68rem;
+
+    gap: 8px;
+
+    margin-bottom: 10px;
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+
+    opacity: 0.82;
+}
+
+.principal-eyebrow i {
+    font-size: 13px;
+}
+
+.principal-hero-title {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 30px;
+    font-weight: 800;
+
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+}
+
+.principal-hero-subtitle {
+    max-width: 760px;
+
+    margin: 10px 0 0;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.principal-hero-subtitle strong {
+    color: #ffffff;
     font-weight: 700;
 }
 
-.principal-live-dot {
-    width: 7px;
-    height: 7px;
-    display: inline-block;
-    border-radius: 50%;
-    background: #4ade80;
-    box-shadow:
-        0 0 0 4px rgba(74, 222, 128, 0.10);
-    animation:
-        principalLivePulse 2s ease-in-out infinite;
-}
-
 
 /* =========================================================
-   11. FALLBACK / HERO ICON
+   ACADEMIC SESSION
    ========================================================= */
 
-.principal-hero-icon {
-    position: relative;
-    width: 94px;
-    height: 94px;
+.principal-session {
     display: flex;
     align-items: center;
-    justify-content: center;
+
+    min-width: 240px;
+
+    gap: 14px;
+
+    padding: 16px 18px;
+
+    background: rgba(255, 255, 255, 0.10);
+
     border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 28px;
-    background: rgba(255, 255, 255, 0.12);
-    color: #ffffff;
-    font-size: 2.45rem;
-    box-shadow:
-        0 18px 35px rgba(0, 0, 0, 0.12);
+
+    border-radius: 16px;
+
     backdrop-filter: blur(10px);
+
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.principal-session-icon {
+    display: grid;
+    place-items: center;
+
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    color: #ffffff;
+
+    font-size: 18px;
+}
+
+.principal-session-content {
+    min-width: 0;
+}
+
+.principal-session-content span,
+.principal-session-content small {
+    display: block;
+
+    color: rgba(255, 255, 255, 0.68);
+
+    font-size: 12px;
+}
+
+.principal-session-content strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+.principal-session-content small {
+    margin-top: 2px;
 }
 
 
 /* =========================================================
-   12. PRINCIPAL SEMESTER PERFORMANCE
+   SEMESTER PERFORMANCE
+   Whole section as a card
    ========================================================= */
+
+#semester-performance.principal-period-section {
+    padding: 24px;
+
+    background: #FFFFFF;
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 16px;
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    #semester-performance.principal-period-section {
+        padding: 20px;
+    }
+
+}
+
+
+@media (max-width: 575.98px) {
+
+    #semester-performance.principal-period-section {
+        padding: 16px;
+
+        border-radius: 14px;
+    }
+
+}
+
+
+/* =========================================================
+   SECTION STRUCTURE
+   ========================================================= */
+
+.principal-section {
+    margin-bottom: var(--space-xl);
+}
 
 .principal-period-section {
-    position: relative;
+    margin-bottom: var(--space-xl);
 }
 
-
-/* =========================================================
-   13. PERIOD FILTER
-   ========================================================= */
-
-.principal-filter-card {
-    padding: 1.15rem;
-    border: 1px solid #e7ebf2;
-    border-radius: 18px;
-    background: #ffffff;
-    box-shadow:
-        0 10px 28px rgba(15, 23, 42, 0.06);
-}
-
-.principal-filter-label {
-    display: block;
-    margin-bottom: 0.45rem;
-    color: #475569;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
-.principal-filter-select {
-    min-height: 44px;
-    border: 1px solid #d9e0ea;
-    border-radius: 11px;
-    color: #172033;
-    font-size: 0.86rem;
-    font-weight: 600;
-}
-
-.principal-filter-select:focus {
-    border-color: #003087;
-    box-shadow:
-        0 0 0 3px rgba(0, 48, 135, 0.10);
-}
-
-.principal-filter-button {
-    min-height: 44px;
-    border: none;
-    border-radius: 11px;
-    background: linear-gradient(
-        135deg,
-        #012169,
-        #0057b8
-    );
-    color: #ffffff;
-    font-size: 0.82rem;
-    font-weight: 800;
-    box-shadow:
-        0 8px 18px rgba(1, 33, 105, 0.16);
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.principal-filter-button:hover {
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow:
-        0 12px 24px rgba(1, 33, 105, 0.22);
-}
-
-
-/* =========================================================
-   14. SELECTED PERIOD
-   ========================================================= */
-
-.principal-selected-period {
+.principal-section-heading {
     display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 0.9rem 1rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 15px;
-    background: linear-gradient(
-        135deg,
-        #f4f7fc,
-        #ffffff
-    );
-}
-
-.principal-selected-period-icon {
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: 11px;
-    background: #012169;
-    color: #ffffff;
-    font-size: 0.9rem;
-}
-
-.principal-selected-period span {
-    display: block;
-    margin-bottom: 0.15rem;
-    color: #718096;
-    font-size: 0.62rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-}
-
-.principal-selected-period strong {
-    display: block;
-    color: #172033;
-    font-size: 0.9rem;
-    font-weight: 800;
-}
-
-
-/* =========================================================
-   15. PERIOD KPI CARDS
-   ========================================================= */
-
-.principal-period-kpi {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    min-height: 92px;
-    padding: 1rem;
-    border: 1px solid #e7ebf2;
-    border-radius: 17px;
-    background: #ffffff;
-    box-shadow:
-        0 8px 22px rgba(15, 23, 42, 0.055);
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.principal-period-kpi:hover {
-    transform: translateY(-3px);
-    box-shadow:
-        0 14px 28px rgba(15, 23, 42, 0.09);
-}
-
-.principal-period-kpi-icon {
-    width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: 12px;
-    background: #eef3fb;
-    color: #003087;
-    font-size: 1rem;
-}
-
-.principal-period-kpi span {
-    display: block;
-    margin-bottom: 0.15rem;
-    color: #718096;
-    font-size: 0.62rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-}
-
-.principal-period-kpi strong {
-    display: block;
-    color: #172033;
-    font-size: 1.35rem;
-    line-height: 1;
-    font-weight: 800;
-}
-
-
-/* =========================================================
-   16. ANALYSIS PANELS
-   ========================================================= */
-
-.principal-analysis-panel {
-    height: 100%;
-    padding: 1.25rem;
-    border: 1px solid #e7ebf2;
-    border-radius: 20px;
-    background: #ffffff;
-    box-shadow:
-        0 10px 28px rgba(15, 23, 42, 0.06);
-}
-
-.principal-analysis-header {
-    display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 1.2rem;
+
+    gap: 20px;
+
+    margin-bottom: var(--space-md);
 }
 
-.principal-analysis-header h3 {
-    margin: 0;
-    color: #172033;
-    font-size: 0.98rem;
-    font-weight: 800;
+.principal-section-heading > div:first-child {
+    min-width: 0;
 }
 
-.principal-analysis-header p {
-    margin: 0.25rem 0 0;
-    color: #718096;
-    font-size: 0.76rem;
-    line-height: 1.5;
-}
-
-.principal-analysis-icon {
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: 11px;
-    background: #eef3fb;
-    color: #003087;
-}
-
-
-/* =========================================================
-   17. EXAM SUMMARY
-   ========================================================= */
-
-.principal-exam-summary {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.65rem;
-    margin-bottom: 1.1rem;
-}
-
-.principal-exam-summary > div {
-    padding: 0.7rem;
-    border-radius: 11px;
-    background: #f7f9fc;
-}
-
-.principal-exam-summary span {
+.principal-section-eyebrow {
     display: block;
-    margin-bottom: 0.2rem;
-    color: #718096;
-    font-size: 0.6rem;
-    font-weight: 700;
-}
 
-.principal-exam-summary strong {
-    color: #172033;
-    font-size: 0.95rem;
+    margin-bottom: 5px;
+
+    color: var(--blue);
+
+    font-size: 11px;
     font-weight: 800;
+
+    letter-spacing: 1px;
 }
 
-.principal-exam-summary .principal-pass-rate {
-    color: #15803d;
+.principal-section-title {
+    margin: 0;
+
+    color: var(--heading);
+
+    font-size: 20px;
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.principal-section-subtitle {
+    margin: 5px 0 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+    line-height: 1.55;
 }
 
 
 /* =========================================================
-   18. PRINCIPAL KPI CARDS
+   INSTITUTIONAL KPI CARDS
    ========================================================= */
 
 .principal-kpi-card {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+
     height: 100%;
-    padding: 1.25rem;
-    border: 1px solid #e7ebf1;
+    min-width: 0;
+
+    padding: 22px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
     border-radius: 20px;
-    background: #ffffff;
-    box-shadow:
-        0 8px 25px rgba(15, 23, 42, 0.055);
+
+    box-shadow: var(--shadow-sm);
+
     transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+        transform var(--transition),
+        box-shadow var(--transition),
+        border-color var(--transition);
 }
 
 .principal-kpi-card:hover {
     transform: translateY(-4px);
-    border-color: #d8e0eb;
-    box-shadow:
-        0 15px 34px rgba(15, 23, 42, 0.10);
+
+    border-color: var(--border);
+
+    box-shadow: var(--shadow);
 }
 
 .principal-kpi-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.1rem;
+
+    gap: 14px;
+
+    min-width: 0;
 }
 
 .principal-kpi-icon {
-    width: 46px;
-    height: 46px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 14px;
-    background: #eef3fb;
-    color: #012169;
-    font-size: 1.05rem;
+
+    width: 56px;
+    height: 56px;
+
+    flex-shrink: 0;
+
+    border-radius: 16px;
+
+    font-size: 23px;
+}
+
+.principal-kpi-students {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.principal-kpi-programmes {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.principal-kpi-departments {
+    background: #f3e8ff;
+    color: #7c3aed;
+}
+
+.principal-kpi-enrollments {
+    background: #fef3c7;
+    color: #ca8a04;
 }
 
 .principal-kpi-label {
-    color: #718096;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.055em;
-    text-transform: uppercase;
+    margin-left: auto;
+
+    color: var(--muted);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-align: right;
 }
 
 .principal-kpi-value {
-    margin-bottom: 0.4rem;
-    color: #111827;
-    font-size: 1.85rem;
-    line-height: 1;
+    margin-top: 17px;
+
+    color: var(--heading);
+
+    font-size: 30px;
     font-weight: 800;
-    letter-spacing: -0.025em;
+
+    line-height: 1.1;
+
+    font-variant-numeric: tabular-nums;
 }
 
 .principal-kpi-note {
+    margin-top: 7px;
+
     color: #94a3b8;
-    font-size: 0.74rem;
+
+    font-size: 12px;
     line-height: 1.45;
 }
 
 
 /* =========================================================
-   19. GENERAL PANELS
+   STANDARD PRINCIPAL PANELS
    ========================================================= */
 
 .principal-panel {
+    display: flex;
+    flex-direction: column;
+
     height: 100%;
+    min-width: 0;
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+
     overflow: hidden;
-    border: 1px solid #e7ebf1;
-    border-radius: 22px;
-    background: #ffffff;
-    box-shadow:
-        0 8px 25px rgba(15, 23, 42, 0.05);
-    transition:
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
 }
-
-.principal-panel:hover {
-    border-color: #dfe5ed;
-    box-shadow:
-        0 12px 30px rgba(15, 23, 42, 0.075);
-}
-
-
-/* =========================================================
-   20. PANEL HEADER
-   ========================================================= */
 
 .principal-panel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.15rem 1.25rem;
-    border-bottom: 1px solid #edf0f4;
-    background: #ffffff;
+
+    gap: 18px;
+
+    min-height: 76px;
+
+    padding: 18px 22px;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+.principal-panel-header > div {
+    min-width: 0;
 }
 
 .principal-panel-title {
+    display: flex;
+    align-items: center;
+
     margin: 0;
-    color: #172033;
-    font-size: 0.93rem;
+
+    color: var(--heading);
+
+    font-size: 16px;
+    font-weight: 700;
+
     line-height: 1.35;
-    font-weight: 800;
 }
 
 .principal-panel-title i {
-    color: #012169;
+    width: 22px;
+
+    margin-right: 9px;
+
+    color: var(--blue);
+
+    font-size: 15px;
+    text-align: center;
 }
 
 .principal-panel-subtitle {
-    margin-top: 0.25rem;
-    color: #94a3b8;
-    font-size: 0.73rem;
-    line-height: 1.4;
+    margin: 5px 0 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+    line-height: 1.45;
 }
-
-
-/* =========================================================
-   21. PANEL BODY
-   ========================================================= */
 
 .principal-panel-body {
-    padding: 1.25rem;
+    flex: 1;
+
+    padding: 20px 22px;
 }
 
 
 /* =========================================================
-   22. OVERVIEW ROWS
+   OVERVIEW ROWS
    ========================================================= */
 
 .principal-overview-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 0.85rem 0;
-    border-bottom: 1px solid #eef1f5;
+
+    gap: 18px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid var(--border-light);
 }
 
 .principal-overview-row:first-child {
@@ -769,854 +521,1635 @@
 
 .principal-overview-row:last-child {
     padding-bottom: 0;
-    border-bottom: 0;
+    border-bottom: none;
 }
 
 .principal-overview-label {
-    color: #64748b;
-    font-size: 0.8rem;
-    font-weight: 600;
+    min-width: 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+    line-height: 1.4;
 }
 
 .principal-overview-value {
-    color: #111827;
-    font-size: 0.9rem;
+    flex-shrink: 0;
+
+    color: var(--heading);
+
+    font-size: 17px;
     font-weight: 800;
+
+    font-variant-numeric: tabular-nums;
 }
 
 
 /* =========================================================
-   23. FINANCIAL POSITION
+   FINANCIAL POSITION
    ========================================================= */
 
 .principal-finance-panel {
-    background: #ffffff;
+    width: 100%;
 }
 
 .principal-finance-card {
-    min-height: 88px;
     display: flex;
     align-items: center;
-    gap: 0.95rem;
-    padding: 1rem;
-    border: 1px solid #edf1f5;
-    border-radius: 16px;
-    background: #f8fafc;
-    transition:
-        transform 0.2s ease,
-        border-color 0.2s ease;
-}
 
-.principal-finance-card:hover {
-    transform: translateY(-2px);
-    border-color: #dce3ec;
+    height: 100%;
+    min-width: 0;
+
+    gap: 16px;
+
+    padding: 19px;
+
+    background: var(--background);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 16px;
 }
 
 .principal-finance-icon {
-    width: 46px;
-    height: 46px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 auto;
+
+    width: 52px;
+    height: 52px;
+
+    flex-shrink: 0;
+
     border-radius: 14px;
-    background: #eef3fb;
-    color: #012169;
-    font-size: 1rem;
+
+    font-size: 20px;
+}
+
+.principal-finance-collections {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.principal-finance-expected {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.principal-finance-outstanding {
+    background: #fef3c7;
+    color: #b45309;
 }
 
 .principal-finance-label {
-    margin-bottom: 0.25rem;
-    color: #718096;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    color: var(--muted);
+
+    font-size: 12px;
+    font-weight: 600;
+
+    line-height: 1.4;
 }
 
 .principal-finance-value {
-    color: #111827;
-    font-size: 1.15rem;
-    line-height: 1.2;
+    margin-top: 5px;
+
+    color: var(--heading);
+
+    font-size: 19px;
     font-weight: 800;
+
+    line-height: 1.25;
+
+    font-variant-numeric: tabular-nums;
+
+    overflow-wrap: anywhere;
 }
 
 
 /* =========================================================
-   24. CHART AREAS
-   ========================================================= */
-
-.principal-chart-wrap {
-    position: relative;
-    height: 270px;
-}
-
-.principal-chart-container {
-    position: relative;
-    width: 100%;
-    height: 280px;
-}
-
-.principal-chart-container canvas {
-    max-width: 100%;
-}
-
-
-/* =========================================================
-   25. LEADERSHIP SNAPSHOT
-   ========================================================= */
-
-.principal-snapshot {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 0.25rem 0;
-}
-
-.principal-snapshot-icon {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    border-radius: 15px;
-    background: #eef3fb;
-    color: #012169;
-    font-size: 1.05rem;
-}
-
-.principal-snapshot h4 {
-    margin: 0 0 0.35rem;
-    color: #172033;
-    font-size: 0.9rem;
-    font-weight: 800;
-}
-
-.principal-snapshot p {
-    margin: 0;
-    color: #718096;
-    font-size: 0.78rem;
-    line-height: 1.65;
-}
-
-
-/* =========================================================
-   26. SECTION HEADING
-   ========================================================= */
-
-.principal-section-heading {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-}
-
-.principal-section-title {
-    margin: 0;
-    color: #172033;
-    font-size: 1.05rem;
-    line-height: 1.3;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-}
-
-.principal-section-subtitle {
-    margin-top: 0.25rem;
-    color: #718096;
-    font-size: 0.8rem;
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   27. PRINCIPAL ANIMATIONS
-   ========================================================= */
-
-@keyframes principalPanelFloat {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-5px);
-    }
-}
-
-@keyframes principalIconPulse {
-    0%,
-    100% {
-        transform: scale(1);
-        box-shadow:
-            0 8px 20px rgba(0, 0, 0, 0.10);
-    }
-
-    50% {
-        transform: scale(1.05);
-        box-shadow:
-            0 10px 26px rgba(255, 255, 255, 0.10);
-    }
-}
-
-@keyframes principalLivePulse {
-    0%,
-    100% {
-        box-shadow:
-            0 0 0 4px rgba(74, 222, 128, 0.10);
-    }
-
-    50% {
-        box-shadow:
-            0 0 0 7px rgba(74, 222, 128, 0.04);
-    }
-}
-
-@keyframes principalStatusPulse {
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.15);
-    }
-}
-
-@keyframes principalOrbitOne {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes principalOrbitTwo {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(-360deg);
-    }
-}
-
-@keyframes principalHeroOrb {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes principalHeroFloat {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-15px);
-    }
-}
-
-
-/* =========================================================
-   28. PRINCIPAL RESPONSIVE
-   Component-specific rules only.
-   Global layout remains in responsive.css.
-   ========================================================= */
-
-@media (max-width: 992px) {
-
-    .principal-page {
-        padding: 0 1rem 1.75rem;
-    }
-
-    .principal-hero {
-        padding: 1.6rem;
-        border-radius: 22px;
-    }
-
-    .principal-title {
-        font-size: 1.7rem;
-    }
-
-    .principal-hero-right {
-        display: none;
-    }
-
-    .principal-chart-container {
-        height: 260px;
-    }
-}
-
-
-@media (max-width: 768px) {
-
-    .principal-page {
-        padding: 0 0.75rem 1.5rem;
-    }
-
-    .principal-hero {
-        padding: 1.35rem;
-        border-radius: 20px;
-    }
-
-    .principal-title {
-        font-size: 1.45rem;
-        letter-spacing: -0.02em;
-    }
-
-    .principal-subtitle {
-        font-size: 0.84rem;
-        line-height: 1.6;
-    }
-
-    .principal-eyebrow {
-        font-size: 0.65rem;
-    }
-
-    .principal-meta {
-        gap: 0.45rem;
-    }
-
-    .principal-badge {
-        padding: 0.48rem 0.7rem;
-        font-size: 0.68rem;
-    }
-
-    .principal-kpi-card {
-        padding: 1.05rem;
-        border-radius: 17px;
-    }
-
-    .principal-kpi-value {
-        font-size: 1.6rem;
-    }
-
-    .principal-panel {
-        border-radius: 18px;
-    }
-
-    .principal-panel-header {
-        padding: 1rem;
-    }
-
-    .principal-panel-body {
-        padding: 1rem;
-    }
-
-    .principal-chart-container {
-        height: 235px;
-    }
-
-    .principal-finance-card {
-        padding: 0.9rem;
-    }
-
-    .principal-finance-value {
-        font-size: 1rem;
-    }
-
-    .principal-overview-label {
-        font-size: 0.76rem;
-    }
-
-    .principal-overview-value {
-        font-size: 0.84rem;
-    }
-
-    .principal-exam-summary {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .principal-chart-wrap {
-        height: 230px;
-    }
-
-    .principal-section-heading {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-}
-
-
-@media (max-width: 576px) {
-
-    .principal-page {
-        padding-left: 0.55rem;
-        padding-right: 0.55rem;
-    }
-
-    .principal-hero {
-        padding: 1.15rem;
-        border-radius: 18px;
-    }
-
-    .principal-title {
-        font-size: 1.3rem;
-    }
-
-    .principal-subtitle {
-        font-size: 0.78rem;
-    }
-
-    .principal-kpi-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        font-size: 0.9rem;
-    }
-
-    .principal-kpi-label {
-        font-size: 0.64rem;
-    }
-
-    .principal-kpi-value {
-        font-size: 1.45rem;
-    }
-
-    .principal-kpi-note {
-        font-size: 0.68rem;
-    }
-
-    .principal-section-title {
-        font-size: 0.95rem;
-    }
-
-    .principal-section-subtitle {
-        font-size: 0.74rem;
-    }
-
-    .principal-chart-container {
-        height: 215px;
-    }
-}
-
-
-/* =========================================================
-   XORADEX EDUCORE ERP
    FINANCE PERIOD PERFORMANCE
+   Whole section as a card
    ========================================================= */
+
+#finance-period-performance.finance-period-performance {
+    padding: 24px;
+
+    background: #FFFFFF;
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 16px;
+
+    box-shadow: var(--shadow-sm);
+}
 
 
 /* =========================================================
-   1. SECTION FOUNDATION
+   RESPONSIVE
    ========================================================= */
 
-#finance-period-performance {
-    scroll-margin-top: 90px;
+@media (max-width: 767.98px) {
+
+    #finance-period-performance.finance-period-performance {
+        padding: 20px;
+    }
+
 }
+
+
+@media (max-width: 575.98px) {
+
+    #finance-period-performance.finance-period-performance {
+        padding: 16px;
+
+        border-radius: 14px;
+    }
+
+}
+
+
+/* =========================================================
+   FINANCE PERIOD HEADER
+   ========================================================= */
 
 .finance-period-performance {
-    width: 100%;
+    min-width: 0;
 }
-
-
-/* =========================================================
-   2. HEADER
-   ========================================================= */
 
 .finance-period-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 18px;
-}
-
-.finance-period-eyebrow,
-.finance-chart-eyebrow {
-    margin-bottom: 5px;
-    color: #64748b;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.finance-period-title {
-    margin: 0;
-    color: #0f172a;
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-}
-
-.finance-period-description {
-    max-width: 650px;
-    margin: 6px 0 0;
-    color: #64748b;
-    font-size: 13px;
-    line-height: 1.6;
+    align-items: center;
 }
 
 .finance-period-current {
-    min-width: 175px;
-    padding: 13px 16px;
-    border: 1px solid #dbe4ef;
-    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+
+    min-width: 190px;
+
+    padding: 12px 16px;
+
     background: #f8fafc;
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 14px;
+
+    text-align: right;
 }
 
 .finance-period-current span {
-    display: block;
-    margin-bottom: 3px;
-    color: #94a3b8;
-    font-size: 9px;
+    color: var(--muted);
+
+    font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.1em;
+
+    letter-spacing: 0.8px;
 }
 
 .finance-period-current strong {
-    display: block;
-    color: #0f172a;
+    margin-top: 3px;
+
+    color: var(--navy);
+
     font-size: 14px;
     font-weight: 800;
 }
 
 .finance-period-current small {
-    display: block;
     margin-top: 2px;
-    color: #64748b;
+
+    color: var(--muted);
+
     font-size: 11px;
 }
 
 
 /* =========================================================
-   3. FILTER PANEL
+   FINANCE PERIOD FILTER
    ========================================================= */
 
 .finance-period-filter {
-    margin-bottom: 16px;
-    padding: 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    background: #ffffff;
-    box-shadow:
-        0 4px 14px rgba(15, 23, 42, 0.035);
+    margin-bottom: 20px;
+
+    padding: 20px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
 }
 
 .finance-period-form {
     display: grid;
+
     grid-template-columns:
         minmax(0, 1fr)
         minmax(0, 1fr)
-        190px;
-    gap: 12px;
+        auto;
+
     align-items: end;
+
+    gap: 16px;
+}
+
+.finance-period-field {
+    min-width: 0;
 }
 
 .finance-period-field label {
     display: block;
-    margin-bottom: 6px;
-    color: #475569;
-    font-size: 11px;
+
+    margin-bottom: 7px;
+
+    color: var(--heading);
+
+    font-size: 12px;
     font-weight: 700;
 }
 
 .finance-period-field .form-select {
-    height: 42px;
-    padding: 0 13px;
-    border: 1px solid #d7e0ea;
-    border-radius: 9px;
-    color: #1e293b;
-    background-color: #ffffff;
+    min-height: 44px;
+
+    border-color: var(--border);
+
+    border-radius: var(--radius);
+
+    color: var(--text);
+
     font-size: 13px;
-    font-weight: 600;
-    box-shadow: none;
 }
 
 .finance-period-field .form-select:focus {
-    border-color: #012169;
+    border-color: var(--blue);
+
     box-shadow:
-        0 0 0 3px rgba(1, 33, 105, 0.08);
+        0 0 0 3px rgba(23, 105, 209, 0.10);
+}
+
+.finance-period-action {
+    min-width: 170px;
 }
 
 .finance-analyse-btn {
-    width: 100%;
-    height: 42px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+
+    width: 100%;
+    min-height: 44px;
+
     gap: 8px;
-    border: 0;
-    border-radius: 9px;
-    background: #012169;
+
+    padding: 10px 17px;
+
+    border: 1px solid var(--blue);
+
+    border-radius: var(--radius);
+
+    background: var(--blue);
+
     color: #ffffff;
-    font-size: 12px;
-    font-weight: 750;
+
+    font-size: 13px;
+    font-weight: 700;
+
     cursor: pointer;
+
     transition:
-        background 0.18s ease,
-        transform 0.18s ease;
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
 }
 
 .finance-analyse-btn:hover {
-    background: #003087;
-    color: #ffffff;
+    background: var(--blue-dark);
+    border-color: var(--blue-dark);
+
     transform: translateY(-1px);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.finance-analyse-btn:focus-visible {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px rgba(23, 105, 209, 0.16);
 }
 
 
 /* =========================================================
-   4. KPI GRID
+   FINANCE PERIOD KPI GRID
    ========================================================= */
 
 .finance-period-kpis {
     display: grid;
+
     grid-template-columns:
         repeat(4, minmax(0, 1fr));
-    gap: 12px;
-    margin-bottom: 12px;
+
+    gap: 16px;
+
+    margin-bottom: 16px;
 }
 
 .finance-period-metric {
     min-width: 0;
-    padding: 17px;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    background: #ffffff;
-    box-shadow:
-        0 4px 14px rgba(15, 23, 42, 0.035);
+
+    padding: 20px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
 }
 
 .finance-period-metric-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+
+    gap: 12px;
 }
 
 .finance-period-metric-label {
-    color: #64748b;
-    font-size: 9px;
+    color: var(--muted);
+
+    font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.08em;
+
+    letter-spacing: 0.8px;
 }
 
 .finance-period-metric-icon {
-    width: 32px;
-    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
     flex-shrink: 0;
-    border-radius: 9px;
-    background: #f1f5f9;
-    color: #012169;
-    font-size: 12px;
+
+    border-radius: 11px;
+
+    background: #eff6ff;
+
+    color: var(--blue);
+
+    font-size: 15px;
 }
 
 .finance-period-metric-value {
     display: block;
-    margin-top: 13px;
-    overflow: hidden;
-    color: #0f172a;
-    font-size: 19px;
+
+    margin-top: 16px;
+
+    color: var(--heading);
+
+    font-size: 20px;
     font-weight: 800;
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+
+    line-height: 1.25;
+
+    font-variant-numeric: tabular-nums;
+
+    overflow-wrap: anywhere;
 }
 
 .finance-period-metric-note {
     display: block;
-    margin-top: 4px;
-    color: #94a3b8;
-    font-size: 10px;
+
+    margin-top: 6px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    line-height: 1.45;
 }
 
-
-/* =========================================================
-   5. COLLECTION RATE
-   ========================================================= */
-
 .finance-period-progress {
-    height: 5px;
+    width: 100%;
+    height: 6px;
+
+    margin-top: 13px;
+
     overflow: hidden;
-    margin-top: 10px;
-    border-radius: 10px;
-    background: #e2e8f0;
+
+    border-radius: 999px;
+
+    background: #e8eef5;
 }
 
 .finance-period-progress span {
     display: block;
+
     height: 100%;
+
+    max-width: 100%;
+
     border-radius: inherit;
-    background: #012169;
+
+    background: var(--blue);
+
+    transition: width 0.4s ease;
 }
 
 
 /* =========================================================
-   6. SUMMARY
+   FINANCE SECONDARY SUMMARY
    ========================================================= */
 
 .finance-period-summary {
     display: grid;
+
     grid-template-columns:
         repeat(4, minmax(0, 1fr));
-    margin-bottom: 16px;
+
+    margin-bottom: 20px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+
     overflow: hidden;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    background: #ffffff;
 }
 
-.finance-period-summary > div {
+.finance-period-summary-item {
     min-width: 0;
-    padding: 15px 17px;
-    border-right: 1px solid #e2e8f0;
+
+    padding: 18px 20px;
+
+    border-right: 1px solid var(--border-light);
 }
 
-.finance-period-summary > div:last-child {
-    border-right: 0;
+.finance-period-summary-item:last-child {
+    border-right: none;
 }
 
-.finance-period-summary span {
+.finance-period-summary-label {
     display: block;
-    color: #94a3b8;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-}
 
-.finance-period-summary strong {
-    display: block;
-    margin-top: 5px;
-    color: #0f172a;
-    font-size: 15px;
-    font-weight: 800;
-}
+    color: var(--muted);
 
-.finance-period-summary small {
-    display: block;
-    margin-top: 3px;
-    color: #94a3b8;
     font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.7px;
+}
+
+.finance-period-summary-value {
+    display: block;
+
+    margin-top: 7px;
+
+    color: var(--heading);
+
+    font-size: 16px;
+    font-weight: 800;
+
+    font-variant-numeric: tabular-nums;
+
+    overflow-wrap: anywhere;
+}
+
+.finance-period-summary-description {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    line-height: 1.45;
 }
 
 
 /* =========================================================
-   7. CHART AREA
+   FINANCE PERIOD CHARTS
    ========================================================= */
 
 .finance-period-charts {
     display: grid;
+
     grid-template-columns:
-        minmax(0, 1.7fr)
-        minmax(300px, 1fr);
-    gap: 12px;
+        minmax(0, 1.35fr)
+        minmax(0, 0.85fr);
+
+    gap: 18px;
 }
 
 .finance-period-chart-card {
+    display: flex;
+    flex-direction: column;
+
     min-width: 0;
-    padding: 18px;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    background: #ffffff;
-    box-shadow:
-        0 4px 14px rgba(15, 23, 42, 0.035);
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+
+    overflow: hidden;
 }
 
 .finance-period-chart-heading {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+    padding: 19px 21px 0;
+}
+
+.finance-chart-eyebrow {
+    display: block;
+
+    color: var(--blue);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.8px;
 }
 
 .finance-period-chart-heading h3 {
-    margin: 0;
-    color: #0f172a;
-    font-size: 14px;
-    font-weight: 800;
+    margin: 5px 0 0;
+
+    color: var(--heading);
+
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .finance-period-chart-heading p {
     margin: 4px 0 0;
-    color: #94a3b8;
-    font-size: 10px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    line-height: 1.45;
 }
 
 .finance-period-chart {
     position: relative;
+
     width: 100%;
-    height: 285px;
+    height: 320px;
+
+    padding: 18px;
+}
+
+.finance-period-chart canvas {
+    display: block;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    max-width: 100%;
 }
 
 
 /* =========================================================
-   8. FINANCE RESPONSIVE
-   Component-specific rules only.
-   Global layout remains in responsive.css.
+   PRINCIPAL CHART PANELS
    ========================================================= */
 
-@media (max-width: 1100px) {
+.principal-chart-panel {
+    min-height: 100%;
+}
+
+.principal-chart-container {
+    position: relative;
+
+    width: 100%;
+    height: 330px;
+}
+
+.principal-chart-container canvas {
+    display: block;
+
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+/* =========================================================
+   PRINCIPAL ANALYSIS PANELS
+   ========================================================= */
+
+.principal-analysis-panel {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+    min-width: 0;
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+
+    overflow: hidden;
+}
+
+.principal-analysis-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 21px 22px 15px;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+.principal-analysis-header > div:first-child {
+    min-width: 0;
+}
+
+.principal-analysis-header h3 {
+    margin: 0;
+
+    color: var(--heading);
+
+    font-size: 17px;
+    font-weight: 700;
+
+    line-height: 1.35;
+}
+
+.principal-analysis-header p {
+    margin: 5px 0 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.principal-analysis-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    background: #eff6ff;
+
+    color: var(--blue);
+
+    font-size: 18px;
+}
+
+.principal-chart-wrap {
+    position: relative;
+
+    width: 100%;
+    height: 330px;
+
+    padding: 20px;
+}
+
+.principal-chart-wrap canvas {
+    display: block;
+
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+/* =========================================================
+   EXAMINATION SUMMARY
+   ========================================================= */
+
+.principal-exam-summary {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 0;
+
+    margin: 0 22px;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+.principal-exam-summary > div {
+    min-width: 0;
+
+    padding: 15px 10px;
+
+    border-right: 1px solid var(--border-light);
+
+    text-align: center;
+}
+
+.principal-exam-summary > div:first-child {
+    padding-left: 0;
+}
+
+.principal-exam-summary > div:last-child {
+    padding-right: 0;
+    border-right: none;
+}
+
+.principal-exam-summary span {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+.principal-exam-summary strong {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--heading);
+
+    font-size: 17px;
+    font-weight: 800;
+
+    font-variant-numeric: tabular-nums;
+}
+
+.principal-pass-rate {
+    color: var(--success) !important;
+}
+
+
+/* =========================================================
+   SEMESTER FILTER
+   ========================================================= */
+
+.principal-filter-card {
+    margin-bottom: 18px;
+
+    padding: 20px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.principal-filter-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--heading);
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.principal-filter-select {
+    min-height: 44px;
+
+    border-color: var(--border);
+
+    border-radius: var(--radius);
+
+    color: var(--text);
+
+    font-size: 13px;
+}
+
+.principal-filter-select:focus {
+    border-color: var(--blue);
+
+    box-shadow:
+        0 0 0 3px rgba(23, 105, 209, 0.10);
+}
+
+.principal-filter-button {
+    min-height: 44px;
+
+    border-color: var(--blue);
+
+    border-radius: var(--radius);
+
+    background: var(--blue);
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.principal-filter-button:hover {
+    border-color: var(--blue-dark);
+
+    background: var(--blue-dark);
+
+    color: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.principal-filter-button:focus-visible {
+    box-shadow:
+        0 0 0 3px rgba(23, 105, 209, 0.16);
+}
+
+
+/* =========================================================
+   SELECTED PERIOD
+   ========================================================= */
+
+.principal-selected-period {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 18px;
+
+    padding: 15px 18px;
+
+    background: #eff6ff;
+
+    border: 1px solid #dbeafe;
+
+    border-radius: 14px;
+}
+
+.principal-selected-period-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: var(--blue);
+
+    font-size: 17px;
+}
+
+.principal-selected-period span {
+    display: block;
+
+    color: var(--blue);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.8px;
+}
+
+.principal-selected-period strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--heading);
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   SEMESTER KPI CARDS
+   ========================================================= */
+
+.principal-period-kpis {
+    margin-bottom: 20px;
+}
+
+.principal-period-kpi {
+    display: flex;
+    align-items: center;
+
+    height: 100%;
+    min-width: 0;
+
+    gap: 14px;
+
+    padding: 18px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 16px;
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.principal-period-kpi:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+}
+
+.principal-period-kpi-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    background: #eff6ff;
+
+    color: var(--blue);
+
+    font-size: 17px;
+}
+
+.principal-period-kpi > div:last-child {
+    min-width: 0;
+}
+
+.principal-period-kpi span {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.6px;
+}
+
+.principal-period-kpi strong {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--heading);
+
+    font-size: 20px;
+    font-weight: 800;
+
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* =========================================================
+   LEADERSHIP SNAPSHOT
+   ========================================================= */
+
+.principal-snapshot {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 16px;
+}
+
+.principal-snapshot-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    background: #eff6ff;
+
+    color: var(--blue);
+
+    font-size: 20px;
+}
+
+.principal-snapshot h4 {
+    margin: 2px 0 0;
+
+    color: var(--heading);
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.principal-snapshot p {
+    margin: 7px 0 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET / SMALL DESKTOP
+   ========================================================= */
+
+@media (max-width: 1199px) {
 
     .finance-period-kpis {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
     }
 
-    .finance-period-charts {
-        grid-template-columns: 1fr;
+    .finance-period-summary {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
+
+    .finance-period-summary-item:nth-child(2) {
+        border-right: none;
+    }
+
+    .finance-period-summary-item:nth-child(-n + 2) {
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .finance-period-charts {
+        grid-template-columns:
+            1fr;
+    }
+
 }
 
 
-@media (max-width: 768px) {
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
 
-    .finance-period-header {
-        align-items: flex-start;
+@media (max-width: 991px) {
+
+    .principal-hero-content {
         flex-direction: column;
+        align-items: flex-start;
     }
 
-    .finance-period-current {
+    .principal-session {
         width: 100%;
+        min-width: 0;
+    }
+
+    .principal-hero-subtitle {
+        max-width: 100%;
     }
 
     .finance-period-form {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
-    .finance-period-kpis {
-        grid-template-columns: 1fr;
+    .finance-period-action {
+        min-width: 0;
+        grid-column: 1 / -1;
     }
 
-    .finance-period-summary {
-        grid-template-columns: 1fr 1fr;
+    .principal-chart-container {
+        height: 320px;
     }
 
-    .finance-period-summary > div:nth-child(2) {
-        border-right: 0;
-    }
-
-    .finance-period-summary > div:nth-child(-n+2) {
-        border-bottom: 1px solid #e2e8f0;
-    }
 }
 
 
-@media (max-width: 576px) {
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .principal-hero {
+        padding: 25px;
+
+        border-radius: 20px;
+    }
+
+    .principal-hero-title {
+        font-size: 27px;
+    }
+
+    .principal-hero-subtitle {
+        font-size: 13px;
+    }
+
+    .principal-section-heading {
+        align-items: flex-start;
+    }
+
+    .principal-section-title {
+        font-size: 19px;
+    }
+
+    .principal-kpi-card {
+        padding: 19px;
+    }
+
+    .principal-kpi-value {
+        font-size: 27px;
+    }
+
+    .principal-panel-header {
+        min-height: auto;
+        padding: 17px 18px;
+    }
+
+    .principal-panel-body {
+        padding: 18px;
+    }
+
+    .principal-chart-container {
+        height: 300px;
+    }
+
+    .principal-chart-wrap {
+        height: 300px;
+        padding: 16px;
+    }
+
+    .principal-analysis-header {
+        padding: 18px;
+    }
+
+    .principal-exam-summary {
+        margin: 0 18px;
+    }
+
+    .principal-exam-summary > div {
+        padding: 13px 7px;
+    }
+
+    .principal-exam-summary span {
+        font-size: 9px;
+    }
+
+    .principal-exam-summary strong {
+        font-size: 15px;
+    }
+
+    .finance-period-current {
+        min-width: 0;
+
+        text-align: left;
+    }
+
+    .finance-period-header {
+        align-items: flex-start;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 575px) {
+
+    .principal-hero {
+        padding: 20px;
+
+        border-radius: 18px;
+    }
+
+    .principal-eyebrow {
+        font-size: 10px;
+    }
+
+    .principal-hero-title {
+        font-size: 24px;
+    }
+
+    .principal-hero-subtitle {
+        margin-top: 8px;
+
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .principal-session {
+        padding: 14px;
+    }
+
+    .principal-session-icon {
+        width: 40px;
+        height: 40px;
+
+        border-radius: 11px;
+
+        font-size: 16px;
+    }
+
+    .principal-session-content strong {
+        font-size: 13px;
+    }
+
+    .principal-section {
+        margin-bottom: 24px;
+    }
+
+    .principal-section-title {
+        font-size: 18px;
+    }
+
+    .principal-section-subtitle {
+        font-size: 12px;
+    }
+
+    .principal-kpi-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .principal-kpi-icon {
+        width: 48px;
+        height: 48px;
+
+        border-radius: 13px;
+
+        font-size: 20px;
+    }
+
+    .principal-kpi-label {
+        font-size: 12px;
+    }
+
+    .principal-kpi-value {
+        margin-top: 14px;
+
+        font-size: 24px;
+    }
+
+    .principal-kpi-note {
+        font-size: 11px;
+    }
+
+    .principal-panel {
+        border-radius: 16px;
+    }
+
+    .principal-panel-header {
+        padding: 15px 16px;
+    }
+
+    .principal-panel-title {
+        font-size: 14px;
+    }
+
+    .principal-panel-body {
+        padding: 16px;
+    }
+
+    .principal-overview-row {
+        gap: 12px;
+
+        padding: 12px 0;
+    }
+
+    .principal-overview-label {
+        font-size: 12px;
+    }
+
+    .principal-overview-value {
+        font-size: 15px;
+    }
+
+    .principal-finance-card {
+        padding: 16px;
+
+        border-radius: 14px;
+    }
+
+    .principal-finance-icon {
+        width: 46px;
+        height: 46px;
+
+        border-radius: 12px;
+
+        font-size: 18px;
+    }
+
+    .principal-finance-value {
+        font-size: 17px;
+    }
+
+    .finance-period-filter {
+        padding: 16px;
+
+        border-radius: 16px;
+    }
+
+    .finance-period-form {
+        grid-template-columns:
+            1fr;
+    }
+
+    .finance-period-action {
+        grid-column: auto;
+    }
+
+    .finance-period-kpis {
+        grid-template-columns:
+            1fr;
+    }
+
+    .finance-period-metric {
+        padding: 17px;
+
+        border-radius: 16px;
+    }
+
+    .finance-period-metric-value {
+        font-size: 18px;
+    }
 
     .finance-period-summary {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
+
+        border-radius: 16px;
     }
 
-    .finance-period-summary > div {
-        border-right: 0;
-        border-bottom: 1px solid #e2e8f0;
+    .finance-period-summary-item {
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
     }
 
-    .finance-period-summary > div:last-child {
-        border-bottom: 0;
+    .finance-period-summary-item:last-child {
+        border-bottom: none;
     }
 
-    .finance-period-title {
-        font-size: 21px;
+    .finance-period-chart-card {
+        border-radius: 16px;
     }
+
+    .finance-period-chart-heading {
+        padding: 17px 17px 0;
+    }
+
+    .finance-period-chart {
+        height: 270px;
+        padding: 12px;
+    }
+
+    .principal-chart-container {
+        height: 270px;
+    }
+
+    .principal-chart-wrap {
+        height: 270px;
+        padding: 12px;
+    }
+
+    .principal-analysis-header {
+        gap: 12px;
+
+        padding: 16px;
+    }
+
+    .principal-analysis-header h3 {
+        font-size: 15px;
+    }
+
+    .principal-analysis-icon {
+        width: 40px;
+        height: 40px;
+
+        border-radius: 11px;
+
+        font-size: 16px;
+    }
+
+    .principal-exam-summary {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        margin: 0 16px;
+    }
+
+    .principal-exam-summary > div {
+        padding: 12px 8px;
+
+        border-right: 1px solid var(--border-light);
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .principal-exam-summary > div:nth-child(2) {
+        border-right: none;
+    }
+
+    .principal-exam-summary > div:nth-child(3),
+    .principal-exam-summary > div:nth-child(4) {
+        border-bottom: none;
+    }
+
+    .principal-exam-summary > div:nth-child(4) {
+        border-right: none;
+    }
+
+    .principal-period-kpi {
+        padding: 16px;
+    }
+
+    .principal-period-kpi-icon {
+        width: 42px;
+        height: 42px;
+
+        border-radius: 11px;
+    }
+
+    .principal-period-kpi strong {
+        font-size: 18px;
+    }
+
+    .principal-selected-period {
+        align-items: flex-start;
+
+        padding: 13px 14px;
+    }
+
+    .principal-selected-period-icon {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 10px;
+    }
+
+    .principal-snapshot {
+        gap: 12px;
+    }
+
+    .principal-snapshot-icon {
+        width: 45px;
+        height: 45px;
+
+        border-radius: 12px;
+
+        font-size: 17px;
+    }
+
+    .principal-snapshot h4 {
+        font-size: 14px;
+    }
+
+    .principal-snapshot p {
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .principal-hero {
+        padding: 18px;
+    }
+
+    .principal-hero-title {
+        font-size: 22px;
+    }
+
+    .principal-eyebrow {
+        letter-spacing: 0.8px;
+    }
+
+    .principal-session {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .principal-session-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .principal-kpi-card {
+        padding: 14px;
+    }
+
+    .principal-kpi-icon {
+        width: 44px;
+        height: 44px;
+
+        font-size: 18px;
+    }
+
+    .principal-kpi-value {
+        font-size: 22px;
+    }
+
+    .principal-panel-header {
+        padding: 14px;
+    }
+
+    .principal-panel-body {
+        padding: 14px;
+    }
+
+    .principal-finance-card {
+        gap: 11px;
+
+        padding: 14px;
+    }
+
+    .principal-finance-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .principal-finance-value {
+        font-size: 16px;
+    }
+
+    .finance-period-metric {
+        padding: 15px;
+    }
+
+    .finance-period-metric-icon {
+        width: 34px;
+        height: 34px;
+    }
+
+    .finance-period-chart {
+        height: 250px;
+    }
+
+    .principal-chart-container,
+    .principal-chart-wrap {
+        height: 250px;
+    }
+
+    .principal-analysis-header {
+        padding: 14px;
+    }
+
+    .principal-exam-summary {
+        margin: 0 14px;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .principal-kpi-card,
+    .principal-period-kpi,
+    .finance-analyse-btn {
+        transition: none;
+    }
+
+    .finance-period-progress span {
+        transition: none;
+    }
+
 }

@@ -6,381 +6,305 @@
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet"
-      href="{% static 'css/principal_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/principal_dashboard.css' %}">
 {% endblock %}
-
 
 {% block content %}
 
 <div class="principal-page">
 
-    <!-- =====================================================
-         PRINCIPAL HERO
-    ====================================================== -->
+    <!-- =========================================================
+         PRINCIPAL EXECUTIVE HERO
+    ========================================================== -->
 
-<section class="principal-hero mb-4">
+    <section class="principal-hero">
 
-    <div class="row align-items-center">
+        <div class="principal-hero-content">
 
-        <!-- =====================================================
-             LEFT — PRINCIPAL INTRODUCTION
-        ====================================================== -->
+            <!-- LEFT — PRINCIPAL INTRODUCTION -->
 
-        <div class="col-lg-8">
+            <div class="principal-hero-copy">
 
-            <div class="principal-eyebrow">
-                <i class="fa-solid fa-building-columns me-2"></i>
-                INSTITUTIONAL LEADERSHIP
+                <span class="principal-eyebrow">
+                    <i class="fa-solid fa-building-columns"></i>
+                    INSTITUTIONAL LEADERSHIP
+                </span>
+
+                <h1 class="principal-hero-title">
+                    Principal's Dashboard
+                </h1>
+
+                <p class="principal-hero-subtitle">
+                    Welcome,
+                    <strong>
+                        {{ user.get_full_name|default:user.username }}
+                    </strong>.
+                    Monitor institutional performance, academic activity,
+                    admissions, finance, examinations and graduation
+                    from one central view.
+                </p>
+
             </div>
 
-            <h1 class="principal-title">
-                Principal's Dashboard
-            </h1>
 
-            <p class="principal-subtitle">
-                Welcome,
-                <strong>
-                    {{ user.get_full_name|default:user.username }}
-                </strong>.
-                Monitor institutional performance, academic activity,
-                admissions, finance, examinations and graduation
-                from one central view.
-            </p>
+            <!-- RIGHT — ACADEMIC SESSION -->
 
-            <div class="principal-meta">
+            <div class="principal-session">
 
-                <span class="principal-badge">
-                    <span class="principal-status-dot"></span>
-                    Institutional Overview
-                </span>
+                <div class="principal-session-icon">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
 
-                <span class="principal-badge">
-                    <i class="fa-solid fa-chart-line"></i>
-                    Executive View
-                </span>
+                <div class="principal-session-content">
+
+                    <span>
+                        Academic Session
+                    </span>
+
+                    <strong>
+                        {% if active_year %}
+                            {{ active_year }}
+                        {% else %}
+                            Academic Year Not Set
+                        {% endif %}
+                    </strong>
+
+                    <small>
+                        {% if active_semester %}
+                            {{ active_semester }}
+                        {% else %}
+                            Semester Not Set
+                        {% endif %}
+                    </small>
+
+                </div>
 
             </div>
 
         </div>
 
+    </section>
 
-        <!-- =====================================================
-             RIGHT — ACADEMIC PERIOD PANEL
-        ====================================================== -->
 
-        <div class="col-lg-4">
+    <!-- =========================================================
+         INSTITUTIONAL OVERVIEW
+    ========================================================== -->
 
-            <div class="principal-period-card">
+    <section class="principal-section">
 
-                <!-- Animated background elements -->
+        <div class="principal-section-heading">
 
-                <div class="principal-orbit orbit-one"></div>
-                <div class="principal-orbit orbit-two"></div>
+            <div>
+                <h2 class="principal-section-title">
+                    Institutional Overview
+                </h2>
 
-                <div class="principal-period-content">
+                <p class="principal-section-subtitle">
+                    High-level indicators across the institution.
+                </p>
+            </div>
 
-                    <div class="principal-period-icon">
-                        <i class="fa-solid fa-calendar-days"></i>
-                    </div>
+        </div>
 
-                    <!-- Academic Year -->
 
-                    <div class="principal-period-item">
+        <div class="row g-4">
 
-                        <div class="principal-period-item-icon">
-                            <i class="fa-solid fa-calendar"></i>
+            <!-- TOTAL STUDENTS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="principal-kpi-card">
+
+                    <div class="principal-kpi-top">
+
+                        <div class="principal-kpi-icon principal-kpi-students">
+                            <i class="fa-solid fa-user-graduate"></i>
                         </div>
 
-                        <div class="principal-period-item-content">
-
-                            <span>
-                                Academic Year
-                            </span>
-
-                            <strong>
-                                {% if active_year %}
-                                    {{ active_year }}
-                                {% else %}
-                                    Not Set
-                                {% endif %}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Semester -->
-
-                    <div class="principal-period-item">
-
-                        <div class="principal-period-item-icon">
-                            <i class="fa-solid fa-layer-group"></i>
-                        </div>
-
-                        <div class="principal-period-item-content">
-
-                            <span>
-                                Current Semester
-                            </span>
-
-                            <strong>
-                                {% if active_semester %}
-                                    {{ active_semester }}
-                                {% else %}
-                                    Not Set
-                                {% endif %}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Status -->
-
-                    <div class="principal-period-status">
-
-                        <span class="principal-live-dot"></span>
-
-                        <span>
-                            Academic Period Active
+                        <span class="principal-kpi-label">
+                            Students
                         </span>
 
                     </div>
 
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-    <!-- =====================================================
-         INSTITUTIONAL OVERVIEW
-    ====================================================== -->
-
-    <div class="principal-section-heading mb-3">
-
-        <div>
-
-            <h2 class="principal-section-title">
-                Institutional Overview
-            </h2>
-
-            <p class="principal-section-subtitle mb-0">
-                High-level indicators across the institution.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="row g-4 mb-4">
-
-        <!-- TOTAL STUDENTS -->
-
-        <div class="col-xl-3 col-md-6">
-
-            <div class="principal-kpi-card">
-
-                <div class="principal-kpi-top">
-
-                    <div class="principal-kpi-icon">
-                        <i class="fa-solid fa-user-graduate"></i>
+                    <div class="principal-kpi-value">
+                        {{ total_students|default:0 }}
                     </div>
 
-                    <span class="principal-kpi-label">
-                        Students
-                    </span>
-
-                </div>
-
-                <div class="principal-kpi-value">
-                    {{ total_students|default:0 }}
-                </div>
-
-                <div class="principal-kpi-note">
-                    Total students in the institution
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- PROGRAMMES -->
-
-        <div class="col-xl-3 col-md-6">
-
-            <div class="principal-kpi-card">
-
-                <div class="principal-kpi-top">
-
-                    <div class="principal-kpi-icon">
-                        <i class="fa-solid fa-graduation-cap"></i>
+                    <div class="principal-kpi-note">
+                        Total students in the institution
                     </div>
 
-                    <span class="principal-kpi-label">
-                        Programmes
-                    </span>
-
-                </div>
-
-                <div class="principal-kpi-value">
-                    {{ total_programmes|default:0 }}
-                </div>
-
-                <div class="principal-kpi-note">
-                    Active academic programmes
                 </div>
 
             </div>
 
-        </div>
 
+            <!-- PROGRAMMES -->
 
-        <!-- DEPARTMENTS -->
+            <div class="col-xl-3 col-md-6">
 
-        <div class="col-xl-3 col-md-6">
+                <div class="principal-kpi-card">
 
-            <div class="principal-kpi-card">
+                    <div class="principal-kpi-top">
 
-                <div class="principal-kpi-top">
+                        <div class="principal-kpi-icon principal-kpi-programmes">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
 
-                    <div class="principal-kpi-icon">
-                        <i class="fa-solid fa-sitemap"></i>
+                        <span class="principal-kpi-label">
+                            Programmes
+                        </span>
+
                     </div>
 
-                    <span class="principal-kpi-label">
-                        Departments
-                    </span>
-
-                </div>
-
-                <div class="principal-kpi-value">
-                    {{ total_departments|default:0 }}
-                </div>
-
-                <div class="principal-kpi-note">
-                    Academic departments
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ENROLLMENTS -->
-
-        <div class="col-xl-3 col-md-6">
-
-            <div class="principal-kpi-card">
-
-                <div class="principal-kpi-top">
-
-                    <div class="principal-kpi-icon">
-                        <i class="fa-solid fa-user-check"></i>
+                    <div class="principal-kpi-value">
+                        {{ total_programmes|default:0 }}
                     </div>
 
-                    <span class="principal-kpi-label">
-                        Enrollments
-                    </span>
+                    <div class="principal-kpi-note">
+                        Active academic programmes
+                    </div>
 
                 </div>
 
-                <div class="principal-kpi-value">
-                    {{ total_enrollments|default:0 }}
+            </div>
+
+
+            <!-- DEPARTMENTS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="principal-kpi-card">
+
+                    <div class="principal-kpi-top">
+
+                        <div class="principal-kpi-icon principal-kpi-departments">
+                            <i class="fa-solid fa-sitemap"></i>
+                        </div>
+
+                        <span class="principal-kpi-label">
+                            Departments
+                        </span>
+
+                    </div>
+
+                    <div class="principal-kpi-value">
+                        {{ total_departments|default:0 }}
+                    </div>
+
+                    <div class="principal-kpi-note">
+                        Academic departments
+                    </div>
+
                 </div>
 
-                <div class="principal-kpi-note">
-                    Semester enrollments
+            </div>
+
+
+            <!-- ENROLLMENTS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="principal-kpi-card">
+
+                    <div class="principal-kpi-top">
+
+                        <div class="principal-kpi-icon principal-kpi-enrollments">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+
+                        <span class="principal-kpi-label">
+                            Enrollments
+                        </span>
+
+                    </div>
+
+                    <div class="principal-kpi-value">
+                        {{ total_enrollments|default:0 }}
+                    </div>
+
+                    <div class="principal-kpi-note">
+                        Semester enrollments
+                    </div>
+
                 </div>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
 
 
-    <!-- =====================================================
+    <!-- =========================================================
          INSTITUTIONAL PERFORMANCE
-    ====================================================== -->
+    ========================================================== -->
 
-    <div class="row g-4 mb-4">
+    <section class="principal-section">
 
-        <!-- ADMISSIONS -->
+        <div class="row g-4">
 
-        <div class="col-xl-4 col-lg-6">
+            <!-- ADMISSIONS -->
 
-            <div class="principal-panel">
+            <div class="col-xl-4 col-lg-6">
 
-                <div class="principal-panel-header">
+                <div class="principal-panel">
 
-                    <div>
-
-                        <h3 class="principal-panel-title">
-                            <i class="fa-solid fa-user-plus me-2"></i>
-                            Admissions
-                        </h3>
-
-                        <p class="principal-panel-subtitle mb-0">
-                            Applicant pipeline
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="principal-panel-body">
-
-                    <div class="principal-overview-row">
+                    <div class="principal-panel-header">
 
                         <div>
+
+                            <h3 class="principal-panel-title">
+                                <i class="fa-solid fa-user-plus"></i>
+                                Admissions
+                            </h3>
+
+                            <p class="principal-panel-subtitle">
+                                Applicant pipeline
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="principal-panel-body">
+
+                        <div class="principal-overview-row">
+
                             <span class="principal-overview-label">
                                 Total Applicants
                             </span>
+
+                            <strong class="principal-overview-value">
+                                {{ total_applicants|default:0 }}
+                            </strong>
+
                         </div>
 
-                        <strong class="principal-overview-value">
-                            {{ total_applicants|default:0 }}
-                        </strong>
+                        <div class="principal-overview-row">
 
-                    </div>
-
-                    <div class="principal-overview-row">
-
-                        <div>
                             <span class="principal-overview-label">
                                 Pending
                             </span>
+
+                            <strong class="principal-overview-value">
+                                {{ pending_applicants|default:0 }}
+                            </strong>
+
                         </div>
 
-                        <strong class="principal-overview-value">
-                            {{ pending_applicants|default:0 }}
-                        </strong>
+                        <div class="principal-overview-row">
 
-                    </div>
-
-                    <div class="principal-overview-row">
-
-                        <div>
                             <span class="principal-overview-label">
                                 Approved
                             </span>
-                        </div>
 
-                        <strong class="principal-overview-value">
-                            {{ approved_applicants|default:0 }}
-                        </strong>
+                            <strong class="principal-overview-value">
+                                {{ approved_applicants|default:0 }}
+                            </strong>
+
+                        </div>
 
                     </div>
 
@@ -388,73 +312,67 @@
 
             </div>
 
-        </div>
 
+            <!-- EXAMINATION -->
 
-        <!-- EXAMINATION -->
+            <div class="col-xl-4 col-lg-6">
 
-        <div class="col-xl-4 col-lg-6">
+                <div class="principal-panel">
 
-            <div class="principal-panel">
+                    <div class="principal-panel-header">
 
-                <div class="principal-panel-header">
+                        <div>
 
-                    <div>
+                            <h3 class="principal-panel-title">
+                                <i class="fa-solid fa-file-circle-check"></i>
+                                Examination
+                            </h3>
 
-                        <h3 class="principal-panel-title">
-                            <i class="fa-solid fa-file-circle-check me-2"></i>
-                            Examination
-                        </h3>
+                            <p class="principal-panel-subtitle">
+                                Results workflow
+                            </p>
 
-                        <p class="principal-panel-subtitle mb-0">
-                            Results workflow
-                        </p>
+                        </div>
 
                     </div>
 
-                </div>
+                    <div class="principal-panel-body">
 
-                <div class="principal-panel-body">
+                        <div class="principal-overview-row">
 
-                    <div class="principal-overview-row">
-
-                        <div>
                             <span class="principal-overview-label">
                                 Result Batches
                             </span>
+
+                            <strong class="principal-overview-value">
+                                {{ total_result_batches|default:0 }}
+                            </strong>
+
                         </div>
 
-                        <strong class="principal-overview-value">
-                            {{ total_result_batches|default:0 }}
-                        </strong>
+                        <div class="principal-overview-row">
 
-                    </div>
-
-                    <div class="principal-overview-row">
-
-                        <div>
                             <span class="principal-overview-label">
                                 Pending Workflow
                             </span>
+
+                            <strong class="principal-overview-value">
+                                {{ pending_result_batches|default:0 }}
+                            </strong>
+
                         </div>
 
-                        <strong class="principal-overview-value">
-                            {{ pending_result_batches|default:0 }}
-                        </strong>
+                        <div class="principal-overview-row">
 
-                    </div>
-
-                    <div class="principal-overview-row">
-
-                        <div>
                             <span class="principal-overview-label">
                                 Published
                             </span>
-                        </div>
 
-                        <strong class="principal-overview-value">
-                            {{ published_result_batches|default:0 }}
-                        </strong>
+                            <strong class="principal-overview-value">
+                                {{ published_result_batches|default:0 }}
+                            </strong>
+
+                        </div>
 
                     </div>
 
@@ -462,196 +380,65 @@
 
             </div>
 
-        </div>
 
+            <!-- GRADUATION -->
 
-        <!-- GRADUATION -->
+            <div class="col-xl-4 col-lg-12">
 
-        <div class="col-xl-4 col-lg-12">
+                <div class="principal-panel">
 
-            <div class="principal-panel">
+                    <div class="principal-panel-header">
 
-                <div class="principal-panel-header">
+                        <div>
 
-                    <div>
+                            <h3 class="principal-panel-title">
+                                <i class="fa-solid fa-award"></i>
+                                Graduation
+                            </h3>
 
-                        <h3 class="principal-panel-title">
-                            <i class="fa-solid fa-award me-2"></i>
-                            Graduation
-                        </h3>
+                            <p class="principal-panel-subtitle">
+                                Graduation pipeline
+                            </p>
 
-                        <p class="principal-panel-subtitle mb-0">
-                            Graduation pipeline
-                        </p>
+                        </div>
 
                     </div>
 
-                </div>
+                    <div class="principal-panel-body">
 
-                <div class="principal-panel-body">
+                        <div class="principal-overview-row">
 
-                    <div class="principal-overview-row">
-
-                        <div>
                             <span class="principal-overview-label">
                                 Total Records
                             </span>
+
+                            <strong class="principal-overview-value">
+                                {{ total_graduands|default:0 }}
+                            </strong>
+
                         </div>
 
-                        <strong class="principal-overview-value">
-                            {{ total_graduands|default:0 }}
-                        </strong>
+                        <div class="principal-overview-row">
 
-                    </div>
-
-                    <div class="principal-overview-row">
-
-                        <div>
                             <span class="principal-overview-label">
                                 Eligible
                             </span>
+
+                            <strong class="principal-overview-value">
+                                {{ eligible_graduands|default:0 }}
+                            </strong>
+
                         </div>
 
-                        <strong class="principal-overview-value">
-                            {{ eligible_graduands|default:0 }}
-                        </strong>
+                        <div class="principal-overview-row">
 
-                    </div>
-
-                    <div class="principal-overview-row">
-
-                        <div>
                             <span class="principal-overview-label">
                                 Graduated
                             </span>
-                        </div>
 
-                        <strong class="principal-overview-value">
-                            {{ graduated_students|default:0 }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         FINANCIAL POSITION
-    ====================================================== -->
-
-    <div class="row g-4 mb-4">
-
-        <div class="col-12">
-
-            <div class="principal-panel principal-finance-panel">
-
-                <div class="principal-panel-header">
-
-                    <div>
-
-                        <h3 class="principal-panel-title">
-                            <i class="fa-solid fa-coins me-2"></i>
-                            Current Financial Position
-                        </h3>
-
-                        <p class="principal-panel-subtitle mb-0">
-                            High-level institutional revenue position
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="principal-panel-body">
-
-                    <div class="row g-4">
-
-                        <!-- COLLECTIONS -->
-
-                        <div class="col-xl-4 col-md-6">
-
-                            <div class="principal-finance-card">
-
-                                <div class="principal-finance-icon">
-                                    <i class="fa-solid fa-money-bill-trend-up"></i>
-                                </div>
-
-                                <div>
-
-                                    <div class="principal-finance-label">
-                                        Total Collections
-                                    </div>
-
-                                    <div class="principal-finance-value">
-                                        KSh
-                                        {{ total_collections|default:0|floatformat:2 }}
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- EXPECTED -->
-
-                        <div class="col-xl-4 col-md-6">
-
-                            <div class="principal-finance-card">
-
-                                <div class="principal-finance-icon">
-                                    <i class="fa-solid fa-bullseye"></i>
-                                </div>
-
-                                <div>
-
-                                    <div class="principal-finance-label">
-                                        Expected Revenue
-                                    </div>
-
-                                    <div class="principal-finance-value">
-                                        KSh
-                                        {{ expected_revenue|default:0|floatformat:2 }}
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- OUTSTANDING -->
-
-                        <div class="col-xl-4 col-md-12">
-
-                            <div class="principal-finance-card">
-
-                                <div class="principal-finance-icon">
-                                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                                </div>
-
-                                <div>
-
-                                    <div class="principal-finance-label">
-                                        Outstanding Balance
-                                    </div>
-
-                                    <div class="principal-finance-value">
-                                        KSh
-                                        {{ outstanding_balance|default:0|floatformat:2 }}
-                                    </div>
-
-                                </div>
-
-                            </div>
+                            <strong class="principal-overview-value">
+                                {{ graduated_students|default:0 }}
+                            </strong>
 
                         </div>
 
@@ -663,62 +450,187 @@
 
         </div>
 
-    </div>
-    
-<!-- =========================================================
-     FINANCE PERIOD PERFORMANCE
-========================================================= -->
+    </section>
 
-<section
-    id="finance-period-performance"
-    class="finance-period-performance mb-4"
->
 
-    <!-- SECTION HEADER -->
-    <div class="finance-period-header">
+    <!-- =========================================================
+         CURRENT FINANCIAL POSITION
+    ========================================================== -->
 
-        <div>
+    <section class="principal-section">
 
-            <div class="finance-period-eyebrow">
-                FINANCIAL ANALYTICS
+        <div class="principal-panel principal-finance-panel">
+
+            <div class="principal-panel-header">
+
+                <div>
+
+                    <h3 class="principal-panel-title">
+                        <i class="fa-solid fa-coins"></i>
+                        Current Financial Position
+                    </h3>
+
+                    <p class="principal-panel-subtitle">
+                        High-level institutional revenue position
+                    </p>
+
+                </div>
+
             </div>
 
-            <h2 class="finance-period-title">
-                Finance Period Performance
-            </h2>
 
-            <p class="finance-period-description">
-                Analyse billing, collections and outstanding balances
-                across a selected academic period.
-            </p>
+            <div class="principal-panel-body">
+
+                <div class="row g-4">
+
+                    <!-- COLLECTIONS -->
+
+                    <div class="col-xl-4 col-md-6">
+
+                        <div class="principal-finance-card">
+
+                            <div class="principal-finance-icon principal-finance-collections">
+                                <i class="fa-solid fa-money-bill-trend-up"></i>
+                            </div>
+
+                            <div>
+
+                                <div class="principal-finance-label">
+                                    Total Collections
+                                </div>
+
+                                <div class="principal-finance-value">
+                                    KSh
+                                    {{ total_collections|default:0|floatformat:2 }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EXPECTED -->
+
+                    <div class="col-xl-4 col-md-6">
+
+                        <div class="principal-finance-card">
+
+                            <div class="principal-finance-icon principal-finance-expected">
+                                <i class="fa-solid fa-bullseye"></i>
+                            </div>
+
+                            <div>
+
+                                <div class="principal-finance-label">
+                                    Expected Revenue
+                                </div>
+
+                                <div class="principal-finance-value">
+                                    KSh
+                                    {{ expected_revenue|default:0|floatformat:2 }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OUTSTANDING -->
+
+                    <div class="col-xl-4 col-md-12">
+
+                        <div class="principal-finance-card">
+
+                            <div class="principal-finance-icon principal-finance-outstanding">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                            </div>
+
+                            <div>
+
+                                <div class="principal-finance-label">
+                                    Outstanding Balance
+                                </div>
+
+                                <div class="principal-finance-value">
+                                    KSh
+                                    {{ outstanding_balance|default:0|floatformat:2 }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
-        {% if selected_finance_year and selected_finance_semester %}
+    </section>
 
-            <div class="finance-period-current">
 
-                <span>
-                    CURRENT ANALYSIS
+    <!-- =========================================================
+         FINANCE PERIOD PERFORMANCE
+    ========================================================== -->
+
+    <section
+        id="finance-periods-performance"
+        class="principal-section finance-period-performance"
+    >
+
+
+    <div  id="finance-period-performance"
+        class="principal-section finance-period-performance">
+        <!-- SECTION HEADER -->
+
+        <div class="principal-section-heading finance-period-header">
+
+            <div>
+
+                <span class="principal-section-eyebrow">
+                    FINANCIAL ANALYTICS
                 </span>
 
-                <strong>
-                    {{ selected_finance_year.year_name }}
-                </strong>
+                <h2 class="principal-section-title">
+                    Finance Period Performance
+                </h2>
 
-                <small>
-                    {{ selected_finance_semester.semester_name }}
-                </small>
+                <p class="principal-section-subtitle">
+                    Analyse billing, collections and outstanding balances
+                    across a selected academic period.
+                </p>
 
             </div>
 
-        {% endif %}
+            {% if selected_finance_year and selected_finance_semester %}
 
-    </div>
+                <div class="finance-period-current">
 
-<!-- =====================================================
-     FILTER PANEL
-====================================================== -->
+                    <span>
+                        CURRENT ANALYSIS
+                    </span>
+
+                    <strong>
+                        {{ selected_finance_year.year_name }}
+                    </strong>
+
+                    <small>
+                        {{ selected_finance_semester.semester_name }}
+                    </small>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+<!-- FILTER PANEL -->
 
 <div class="finance-period-filter">
 
@@ -782,18 +694,13 @@
 
                     <option
                         value="{{ semester.id }}"
-                        data-year="{{ semester.academic_year_id }}"
+                        data-academic-year-id="{{ semester.academic_year_id }}"
+                        data-semester-name="{{ semester.semester_name }}"
                         {% if selected_finance_semester and selected_finance_semester.id == semester.id %}
                             selected
                         {% endif %}
                     >
                         {{ semester.semester_name }}
-                    </option>
-
-                {% empty %}
-
-                    <option value="">
-                        No semesters available
                     </option>
 
                 {% endfor %}
@@ -810,7 +717,6 @@
                 class="finance-analyse-btn"
                 id="financeAnalyseBtn"
             >
-
                 <i class="fa-solid fa-chart-simple"></i>
 
                 <span>
@@ -826,513 +732,279 @@
 </div>
 
 
-    <!-- =====================================================
-         KPI GRID
-    ====================================================== -->
+        <!-- FINANCE KPI GRID -->
 
-    <div class="finance-period-kpis">
+        <div class="finance-period-kpis">
 
-        <!-- BILLED -->
+            <!-- BILLED -->
 
-        <div class="finance-period-metric">
+            <div class="finance-period-metric">
 
-            <div class="finance-period-metric-top">
+                <div class="finance-period-metric-top">
 
-                <span class="finance-period-metric-label">
-                    TOTAL BILLED
-                </span>
-
-                <div class="finance-period-metric-icon">
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                </div>
-
-            </div>
-
-            <strong class="finance-period-metric-value">
-                KSh {{ period_gross_invoiced|floatformat:2 }}
-            </strong>
-
-            <span class="finance-period-metric-note">
-                Posted invoices
-            </span>
-
-        </div>
-
-
-        <!-- COLLECTED -->
-
-        <div class="finance-period-metric">
-
-            <div class="finance-period-metric-top">
-
-                <span class="finance-period-metric-label">
-                    FEES COLLECTED
-                </span>
-
-                <div class="finance-period-metric-icon">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                </div>
-
-            </div>
-
-            <strong class="finance-period-metric-value">
-                KSh {{ period_collected|floatformat:2 }}
-            </strong>
-
-            <span class="finance-period-metric-note">
-                Posted payments
-            </span>
-
-        </div>
-
-
-        <!-- OUTSTANDING -->
-
-        <div class="finance-period-metric">
-
-            <div class="finance-period-metric-top">
-
-                <span class="finance-period-metric-label">
-                    OUTSTANDING
-                </span>
-
-                <div class="finance-period-metric-icon">
-                    <i class="fa-solid fa-wallet"></i>
-                </div>
-
-            </div>
-
-            <strong class="finance-period-metric-value">
-                KSh {{ period_outstanding|floatformat:2 }}
-            </strong>
-
-            <span class="finance-period-metric-note">
-                Unsettled invoice balance
-            </span>
-
-        </div>
-
-
-        <!-- COLLECTION RATE -->
-
-        <div class="finance-period-metric finance-period-rate">
-
-            <div class="finance-period-metric-top">
-
-                <span class="finance-period-metric-label">
-                    COLLECTION RATE
-                </span>
-
-                <div class="finance-period-metric-icon">
-                    <i class="fa-solid fa-percent"></i>
-                </div>
-
-            </div>
-
-            <strong class="finance-period-metric-value">
-                {{ period_collection_rate|floatformat:2 }}%
-            </strong>
-
-            <div class="finance-period-progress">
-
-                <span
-                    style="width: {{ period_collection_rate }}%;"
-                ></span>
-
-            </div>
-
-            <span class="finance-period-metric-note">
-                Settlement performance
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         SECONDARY METRICS
-    ====================================================== -->
-
-    <div class="finance-period-summary">
-
-        <div class="finance-period-summary-item">
-
-            <span class="finance-period-summary-label">
-                SETTLED VALUE
-            </span>
-
-            <strong class="finance-period-summary-value">
-                KSh {{ period_settled_value|floatformat:2 }}
-            </strong>
-
-            <small class="finance-period-summary-description">
-                KSh {{ period_collected|floatformat:2 }}
-                payment +
-                KSh {{ period_previous_credit_applied|floatformat:2 }}
-                previous credit
-            </small>
-
-        </div>
-
-
-        <div>
-
-            <span>
-                PENDING INVOICES
-            </span>
-
-            <strong>
-                {{ period_pending_invoices }}
-            </strong>
-
-            <small>
-                Invoices with balances
-            </small>
-
-        </div>
-
-
-        <div>
-
-            <span>
-                CLEARED INVOICES
-            </span>
-
-            <strong>
-                {{ period_cleared_invoices }}
-            </strong>
-
-            <small>
-                Fully settled
-            </small>
-
-        </div>
-
-
-        <div>
-
-            <span>
-                TOTAL INVOICES
-            </span>
-
-            <strong>
-                {{ period_invoice_count }}
-            </strong>
-
-            <small>
-                Posted invoices
-            </small>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         CHARTS
-    ====================================================== -->
-
-    <div class="finance-period-charts">
-
-        <!-- COLLECTION CHART -->
-
-        <div class="finance-period-chart-card">
-
-            <div class="finance-period-chart-heading">
-
-                <div>
-
-                    <span class="finance-chart-eyebrow">
-                        COLLECTION ANALYSIS
+                    <span class="finance-period-metric-label">
+                        TOTAL BILLED
                     </span>
 
-                    <h3>
-                        Billing vs Collection
-                    </h3>
-
-                    <p>
-                        Financial performance across recent academic
-                        periods.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="finance-period-chart">
-
-                <canvas
-                    id="financePeriodCollectionChart"
-                    data-labels='{{ period_comparison_labels|safe }}'
-                    data-billed='{{ period_billed_values|safe }}'
-                    data-collected='{{ period_collected_values|safe }}'
-                ></canvas>
-
-            </div>
-
-        </div>
-
-
-        <!-- RATE CHART -->
-
-        <div class="finance-period-chart-card finance-period-rate-chart">
-
-            <div class="finance-period-chart-heading">
-
-                <div>
-
-                    <span class="finance-chart-eyebrow">
-                        EFFICIENCY
-                    </span>
-
-                    <h3>
-                        Collection Rate
-                    </h3>
-
-                    <p>
-                        Settlement rate across academic periods.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="finance-period-chart">
-
-                <canvas
-                    id="financePeriodRateChart"
-                    data-labels='{{ period_comparison_labels|safe }}'
-                    data-values='{{ period_collection_rate_values|safe }}'
-                ></canvas>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-    <!-- =====================================================
-         CHARTS
-    ====================================================== -->
-
-    <div class="row g-4 mb-4">
-
-        <!-- ADMISSIONS CHART -->
-
-        <div class="col-xl-5">
-
-            <div class="principal-panel">
-
-                <div class="principal-panel-header">
-
-                    <h3 class="principal-panel-title">
-                        <i class="fa-solid fa-chart-pie me-2"></i>
-                        Admissions Status
-                    </h3>
-
-                </div>
-
-                <div class="principal-panel-body">
-
-                    <div class="principal-chart-container">
-
-                        <canvas
-                            id="principalAdmissionsChart"
-                            data-labels='{{ admission_status_labels|safe }}'
-                            data-values='{{ admission_status_values|safe }}'>
-                        </canvas>
-
+                    <div class="finance-period-metric-icon">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
                     </div>
 
                 </div>
 
+                <strong class="finance-period-metric-value">
+                    KSh {{ period_gross_invoiced|floatformat:2 }}
+                </strong>
+
+                <span class="finance-period-metric-note">
+                    Posted invoices
+                </span>
+
             </div>
 
-        </div>
 
+            <!-- COLLECTED -->
 
-        <!-- EXAMINATION CHART -->
+            <div class="finance-period-metric">
 
-        <div class="col-xl-7">
+                <div class="finance-period-metric-top">
 
-            <div class="principal-panel">
+                    <span class="finance-period-metric-label">
+                        FEES COLLECTED
+                    </span>
 
-                <div class="principal-panel-header">
-
-                    <h3 class="principal-panel-title">
-                        <i class="fa-solid fa-chart-column me-2"></i>
-                        Examination Workflow
-                    </h3>
-
-                </div>
-
-                <div class="principal-panel-body">
-
-                    <div class="principal-chart-container">
-
-                        <canvas
-                            id="principalResultsChart"
-                            data-labels='{{ result_status_labels|safe }}'
-                            data-values='{{ result_status_values|safe }}'>
-                        </canvas>
-
+                    <div class="finance-period-metric-icon">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
                     </div>
 
                 </div>
 
+                <strong class="finance-period-metric-value">
+                    KSh {{ period_collected|floatformat:2 }}
+                </strong>
+
+                <span class="finance-period-metric-note">
+                    Posted payments
+                </span>
+
+            </div>
+
+
+            <!-- OUTSTANDING -->
+
+            <div class="finance-period-metric">
+
+                <div class="finance-period-metric-top">
+
+                    <span class="finance-period-metric-label">
+                        OUTSTANDING
+                    </span>
+
+                    <div class="finance-period-metric-icon">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+
+                </div>
+
+                <strong class="finance-period-metric-value">
+                    KSh {{ period_outstanding|floatformat:2 }}
+                </strong>
+
+                <span class="finance-period-metric-note">
+                    Unsettled invoice balance
+                </span>
+
+            </div>
+
+
+            <!-- COLLECTION RATE -->
+
+            <div class="finance-period-metric finance-period-rate">
+
+                <div class="finance-period-metric-top">
+
+                    <span class="finance-period-metric-label">
+                        COLLECTION RATE
+                    </span>
+
+                    <div class="finance-period-metric-icon">
+                        <i class="fa-solid fa-percent"></i>
+                    </div>
+
+                </div>
+
+                <strong class="finance-period-metric-value">
+                    {{ period_collection_rate|floatformat:2 }}%
+                </strong>
+
+                <div class="finance-period-progress">
+
+                    <span
+                        style="width: {{ period_collection_rate }}%;"
+                    ></span>
+
+                </div>
+
+                <span class="finance-period-metric-note">
+                    Settlement performance
+                </span>
+
             </div>
 
         </div>
 
-    </div>
 
-    <!-- =====================================================
-         ENROLMENT + EXAMINATION
-         ===================================================== -->
+        <!-- SECONDARY METRICS -->
 
-    <div class="row g-4">
+        <div class="finance-period-summary">
+
+            <div class="finance-period-summary-item">
+
+                <span class="finance-period-summary-label">
+                    SETTLED VALUE
+                </span>
+
+                <strong class="finance-period-summary-value">
+                    KSh {{ period_settled_value|floatformat:2 }}
+                </strong>
+
+                <small class="finance-period-summary-description">
+                    KSh {{ period_collected|floatformat:2 }}
+                    payment +
+                    KSh {{ period_previous_credit_applied|floatformat:2 }}
+                    previous credit
+                </small>
+
+            </div>
 
 
-        <!-- ENROLMENT BY PROGRAMME -->
+            <div class="finance-period-summary-item">
 
-        <div class="col-xl-6">
+                <span class="finance-period-summary-label">
+                    PENDING INVOICES
+                </span>
 
-            <div class="principal-analysis-panel">
+                <strong class="finance-period-summary-value">
+                    {{ period_pending_invoices }}
+                </strong>
 
-                <div class="principal-analysis-header">
+                <small class="finance-period-summary-description">
+                    Invoices with balances
+                </small>
+
+            </div>
+
+
+            <div class="finance-period-summary-item">
+
+                <span class="finance-period-summary-label">
+                    CLEARED INVOICES
+                </span>
+
+                <strong class="finance-period-summary-value">
+                    {{ period_cleared_invoices }}
+                </strong>
+
+                <small class="finance-period-summary-description">
+                    Fully settled
+                </small>
+
+            </div>
+
+
+            <div class="finance-period-summary-item">
+
+                <span class="finance-period-summary-label">
+                    TOTAL INVOICES
+                </span>
+
+                <strong class="finance-period-summary-value">
+                    {{ period_invoice_count }}
+                </strong>
+
+                <small class="finance-period-summary-description">
+                    Posted invoices
+                </small>
+
+            </div>
+
+        </div>
+     </div>
+
+        <!-- FINANCE CHARTS -->
+
+        <div class="finance-period-charts">
+
+            <!-- COLLECTION CHART -->
+
+            <div class="finance-period-chart-card">
+
+                <div class="finance-period-chart-heading">
 
                     <div>
 
+                        <span class="finance-chart-eyebrow">
+                            COLLECTION ANALYSIS
+                        </span>
+
                         <h3>
-                            Enrolment by Programme
+                            Billing vs Collection
                         </h3>
 
                         <p>
-                            Student enrolment distribution for
-                            the selected semester.
+                            Financial performance across recent academic
+                            periods.
                         </p>
 
                     </div>
 
-                    <div class="principal-analysis-icon">
-
-                        <i class="fa-solid fa-users-rectangle"></i>
-
-                    </div>
-
                 </div>
 
+                <div class="finance-period-chart">
 
-                <div class="principal-chart-wrap">
-
-                   <canvas
-                    id="principalEnrollmentChart"
-                    data-labels='{{ enrolment_programme_labels|safe }}'
-                    data-values='{{ enrolment_programme_values|safe }}'>
-                  </canvas>
+                    <canvas
+                        id="financePeriodCollectionChart"
+                        data-labels='{{ period_comparison_labels|safe }}'
+                        data-billed='{{ period_billed_values|safe }}'
+                        data-collected='{{ period_collected_values|safe }}'
+                    ></canvas>
 
                 </div>
 
             </div>
 
-        </div>
 
+            <!-- RATE CHART -->
 
-        <!-- EXAMINATION PERFORMANCE -->
+            <div class="finance-period-chart-card">
 
-        <div class="col-xl-6">
-
-            <div class="principal-analysis-panel">
-
-                <div class="principal-analysis-header">
+                <div class="finance-period-chart-heading">
 
                     <div>
 
+                        <span class="finance-chart-eyebrow">
+                            EFFICIENCY
+                        </span>
+
                         <h3>
-                            Examination Performance
+                            Collection Rate
                         </h3>
 
                         <p>
-                            Published results for the selected
-                            semester.
+                            Settlement rate across academic periods.
                         </p>
 
                     </div>
 
-                    <div class="principal-analysis-icon">
-
-                        <i class="fa-solid fa-square-poll-vertical"></i>
-
-                    </div>
-
                 </div>
 
+                <div class="finance-period-chart">
 
-                <div class="principal-exam-summary">
-
-                    <div>
-
-                        <span>
-                            Published Results
-                        </span>
-
-                        <strong>
-                            {{ total_published_results }}
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Pass Rate
-                        </span>
-
-                        <strong class="principal-pass-rate">
-                            {{ pass_rate }}%
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Passed
-                        </span>
-
-                        <strong>
-                            {{ passed_results }}
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Failed
-                        </span>
-
-                        <strong>
-                            {{ failed_results }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="principal-chart-wrap">
-
-                   <canvas
-                    id="principalExamChart"
-                    data-labels='{{ exam_programme_labels|safe }}'
-                    data-values='{{ exam_programme_pass_rates|safe }}'>
-                   </canvas>
+                    <canvas
+                        id="financePeriodRateChart"
+                        data-labels='{{ period_comparison_labels|safe }}'
+                        data-values='{{ period_collection_rate_values|safe }}'
+                    ></canvas>
 
                 </div>
 
@@ -1340,128 +1012,150 @@
 
         </div>
 
-    </div>
+    </section>
 
-</section>
 
 <!-- =========================================================
-     PRINCIPAL PERIOD PERFORMANCE
-     ========================================================= -->
+     SEMESTER PERFORMANCE
+========================================================== -->
 
-<section id="semester-performance" class="principal-period-section mb-4 mt-4">
+<section
+    id="semester-performance"
+    class="principal-period-section"
+>
 
-    <div class="principal-section-heading mb-3">
+    <div class="principal-section-heading">
 
         <div>
+
+            <span class="principal-section-eyebrow">
+                ACADEMIC ANALYTICS
+            </span>
+
             <h2 class="principal-section-title">
                 Semester Performance
             </h2>
 
-            <div class="principal-section-subtitle">
+            <p class="principal-section-subtitle">
                 Review enrolment and examination performance
                 for a specific academic period.
-            </div>
+            </p>
+
         </div>
 
     </div>
 
 
-    <!-- =====================================================
-         PERIOD FILTER
-         ===================================================== -->
+    <!-- PERIOD FILTER -->
 
-<div class="principal-filter-card mb-4">
+    <div class="principal-filter-card">
 
-    <form method="get" action="#semester-performance" class="row g-3 align-items-end">
-        <!-- Academic Year -->
-        <div class="col-lg-5 col-md-6">
+        <form
+            method="get"
+            action="#semester-performance"
+            id="principalPeriodForm"
+            class="row g-3 align-items-end"
+        >
 
-            <label for="principalAcademicYear"
-                   class="principal-filter-label">
-                Academic Year
-            </label>
+            <!-- Academic Year -->
 
-            <select
-                name="academic_year"
-                id="principalAcademicYear"
-                class="form-select principal-filter-select"
-                required>
+            <div class="col-lg-5 col-md-6">
 
-                {% for year in academic_years %}
+                <label
+                    for="principalAcademicYear"
+                    class="principal-filter-label"
+                >
+                    Academic Year
+                </label>
 
-                    <option
-                        value="{{ year.id }}"
-                        {% if selected_year and selected_year.id == year.id %}
-                            selected
-                        {% endif %}>
-                        {{ year.year_name }}
-                    </option>
+                <select
+                    name="academic_year"
+                    id="principalAcademicYear"
+                    class="form-select principal-filter-select"
+                    required
+                >
 
-                {% endfor %}
+                    {% for year in academic_years %}
 
-            </select>
+                        <option
+                            value="{{ year.id }}"
+                            {% if selected_year and selected_year.id == year.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ year.year_name }}
+                        </option>
 
-        </div>
+                    {% endfor %}
 
+                </select>
 
-        <!-- Semester -->
-        <div class="col-lg-5 col-md-6">
-
-            <label for="principalSemester"
-                   class="principal-filter-label">
-                Semester
-            </label>
-
-            <select
-                name="semester"
-                id="principalSemester"
-                class="form-select principal-filter-select"
-                required>
-
-                {% for semester in semesters %}
-
-                    <option
-                        value="{{ semester.id }}"
-                        data-year="{{ semester.academic_year_id }}"
-                        {% if selected_semester and selected_semester.id == semester.id %}
-                            selected
-                        {% endif %}>
-                       {{ semester.academic_year.year_name }} — {{ semester.semester_name }}
-                    </option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
+            </div>
 
 
-        <!-- Analyse -->
-        <div class="col-lg-2 col-md-12">
+            <!-- Semester -->
 
-            <button
-                type="submit"
-                class="btn principal-filter-button w-100">
+            <div class="col-lg-5 col-md-6">
 
-                <i class="fa-solid fa-chart-line me-2"></i>
-                Analyse
+                <label
+                    for="principalSemester"
+                    class="principal-filter-label"
+                >
+                    Semester
+                </label>
 
-            </button>
+                <select
+                    name="semester"
+                    id="principalSemester"
+                    class="form-select principal-filter-select"
+                    required
+                >
 
-        </div>
+                    {% for semester in semesters %}
 
-    </form>
+                        <option
+                            value="{{ semester.id }}"
+                            data-year="{{ semester.academic_year_id }}"
+                            data-semester-name="{{ semester.semester_name }}"
+                            {% if selected_semester and selected_semester.id == semester.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ semester.semester_name }}
+                        </option>
 
-</div>
+                    {% endfor %}
+
+                </select>
+
+            </div>
 
 
-    <!-- =====================================================
-         SELECTED PERIOD HEADER
-         ===================================================== -->
+            <!-- Analyse -->
+
+            <div class="col-lg-2 col-md-12">
+
+                <button
+                    type="button"
+                    id="principalAnalyseBtn"
+                    class="btn principal-filter-button w-100"
+                >
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Analyse</span>
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- SELECTED PERIOD HEADER -->
 
     {% if selected_year and selected_semester %}
 
-        <div class="principal-selected-period mb-4">
+        <div class="principal-selected-period">
 
             <div class="principal-selected-period-icon">
 
@@ -1491,14 +1185,10 @@
 
     {% endif %}
 
-</section>
 
+    <!-- ENROLMENT KPIs -->
 
-    <!-- =====================================================
-         ENROLMENT KPIs
-         ===================================================== -->
-
-    <div class="row g-3 mb-4">
+    <div class="row g-3 principal-period-kpis">
 
         <div class="col-xl-3 col-md-6">
 
@@ -1609,61 +1299,77 @@
 
     </div>
 
+</section>
 
-    <!-- =====================================================
-         ACADEMIC SUMMARY
-    ====================================================== -->
 
-    <div class="row g-4">
+    <!-- =========================================================
+         INSTITUTIONAL CHARTS
+    ========================================================== -->
 
-        <div class="col-xl-6">
+    <section class="principal-section">
 
-            <div class="principal-panel">
+        <div class="row g-4">
 
-                <div class="principal-panel-header">
+            <!-- ADMISSIONS CHART -->
 
-                    <h3 class="principal-panel-title">
-                        <i class="fa-solid fa-school me-2"></i>
-                        Academic Activity
-                    </h3>
+            <div class="col-xl-5">
+
+                <div class="principal-panel principal-chart-panel">
+
+                    <div class="principal-panel-header">
+
+                        <h3 class="principal-panel-title">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            Admissions Status
+                        </h3>
+
+                    </div>
+
+                    <div class="principal-panel-body">
+
+                        <div class="principal-chart-container">
+
+                            <canvas
+                                id="principalAdmissionsChart"
+                                data-labels='{{ admission_status_labels|safe }}'
+                                data-values='{{ admission_status_values|safe }}'
+                            ></canvas>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="principal-panel-body">
+            </div>
 
-                    <div class="principal-overview-row">
 
-                        <span class="principal-overview-label">
-                            Total Students
-                        </span>
+            <!-- EXAMINATION CHART -->
 
-                        <strong class="principal-overview-value">
-                            {{ total_students|default:0 }}
-                        </strong>
+            <div class="col-xl-7">
 
-                    </div>
+                <div class="principal-panel principal-chart-panel">
 
-                    <div class="principal-overview-row">
+                    <div class="principal-panel-header">
 
-                        <span class="principal-overview-label">
-                            Semester Enrollments
-                        </span>
-
-                        <strong class="principal-overview-value">
-                            {{ total_enrollments|default:0 }}
-                        </strong>
+                        <h3 class="principal-panel-title">
+                            <i class="fa-solid fa-chart-column"></i>
+                            Examination Workflow
+                        </h3>
 
                     </div>
 
-                    <div class="principal-overview-row">
+                    <div class="principal-panel-body">
 
-                        <span class="principal-overview-label">
-                            Course Registrations
-                        </span>
+                        <div class="principal-chart-container">
 
-                        <strong class="principal-overview-value">
-                            {{ total_registrations|default:0 }}
-                        </strong>
+                            <canvas
+                                id="principalResultsChart"
+                                data-labels='{{ result_status_labels|safe }}'
+                                data-values='{{ result_status_values|safe }}'
+                            ></canvas>
+
+                        </div>
 
                     </div>
 
@@ -1673,43 +1379,148 @@
 
         </div>
 
+    </section>
 
-        <div class="col-xl-6">
 
-            <div class="principal-panel">
+    <!-- =========================================================
+         ENROLMENT + EXAMINATION ANALYSIS
+    ========================================================== -->
 
-                <div class="principal-panel-header">
+    <section class="principal-section">
 
-                    <h3 class="principal-panel-title">
-                        <i class="fa-solid fa-chart-line me-2"></i>
-                        Leadership Snapshot
-                    </h3>
+        <div class="row g-4">
 
-                </div>
+            <!-- ENROLMENT BY PROGRAMME -->
 
-                <div class="principal-panel-body">
+            <div class="col-xl-6">
 
-                    <div class="principal-snapshot">
+                <div class="principal-analysis-panel">
 
-                        <div class="principal-snapshot-icon">
-                            <i class="fa-solid fa-landmark"></i>
-                        </div>
+                    <div class="principal-analysis-header">
 
                         <div>
 
-                            <h4>
-                                Institutional Oversight
-                            </h4>
+                            <h3>
+                                Enrolment by Programme
+                            </h3>
 
                             <p>
-                                This dashboard provides the Principal
-                                with a consolidated view of academic,
-                                admissions, examination, finance and
-                                graduation activity.
+                                Student enrolment distribution for
+                                the selected semester.
                             </p>
 
                         </div>
 
+                        <div class="principal-analysis-icon">
+                            <i class="fa-solid fa-users-rectangle"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="principal-chart-wrap">
+
+                        <canvas
+                            id="principalEnrollmentChart"
+                            data-labels='{{ enrolment_programme_labels|safe }}'
+                            data-values='{{ enrolment_programme_values|safe }}'
+                        ></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EXAMINATION PERFORMANCE -->
+
+            <div class="col-xl-6">
+
+                <div class="principal-analysis-panel">
+
+                    <div class="principal-analysis-header">
+
+                        <div>
+
+                            <h3>
+                                Examination Performance
+                            </h3>
+
+                            <p>
+                                Published results for the selected
+                                semester.
+                            </p>
+
+                        </div>
+
+                        <div class="principal-analysis-icon">
+                            <i class="fa-solid fa-square-poll-vertical"></i>
+                        </div>
+
+                    </div>
+
+
+                    <div class="principal-exam-summary">
+
+                        <div>
+
+                            <span>
+                                Published Results
+                            </span>
+
+                            <strong>
+                                {{ total_published_results }}
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Pass Rate
+                            </span>
+
+                            <strong class="principal-pass-rate">
+                                {{ pass_rate }}%
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Passed
+                            </span>
+
+                            <strong>
+                                {{ passed_results }}
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Failed
+                            </span>
+
+                            <strong>
+                                {{ failed_results }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="principal-chart-wrap">
+
+                        <canvas
+                            id="principalExamChart"
+                            data-labels='{{ exam_programme_labels|safe }}'
+                            data-values='{{ exam_programme_pass_rates|safe }}'
+                        ></canvas>
+
                     </div>
 
                 </div>
@@ -1718,10 +1529,123 @@
 
         </div>
 
-    </div>
+    </section>
+        <!-- ACADEMIC SUMMARY -->
+<section>
+        <div class="row g-4">
 
+            <!-- ACADEMIC ACTIVITY -->
+
+            <div class="col-xl-6">
+
+                <div class="principal-panel">
+
+                    <div class="principal-panel-header">
+
+                        <h3 class="principal-panel-title">
+                            <i class="fa-solid fa-school"></i>
+                            Academic Activity
+                        </h3>
+
+                    </div>
+
+                    <div class="principal-panel-body">
+
+                        <div class="principal-overview-row">
+
+                            <span class="principal-overview-label">
+                                Total Students
+                            </span>
+
+                            <strong class="principal-overview-value">
+                                {{ total_students|default:0 }}
+                            </strong>
+
+                        </div>
+
+                        <div class="principal-overview-row">
+
+                            <span class="principal-overview-label">
+                                Semester Enrollments
+                            </span>
+
+                            <strong class="principal-overview-value">
+                                {{ total_enrollments|default:0 }}
+                            </strong>
+
+                        </div>
+
+                        <div class="principal-overview-row">
+
+                            <span class="principal-overview-label">
+                                Course Registrations
+                            </span>
+
+                            <strong class="principal-overview-value">
+                                {{ total_registrations|default:0 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LEADERSHIP SNAPSHOT -->
+
+            <div class="col-xl-6">
+
+                <div class="principal-panel">
+
+                    <div class="principal-panel-header">
+
+                        <h3 class="principal-panel-title">
+                            <i class="fa-solid fa-chart-line"></i>
+                            Leadership Snapshot
+                        </h3>
+
+                    </div>
+
+                    <div class="principal-panel-body">
+
+                        <div class="principal-snapshot">
+
+                            <div class="principal-snapshot-icon">
+                                <i class="fa-solid fa-landmark"></i>
+                            </div>
+
+                            <div>
+
+                                <h4>
+                                    Institutional Oversight
+                                </h4>
+
+                                <p>
+                                    This dashboard provides the Principal
+                                    with a consolidated view of academic,
+                                    admissions, examination, finance and
+                                    graduation activity.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+</section>
 </div>
+
 {% endblock %}
+
 
 {% block extra_js %}
 
