@@ -4,26 +4,49 @@
 
 <div class="container mt-4">
 
-    <div class="card shadow-sm">
+<div class="card shadow-sm">
 
-        <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card-header">
 
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 w-100">
             <h4 class="mb-0">
                 Fee Statements
             </h4>
+            <div class="input-group" style="max-width: 350px;">
 
-            <a href="{% url 'finance:dashboard' %}"
-               class="btn btn-secondary btn-sm">
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
 
+                <input
+                    type="text"
+                    id="statementSearch"
+                    class="form-control"
+                    placeholder="Search student or admission no..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+            <a
+                href="{% url 'finance:dashboard' %}"
+                class="btn btn-secondary btn-sm"
+            >
                 Back
-
             </a>
 
         </div>
 
-        <div class="card-body">
+    </div>
 
-            <table class="table table-striped">
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table
+                class="table table-striped table-hover table-bordered align-middle"
+                id="statementTable"
+            >
 
                 <thead>
 
@@ -61,13 +84,13 @@
 
                     {% for record in records %}
 
-                    <tr>
+                    <tr class="statement-row">
 
-                        <td>
+                        <td class="admission-no">
                             {{ record.student.admission_no }}
                         </td>
 
-                        <td>
+                        <td class="student-name">
                             {{ record.student }}
                         </td>
 
@@ -85,11 +108,12 @@
 
                         <td>
 
-                            <a href="{% url 'finance:fee_statement_detail' record.student.pk %}"
-                               class="btn btn-primary btn-sm text-white">
-
+                            <a
+                                href="{% url 'finance:fee_statement_detail' record.student.pk %}"
+                                class="btn btn-primary btn-sm text-white"
+                            >
+                                <i class="fas fa-eye me-1"></i>
                                 View
-
                             </a>
 
                         </td>
@@ -100,16 +124,30 @@
 
                     <tr>
 
-                        <td colspan="6"
-                            class="text-center">
-
+                        <td
+                            colspan="6"
+                            class="text-center py-4"
+                        >
                             No students found.
-
                         </td>
 
                     </tr>
 
                     {% endfor %}
+
+                    <tr
+                        id="statementNoResults"
+                        style="display: none;"
+                    >
+
+                        <td
+                            colspan="6"
+                            class="text-center py-4 text-muted"
+                        >
+                            No students match your search.
+                        </td>
+
+                    </tr>
 
                 </tbody>
 
@@ -118,6 +156,9 @@
         </div>
 
     </div>
+
+</div>
+
 
 </div>
 

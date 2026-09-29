@@ -2,93 +2,295 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container-fluid px-4 mt-4">
 
-    <h2>
-        Payment List
-    </h2>
+    <div class="card shadow-sm">
 
-    <table class="table table-striped">
+        <!-- HEADER -->
+        <div class="card-header">
 
-        <thead>
-            <tr>
-                <th>Payment No</th>
-                <th>Student</th>
-                <th>Invoice</th>
-                <th>Method</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-        </thead>
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
-        <tbody>
+                <div>
+                    <h4 class="mb-1">
+                        Student Payments
+                    </h4>
 
-            {% for payment in payments %}
+                    <p class="text-muted mb-0">
+                        View and manage student payment history.
+                    </p>
+                </div>
 
-            <tr>
-                <td>
-                    <a href="{% url 'finance:payment_detail' payment.pk %}">
-                        {{ payment.payment_number }}
-                    </a>
-                </td>
-                <td>{{ payment.invoice.student }}</td>
+                <div class="payment-search">
 
-                <td>{{ payment.invoice.invoice_number }}</td>
+                    <div class="input-group">
 
-                <td>{{ payment.payment_method }}</td>
-
-                <td>{{ payment.amount }}</td>
-
-                <td>{{ payment.payment_date }}</td>
-
-                <td>
-
-                    {% if payment.is_reversed %}
-
-                        <span class="badge bg-danger">
-                            Reversed
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
                         </span>
 
-                    {% else %}
+                        <input
+                            type="text"
+                            id="paymentSearch"
+                            class="form-control"
+                            placeholder="Search student or admission no..."
+                            autocomplete="off"
+                        >
 
-                        <span class="badge bg-success">
-                            Posted
-                        </span>
+                    </div>
 
-                    {% endif %}
+                </div>
 
-                </td>
+            </div>
 
-                <td>
+        </div>
 
-                    <a href="{% url 'finance:payment_detail' payment.pk %}"
-                       class="btn btn-primary btn-sm text-white">
 
-                        View
+        <!-- PAYMENT REGISTER -->
+        <div class="card-body">
 
-                    </a>
+            {% regroup payments|dictsort:"invoice.student.pk" by invoice.student as student_groups %}
 
-                </td>
+            <div id="paymentRegister">
 
-            </tr>
+                {% for group in student_groups %}
 
-            {% empty %}
+                <div
+                    class="payment-student-group border-bottom"
+                    data-student-name="{{ group.grouper }}"
+                    data-admission-no="{{ group.grouper.admission_no }}"
+                >
 
-            <tr>
+                    <!-- STUDENT -->
+                    <div class="payment-student-row p-3">
 
-                <td colspan="8">
-                    No payments found.
-                </td>
+                        <div class="row align-items-center g-3">
 
-            </tr>
+                            <div class="col-12 col-md-5">
 
-            {% endfor %}
+                                <div class="d-flex align-items-center gap-3">
 
-        </tbody>
+                                    <div class="payment-student-icon">
+                                        <i class="fas fa-user"></i>
+                                    </div>
 
-    </table>
+                                    <div>
+
+                                        <div class="fw-semibold">
+                                            {{ group.grouper }}
+                                        </div>
+
+                                        <div class="text-muted small">
+                                            {{ group.grouper.admission_no }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- NUMBER OF PAYMENTS -->
+                            <div class="col-6 col-md-2">
+
+                                <div class="text-muted small">
+                                    Payments
+                                </div>
+
+                                <div class="fw-semibold">
+                                    {{ group.list|length }}
+                                </div>
+
+                            </div>
+
+
+                            <!-- ACTION -->
+                            <div class="col-6 col-md-5 text-md-end">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary btn-sm payment-history-toggle"
+                                    data-target="payment-history-{{ group.grouper.pk }}"
+                                    aria-expanded="false"
+                                >
+
+                                    <i class="fas fa-eye me-1"></i>
+
+                                    <span class="payment-toggle-text">
+                                        View Payments
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PAYMENT HISTORY -->
+                    <div
+                        id="payment-history-{{ group.grouper.pk }}"
+                        class="payment-history d-none"
+                    >
+
+                        <div class="table-responsive">
+
+                            <table class="table table-sm table-hover align-middle mb-0">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Payment No
+                                        </th>
+
+                                        <th>
+                                            Invoice
+                                        </th>
+
+                                        <th>
+                                            Method
+                                        </th>
+
+                                        <th>
+                                            Reference
+                                        </th>
+
+                                        <th class="text-end">
+                                            Amount
+                                        </th>
+
+                                        <th>
+                                            Date
+                                        </th>
+
+                                        <th>
+                                            Status
+                                        </th>
+
+                                        <th class="text-center">
+                                            Action
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    {% for payment in group.list %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ payment.payment_number }}
+                                        </td>
+
+                                        <td>
+                                            {{ payment.invoice.invoice_number }}
+                                        </td>
+
+                                        <td>
+                                            {{ payment.payment_method }}
+                                        </td>
+
+                                        <td>
+                                            {{ payment.reference_number|default:"-" }}
+                                        </td>
+
+                                        <td class="text-end fw-semibold">
+                                            KES {{ payment.amount }}
+                                        </td>
+
+                                        <td>
+                                            {{ payment.payment_date }}
+                                        </td>
+
+                                        <td>
+
+                                            {% if payment.is_reversed %}
+
+                                                <span class="badge bg-danger">
+                                                    Reversed
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="badge bg-success">
+                                                    Posted
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td class="text-center">
+
+                                            <a
+                                                href="{% url 'finance:payment_detail' payment.pk %}"
+                                                class="btn btn-primary btn-sm text-white
+                                            >
+
+                                                <i class="fas fa-eye me-1"></i>
+                                                View
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="text-center py-5">
+
+                    <i class="fas fa-money-bill-wave fa-2x text-muted mb-3"></i>
+
+                    <div class="fw-semibold">
+                        No payments found.
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+
+                <!-- SEARCH EMPTY STATE -->
+                <div
+                    id="paymentNoResults"
+                    class="text-center py-5 d-none"
+                >
+
+                    <i class="fas fa-search fa-2x text-muted mb-3"></i>
+
+                    <div class="fw-semibold">
+                        No students match your search.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 

@@ -2,29 +2,29 @@
 
 {% block content %}
 
-<div class="container mt-4" style="width:1000px;">
+<div class="container mt-4 receipt-page">
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm receipt-card">
 
-        <div class="card-header d-flex justify-content-between">
+        <div class="card-header d-flex justify-content-between receipt-header">
 
-            <h4>
-
+            <h4 class="mb-0">
                 Official Receipt
-
             </h4>
 
             <button
                 onclick="window.print();"
-                class="btn btn-success">
-
+                class="btn btn-success print-hide"
+            >
+                <i class="fas fa-print me-1"></i>
                 Print
-
             </button>
 
         </div>
 
-        <div class="card-body">
+
+        <div class="card-body receipt-body">
+
             {% if receipt.payment.is_reversed %}
 
             <div class="alert alert-danger border border-danger shadow-sm mb-3">
@@ -42,22 +42,41 @@
             </div>
 
             {% endif %}
+
+
             <table class="table table-borderless table-sm">
 
                 <tbody>
 
                     <tr>
-                        <th style="width:200px;">Receipt Number:</th>
-                        <td>{{ receipt.receipt_number }}</td>
+                        <th style="width:200px;">
+                            Receipt Number:
+                        </th>
+
+                        <td>
+                            {{ receipt.receipt_number }}
+                        </td>
                     </tr>
 
+
                     <tr>
-                        <th>Payment Number:</th>
-                        <td>{{ receipt.payment.payment_number }}</td>
-                    </tr>
-                   <tr>
-                        <th>Status:</th>
+                        <th>
+                            Payment Number:
+                        </th>
+
                         <td>
+                            {{ receipt.payment.payment_number }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Status:
+                        </th>
+
+                        <td>
+
                             {% if receipt.payment.is_reversed %}
 
                                 <span class="badge bg-danger">
@@ -71,47 +90,96 @@
                                 </span>
 
                             {% endif %}
+
                         </td>
                     </tr>
 
-                    <tr>
-                        <th>Invoice Number:</th>
-                        <td>{{ receipt.payment.invoice.invoice_number }}</td>
-                    </tr>
 
                     <tr>
-                        <th>Student:</th>
-                        <td>{{ receipt.payment.invoice.student.full_name }}</td>
+                        <th>
+                            Invoice Number:
+                        </th>
+
+                        <td>
+                            {{ receipt.payment.invoice.invoice_number }}
+                        </td>
                     </tr>
 
-                    <tr>
-                        <th>Admission Number:</th>
-                        <td>{{ receipt.payment.invoice.student.admission_no }}</td>
-                    </tr>
 
                     <tr>
-                        <th>Amount Paid:</th>
-                        <td>KES {{ receipt.payment.amount }}</td>
+                        <th>
+                            Student:
+                        </th>
+
+                        <td>
+                            {{ receipt.payment.invoice.student.full_name }}
+                        </td>
                     </tr>
 
-                    <tr>
-                        <th>Payment Method:</th>
-                        <td>{{ receipt.payment.get_payment_method_display }}</td>
-                    </tr>
 
                     <tr>
-                        <th>Reference Number:</th>
-                        <td>{{ receipt.payment.reference_number }}</td>
+                        <th>
+                            Admission Number:
+                        </th>
+
+                        <td>
+                            {{ receipt.payment.invoice.student.admission_no }}
+                        </td>
                     </tr>
 
-                    <tr>
-                        <th>Receipt Date:</th>
-                        <td>{{ receipt.receipt_date }}</td>
-                    </tr>
 
                     <tr>
-                        <th>Received By:</th>
-                        <td>{{ receipt.payment.received_by }}</td>
+                        <th>
+                            Amount Paid:
+                        </th>
+
+                        <td>
+                            KES {{ receipt.payment.amount }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Payment Method:
+                        </th>
+
+                        <td>
+                            {{ receipt.payment.get_payment_method_display }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Reference Number:
+                        </th>
+
+                        <td>
+                            {{ receipt.payment.reference_number }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Receipt Date:
+                        </th>
+
+                        <td>
+                            {{ receipt.receipt_date }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Received By:
+                        </th>
+
+                        <td>
+                            {{ receipt.payment.received_by }}
+                        </td>
                     </tr>
 
                 </tbody>

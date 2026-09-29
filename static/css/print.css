@@ -1,0 +1,460 @@
+/* =========================================================
+   XORADEX EDUCORE ERP
+   PRINT SYSTEM
+   ---------------------------------------------------------
+   RESPONSIBILITY:
+   - Remove ERP interface when printing
+   - Reset screen layout for paper
+   - Hide screen-only controls
+   - Preserve existing ERP styling
+   - Provide shared print utilities
+   ========================================================= */
+
+
+/* =========================================================
+   PRINT MODE
+   ========================================================= */
+
+@media print {
+
+
+    /* =====================================================
+       1. HIDE ERP SCREEN INTERFACE
+       ===================================================== */
+
+    .erp-header,
+    .sidebar,
+    .erp-sidebar,
+    .topbar,
+    .navbar,
+    .print-hide {
+        display: none !important;
+    }
+
+
+    /* =====================================================
+       2. RESET BODY
+       ===================================================== */
+
+    html,
+    body {
+        width: 100% !important;
+        height: auto !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible !important;
+    }
+
+
+    body.erp-body {
+        background: #ffffff;
+    }
+
+
+    /* =====================================================
+       3. RESET ERP WRAPPER
+       ===================================================== */
+
+    .erp-wrapper {
+        width: 100% !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        display: block !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible !important;
+    }
+
+
+    /* =====================================================
+       4. RESET ERP WORKSPACE
+       ===================================================== */
+
+    .erp-workspace {
+        width: 100% !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        display: block !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible !important;
+    }
+
+
+    /* =====================================================
+       5. RESET MAIN CONTENT
+       ===================================================== */
+
+    .erp-content {
+        width: 100% !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible !important;
+    }
+
+
+    /* =====================================================
+       6. BOOTSTRAP CONTAINERS
+       ===================================================== */
+
+    .container,
+    .container-fluid {
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+
+    /* =====================================================
+       7. REMOVE SCREEN-ONLY SHADOWS
+       ===================================================== */
+
+    .shadow,
+    .shadow-sm,
+    .shadow-lg {
+        box-shadow: none !important;
+    }
+
+
+    /* =====================================================
+       8. PRINT WHITE UTILITY
+       ===================================================== */
+
+    .print-white {
+        background: #ffffff !important;
+    }
+
+
+    /* =====================================================
+       9. BUTTONS / PRINT CONTROLS
+       ===================================================== */
+
+    button.print-hide,
+    a.print-hide,
+    .btn.print-hide {
+        display: none !important;
+    }
+
+
+    /* =====================================================
+       10. TABLES
+       ===================================================== */
+
+    table {
+        width: 100% !important;
+
+        page-break-inside: auto;
+    }
+
+
+    tr {
+        page-break-inside: avoid;
+
+        page-break-after: auto;
+    }
+
+
+    thead {
+        display: table-header-group;
+    }
+
+
+    tfoot {
+        display: table-footer-group;
+    }
+
+
+    /* =====================================================
+       11. TABLE CELLS
+       -----------------------------------------------------
+       Only controls page breaking.
+       Does NOT change borders or colors.
+       ===================================================== */
+
+    .table th,
+    .table td {
+        page-break-inside: avoid;
+    }
+
+
+    /* =====================================================
+       12. ALERTS
+       ===================================================== */
+
+    .alert {
+        box-shadow: none !important;
+    }
+
+
+    /* =====================================================
+       13. CARDS
+       ===================================================== */
+
+    .card {
+        box-shadow: none !important;
+    }
+
+
+    /* =====================================================
+       14. PRINT DOCUMENT
+       ===================================================== */
+
+    .print-document {
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        box-shadow: none !important;
+    }
+
+
+    /* =====================================================
+       15. PRINT PAGE
+       ===================================================== */
+
+    .print-page {
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    /* =====================================================
+       16. RECEIPTS
+       ===================================================== */
+
+    .receipt-page {
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    .receipt-card {
+        width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        box-shadow: none !important;
+    }
+
+
+    .receipt-body {
+        padding: 0 !important;
+    }
+
+
+    /* =====================================================
+       17. PAGE BREAK UTILITIES
+       ===================================================== */
+
+    .print-page-break-before {
+        page-break-before: always !important;
+        break-before: page !important;
+    }
+
+
+    .print-page-break-after {
+        page-break-after: always !important;
+        break-after: page !important;
+    }
+
+
+    .print-avoid-break {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+
+    /* =====================================================
+       18. FINANCIAL STATEMENT
+       -----------------------------------------------------
+       Presentation/layout only.
+       Existing ERP colors, borders, typography and
+       component styling are preserved.
+       ===================================================== */
+
+    .financial-statement {
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    .financial-statement > .card {
+        width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        box-shadow: none !important;
+    }
+
+
+    .financial-statement .card {
+        box-shadow: none !important;
+    }
+
+
+    .financial-statement .card,
+    .financial-statement .table-responsive {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+
+    .financial-statement .table {
+        page-break-inside: auto;
+    }
+
+
+    .financial-statement .table tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+
+    .financial-statement .table thead {
+        display: table-header-group;
+    }
+
+
+    .financial-statement .table tfoot {
+        display: table-footer-group;
+    }
+
+
+    /* =====================================================
+       19. PRINT SPACING
+       ===================================================== */
+
+    .financial-statement .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+
+
+    /* =====================================================
+       20. PRESERVE PRINT COLORS
+       -----------------------------------------------------
+       Allows Bootstrap/ERP colors to print where the
+       browser supports print-color adjustment.
+       ===================================================== */
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+
+    /* =====================================================
+   UNIT MARKSHEET
+   ===================================================== */
+
+    .marksheet-print {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .marksheet-print > .card {
+        width: 100% !important;
+
+        margin: 0 !important;
+
+        box-shadow: none !important;
+    }
+
+    .marksheet-print .table-responsive {
+        overflow: visible !important;
+    }
+
+    .marksheet-print table {
+        width: 100% !important;
+    }
+
+    .marksheet-print table thead {
+        display: table-header-group;
+    }
+
+    .marksheet-print table tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* =====================================================
+   SEMESTER RESULT SLIP
+   ===================================================== */
+
+    .result-slip-print {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    .result-slip-print > .card {
+        width: 100% !important;
+
+        margin: 0 !important;
+
+        box-shadow: none !important;
+    }
+
+
+    .result-slip-print .table-responsive {
+        overflow: visible !important;
+    }
+
+
+    .result-slip-print table {
+        width: 100% !important;
+    }
+
+
+    .result-slip-print table thead {
+        display: table-header-group;
+    }
+
+
+    .result-slip-print table tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+
+}

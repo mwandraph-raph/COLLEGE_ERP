@@ -2,16 +2,19 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container mt-4 marksheet-print">
 
     <div class="card shadow">
+
+        <!-- =====================================================
+             MARKSHEET HEADER
+             ===================================================== -->
 
         <div class="card-header">
 
             <h4>
                 Unit Marksheet
             </h4>
-
 
             <strong>
                 {{ assignment.unit_offering.unit.code }}
@@ -34,99 +37,104 @@
             Semester:
             {{ assignment.unit_offering.semester }}
 
+            <div class="mt-2">
+
+                {% if status == "Approved" %}
+
+                    <span class="badge bg-success">
+                        Approved
+                    </span>
+
+                {% elif status == "Submitted" %}
+
+                    <span class="badge bg-warning text-dark">
+                        Submitted
+                    </span>
+
+                {% elif status == "Returned" %}
+
+                    <span class="badge bg-danger">
+                        Returned
+                    </span>
+
+                {% elif status == "Unlocked" %}
+
+                    <span class="badge bg-info">
+                        Unlocked
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-secondary">
+                        Draft
+                    </span>
+
+                {% endif %}
+
+            </div>
 
         </div>
 
 
-        <div class="mt-2">
-
-            {% if status == "Approved" %}
-
-                <span class="badge bg-success">
-                    Approved
-                </span>
-
-
-            {% elif status == "Submitted" %}
-
-                <span class="badge bg-warning text-dark">
-                    Submitted
-                </span>
-
-
-            {% elif status == "Returned" %}
-
-                <span class="badge bg-danger">
-                    Returned
-                </span>
-
-
-            {% elif status == "Unlocked" %}
-
-                <span class="badge bg-info">
-                    Unlocked
-                </span>
-
-
-            {% else %}
-
-                <span class="badge bg-secondary">
-                    Draft
-                </span>
-
-
-            {% endif %}
-
-        </div>
-
+        <!-- =====================================================
+             MARKSHEET BODY
+             ===================================================== -->
 
         <div class="card-body">
 
 
-            <div class="mb-3">
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
 
+            <div class="mb-3 print-hide">
 
-                <a href="{% url 'submit_results' assignment.id %}"
-                   class="btn btn-warning">
-
+                <a
+                    href="{% url 'submit_results' assignment.id %}"
+                    class="btn btn-warning"
+                >
                     Submit Results
-
                 </a>
 
 
                 <button
+                    type="button"
                     onclick="window.print()"
-                    class="btn btn-secondary">
-
+                    class="btn btn-secondary"
+                >
                     Print
-
                 </button>
 
 
-                <a href="{% url 'export_marksheet_excel' assignment.id %}"
-                   class="btn btn-success">
-
+                <a
+                    href="{% url 'export_marksheet_excel' assignment.id %}"
+                    class="btn btn-success"
+                >
                     Export Excel
-
                 </a>
 
 
-                <a href="{% url 'my_units' %}"
-                   class="btn btn-primary">
-
+                <a
+                    href="{% url 'my_units' %}"
+                    class="btn btn-primary"
+                >
                     Back
-
                 </a>
-
 
             </div>
 
 
+            <!-- =================================================
+                 EXAMINER REMARK
+                 ================================================= -->
+
             {% if examiner_remark %}
 
-            <div class="alert alert-info">
+            <div class="alert alert-info print-hide">
 
-                <strong>Examiner Remark:</strong>
+                <strong>
+                    Examiner Remark:
+                </strong>
 
                 {{ examiner_remark }}
 
@@ -135,112 +143,120 @@
             {% endif %}
 
 
+            <!-- =================================================
+                 MARKS TABLE
+                 ================================================= -->
 
-            <table class="table table-bordered table-striped">
+            <div class="table-responsive">
 
+                <table class="table table-bordered table-striped align-middle">
 
-                <thead>
+                    <thead>
 
-                    <tr>
+                        <tr>
 
-                        <th>Adm No</th>
-                        <th>Student Name</th>
-                        <th>CAT 1</th>
-                        <th>CAT 2</th>
-                        <th>Exam</th>
-                        <th>Total</th>
-                        <th>Grade</th>
-                        <th>Remarks</th>
+                            <th>
+                                Adm No
+                            </th>
 
-                    </tr>
+                            <th>
+                                Student Name
+                            </th>
 
-                </thead>
+                            <th>
+                                CAT 1
+                            </th>
 
+                            <th>
+                                CAT 2
+                            </th>
 
+                            <th>
+                                Exam
+                            </th>
 
-                <tbody>
+                            <th>
+                                Total
+                            </th>
 
+                            <th>
+                                Grade
+                            </th>
 
-                    {% for result in results %}
+                            <th>
+                                Remarks
+                            </th>
 
+                        </tr>
 
-                    <tr>
-
-
-                        <td>
-                            {{ result.enrollment.student.admission_no }}
-                        </td>
-
-
-                        <td>
-                            {{ result.enrollment.student }}
-                        </td>
-
-
-                        <td>
-                            {{ result.cat1 }}
-                        </td>
-
-
-                        <td>
-                            {{ result.cat2 }}
-                        </td>
+                    </thead>
 
 
-                        <td>
-                            {{ result.exam }}
-                        </td>
+                    <tbody>
 
+                        {% for result in results %}
 
-                        <td>
-                            {{ result.total }}
-                        </td>
+                        <tr>
 
+                            <td>
+                                {{ result.enrollment.student.admission_no }}
+                            </td>
 
-                        <td>
-                            {{ result.grade }}
-                        </td>
+                            <td>
+                                {{ result.enrollment.student }}
+                            </td>
 
+                            <td>
+                                {{ result.cat1 }}
+                            </td>
 
-                        <td>
-                            {{ result.remarks }}
-                        </td>
+                            <td>
+                                {{ result.cat2 }}
+                            </td>
 
+                            <td>
+                                {{ result.exam }}
+                            </td>
 
-                    </tr>
+                            <td>
+                                {{ result.total }}
+                            </td>
 
+                            <td>
+                                {{ result.grade }}
+                            </td>
 
-                    {% empty %}
+                            <td>
+                                {{ result.remarks }}
+                            </td>
 
+                        </tr>
 
-                    <tr>
+                        {% empty %}
 
-                        <td colspan="8"
-                            class="text-center">
+                        <tr>
 
-                            No marks entered.
+                            <td
+                                colspan="8"
+                                class="text-center"
+                            >
+                                No marks entered.
+                            </td>
 
-                        </td>
+                        </tr>
 
-                    </tr>
+                        {% endfor %}
 
+                    </tbody>
 
-                    {% endfor %}
+                </table>
 
-
-                </tbody>
-
-
-            </table>
-
+            </div>
 
         </div>
 
-
     </div>
 
-
 </div>
-
 
 {% endblock %}

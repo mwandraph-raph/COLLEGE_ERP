@@ -2,170 +2,198 @@
 
 {% block content %}
 
-<div class="container-fluid px-4 mt-4">
+<div class="container-fluid px-4 mt-4 print-document financial-statement">
 
     <div class="card shadow-sm">
 
-        <!-- Header -->
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
         <div class="card-header d-flex justify-content-between align-items-center">
+
             <h4 class="mb-0">
-                Fee Statement
+                Student Financial Statement
             </h4>
 
-            <a href="{% url 'finance:fee_statement_list' %}"
-               class="btn btn-secondary btn-sm">
+            <a
+                href="{% url 'finance:invoice_list' %}"
+                class="btn btn-secondary btn-sm print-hide"
+            >
                 Back
             </a>
+
         </div>
+
 
         <div class="card-body">
 
-            <!-- Student Information -->
-            <div class="row mb-4">
 
-                <div class="col-md-6">
-                    <p class="mb-2">
-                        <strong>Admission No:</strong>
-                        {{ student.admission_no }}
-                    </p>
+            <!-- =================================================
+                 STUDENT INFORMATION
+                 ================================================= -->
 
-                    <p class="mb-2">
-                        <strong>Student:</strong>
-                        {{ student.first_name }}
-                        {{ student.last_name }}
-                    </p>
+            <div class="card mb-4">
+
+                <div class="card-header">
+
+                    <strong>
+                        Student Information
+                    </strong>
+
                 </div>
-
-                <div class="col-md-6">
-                    <p class="mb-2">
-                        <strong>Programme:</strong>
-                        {{ student.programme }}
-                    </p>
-
-                    <p class="mb-2">
-                        <strong>Study Level:</strong>
-                        {{ student.current_programme_level }}
-                    </p>
-                </div>
-
-            </div>
-
-            <!-- Transactions -->
-            <div class="table-responsive">
-
-                <table class="table table-bordered table-striped align-middle mb-0">
-
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th class="text-end">Debit</th>
-                            <th class="text-end">Credit</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        {% for transaction in transactions %}
-
-                        <tr>
-
-                            <td>
-                                {{ transaction.date }}
-                            </td>
-
-                            <td>
-                                {{ transaction.description }}
-
-                                {% if transaction.is_reversed %}
-                                    <span class="badge bg-danger ms-2">
-                                        Reversed
-                                    </span>
-                                {% endif %}
-                            </td>
-
-                            <td class="text-end">
-                                {% if transaction.debit %}
-                                    {{ transaction.debit }}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-
-                            <td class="text-end">
-                                {% if transaction.credit %}
-                                    {{ transaction.credit }}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-
-                        </tr>
-
-                        {% empty %}
-
-                        <tr>
-                            <td colspan="4" class="text-center py-4">
-                                No transactions found.
-                            </td>
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-            <!-- Statement Summary -->
-            <div class="card mt-4 border-0 bg-light">
 
                 <div class="card-body">
 
                     <div class="row">
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
+
+                            <p class="mb-2">
+
+                                <strong>
+                                    Admission No:
+                                </strong>
+
+                                {{ student.admission_no }}
+
+                            </p>
+
+                            <p class="mb-2">
+
+                                <strong>
+                                    Student:
+                                </strong>
+
+                                {{ student.first_name }}
+                                {{ student.last_name }}
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <p class="mb-2">
+
+                                <strong>
+                                    Programme:
+                                </strong>
+
+                                {{ student.programme }}
+
+                            </p>
+
+                            <p class="mb-2">
+
+                                <strong>
+                                    Study Level:
+                                </strong>
+
+                                {{ student.current_programme_level }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FINANCIAL SUMMARY
+                 ================================================= -->
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+
+                    <strong>
+                        Financial Summary
+                    </strong>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-3">
+
                             <small class="text-muted">
                                 Total Invoiced
                             </small>
 
                             <h5 class="mb-0">
-                                {{ total_invoiced }}
+                                {{ total_invoiced|floatformat:2 }}
                             </h5>
+
                         </div>
 
-                        <div class="col-md-4">
+
+                        <div class="col-md-3">
+
                             <small class="text-muted">
                                 Total Paid
                             </small>
 
                             <h5 class="mb-0">
-                                {{ total_paid }}
+                                {{ total_paid|floatformat:2 }}
                             </h5>
+
                         </div>
 
-                        <div class="col-md-4">
+
+                        <div class="col-md-3">
+
+                            <small class="text-muted">
+                                Credit Applied
+                            </small>
+
+                            <h5 class="mb-0">
+                                {{ previous_credit_applied|floatformat:2 }}
+                            </h5>
+
+                        </div>
+
+
+                        <div class="col-md-3">
 
                             {% if balance < 0 %}
 
-                                <span class="badge bg-success mb-2">
+                                <small class="text-muted">
+                                    Balance
+                                </small>
+
+                                <h5 class="text-success mb-0">
+
+                                    {{ balance|floatformat:2|cut:"-" }}
+
+                                </h5>
+
+                                <span class="badge bg-success mt-1">
                                     Credit Balance
                                 </span>
 
-                                <h5 class="text-success mb-0">
-                                    {{ balance|floatformat:2|cut:"-" }}
-                                </h5>
-
                             {% else %}
 
-                                <span class="badge bg-danger mb-2">
-                                    Outstanding Balance
-                                </span>
+                                <small class="text-muted">
+                                    Balance
+                                </small>
 
                                 <h5 class="text-danger mb-0">
+
                                     {{ balance|floatformat:2 }}
+
                                 </h5>
+
+                                <span class="badge bg-danger mt-1">
+                                    Outstanding Balance
+                                </span>
 
                             {% endif %}
 
@@ -177,13 +205,332 @@
 
             </div>
 
-            <!-- Print -->
-            <div class="mt-4 mb-2">
+
+            <!-- =================================================
+                 INVOICE HISTORY
+                 ================================================= -->
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+
+                    <strong>
+                        Invoice History
+                    </strong>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-striped align-middle mb-0">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Invoice No
+                                    </th>
+
+                                    <th>
+                                        Date
+                                    </th>
+
+                                    <th>
+                                        Total
+                                    </th>
+
+                                    <th>
+                                        Paid
+                                    </th>
+
+                                    <th>
+                                        Balance
+                                    </th>
+
+                                    <th>
+                                        % Paid
+                                    </th>
+
+                                    <th class="text-center">
+                                        Status
+                                    </th>
+
+                                    <th class="text-center print-hide">
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for invoice in student.invoices.all %}
+
+                                    {% if invoice.status == "POSTED" %}
+
+                                    <tr>
+
+                                        <td>
+
+                                            <strong>
+                                                {{ invoice.invoice_number }}
+                                            </strong>
+
+                                        </td>
+
+                                        <td>
+                                            {{ invoice.invoice_date }}
+                                        </td>
+
+                                        <td>
+                                            {{ invoice.total_amount|floatformat:2 }}
+                                        </td>
+
+                                        <td>
+                                            {{ invoice.amount_paid|floatformat:2 }}
+                                        </td>
+
+                                        <td>
+
+                                            {% if invoice.balance < 0 %}
+
+                                                <span class="text-success">
+
+                                                    {{ invoice.balance|floatformat:2 }}
+
+                                                </span>
+
+                                            {% else %}
+
+                                                {{ invoice.balance|floatformat:2 }}
+
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td>
+                                            {{ invoice.payment_percentage|floatformat:2 }}%
+                                        </td>
+
+                                        <td class="text-center">
+
+                                            <span class="badge bg-success">
+                                                Posted
+                                            </span>
+
+                                        </td>
+
+                                        <td class="text-center print-hide">
+
+                                            <a
+                                                href="{% url 'finance:invoice_detail' invoice.pk %}"
+                                                class="btn btn-primary btn-sm text-white"
+                                            >
+                                                View Invoice
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endif %}
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="8"
+                                        class="text-center py-4"
+                                    >
+                                        No invoices found.
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FINANCIAL TRANSACTION HISTORY
+                 ================================================= -->
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+
+                    <strong>
+                        Financial Transaction History
+                    </strong>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-striped align-middle mb-0">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Date
+                                    </th>
+
+                                    <th>
+                                        Description
+                                    </th>
+
+                                    <th class="text-end">
+                                        Debit
+                                    </th>
+
+                                    <th class="text-end">
+                                        Credit
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for transaction in transactions %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ transaction.date }}
+                                    </td>
+
+                                    <td>
+
+                                        {{ transaction.description }}
+
+                                        {% if transaction.is_reversed %}
+
+                                            <span class="badge bg-danger ms-2">
+                                                Reversed
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        {% if transaction.debit %}
+
+                                            {{ transaction.debit|floatformat:2 }}
+
+                                        {% else %}
+
+                                            -
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        {% if transaction.credit %}
+
+                                            {{ transaction.credit|floatformat:2 }}
+
+                                        {% else %}
+
+                                            -
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="4"
+                                        class="text-center py-4"
+                                    >
+                                        No transactions found.
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+
+                            <!-- =========================================
+                                 TOTALS
+                                 ========================================= -->
+
+                            <tfoot>
+
+                                <tr class="fw-bold">
+
+                                    <td colspan="2" class="text-end">
+                                        Total
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        {{ total_invoiced|floatformat:2 }}
+
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        {{ total_settled|floatformat:2 }}
+
+                                    </td>
+
+                                </tr>
+
+                            </tfoot>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="mt-4 mb-2 print-hide">
 
                 <button
                     type="button"
                     class="btn btn-primary"
-                    onclick="window.print()">
+                    onclick="window.print()"
+                >
+                    <i class="fas fa-print me-1"></i>
                     Print Statement
                 </button>
 

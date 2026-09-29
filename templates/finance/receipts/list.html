@@ -2,100 +2,284 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container-fluid px-4 mt-4">
 
-    <h2>
+    <div class="card shadow-sm">
 
-        Receipt List
+        <!-- HEADER -->
+        <div class="card-header">
 
-    </h2>
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
-    <table class="table table-striped">
+                <div>
 
-        <thead>
+                    <h4 class="mb-1">
+                        Student Receipts
+                    </h4>
 
-            <tr>
+                    <p class="text-muted mb-0">
+                        View and manage student receipt history.
+                    </p>
 
-                <th>Receipt No</th>
-                <th>Payment No</th>
-                <th>Student</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th></th>
+                </div>
 
-            </tr>
 
-        </thead>
+                <!-- SEARCH -->
+                <div class="receipt-search">
 
-        <tbody>
+                    <div class="input-group">
 
-            {% for receipt in receipts %}
-
-            <tr>
-
-                <td>{{ receipt.receipt_number }}</td>
-
-                <td>{{ receipt.payment.payment_number }}</td>
-
-                <td>{{ receipt.payment.invoice.student.full_name }}</td>
-
-                <td>{{ receipt.payment.amount }}</td>
-
-                <td>{{ receipt.receipt_date }}</td>
-
-                <td>
-
-                    {% if receipt.payment.is_reversed %}
-
-                        <span class="badge bg-danger">
-
-                            Reversed
-
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
                         </span>
 
-                    {% else %}
+                        <input
+                            type="text"
+                            id="receiptSearch"
+                            class="form-control"
+                            placeholder="Search student or admission no..."
+                            autocomplete="off"
+                        >
 
-                        <span class="badge bg-success">
+                    </div>
 
-                            Posted
+                </div>
 
-                        </span>
+            </div>
 
-                    {% endif %}
+        </div>
 
-                </td>
 
-                <td>
+        <!-- RECEIPT REGISTER -->
+        <div class="card-body">
 
-                    <a href="{% url 'finance:receipt_detail' receipt.pk %}"
-                    class="btn btn-primary btn-sm text-white">
+            {% regroup receipts|dictsort:"payment.invoice.student.pk" by payment.invoice.student as student_groups %}
 
-                        View
+            <div id="receiptRegister">
 
-                    </a>
+                {% for group in student_groups %}
 
-                </td>
+                <div
+                    class="receipt-student-group border-bottom"
+                    data-student-name="{{ group.grouper }}"
+                    data-admission-no="{{ group.grouper.admission_no }}"
+                >
 
-            </tr>
+                    <!-- STUDENT ROW -->
+                    <div class="receipt-student-row p-3">
 
-            {% empty %}
+                        <div class="row align-items-center g-3">
 
-            <tr>
+                            <!-- STUDENT -->
+                            <div class="col-12 col-md-5">
 
-                <td colspan="6">
+                                <div class="d-flex align-items-center gap-3">
 
-                    No receipts found.
+                                    <div class="receipt-student-icon">
+                                        <i class="fas fa-user"></i>
+                                    </div>
 
-                </td>
+                                    <div>
 
-            </tr>
+                                        <div class="fw-semibold">
+                                            {{ group.grouper }}
+                                        </div>
 
-            {% endfor %}
+                                        <div class="text-muted small">
+                                            {{ group.grouper.admission_no }}
+                                        </div>
 
-        </tbody>
+                                    </div>
 
-    </table>
+                                </div>
+
+                            </div>
+
+
+                            <!-- RECEIPT COUNT -->
+                            <div class="col-6 col-md-2">
+
+                                <div class="text-muted small">
+                                    Receipts
+                                </div>
+
+                                <div class="fw-semibold">
+                                    {{ group.list|length }}
+                                </div>
+
+                            </div>
+
+
+                            <!-- ACTION -->
+                            <div class="col-6 col-md-5 text-md-end">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary btn-sm receipt-history-toggle"
+                                    data-target="receipt-history-{{ group.grouper.pk }}"
+                                    aria-expanded="false"
+                                >
+
+                                    <i class="fas fa-eye me-1"></i>
+
+                                    <span class="receipt-toggle-text">
+                                        View Receipts
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RECEIPT HISTORY -->
+                    <div
+                        id="receipt-history-{{ group.grouper.pk }}"
+                        class="receipt-history d-none"
+                    >
+
+                        <div class="table-responsive">
+
+                            <table class="table table-sm table-hover align-middle mb-0">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Receipt No
+                                        </th>
+
+                                        <th>
+                                            Payment No
+                                        </th>
+
+                                        <th>
+                                            Amount
+                                        </th>
+
+                                        <th>
+                                            Date
+                                        </th>
+
+                                        <th>
+                                            Status
+                                        </th>
+
+                                        <th class="text-center">
+                                            Action
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    {% for receipt in group.list %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ receipt.receipt_number }}
+                                        </td>
+
+                                        <td>
+                                            {{ receipt.payment.payment_number }}
+                                        </td>
+
+                                        <td class="fw-semibold">
+                                            KES {{ receipt.payment.amount }}
+                                        </td>
+
+                                        <td>
+                                            {{ receipt.receipt_date }}
+                                        </td>
+
+                                        <td>
+
+                                            {% if receipt.payment.is_reversed %}
+
+                                                <span class="badge bg-danger">
+                                                    Reversed
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="badge bg-success">
+                                                    Posted
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td class="text-center">
+
+                                            <a
+                                                href="{% url 'finance:receipt_detail' receipt.pk %}"
+                                                class="btn btn-primary btn-sm text-white"
+                                            >
+
+                                                <i class="fas fa-eye me-1"></i>
+                                                View
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="text-center py-5">
+
+                    <i class="fas fa-receipt fa-2x text-muted mb-3"></i>
+
+                    <div class="fw-semibold">
+                        No receipts found.
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+
+                <!-- SEARCH EMPTY STATE -->
+                <div
+                    id="receiptNoResults"
+                    class="text-center py-5 d-none"
+                >
+
+                    <i class="fas fa-search fa-2x text-muted mb-3"></i>
+
+                    <div class="fw-semibold">
+                        No students match your search.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 

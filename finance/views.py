@@ -1951,16 +1951,17 @@ def financial_clearance_list(request):
 
         return redirect("home")
 
+    # ==========================================================
+    # DETERMINE WHICH STUDENTS THE USER MAY SEE
+    # ==========================================================
+
     if is_finance_staff(request):
 
-        invoices = (
-            StudentInvoice.objects
-            .select_related(
-                "student",
-                "enrollment",
-            )
+        students = (
+            Student.objects
+            .all()
             .order_by(
-                "student__admission_no"
+                "admission_no"
             )
         )
 
@@ -1977,6 +1978,27 @@ def financial_clearance_list(request):
 
             return redirect("home")
 
+        students = (
+            Student.objects
+            .filter(
+                pk=student.pk
+            )
+        )
+
+    # ==========================================================
+    # BUILD ONE CLEARANCE ROW PER STUDENT
+    # ==========================================================
+
+    clearances = []
+
+    for student in students:
+
+        # ------------------------------------------------------
+        # GET THE STUDENT'S INVOICES
+        #
+        # We retain the existing clearance calculation.
+        # ------------------------------------------------------
+
         invoices = (
             StudentInvoice.objects
             .filter(
@@ -1985,21 +2007,112 @@ def financial_clearance_list(request):
             .select_related(
                 "student",
                 "enrollment",
+                "enrollment__programme_level",
             )
             .order_by(
-                "student__admission_no"
+                "-enrollment__academic_year_id",
+                "-enrollment__semester_id",
+                "-id",
             )
         )
 
-    clearances = []
+        invoice = invoices.first()
 
-    for invoice in invoices:
+        if not invoice:
+            continue
+
+        # ------------------------------------------------------
+        # PAYMENT / CLEARANCE STATUS
+        # ------------------------------------------------------
 
         percentage = invoice.payment_percentage
+
+        # ------------------------------------------------------
+        # OFFICIAL COMPLETION / GRADUATION
+        #
+        # Completion is NOT inferred from reaching the final
+        # programme level.
+        #
+        # The student must have an official graduation record.
+        # ------------------------------------------------------
+
+        from graduation.models import Graduation
+
+        graduation_record = (
+            Graduation.objects
+            .filter(
+                student=student,
+                status__in=[
+                    "APPROVED",
+                    "GRADUATED",
+                ],
+            )
+            .first()
+        )
+
+        # ------------------------------------------------------
+        # DETERMINE CURRENT / HIGHEST ACTUAL STUDY LEVEL
+        # ------------------------------------------------------
+
+        latest_enrollment = (
+            SemesterEnrollment.objects
+            .filter(
+                student=student,
+            )
+            .select_related(
+                "programme",
+                "programme_level",
+                "academic_year",
+                "semester",
+            )
+            .order_by(
+                "-programme_level__progression_order",
+                "-academic_year_id",
+                "-semester_id",
+                "-id",
+            )
+            .first()
+        )
+
+        # ------------------------------------------------------
+        # DISPLAY LEVEL
+        # ------------------------------------------------------
+
+        if graduation_record:
+
+            if latest_enrollment:
+
+                current_study_level = (
+                    f"{latest_enrollment.programme.code}"
+                    f" - Completed"
+                )
+
+            else:
+
+                current_study_level = "Completed"
+
+        elif latest_enrollment:
+
+            current_study_level = (
+                str(
+                    latest_enrollment.programme_level
+                )
+            )
+
+        else:
+
+            current_study_level = "Not Enrolled"
+
+        # ------------------------------------------------------
+        # BUILD THE ROW
+        # ------------------------------------------------------
 
         clearances.append({
 
             "invoice": invoice,
+
+            "current_study_level":
+                current_study_level,
 
             "registration": (
                 percentage
@@ -2034,10 +2147,332 @@ def financial_clearance_list(request):
             "percentage": percentage,
         })
 
+    # ==========================================================
+    # CURRENT ACTIVE ACADEMIC PERIOD
+    #
+    # Uses the ERP's existing active AcademicYear and Semester
+    # configuration. Nothing is hard-coded.
+    # ==========================================================
+
+    active_academic_year = (
+        AcademicYear.objects
+        .filter(
+            is_active=True
+        )
+        .first()
+    )
+
+    active_semester = None
+
+    if active_academic_year:
+
+        active_semester = (
+            Semester.objects
+            .filter(
+                academic_year=active_academic_year,
+                is_active=True,
+            )
+            .first()
+        )
+
+    # ==========================================================
+    # CURRENT ACTIVE PERIOD CLEARANCE SUMMARY
+    # ==========================================================
+
+    active_students_count = 0
+    fully_cleared_count = 0
+    partially_cleared_count = 0
+    not_cleared_count = 0
+
+    if active_academic_year and active_semester:
+
+        # ------------------------------------------------------
+        # ACTIVE ENROLLMENTS
+        #
+        # Only students enrolled in the currently active
+        # academic year and semester are included.
+        # ------------------------------------------------------
+
+        active_enrollments = (
+            SemesterEnrollment.objects
+            .filter(
+                academic_year=active_academic_year,
+                semester=active_semester,
+            )
+            .select_related(
+                "student",
+            )
+        )
+
+        # ------------------------------------------------------
+        # RESPECT THE SAME ACCESS RULES AS THE PAGE
+        # ------------------------------------------------------
+
+        if not is_finance_staff(request):
+
+            active_enrollments = (
+                active_enrollments
+                .filter(
+                    student=student
+                )
+            )
+
+        # ------------------------------------------------------
+        # ONE ACTIVE ENROLLMENT = ONE ACTIVE STUDENT
+        # ------------------------------------------------------
+
+        active_students_count = (
+            active_enrollments
+            .values(
+                "student_id"
+            )
+            .distinct()
+            .count()
+        )
+
+        # ------------------------------------------------------
+        # CLASSIFY EACH ACTIVE STUDENT
+        # ------------------------------------------------------
+
+        for enrollment in active_enrollments:
+
+            invoice = (
+                StudentInvoice.objects
+                .filter(
+                    enrollment=enrollment
+                )
+                .first()
+            )
+
+            # --------------------------------------------------
+            # No invoice / no payment = NOT CLEARED
+            # --------------------------------------------------
+
+            if not invoice:
+
+                not_cleared_count += 1
+
+                continue
+
+            percentage = invoice.payment_percentage
+
+            registration = (
+                percentage
+                >= finance_settings_obj
+                .minimum_registration_percentage
+            )
+
+            exam = (
+                percentage
+                >= finance_settings_obj
+                .minimum_exam_percentage
+            )
+
+            results = (
+                percentage
+                >= finance_settings_obj
+                .minimum_result_slip_percentage
+            )
+
+            transcript = (
+                percentage
+                >= finance_settings_obj
+                .minimum_transcript_percentage
+            )
+
+            graduation = (
+                percentage
+                >= finance_settings_obj
+                .minimum_graduation_percentage
+            )
+
+            requirements = [
+                registration,
+                exam,
+                results,
+                transcript,
+                graduation,
+            ]
+
+            # --------------------------------------------------
+            # ALL REQUIREMENTS CLEARED
+            # --------------------------------------------------
+
+            if all(requirements):
+
+                fully_cleared_count += 1
+
+            # --------------------------------------------------
+            # SOME REQUIREMENTS CLEARED
+            # --------------------------------------------------
+
+            elif any(requirements):
+
+                partially_cleared_count += 1
+
+            # --------------------------------------------------
+            # NO REQUIREMENT CLEARED
+            # --------------------------------------------------
+
+            else:
+
+                not_cleared_count += 1
+
+    # ==========================================================
+    # RENDER
+    # ==========================================================
+
     return render(
         request,
         "finance/clearance/list.html",
         {
+            "clearances": clearances,
+
+            # --------------------------------------------------
+            # ACTIVE ACADEMIC PERIOD
+            # --------------------------------------------------
+
+            "active_academic_year":
+                active_academic_year,
+
+            "active_semester":
+                active_semester,
+
+            # --------------------------------------------------
+            # ACTIVE PERIOD SUMMARY
+            # --------------------------------------------------
+
+            "active_students_count":
+                active_students_count,
+
+            "fully_cleared_count":
+                fully_cleared_count,
+
+            "partially_cleared_count":
+                partially_cleared_count,
+
+            "not_cleared_count":
+                not_cleared_count,
+        },
+    )
+    # ==========================================================
+# STUDENT CLEARANCE HISTORY
+#
+# Shows one student's financial clearance snapshot
+# for every academic year / semester.
+# ==========================================================
+
+@login_required
+def student_clearance_history(request, student_id):
+
+    student = get_object_or_404(
+        Student,
+        pk=student_id,
+    )
+
+    if not is_finance_staff(request):
+
+        logged_in_student = get_logged_in_student(
+            request
+        )
+
+        if (
+            not logged_in_student
+            or logged_in_student.id != student.id
+        ):
+
+            messages.error(
+                request,
+                "You are not authorized to view this student's "
+                "financial clearance history.",
+            )
+
+            return redirect("home")
+
+    finance_settings_obj = (
+        FinanceSetting.objects
+        .first()
+    )
+
+    if not finance_settings_obj:
+
+        messages.error(
+            request,
+            "Finance settings have not been configured.",
+        )
+
+        return redirect(
+            "finance:financial_clearance_list"
+        )
+
+    invoices = (
+        StudentInvoice.objects
+        .filter(
+            student=student,
+        )
+        .select_related(
+            "student",
+            "enrollment",
+            "enrollment__academic_year",
+            "enrollment__semester",
+            "enrollment__programme_level",
+        )
+        .order_by(
+            "-enrollment__academic_year",
+            "-enrollment__semester",
+            "-invoice_date",
+        )
+    )
+
+    clearances = []
+
+    for invoice in invoices:
+
+        percentage = invoice.payment_percentage
+
+        clearances.append({
+
+            "invoice": invoice,
+
+            "percentage": percentage,
+
+            "registration": (
+                percentage
+                >= finance_settings_obj
+                .minimum_registration_percentage
+            ),
+
+            "exam": (
+                percentage
+                >= finance_settings_obj
+                .minimum_exam_percentage
+            ),
+
+            "results": (
+                percentage
+                >= finance_settings_obj
+                .minimum_result_slip_percentage
+            ),
+
+            "transcript": (
+                percentage
+                >= finance_settings_obj
+                .minimum_transcript_percentage
+            ),
+
+            "graduation": (
+                percentage
+                >= finance_settings_obj
+                .minimum_graduation_percentage
+            ),
+
+        })
+
+    return render(
+        request,
+        "finance/clearance/history.html",
+        {
+            "student": student,
             "clearances": clearances,
         },
     )

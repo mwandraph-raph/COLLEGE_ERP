@@ -1,148 +1,372 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container-fluid px-4 mt-4">
 
-    <div class="card shadow-sm">
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
 
-        <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card shadow-sm mb-4">
 
-            <h4 class="mb-0">
+    <div class="card-header">
 
-                Financial Clearance Dashboard
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 w-100">
 
-            </h4>
+            <div>
 
-            <a href="{% url 'finance:dashboard' %}"
-               class="btn btn-secondary btn-sm">
+                <h4 class="mb-1">
+                    Financial Clearance
+                </h4>
 
+                <p class="text-muted mb-0">
+                    Student financial clearance and eligibility.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'finance:dashboard' %}"
+                class="btn btn-secondary btn-sm"
+            >
+                <i class="bi bi-arrow-left me-1"></i>
                 Back
-
             </a>
-
-        </div>
-
-        <div class="card-body">
-
-            <table class="table table-bordered table-striped">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Student</th>
-
-                        <th>% Paid</th>
-
-                        <th>Registration</th>
-
-                        <th>Exam</th>
-
-                        <th>Result Slip</th>
-
-                        <th>Transcript</th>
-
-                        <th>Graduation</th>
-
-                    </tr>
-
-                </thead>
-
-<tbody>
-
-    {% for clearance in clearances %}
-
-    <tr>
-
-        <td>
-            {{ clearance.invoice.student }}
-        </td>
-
-        <td>
-            {{ clearance.percentage }}%
-        </td>
-
-        <td>
-            {% if clearance.registration %}
-                <span class="badge bg-success">
-                    Cleared
-                </span>
-            {% else %}
-                <span class="badge bg-danger">
-                    Not Cleared
-                </span>
-            {% endif %}
-        </td>
-
-        <td>
-            {% if clearance.exam %}
-                <span class="badge bg-success">
-                    Cleared
-                </span>
-            {% else %}
-                <span class="badge bg-danger">
-                    Not Cleared
-                </span>
-            {% endif %}
-        </td>
-
-        <td>
-            {% if clearance.results %}
-                <span class="badge bg-success">
-                    Cleared
-                </span>
-            {% else %}
-                <span class="badge bg-danger">
-                    Not Cleared
-                </span>
-            {% endif %}
-        </td>
-
-        <td>
-            {% if clearance.transcript %}
-                <span class="badge bg-success">
-                    Cleared
-                </span>
-            {% else %}
-                <span class="badge bg-danger">
-                    Not Cleared
-                </span>
-            {% endif %}
-        </td>
-
-        <td>
-            {% if clearance.graduation %}
-                <span class="badge bg-success">
-                    Cleared
-                </span>
-            {% else %}
-                <span class="badge bg-danger">
-                    Not Cleared
-                </span>
-            {% endif %}
-        </td>
-
-    </tr>
-
-    {% empty %}
-
-    <tr>
-        <td colspan="7">
-            No financial clearance records found.
-        </td>
-    </tr>
-
-    {% endfor %}
-
-</tbody>
-
-            </table>
 
         </div>
 
     </div>
 
 </div>
+<!-- ========================================================= -->
+<!-- ACTIVE ACADEMIC PERIOD SUMMARY                            -->
+<!-- ========================================================= -->
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 w-100">
+
+            <div>
+                <h5 class="mb-1">
+                    Current Financial Clearance
+                </h5>
+
+                <small class="text-muted">
+                    Clearance status for the currently active academic period.
+                </small>
+            </div>
+
+            <div class="text-end">
+                <div class="text-muted small">
+                    ACTIVE ACADEMIC PERIOD
+                </div>
+
+                <div class="fw-semibold">
+                    {% if active_academic_year and active_semester %}
+                        {{ active_academic_year.year_name }}
+                        -
+                        {{ active_semester.semester_name }}
+                    {% else %}
+                        Not Configured
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="card-body">
+
+        <div class="row g-3">
+
+            <!-- ACTIVE STUDENTS -->
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Active Students
+                        </div>
+
+                        <div class="fs-3 fw-bold">
+                            {{ active_students_count|default:"0" }}
+                        </div>
+
+                        <div class="text-muted small mt-1">
+                            Currently enrolled
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- FULLY CLEARED -->
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Fully Cleared
+                        </div>
+
+                        <div class="fs-3 fw-bold text-success">
+                            {{ fully_cleared_count|default:"0" }}
+                        </div>
+
+                        <div class="text-muted small mt-1">
+                            All requirements cleared
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- PARTIALLY CLEARED -->
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Partially Cleared
+                        </div>
+
+                        <div class="fs-3 fw-bold text-warning">
+                            {{ partially_cleared_count|default:"0" }}
+                        </div>
+
+                        <div class="text-muted small mt-1">
+                            Some requirements cleared
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- NOT CLEARED -->
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Not Cleared
+                        </div>
+
+                        <div class="fs-3 fw-bold text-danger">
+                            {{ not_cleared_count|default:"0" }}
+                        </div>
+
+                        <div class="text-muted small mt-1">
+                            No clearance achieved
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- =====================================================
+         STUDENT CLEARANCE
+         ===================================================== -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                <div>
+
+                    <h5 class="mb-0">
+                        Student Clearance
+                    </h5>
+
+                    <small class="text-muted">
+                        View individual student clearance history.
+                    </small>
+
+                </div>
+
+
+                <!-- SEARCH -->
+
+                <div>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                           <i class="fas fa-search"></i>
+                        </span>
+
+                        <input
+                            type="text"
+                            id="clearanceSearch"
+                            class="form-control"
+                            placeholder="Search student or admission no..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-striped table-hover table-bordered align-middle mb-0"
+                    id="clearanceTable"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Student
+                            </th>
+
+                            <th>
+                                Admission No.
+                            </th>
+
+                            <th>
+                                Current Study Level
+                            </th>
+
+                            <th class="text-end">
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="clearanceTableBody">
+
+                        {% regroup clearances|dictsort:"invoice.student.pk" by invoice.student.pk as student_groups %}
+
+                        {% for group in student_groups %}
+
+                            {% with clearance=group.list|first %}
+
+                            <tr
+                                class="clearance-student-row"
+                                data-student-name="{{ clearance.invoice.student|lower }}"
+                                data-admission-no="{{ clearance.invoice.student.admission_no|lower }}"
+                            >
+
+                                <!-- STUDENT -->
+
+                                <td>
+
+                                    <div class="fw-semibold">
+                                        {{ clearance.invoice.student }}
+                                    </div>
+
+                                </td>
+
+
+                                <!-- ADMISSION NUMBER -->
+
+                                <td>
+
+                                    <span class="text-muted">
+                                        {{ clearance.invoice.student.admission_no }}
+                                    </span>
+
+                                </td>
+
+
+                                <!-- CURRENT STUDY LEVEL -->
+
+                                <td>
+
+                                    {{ clearance.current_study_level }}
+
+                                </td>
+
+
+                                <!-- ACTION -->
+
+                                <td class="text-end">
+
+                                    <a
+                                        href="{% url 'finance:student_clearance_history' clearance.invoice.student.pk %}"
+                                        class="btn btn-sm btn-primary text-white"
+                                    >
+
+                                        <i class="fas fa-eye me-1"></i>
+
+                                        View
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% endwith %}
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td
+                                    colspan="4"
+                                    class="text-center py-4"
+                                >
+
+                                    No financial clearance records found.
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="{% static 'js/finance/financial_clearance.js' %}"></script>
 
 {% endblock %}

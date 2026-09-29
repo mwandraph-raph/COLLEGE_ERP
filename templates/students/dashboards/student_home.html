@@ -1,440 +1,623 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/topbar.css' %}">
-<link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}">
-{% endblock %}
 
 {% block content %}
 
 <div class="student-dashboard">
 
-<!-- =====================================================
-     TOP HEADER
-     ===================================================== -->
+    <!-- =========================================================
+         STUDENT DASHBOARD HERO
+    ========================================================= -->
 
-<section class="student-topbar">
+    <section class="student-dashboard-hero">
 
-    <div class="student-heading">
+        <div class="student-dashboard-hero-content">
 
-        <div class="student-heading-icon">
-            <i class="fa-solid fa-graduation-cap"></i>
-        </div>
+            <!-- =================================================
+                 HERO LEFT
+            ================================================= -->
 
-        <div>
-            <span class="eyebrow">STUDENT PORTAL</span>
+            <div class="student-dashboard-hero-main">
 
-            <h1>
-                 <!--Welcome back,
-               {{ user.get_full_name|default:user.username }}-->
-            </h1>
+                <span class="student-dashboard-eyebrow">
 
-            <p>
-                Your academic activities, registration and results at a glance.
-            </p>
-        </div>
+                    <i class="fa-solid fa-graduation-cap"></i>
 
-    </div>
+                    STUDENT PORTAL
 
-    <div class="session-pill">
-        <span class="session-dot"></span>
-
-        <div>
-            <small>ACTIVE SESSION</small>
-            <strong>
-                {% if active_year %}
-                    {{ active_year }}
-                {% else %}
-                    Academic Session
-                {% endif %}
-                
-            </strong>
-        </div>
-
-        <i class="fa-solid fa-calendar-days"></i>
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     STUDENT PROFILE HERO
-     ===================================================== -->
-
-<section class="student-hero">
-
-    <div class="hero-main">
-
-        <div class="student-avatar">
-            <i class="fa-solid fa-user-graduate"></i>
-        </div>
-
-        <div class="student-identity">
-
-            <div class="identity-top">
-
-                <span class="status-badge">
-                    <span></span>
-                    {{ student.get_status_display }}
                 </span>
 
-                <span class="admission-number">
-                    <i class="fa-solid fa-id-card"></i>
-                    {{ student.admission_no }}
-                </span>
+
+                <h1>
+                    Student Dashboard
+                </h1>
+
+
+                <p>
+                    Your academic activities, registration and results
+                    at a glance.
+                </p>
 
             </div>
 
-            <h2>
-                {{ user.get_full_name|default:user.username }}
-            </h2>
 
-            <p class="programme-name">
-                {{ student.programme }}
-            </p>
+            <!-- =================================================
+                 HERO RIGHT — ACADEMIC SESSION
+            ================================================= -->
 
-            <div class="academic-line">
+            <div class="student-dashboard-session">
 
-                <span>
-                    <i class="fa-solid fa-layer-group"></i>
-                    {{ enrollment.programme_level }}
-                </span>
+                <div class="student-session-icon">
 
-                <span class="academic-separator"></span>
-
-                <span>
                     <i class="fa-solid fa-calendar-days"></i>
-                    {{ enrollment.academic_year }}
-                </span>
 
-                <span class="academic-separator"></span>
+                </div>
 
-                <span>
+
+                <div>
+
+                    <span>
+                        Academic Session
+                    </span>
+
+
+                    <strong>
+
+                        {% if active_year %}
+
+                            {{ active_year }}
+
+                        {% else %}
+
+                            Academic Session
+
+                        {% endif %}
+
+                    </strong>
+
+
+                    <small>
+
+                        {% if enrollment.semester %}
+
+                            {{ enrollment.semester }}
+
+                        {% else %}
+
+                            Semester Not Set
+
+                        {% endif %}
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+  </section>
+
+        <!-- =====================================================
+             STUDENT IDENTITY
+        ====================================================== -->
+
+        <div class="student-hero-profile">
+
+            <div class="student-hero-profile-main">
+
+                <!-- AVATAR -->
+
+                <div class="student-avatar">
+
+                    <i class="fa-solid fa-user-graduate"></i>
+
+                </div>
+
+
+                <!-- IDENTITY -->
+
+                <div class="student-identity">
+
+                    <div class="identity-top">
+
+                        <span class="status-badge">
+
+                            <span></span>
+
+                            {{ student.get_status_display }}
+
+                        </span>
+
+
+                        <span class="admission-number">
+
+                            <i class="fa-solid fa-id-card"></i>
+
+                            {{ student.admission_no }}
+
+                        </span>
+
+                    </div>
+
+
+                    <h2>
+                        {{ user.get_full_name|default:user.username }}
+                    </h2>
+
+
+                    <p class="programme-name">
+                        {{ student.programme }}
+                    </p>
+
+
+                    <div class="academic-line">
+
+                        <span>
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                            {{ enrollment.programme_level }}
+
+                        </span>
+
+
+                        <span class="academic-separator"></span>
+
+
+                        <span>
+
+                            <i class="fa-solid fa-calendar-days"></i>
+
+                            {{ enrollment.academic_year }}
+
+                        </span>
+
+
+                        <span class="academic-separator"></span>
+
+
+                        <span>
+
+                            <i class="fa-solid fa-book-open"></i>
+
+                            {{ enrollment.semester }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STUDENT ACTIONS
+            ================================================= -->
+
+            <div class="hero-actions">
+
+                {% if latest_enrollment %}
+
+                <a href="{% url 'register_units' latest_enrollment.pk %}"
+                   class="primary-action">
+
                     <i class="fa-solid fa-book-open"></i>
+
+                    <span>
+
+                        <strong>
+                            Register Units
+                        </strong>
+
+                        <small>
+                            Semester Units registration
+                        </small>
+
+                    </span>
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+                {% endif %}
+
+
+                <a href="{% url 'student_results' %}"
+                   class="secondary-action">
+
+                    <i class="fa-solid fa-chart-column"></i>
+
+                    <span>
+
+                        <strong>
+                            View Results
+                        </strong>
+
+                        <small>
+                            Check your academic performance
+                        </small>
+
+                    </span>
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+  
+
+
+    <!-- =========================================================
+         ACADEMIC SNAPSHOT
+    ========================================================= -->
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    ACADEMIC OVERVIEW
+                </span>
+
+                <h3>
+                    Your Academic Snapshot
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        {% if latest_enrollment %}
+
+            {% url 'register_units' latest_enrollment.pk as register_units_url %}
+
+        {% endif %}
+
+
+        <div class="snapshot-grid">
+
+            <!-- REGISTERED UNITS -->
+
+            <a href="{{ register_units_url }}"
+               class="snapshot-card snapshot-primary">
+
+                <div class="snapshot-top">
+
+                    <div class="snapshot-icon">
+
+                        <i class="fa-solid fa-book"></i>
+
+                    </div>
+
+
+                    <span class="snapshot-arrow">
+
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                    </span>
+
+                </div>
+
+
+                <div class="snapshot-value">
+
+                    {{ registration_count }}
+
+                </div>
+
+
+                <div class="snapshot-title">
+                    Registered Units
+                </div>
+
+
+                <div class="snapshot-description">
+                    Current semester
+                </div>
+
+            </a>
+
+
+            <!-- CURRENT LEVEL -->
+
+            <div class="snapshot-card snapshot-success">
+
+                <div class="snapshot-top">
+
+                    <div class="snapshot-icon">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                    </div>
+
+
+                    <span class="snapshot-tag">
+                        LEVEL
+                    </span>
+
+                </div>
+
+
+                <div class="snapshot-value snapshot-level">
+
+                    {{ enrollment.programme_level }}
+
+                </div>
+
+
+                <div class="snapshot-title">
+                    Current Level
+                </div>
+
+
+                <div class="snapshot-description">
+                    Programme progression
+                </div>
+
+            </div>
+
+
+            <!-- ACADEMIC STATUS -->
+
+            <div class="snapshot-card snapshot-warning">
+
+                <div class="snapshot-top">
+
+                    <div class="snapshot-icon">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </div>
+
+
+                    <span class="snapshot-tag">
+                        STATUS
+                    </span>
+
+                </div>
+
+
+                <div class="snapshot-value snapshot-status">
+
+                    {{ student.get_status_display }}
+
+                </div>
+
+
+                <div class="snapshot-title">
+                    Academic Status
+                </div>
+
+
+                <div class="snapshot-description">
+                    Current standing
+                </div>
+
+            </div>
+
+
+            <!-- CURRENT SEMESTER -->
+
+            <div class="snapshot-card snapshot-danger">
+
+                <div class="snapshot-top">
+
+                    <div class="snapshot-icon">
+
+                        <i class="fa-solid fa-calendar-days"></i>
+
+                    </div>
+
+
+                    <span class="snapshot-tag">
+                        SESSION
+                    </span>
+
+                </div>
+
+
+                <div class="snapshot-value snapshot-semester">
+
                     {{ enrollment.semester }}
-                </span>
 
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- HERO ACTIONS -->
-
-    <div class="hero-actions">
-
-        {% if latest_enrollment %}
-
-        <a href="{% url 'register_units' latest_enrollment.pk %}"
-           class="primary-action">
-
-            <i class="fa-solid fa-book-open"></i>
-
-            <span>
-                <strong>Register Units</strong>
-                <small>Semester Units registration</small>
-            </span>
-
-            <i class="fa-solid fa-arrow-right"></i>
-
-        </a>
-
-        {% endif %}
-
-
-        <a href="{% url 'student_results' %}"
-           class="secondary-action">
-
-            <i class="fa-solid fa-chart-column"></i>
-
-            <span>
-                <strong>View Results</strong>
-                <small>Check your academic performance</small>
-            </span>
-
-            <i class="fa-solid fa-arrow-right"></i>
-
-        </a>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     ACADEMIC SNAPSHOT
-     ===================================================== -->
-
-<section class="dashboard-section">
-
-    <div class="section-heading">
-
-        <div>
-            <span class="eyebrow">ACADEMIC OVERVIEW</span>
-            <h3>Your Academic Snapshot</h3>
-        </div>
-
-    </div>
-
-
-    {% if latest_enrollment %}
-        {% url 'register_units' latest_enrollment.pk as register_units_url %}
-    {% endif %}
-
-
-    <div class="snapshot-grid">
-
-
-        <!-- REGISTERED UNITS -->
-
-        <a href="{{ register_units_url }}"
-           class="snapshot-card snapshot-primary">
-
-            <div class="snapshot-top">
-
-                <div class="snapshot-icon">
-                    <i class="fa-solid fa-book"></i>
                 </div>
 
-                <span class="snapshot-arrow">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </span>
 
-            </div>
-
-            <div class="snapshot-value">
-                {{ registration_count }}
-            </div>
-
-            <div class="snapshot-title">
-                Registered Units
-            </div>
-
-            <div class="snapshot-description">
-                Current semester
-            </div>
-
-        </a>
-
-
-        <!-- CURRENT LEVEL -->
-
-        <div class="snapshot-card snapshot-success">
-
-            <div class="snapshot-top">
-
-                <div class="snapshot-icon">
-                    <i class="fa-solid fa-layer-group"></i>
+                <div class="snapshot-title">
+                    Current Semester
                 </div>
 
-                <span class="snapshot-tag">
-                    LEVEL
-                </span>
 
-            </div>
-
-            <div class="snapshot-value snapshot-level">
-                {{ enrollment.programme_level }}
-            </div>
-
-            <div class="snapshot-title">
-                Current Level
-            </div>
-
-            <div class="snapshot-description">
-                Programme progression
-            </div>
-
-        </div>
-
-
-        <!-- STATUS -->
-
-        <div class="snapshot-card snapshot-warning">
-
-            <div class="snapshot-top">
-
-                <div class="snapshot-icon">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-
-                <span class="snapshot-tag">
-                    STATUS
-                </span>
-
-            </div>
-
-            <div class="snapshot-value snapshot-status">
-                {{ student.get_status_display }}
-            </div>
-
-            <div class="snapshot-title">
-                Academic Status
-            </div>
-
-            <div class="snapshot-description">
-                Current standing
-            </div>
-
-        </div>
-
-
-        <!-- SEMESTER -->
-
-        <div class="snapshot-card snapshot-danger">
-
-            <div class="snapshot-top">
-
-                <div class="snapshot-icon">
-                    <i class="fa-solid fa-calendar-days"></i>
-                </div>
-
-                <span class="snapshot-tag">
-                    SESSION
-                </span>
-
-            </div>
-
-            <div class="snapshot-value snapshot-semester">
-                {{ enrollment.semester }}
-            </div>
-
-            <div class="snapshot-title">
-                Current Semester
-            </div>
-
-            <div class="snapshot-description">
-                Active academic session
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     LOWER DASHBOARD
-     ===================================================== -->
-
-<div class="dashboard-grid">
-
-
-    <!-- =================================================
-         REGISTRATION PROGRESS
-         ================================================= -->
-
-    <section class="dashboard-card registration-card">
-
-        <div class="card-heading">
-
-            <div class="heading-icon blue">
-                <i class="fa-solid fa-chart-pie"></i>
-            </div>
-
-            <div class="reg-progress">
-                <h4>Registration Progress</h4>
-                <p>Current semester</p>
-            </div>
-
-            <span class="progress-count">
-                {{ registration_count }}/8
-            </span>
-
-        </div>
-
-
-        <div class="progress-area">
-
-            <div class="progress-chart-wrapper">
-
-                <canvas
-                    id="studentProgressChart"
-                    data-registered="{{ registration_count|default:0 }}"
-                    data-total="8">
-                </canvas>
-
-                <div class="progress-center">
-                    <strong>{{ registration_count }}</strong>
-                    <span>of 8 units</span>
+                <div class="snapshot-description">
+                    Active academic session
                 </div>
 
             </div>
 
         </div>
-
-
-        <div class="progress-details">
-
-            <div>
-                <span class="detail-label">
-                    <span class="legend registered"></span>
-                    Registered
-                </span>
-
-                <strong>{{ registration_count }}</strong>
-            </div>
-
-            <div>
-                <span class="detail-label">
-                    <span class="legend expected"></span>
-                    Expected
-                </span>
-
-                <strong>8</strong>
-            </div>
-
-        </div>
-
-
-        {% if latest_enrollment %}
-
-        <a href="{% url 'register_units' latest_enrollment.pk %}"
-           class="manage-registration">
-
-            <span>
-                <i class="fa-solid fa-sliders"></i>
-                Manage Unit Registration
-            </span>
-
-            <i class="fa-solid fa-arrow-right"></i>
-
-        </a>
-
-        {% endif %}
 
     </section>
 
 
-    <!-- =================================================
-         CURRENT UNITS
-         ================================================= -->
+    <!-- =========================================================
+         REGISTRATION + CURRENT UNITS
+    ========================================================= -->
 
-    <section class="dashboard-card units-card">
+    <div class="dashboard-grid">
 
-        <div class="card-heading">
 
-            <div class="heading-icon green">
-                <i class="fa-solid fa-book-open"></i>
+        <!-- =====================================================
+             REGISTRATION PROGRESS
+        ====================================================== -->
+
+        <section class="dashboard-card registration-card">
+
+            <div class="card-heading">
+
+                <div class="heading-icon blue">
+
+                    <i class="fa-solid fa-chart-pie"></i>
+
+                </div>
+
+
+                <div class="reg-progress">
+
+                    <h4>
+                        Registration Progress
+                    </h4>
+
+                    <p>
+                        Current semester
+                    </p>
+
+                </div>
+
+
+                <span class="progress-count">
+
+                    {{ registration_count }}/8
+
+                </span>
+
             </div>
 
-            <div class="sem-units">
-                <h4>Current Semester Units</h4>
-                <p>Your registered academic units</p>
+
+            <div class="progress-area">
+
+                <div class="progress-chart-wrapper">
+
+                    <canvas
+                        id="studentProgressChart"
+                        data-registered="{{ registration_count|default:0 }}"
+                        data-total="8">
+                    </canvas>
+
+
+                    <div class="progress-center">
+
+                        <strong>
+                            {{ registration_count }}
+                        </strong>
+
+                        <span>
+                            of 8 units
+                        </span>
+
+                    </div>
+
+                </div>
+
             </div>
 
-            <span class="unit-count">
-                {{ registration_count }} Units
-            </span>
 
-        </div>
+            <div class="progress-details">
+
+                <div>
+
+                    <span class="detail-label">
+
+                        <span class="legend registered"></span>
+
+                        Registered
+
+                    </span>
 
 
-        {% if registrations %}
+                    <strong>
+                        {{ registration_count }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="detail-label">
+
+                        <span class="legend expected"></span>
+
+                        Expected
+
+                    </span>
+
+
+                    <strong>
+                        8
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            {% if latest_enrollment %}
+
+            <a href="{% url 'register_units' latest_enrollment.pk %}"
+               class="manage-registration">
+
+                <span>
+
+                    <i class="fa-solid fa-sliders"></i>
+
+                    Manage Unit Registration
+
+                </span>
+
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =====================================================
+             CURRENT SEMESTER UNITS
+        ====================================================== -->
+
+        <section class="dashboard-card units-card">
+
+            <div class="card-heading">
+
+                <div class="heading-icon green">
+
+                    <i class="fa-solid fa-book-open"></i>
+
+                </div>
+
+
+                <div class="sem-units">
+
+                    <h4>
+                        Current Semester Units
+                    </h4>
+
+                    <p>
+                        Your registered academic units
+                    </p>
+
+                </div>
+
+
+                <span class="unit-count">
+
+                    {{ registration_count }} Units
+
+                </span>
+
+            </div>
+
+
+            {% if registrations %}
 
             <div class="unit-list">
 
@@ -443,12 +626,18 @@
                 <div class="unit-item">
 
                     <div class="unit-number">
+
                         {{ forloop.counter|stringformat:"02d" }}
+
                     </div>
 
+
                     <div class="unit-icon">
+
                         <i class="fa-solid fa-book"></i>
+
                     </div>
+
 
                     <div class="unit-information">
 
@@ -462,9 +651,13 @@
 
                     </div>
 
+
                     <div class="registered-status">
+
                         <i class="fa-solid fa-check"></i>
+
                         Registered
+
                     </div>
 
                 </div>
@@ -473,19 +666,28 @@
 
             </div>
 
-        {% else %}
+
+            {% else %}
+
 
             <div class="empty-units">
 
                 <div class="empty-icon">
+
                     <i class="fa-solid fa-book-open"></i>
+
                 </div>
 
-                <h4>No Registered Units</h4>
+
+                <h4>
+                    No Registered Units
+                </h4>
+
 
                 <p>
                     You have not registered any units for the current semester.
                 </p>
+
 
                 {% if latest_enrollment %}
 
@@ -493,6 +695,7 @@
                    class="empty-action">
 
                     <i class="fa-solid fa-plus"></i>
+
                     Register Your Units
 
                 </a>
@@ -501,84 +704,116 @@
 
             </div>
 
-        {% endif %}
+            {% endif %}
 
-    </section>
+        </section>
+
+    </div>
 
 
-</div>
-
-
-<!-- =====================================================
+  <!-- =========================================================
      ACADEMIC SERVICES
-     ===================================================== -->
+========================================================= -->
 
 <section class="dashboard-section services-section">
 
-    <div class="section-heading">
+    <div class="services-card">
 
-        <div>
-            <span class="eyebrow">STUDENT SERVICES</span>
-            <h3>Academic Services</h3>
-            <p>Frequently used student services</p>
+        <!-- SERVICES HEADER -->
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    STUDENT SERVICES
+                </span>
+
+                <h3>
+                    Academic Services
+                </h3>
+
+                <p>
+                    Frequently used student services
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SERVICES -->
+
+        <div class="services-grid">
+
+
+            <!-- RESULTS -->
+
+            <a href="{% url 'student_results' %}"
+               class="service-card">
+
+                <div class="service-icon blue">
+
+                    <i class="fa-solid fa-chart-column"></i>
+
+                </div>
+
+
+                <div class="service-content">
+
+                    <strong>
+                        Academic Results
+                    </strong>
+
+                    <span>
+                        View your published results
+                    </span>
+
+                </div>
+
+
+                <i class="fa-solid fa-arrow-right service-arrow"></i>
+
+            </a>
+
+
+            <!-- STUDENT SURVEY -->
+
+            <a href="YOUR_GOOGLE_FORM_URL"
+               class="service-card"
+               target="_blank"
+               rel="noopener noreferrer">
+
+                <div class="service-icon green">
+
+                    <i class="fa-solid fa-clipboard-question"></i>
+
+                </div>
+
+
+                <div class="service-content">
+
+                    <strong>
+                        Take Student Survey
+                    </strong>
+
+                    <span>
+                        Share your feedback and experience
+                    </span>
+
+                </div>
+
+
+                <i class="fa-solid fa-arrow-up-right-from-square service-arrow"></i>
+
+            </a>
+
+
         </div>
 
     </div>
 
-
-    <div class="services-grid">
-
-
-        <a href="{% url 'student_results' %}"
-           class="service-card">
-
-            <div class="service-icon blue">
-                <i class="fa-solid fa-chart-column"></i>
-            </div>
-
-            <div class="service-content">
-
-                <strong>Academic Results</strong>
-
-                <span>
-                    View your published results
-                </span>
-
-            </div>
-
-            <i class="fa-solid fa-arrow-right service-arrow"></i>
-
-        </a>
-
-
-        {% if latest_enrollment %}
-
-        <a href="{% url 'register_units' latest_enrollment.pk %}"
-           class="service-card">
-
-            <div class="service-icon green">
-                <i class="fa-solid fa-book-open"></i>
-            </div>
-
-            <div class="service-content">
-
-                <strong>Unit Registration</strong>
-
-                <span>
-                    Manage semester units
-                </span>
-
-            </div>
-
-            <i class="fa-solid fa-arrow-right service-arrow"></i>
-
-        </a>
-
-        {% endif %}
-    </div>
-
 </section>
-
 
 </div>
 

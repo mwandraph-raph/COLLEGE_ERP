@@ -138,4 +138,11 @@ path(
     views.financial_clearance_list,
     name="financial_clearance_list",
 ),
+
+
+path(
+    "clearance/student/<int:student_id>/history/",
+    views.student_clearance_history,
+    name="student_clearance_history",
+),
 ]

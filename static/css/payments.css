@@ -1,0 +1,96 @@
+/* =========================================================
+   XORADEX EDUCORE ERP
+   FINANCE - PAYMENTS
+   ---------------------------------------------------------
+   Responsibility:
+   - Payment register presentation
+   - Student payment rows
+   - Payment history presentation
+   - Responsive payment history
+   ========================================================= */
+
+
+/* =========================================================
+   STUDENT PAYMENT ROW
+   ========================================================= */
+
+.payment-student-row {
+    transition: background-color 0.15s ease;
+}
+
+.payment-student-row:hover {
+    background-color: #f8f9fa;
+}
+
+
+/* =========================================================
+   STUDENT ICON
+   ========================================================= */
+
+.payment-student-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #f1f3f5;
+    color: #495057;
+}
+
+
+/* =========================================================
+   PAYMENT HISTORY
+   ========================================================= */
+
+.payment-history {
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   PAYMENT HISTORY TABLE
+   ========================================================= */
+
+.payment-history .table th {
+    white-space: nowrap;
+}
+
+.payment-history .table td {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   LAST STUDENT ROW
+   ========================================================= */
+
+.payment-student-group:last-child {
+    border-bottom: 0 !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .payment-student-row {
+        padding: 1rem !important;
+    }
+
+    .payment-history {
+        padding: 0;
+    }
+
+    .payment-history .table {
+        min-width: 900px;
+    }
+
+}

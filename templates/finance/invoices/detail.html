@@ -2,35 +2,59 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container-fluid px-4 mt-4">
 
-    <div class="d-flex justify-content-between mb-3">
 
-        <h3>
-            Invoice {{ invoice.invoice_number }}
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h3 class="mb-0">
+
+            Invoice
+            {{ invoice.invoice_number }}
+
         </h3>
-        <a href="{% url 'finance:payment_create' invoice.pk %}"
-        class="btn btn-success">
 
-            Record Payment
 
-        </a>
-        <a href="{% url 'finance:invoice_list' %}"
-           class="btn btn-secondary">
+        <div class="d-flex gap-2">
 
-            Back
+            <a
+                href="{% url 'finance:payment_create' invoice.pk %}"
+                class="btn btn-success"
+            >
+                Record Payment
+            </a>
 
-        </a>
+
+            <a
+                href="{% url 'finance:fee_statement_detail' invoice.student.pk %}"
+                class="btn btn-secondary"
+            >
+                Back to Student
+            </a>
+
+        </div>
 
     </div>
+
+
+    <!-- =====================================================
+         STUDENT INFORMATION
+         ===================================================== -->
 
     <div class="card shadow-sm mb-4">
 
         <div class="card-header">
 
-            Student Information
+            <strong>
+                Student Information
+            </strong>
 
         </div>
+
 
         <div class="card-body">
 
@@ -39,27 +63,50 @@
                 <div class="col-md-6">
 
                     <p>
-                        <strong>Student:</strong>
+
+                        <strong>
+                            Student:
+                        </strong>
+
                         {{ invoice.student }}
+
                     </p>
 
+
                     <p>
-                        <strong>Academic Year:</strong>
+
+                        <strong>
+                            Academic Year:
+                        </strong>
+
                         {{ invoice.enrollment.academic_year }}
+
                     </p>
 
                 </div>
 
+
                 <div class="col-md-6">
 
                     <p>
-                        <strong>Semester:</strong>
+
+                        <strong>
+                            Semester:
+                        </strong>
+
                         {{ invoice.enrollment.semester }}
+
                     </p>
 
+
                     <p>
-                        <strong>Study Level:</strong>
-                       {{ invoice.enrollment.programme_level }}
+
+                        <strong>
+                            Study Level:
+                        </strong>
+
+                        {{ invoice.enrollment.programme_level }}
+
                     </p>
 
                 </div>
@@ -70,62 +117,101 @@
 
     </div>
 
+
+    <!-- =====================================================
+         INVOICE ITEMS
+         ===================================================== -->
+
     <div class="card shadow-sm mb-4">
 
         <div class="card-header">
 
-            Invoice Items
+            <strong>
+                Invoice Items
+            </strong>
 
         </div>
 
+
         <div class="card-body">
 
-            <table class="table table-bordered">
+            <div class="table-responsive">
 
-                <thead>
+                <table class="table table-bordered align-middle mb-0">
 
-                    <tr>
+                    <thead>
 
-                        <th>Fee Category</th>
-                        <th>Amount</th>
+                        <tr>
 
-                    </tr>
+                            <th>
+                                Fee Category
+                            </th>
 
-                </thead>
+                            <th class="text-end">
+                                Amount
+                            </th>
 
-                <tbody>
+                        </tr>
 
-                    {% for item in items %}
+                    </thead>
 
-                    <tr>
 
-                        <td>
-                            {{ item.fee_category }}
-                        </td>
+                    <tbody>
 
-                        <td>
-                            {{ item.amount }}
-                        </td>
+                        {% for item in items %}
 
-                    </tr>
+                        <tr>
 
-                    {% endfor %}
+                            <td>
+                                {{ item.fee_category }}
+                            </td>
 
-                </tbody>
+                            <td class="text-end">
+                                {{ item.amount|floatformat:2 }}
+                            </td>
 
-            </table>
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="2"
+                                class="text-center py-4"
+                            >
+                                No invoice items found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 
     </div>
 
+
+    <!-- =====================================================
+         FINANCIAL SUMMARY
+         ===================================================== -->
+
     <div class="card shadow-sm mb-4">
 
         <div class="card-header">
 
-            Financial Summary
+            <strong>
+                Financial Summary
+            </strong>
 
         </div>
+
 
         <div class="card-body">
 
@@ -133,29 +219,54 @@
 
                 <div class="col-md-3">
 
-                    <strong>Total</strong><br>
-                    {{ invoice.total_amount }}
+                    <small class="text-muted">
+                        Total
+                    </small>
+
+                    <h5>
+                        {{ invoice.total_amount|floatformat:2 }}
+                    </h5>
 
                 </div>
 
+
                 <div class="col-md-3">
 
-                    <strong>Paid</strong><br>
-                    {{ invoice.amount_paid }}
+                    <small class="text-muted">
+                        Paid
+                    </small>
+
+                    <h5>
+                        {{ invoice.amount_paid|floatformat:2 }}
+                    </h5>
 
                 </div>
 
+
                 <div class="col-md-3">
 
-                    <strong>Balance</strong><br>
-                    {{ invoice.balance }}
+                    <small class="text-muted">
+                        Balance
+                    </small>
+
+                    <h5>
+
+                        {{ invoice.balance|floatformat:2 }}
+
+                    </h5>
 
                 </div>
 
+
                 <div class="col-md-3">
 
-                    <strong>% Paid</strong><br>
-                    {{ invoice.payment_percentage }}%
+                    <small class="text-muted">
+                        % Paid
+                    </small>
+
+                    <h5>
+                        {{ invoice.payment_percentage|floatformat:2 }}%
+                    </h5>
 
                 </div>
 
@@ -165,68 +276,134 @@
 
     </div>
 
-    <div class="card shadow-sm">
 
-        <div class="card-header">
+    <!-- =====================================================
+         PAYMENTS
+         ===================================================== -->
 
-            Payments
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <strong>
+                Payments
+            </strong>
+
+
+            <a
+                href="{% url 'finance:payment_create' invoice.pk %}"
+                class="btn btn-success btn-sm"
+            >
+                Record Payment
+            </a>
 
         </div>
 
+
         <div class="card-body">
 
-            <table class="table table-striped">
+            <div class="table-responsive">
 
-                <thead>
+                <table class="table table-striped table-bordered align-middle mb-0">
 
-                    <tr>
+                    <thead>
 
-                        <th>Date</th>
-                        <th>Method</th>
-                        <th>Reference</th>
-                        <th>Amount</th>
+                        <tr>
 
-                    </tr>
+                            <th>
+                                Date
+                            </th>
 
-                </thead>
+                            <th>
+                                Method
+                            </th>
 
-                <tbody>
+                            <th>
+                                Reference
+                            </th>
 
-                    {% for payment in payments %}
+                            <th class="text-end">
+                                Amount
+                            </th>
 
-                    <tr>
+                        </tr>
 
-                        <td>{{ payment.payment_date }}</td>
+                    </thead>
 
-                        <td>{{ payment.payment_method }}</td>
 
-                        <td>{{ payment.reference_number }}</td>
+                    <tbody>
 
-                        <td>{{ payment.amount }}</td>
+                        {% for payment in payments %}
 
-                    </tr>
+                        <tr>
 
-                    {% empty %}
+                            <td>
+                                {{ payment.payment_date }}
+                            </td>
 
-                    <tr>
+                            <td>
+                                {{ payment.payment_method }}
+                            </td>
 
-                        <td colspan="4">
+                            <td>
+                                {{ payment.reference_number }}
+                            </td>
 
-                            No payments recorded.
+                            <td class="text-end">
+                                {{ payment.amount|floatformat:2 }}
+                            </td>
 
-                        </td>
+                        </tr>
 
-                    </tr>
+                        {% empty %}
 
-                    {% endfor %}
+                        <tr>
 
-                </tbody>
+                            <td
+                                colspan="4"
+                                class="text-center py-4"
+                            >
+                                No payments recorded.
+                            </td>
 
-            </table>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 
     </div>
+
+
+    <!-- =====================================================
+         FOOTER ACTIONS
+         ===================================================== -->
+
+    <div class="d-flex gap-2 mb-4">
+
+        <a
+            href="{% url 'finance:fee_statement_detail' invoice.student.pk %}"
+            class="btn btn-secondary"
+        >
+            Back to Student
+        </a>
+
+
+        <a
+            href="{% url 'finance:invoice_list' %}"
+            class="btn btn-outline-secondary"
+        >
+            Student Invoices
+        </a>
+
+    </div>
+
 
 </div>
 
