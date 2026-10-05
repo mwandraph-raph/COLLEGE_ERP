@@ -452,10 +452,9 @@
 
     </section>
 
-
-    <!-- =========================================================
-         CURRENT FINANCIAL POSITION
-    ========================================================== -->
+    <!-- ============================================================
+        CURRENT FINANCIAL POSITION
+        ============================================================ -->
 
     <section class="principal-section">
 
@@ -466,12 +465,17 @@
                 <div>
 
                     <h3 class="principal-panel-title">
+
                         <i class="fa-solid fa-coins"></i>
+
                         Current Financial Position
+
                     </h3>
 
                     <p class="principal-panel-subtitle">
+
                         High-level institutional revenue position
+
                     </p>
 
                 </div>
@@ -483,53 +487,34 @@
 
                 <div class="row g-4">
 
-                    <!-- COLLECTIONS -->
 
-                    <div class="col-xl-4 col-md-6">
+                    <!-- ==================================================
+                        EXPECTED REVENUE
+                        ================================================== -->
 
-                        <div class="principal-finance-card">
-
-                            <div class="principal-finance-icon principal-finance-collections">
-                                <i class="fa-solid fa-money-bill-trend-up"></i>
-                            </div>
-
-                            <div>
-
-                                <div class="principal-finance-label">
-                                    Total Collections
-                                </div>
-
-                                <div class="principal-finance-value">
-                                    KSh
-                                    {{ total_collections|default:0|floatformat:2 }}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- EXPECTED -->
-
-                    <div class="col-xl-4 col-md-6">
+                    <div class="col-xl-3 col-md-6">
 
                         <div class="principal-finance-card">
 
                             <div class="principal-finance-icon principal-finance-expected">
-                                <i class="fa-solid fa-bullseye"></i>
+
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+
                             </div>
 
-                            <div>
+                            <div class="min-width-0">
 
                                 <div class="principal-finance-label">
+
                                     Expected Revenue
+
                                 </div>
 
                                 <div class="principal-finance-value">
+
                                     KSh
                                     {{ expected_revenue|default:0|floatformat:2 }}
+
                                 </div>
 
                             </div>
@@ -539,30 +524,133 @@
                     </div>
 
 
-                    <!-- OUTSTANDING -->
+                    <!-- ==================================================
+                        TOTAL COLLECTIONS
+                        ================================================== -->
 
-                    <div class="col-xl-4 col-md-12">
+                    <div class="col-xl-3 col-md-6">
 
                         <div class="principal-finance-card">
 
-                            <div class="principal-finance-icon principal-finance-outstanding">
-                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                            <div class="principal-finance-icon principal-finance-collections">
+
+                                <i class="fa-solid fa-money-bill-wave"></i>
+
                             </div>
 
-                            <div>
+                            <div class="min-width-0">
 
                                 <div class="principal-finance-label">
-                                    Outstanding Balance
+
+                                    Total Collections
+
                                 </div>
 
                                 <div class="principal-finance-value">
+
                                     KSh
-                                    {{ outstanding_balance|default:0|floatformat:2 }}
+                                    {{ total_collections|default:0|floatformat:2 }}
+
                                 </div>
 
                             </div>
 
                         </div>
+
+                    </div>
+
+
+                    <!-- ==================================================
+                        STUDENT CREDITS APPLIED
+                        ================================================== -->
+
+                    <div class="col-xl-3 col-md-6">
+
+                        <div class="principal-finance-card">
+
+                            <div class="principal-finance-icon principal-finance-collections">
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                            </div>
+
+                            <div class="min-width-0">
+
+                                <div class="principal-finance-label">
+
+                                    Student Credits Applied
+
+                                </div>
+
+                                <div class="principal-finance-value">
+
+                                    KSh
+                                    {{ student_credits_applied|default:0|floatformat:2 }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==================================================
+                        OUTSTANDING BALANCE
+                        ================================================== -->
+
+                    <div class="col-xl-3 col-md-6">
+
+                        <div class="principal-finance-card">
+
+                            <div class="principal-finance-icon principal-finance-outstanding">
+
+                                <i class="fa-solid fa-scale-balanced"></i>
+
+                            </div>
+
+                            <div class="min-width-0">
+
+                                <div class="principal-finance-label">
+
+                                    Outstanding Balance
+
+                                </div>
+
+                                <div class="principal-finance-value">
+
+                                    KSh
+                                    {{ outstanding_balance|default:0|floatformat:2 }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- ==================================================
+                    FINANCIAL RECONCILIATION
+                    ================================================== -->
+
+                <div class="mt-4 pt-3 border-top">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <i class="fa-solid fa-circle-info text-muted"></i>
+
+                        <span class="text-muted small">
+
+                            Outstanding balance reflects posted invoice balances
+                            after collections and applicable student credits.
+
+                        </span>
 
                     </div>
 
@@ -573,7 +661,6 @@
         </div>
 
     </section>
-
 
     <!-- =========================================================
          FINANCE PERIOD PERFORMANCE

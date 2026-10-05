@@ -676,7 +676,8 @@ def home(request):
         # ==================================================
         # FINANCE — GLOBAL
         # ==================================================
-
+        from decimal import Decimal
+        from finance.models import StudentCredit
         posted_payments = Payment.objects.filter(
             posting_status="POSTED",
             is_reversed=False,
@@ -718,6 +719,17 @@ def home(request):
                 ),
             )
         )["total"]
+
+        student_credits_applied = StudentCredit.objects.aggregate(
+            total=Coalesce(
+                Sum("used_amount"),
+                Value(0),
+                output_field=DecimalField(
+                    max_digits=12,
+                    decimal_places=2,
+                ),
+            )
+        )["total"] or Decimal("0.00")
 
         # ==================================================
         # GRADUATION — GLOBAL
@@ -925,8 +937,7 @@ def home(request):
         # FINANCIAL ANALYTICS — PREVIOUS SEMESTER CREDIT
         # ==================================================
 
-        from decimal import Decimal
-        from finance.models import StudentCredit
+
 
         previous_semester = None
 
@@ -1067,6 +1078,7 @@ def home(request):
             "total_departments": total_departments,
             "total_enrollments": total_enrollments,
             "total_registrations": total_registrations,
+            "student_credits_applied": student_credits_applied,
 
             # ----------------------------------------------
             # ADMISSIONS
