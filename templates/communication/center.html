@@ -1,0 +1,660 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Communication Center | Xorami College ERP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/communication.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="communication-page">
+
+    <!-- =====================================================
+         COMMUNICATION HERO
+         ===================================================== -->
+    <section class="communication-hero">
+
+        <div>
+
+            <span class="communication-eyebrow">
+                <i class="fa-solid fa-bullhorn"></i>
+                STUDENT COMMUNICATION
+            </span>
+
+            <h1>
+                Communication Center
+            </h1>
+
+            <p>
+                Official announcements, important notices,
+                messages, student feedback and upcoming academic
+                dates in one place.
+            </p>
+
+            <!-- BACK TO STUDENT DASHBOARD -->
+
+            <a
+                href="{% url 'home' %}"
+                class="communication-hero-action"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Student Dashboard
+            </a>
+
+        </div>
+
+
+        <div class="communication-hero-stat">
+
+            <i class="fa-solid fa-bell"></i>
+
+            <strong>
+                {{ communication_notification_count }}
+            </strong>
+
+            <span>
+                New
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         COMMUNICATION GRID
+         ===================================================== -->
+
+    <div class="communication-grid">
+
+
+        <!-- =================================================
+             ANNOUNCEMENTS
+             ================================================= -->
+
+        <section class="communication-card">
+
+            <div class="communication-card-header">
+
+                <div>
+
+                    <span class="communication-label">
+                        OFFICIAL NOTICES
+                    </span>
+
+                    <h2>
+
+                        Announcements
+
+                        {% if communication_unread_announcement_count %}
+
+                            <span class="communication-notification-badge">
+                                {{ communication_unread_announcement_count }}
+                            </span>
+
+                        {% endif %}
+
+                    </h2>
+
+                    <p>
+                        Messages published by college administration
+                        and academic leadership.
+                    </p>
+
+                </div>
+
+
+                <span class="communication-count">
+                    {{ communication_announcements|length }}
+                </span>
+
+            </div>
+
+
+            <div class="communication-list">
+
+                {% for item in communication_announcements %}
+
+                    <a
+                        href="{% url 'communication_announcement_detail' item.pk %}"
+                        class="communication-item{% if not item.is_read %} is-unread{% endif %}"
+                    >
+
+                        <div
+                            class="communication-item-icon {% if item.is_important %}important{% endif %}"
+                        >
+
+                            <i
+                                class="fa-solid
+                                {% if item.is_important %}
+                                    fa-circle-exclamation
+                                {% else %}
+                                    fa-bullhorn
+                                {% endif %}"
+                            ></i>
+
+                        </div>
+
+
+                        <div class="communication-item-content">
+
+                            <div class="communication-item-top">
+
+                                <strong>
+                                    {{ item.title }}
+                                </strong>
+
+                                {% if not item.is_read %}
+
+                                    <span class="unread-dot"></span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <p>
+                                {{ item.body|truncatechars:105 }}
+                            </p>
+
+
+                            <small>
+
+                                <i class="fa-regular fa-clock"></i>
+
+                                {{ item.published_at|date:"d M Y, H:i" }}
+
+                                ·
+
+                                {{ item.created_by.get_full_name|default:item.created_by.username }}
+
+                            </small>
+
+                        </div>
+
+
+                        <i
+                            class="fa-solid fa-chevron-right communication-arrow"
+                        ></i>
+
+                    </a>
+
+
+                {% empty %}
+
+                    <div class="communication-empty">
+
+                        <i class="fa-regular fa-envelope-open"></i>
+
+                        <strong>
+                            No announcements yet
+                        </strong>
+
+                        <span>
+                            Official notices will appear here when published.
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MESSAGES
+             ================================================= -->
+
+        <section class="communication-card">
+
+            <div class="communication-card-header">
+
+                <div>
+
+                    <span class="communication-label">
+                        PRIVATE COMMUNICATION
+                    </span>
+
+                    <h2>
+
+                        Messages
+
+                        {% if communication_unread_count %}
+
+                            <span class="communication-notification-badge">
+                                {{ communication_unread_count }}
+                            </span>
+
+                        {% endif %}
+
+                    </h2>
+
+                    <p>
+                        Private conversations with authorised
+                        college staff and academic leadership.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="{% url 'communication_messages' %}"
+                    class="communication-count communication-count-link"
+                    title="Open Messages"
+                >
+
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                </a>
+
+            </div>
+
+
+            <div class="communication-list">
+
+                {% for thread in communication_threads %}
+
+                    <a
+                        href="{% url 'communication_message_thread' thread.pk %}"
+                        class="communication-item{% if thread.unread_count %} is-unread{% endif %}"
+                    >
+
+                        <div class="communication-item-icon">
+
+                            <i class="fa-solid fa-envelope"></i>
+
+                        </div>
+
+
+                        <div class="communication-item-content">
+
+                            <div class="communication-item-top">
+
+                                <strong>
+                                    {{ thread.subject }}
+                                </strong>
+
+                                {% if thread.unread_count %}
+
+                                    <span class="communication-notification-badge">
+                                        {{ thread.unread_count }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- LATEST MESSAGE -->
+
+                            {% for message in thread.messages.all %}
+
+                                {% if forloop.last %}
+
+                                    <p>
+                                        {{ message.body|truncatechars:105 }}
+                                    </p>
+
+                                    <small>
+
+                                        <i class="fa-regular fa-clock"></i>
+
+                                        {{ message.created_at|date:"d M Y, H:i" }}
+
+                                        ·
+
+                                        {{ message.sender.get_full_name|default:message.sender.username }}
+
+                                    </small>
+
+                                {% endif %}
+
+                            {% empty %}
+
+                                <p>
+                                    No messages in this conversation yet.
+                                </p>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <i
+                            class="fa-solid fa-chevron-right communication-arrow"
+                        ></i>
+
+                    </a>
+
+
+                {% empty %}
+
+                    <div class="communication-empty">
+
+                        <i class="fa-regular fa-envelope-open"></i>
+
+                        <strong>
+                            No messages yet
+                        </strong>
+
+                        <span>
+                            Private conversations will appear here when
+                            you receive a message.
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            {% if communication_threads %}
+
+                <div class="communication-card-footer">
+
+                    <a
+                        href="{% url 'communication_messages' %}"
+                        class="communication-footer-link"
+                    >
+
+                        View all messages
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+
+        <!-- =================================================
+             STUDENT FEEDBACK
+             ================================================= -->
+
+        <section class="communication-card feedback-card">
+
+            <div class="communication-card-header">
+
+                <div>
+
+                    <span class="communication-label">
+                        STUDENT SERVICES
+                    </span>
+
+                    <h2>
+                        Student Feedback
+                    </h2>
+
+                    <p>
+                        Share your feedback through the active college
+                        feedback forms.
+                    </p>
+
+                </div>
+
+
+                <span class="communication-count">
+
+                    <i class="fa-solid fa-clipboard-question"></i>
+
+                </span>
+
+            </div>
+
+
+            <!-- =================================================
+                 FEEDBACK FORMS
+                 ONLY TITLE IS DISPLAYED
+                 ================================================= -->
+
+            <div class="communication-list">
+
+                {% for feedback in student_feedback_forms %}
+
+                    <a
+                        href="{{ feedback.google_form_url }}"
+                        class="communication-item"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+
+                        <div class="communication-item-icon">
+
+                            <i class="fa-solid fa-clipboard-question"></i>
+
+                        </div>
+
+
+                        <div class="communication-item-content">
+
+                            <div class="communication-item-top">
+
+                                <strong>
+                                    {{ feedback.title }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <i
+                            class="fa-solid fa-arrow-up-right-from-square communication-arrow"
+                        ></i>
+
+                    </a>
+
+                {% empty %}
+
+                    <div class="communication-empty">
+
+                        <i class="fa-regular fa-clipboard"></i>
+
+                        <strong>
+                            No active feedback forms
+                        </strong>
+
+                        <span>
+                            Active student feedback forms will appear here
+                            when they are published.
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ACADEMIC CALENDAR
+             ================================================= -->
+
+        <section class="communication-card calendar-card">
+
+            <div class="communication-card-header">
+
+                <div>
+
+                    <span class="communication-label">
+                        ACADEMIC CALENDAR
+                    </span>
+
+                    <h2>
+                        Upcoming Dates
+                    </h2>
+
+                    <p>
+                        Deadlines and academic events relevant to you.
+                    </p>
+
+                </div>
+
+
+                <span class="communication-count">
+                    {{ communication_events|length }}
+                </span>
+
+            </div>
+
+
+            <div class="communication-list">
+
+                {% for event in communication_events %}
+
+                    <a
+                        href="{% url 'communication_academic_event_detail' event.pk %}"
+                        class="communication-item event-item"
+                    >
+
+                        <!-- EVENT ICON -->
+
+                        <div class="communication-item-icon">
+
+                            <i class="fa-solid fa-calendar-days"></i>
+
+                        </div>
+
+
+                        <!-- EVENT CONTENT -->
+
+                        <div class="communication-item-content">
+
+                            <div class="communication-item-top">
+
+                                <strong>
+                                    {{ event.title }}
+                                </strong>
+
+                                {% if event.is_important %}
+
+                                    <span class="important-pill">
+
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                                        Important
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- EVENT TYPE / PUBLISHED -->
+
+                            <div class="event-meta">
+
+                                <span class="event-type">
+                                    {{ event.get_event_type_display }}
+                                </span>
+
+                                {% if event.is_published %}
+
+                                    <span class="event-published-pill">
+                                        Published
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- DESCRIPTION -->
+
+                            {% if event.description %}
+
+                                <p class="event-description">
+                                    {{ event.description|linebreaksbr }}
+                                </p>
+
+                            {% endif %}
+
+
+                            <!-- DATE / TIME -->
+
+                            <small>
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                                {{ event.start_at|date:"D, d M Y" }}
+
+                                ·
+
+                                <i class="fa-regular fa-clock"></i>
+
+                                {{ event.start_at|date:"H:i" }}
+
+                                {% if event.end_at %}
+
+                                    – {{ event.end_at|date:"H:i" }}
+
+                                {% endif %}
+
+                            </small>
+
+
+                            <!-- AUDIENCE -->
+
+                            <small>
+
+                                <i class="fa-solid fa-users"></i>
+
+                                {{ event.get_audience_display }}
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- CLICK ARROW -->
+
+                        <i
+                            class="fa-solid fa-chevron-right communication-arrow"
+                        ></i>
+
+                    </a>
+
+
+                {% empty %}
+
+                    <div class="communication-empty">
+
+                        <i class="fa-regular fa-calendar-xmark"></i>
+
+                        <strong>
+                            No upcoming dates
+                        </strong>
+
+                        <span>
+                            New deadlines and academic events will appear here.
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

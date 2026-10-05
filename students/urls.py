@@ -22,6 +22,12 @@ urlpatterns = [
         name="principal_dashboard",
     ),
 
+
+    path("hod-dashboard/",
+         views.hod_dashboard, 
+         name="hod_dashboard"
+         ),
+
     path(
         "students/",
         views.student_list,

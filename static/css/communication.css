@@ -1,0 +1,2636 @@
+/* =========================================================
+   XORADEX EDUCORE ERP
+   COMMUNICATION CENTER
+   ---------------------------------------------------------
+   RESPONSIBILITY:
+   - Communication Center
+   - Announcements
+   - Private Messages
+   - Academic Calendar
+   - Announcement Details
+   - Academic Event Details
+   - Communication Management Forms
+   - Student Dashboard Communication Components
+   ---------------------------------------------------------
+   IMPORTANT:
+   Uses the existing ERP-wide CSS variables.
+   Does not create a separate global layout system.
+   ========================================================= */
+
+
+/* =========================================================
+   COMMUNICATION PAGE
+   ========================================================= */
+
+.communication-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    margin: 0;
+    padding: 4px 0 30px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   COMMUNICATION HERO
+   ---------------------------------------------------------
+   PRESERVED
+   ========================================================= */
+
+.communication-hero {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 20px;
+    padding: 26px 28px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--navy),
+            var(--blue-dark),
+            #0057b8
+        );
+
+    border-radius: 20px;
+
+    color: #ffffff;
+
+    box-shadow: var(--shadow-md);
+}
+
+
+.communication-hero > div:first-child {
+    min-width: 0;
+}
+
+
+.communication-eyebrow {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    color: rgba(255, 255, 255, 0.78);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    line-height: 1.35;
+}
+
+
+.communication-hero h1 {
+    margin: 5px 0 0;
+
+    color: #ffffff;
+
+    font-size: 28px;
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    overflow-wrap: anywhere;
+}
+
+
+.communication-hero p {
+    max-width: 760px;
+
+    margin: 7px 0 0;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-size: 13px;
+    line-height: 1.6;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   BACK TO STUDENT DASHBOARD
+   ========================================================= */
+
+.communication-hero-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 17px;
+
+    padding: 9px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    line-height: 1.3;
+
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.communication-hero-action:hover {
+    background: rgba(255, 255, 255, 0.15);
+
+    border-color: rgba(255, 255, 255, 0.45);
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    transform: translateX(-2px);
+}
+
+
+.communication-hero-action i {
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   HERO STAT
+   ========================================================= */
+
+.communication-hero-stat {
+    flex: 0 0 auto;
+
+    min-width: 100px;
+
+    padding: 14px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.10);
+
+    text-align: center;
+
+    box-sizing: border-box;
+}
+
+
+.communication-hero-stat i {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 15px;
+}
+
+
+.communication-hero-stat strong {
+    display: block;
+
+    font-size: 23px;
+    line-height: 1.2;
+}
+
+
+.communication-hero-stat span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: rgba(255, 255, 255, 0.70);
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.8px;
+
+    line-height: 1.35;
+}
+
+
+/* =========================================================
+   COMMUNICATION GRID
+   ---------------------------------------------------------
+   Uses flexible columns.
+   Never forces a fixed card height.
+   ========================================================= */
+
+.communication-grid {
+    width: 100%;
+    min-width: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.4fr)
+        minmax(280px, 0.8fr);
+
+    gap: 20px;
+
+    align-items: start;
+}
+
+
+/* =========================================================
+   COMMUNICATION CARDS
+   ========================================================= */
+
+.communication-card,
+.announcement-detail-card,
+.management-card {
+    width: 100%;
+    min-width: 0;
+
+    box-sizing: border-box;
+
+    background: var(--card);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 18px;
+
+    box-shadow: var(--shadow-sm);
+
+    overflow: hidden;
+}
+
+
+.communication-card > *,
+.announcement-detail-card > *,
+.management-card > * {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.communication-card-header {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 20px 20px 15px;
+
+    min-width: 0;
+}
+
+
+.communication-card-header > div:first-child {
+    min-width: 0;
+}
+
+
+.communication-label {
+    display: inline-block;
+
+    color: var(--blue);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 0.9px;
+
+    line-height: 1.35;
+}
+
+
+.communication-card-header h1,
+.communication-card-header h2 {
+    margin: 4px 0 0;
+
+    color: var(--heading);
+
+    font-size: 18px;
+    font-weight: 800;
+
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+}
+
+
+.communication-card-header p {
+    margin: 5px 0 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.55;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   COUNT / HEADER ACTION
+   ========================================================= */
+
+.communication-count,
+.calendar-header-icon {
+    flex: 0 0 auto;
+
+    min-width: 32px;
+    min-height: 32px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 9px;
+
+    box-sizing: border-box;
+
+    background: #eff6ff;
+
+    border: 1px solid #dbeafe;
+
+    border-radius: 9px;
+
+    color: var(--blue);
+
+    font-size: 12px;
+    font-weight: 800;
+
+    line-height: 1;
+
+    text-decoration: none;
+}
+
+
+.communication-count-link {
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.communication-count-link:hover {
+    background: #dbeafe;
+
+    border-color: #bfdbfe;
+
+    color: var(--blue-dark);
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   COMMUNICATION LIST
+   ========================================================= */
+
+.communication-list,
+.event-list {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 0 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   COMMUNICATION ITEM
+   ========================================================= */
+
+.communication-item {
+    width: 100%;
+    min-width: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        40px
+        minmax(0, 1fr)
+        18px;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 0;
+
+    box-sizing: border-box;
+
+    border-top: 1px solid var(--border-light);
+
+    color: inherit;
+
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        padding-left 0.2s ease,
+        padding-right 0.2s ease;
+}
+
+
+.communication-item:hover {
+    background: #fbfdff;
+
+    color: inherit;
+
+    text-decoration: none;
+}
+
+
+.communication-item:first-child {
+    border-top: 1px solid var(--border-light);
+}
+
+
+.communication-item-content {
+    min-width: 0;
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   ITEM ICON
+   ========================================================= */
+
+.communication-item-icon,
+.announcement-detail-icon {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    border-radius: 11px;
+
+    background: #eff6ff;
+
+    color: var(--blue);
+
+    font-size: 14px;
+}
+
+
+.communication-item-icon.important,
+.announcement-detail-icon.important {
+    background: #fff7ed;
+
+    color: var(--darkorange);
+}
+
+
+/* =========================================================
+   ITEM TOP
+   ========================================================= */
+
+.communication-item-top {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+.communication-item-top strong {
+    min-width: 0;
+
+    color: var(--heading);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+
+.communication-item p {
+    margin: 5px 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.55;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+
+.communication-item small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.45;
+
+    overflow-wrap: anywhere;
+}
+
+
+.communication-arrow {
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    justify-self: end;
+}
+
+
+/* =========================================================
+   UNREAD STATE
+   ========================================================= */
+
+.communication-item.is-unread {
+    background: #fcfdff;
+}
+
+
+.communication-item.is-unread
+.communication-item-top strong {
+    font-weight: 800;
+}
+
+
+.unread-dot {
+    width: 7px;
+    height: 7px;
+
+    flex: 0 0 7px;
+
+    border-radius: 50%;
+
+    background: var(--blue);
+}
+
+
+/* =========================================================
+   NOTIFICATION BADGES
+   ========================================================= */
+
+.communication-notification-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 21px;
+    min-height: 21px;
+
+    padding: 0 6px;
+
+    margin-left: 6px;
+
+    box-sizing: border-box;
+
+    border-radius: 999px;
+
+    background: var(--danger);
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.communication-empty {
+    width: 100%;
+    min-width: 0;
+
+    min-height: 190px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    padding: 25px;
+
+    text-align: center;
+
+    color: var(--muted);
+}
+
+
+.communication-empty i {
+    margin-bottom: 10px;
+
+    color: #94a3b8;
+
+    font-size: 28px;
+}
+
+
+.communication-empty strong {
+    color: var(--heading);
+
+    font-size: 14px;
+
+    line-height: 1.4;
+}
+
+
+.communication-empty span {
+    max-width: 420px;
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   COMMUNICATION CARD FOOTER
+   ========================================================= */
+
+.communication-card-footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 0;
+
+    padding: 12px 20px;
+
+    border-top: 1px solid var(--border-light);
+
+    background: #fbfdff;
+}
+
+
+.communication-footer-link {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    color: var(--blue);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    line-height: 1.3;
+
+    text-decoration: none;
+}
+
+
+.communication-footer-link:hover {
+    color: var(--blue-dark);
+
+    text-decoration: none;
+}
+
+
+.communication-footer-link i {
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   ACADEMIC CALENDAR
+   ========================================================= */
+
+.calendar-card {
+    min-width: 0;
+}
+
+
+.event-item {
+    grid-template-columns:
+        40px
+        minmax(0, 1fr)
+        18px;
+}
+
+
+.event-meta {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 5px;
+}
+
+
+.event-type {
+    color: var(--blue);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+    text-transform: uppercase;
+
+    line-height: 1.35;
+}
+
+
+.event-published-pill {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 3px 7px;
+
+    border-radius: 999px;
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    line-height: 1.25;
+}
+
+
+.important-pill {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    flex: 0 0 auto;
+
+    padding: 4px 8px;
+
+    border-radius: 999px;
+
+    background: #fff7ed;
+
+    color: var(--darkorange);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    line-height: 1.25;
+
+    white-space: nowrap;
+}
+
+
+.event-description {
+    margin: 6px 0 !important;
+
+    color: var(--muted);
+
+    font-size: 12px !important;
+
+    line-height: 1.55 !important;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+.event-item small {
+    margin-top: 4px;
+}
+
+
+/* =========================================================
+   EVENT DATE COMPONENT
+   ---------------------------------------------------------
+   Retained for compatibility with previous templates.
+   ========================================================= */
+
+.event-date {
+    min-height: 54px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 7px;
+
+    box-sizing: border-box;
+
+    background: #f4f7fb;
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 11px;
+
+    text-align: center;
+}
+
+
+.event-date strong {
+    color: var(--navy);
+
+    font-size: 18px;
+
+    line-height: 1;
+}
+
+
+.event-date span {
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   LEGACY EVENT CONTENT
+   ---------------------------------------------------------
+   Retained so existing event templates continue to work.
+   ========================================================= */
+
+.event-content {
+    min-width: 0;
+}
+
+
+.event-topline {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-bottom: 4px;
+}
+
+
+.event-content > strong {
+    display: block;
+
+    color: var(--heading);
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+}
+
+
+.event-content p {
+    margin: 5px 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.55;
+
+    overflow-wrap: anywhere;
+}
+
+
+.event-content small {
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   ANNOUNCEMENT DETAIL
+   ========================================================= */
+
+.communication-back {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin: 0 0 14px;
+
+    color: var(--navy);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+
+.communication-back:hover {
+    color: var(--blue);
+
+    text-decoration: none;
+}
+
+
+.announcement-detail-card {
+    padding: 26px;
+}
+
+
+.announcement-detail-top {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    min-width: 0;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+
+.announcement-detail-top > div:last-child {
+    min-width: 0;
+}
+
+
+.announcement-detail-icon {
+    flex: 0 0 48px;
+
+    width: 48px;
+    height: 48px;
+}
+
+
+.announcement-detail-top h1 {
+    margin: 7px 0 4px;
+
+    color: var(--heading);
+
+    font-size: 24px;
+    font-weight: 800;
+
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+}
+
+
+.announcement-detail-top p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+.announcement-body {
+    padding-top: 22px;
+
+    color: var(--text);
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+.announcement-body p {
+    margin-top: 0;
+}
+
+
+.announcement-body img,
+.announcement-body iframe {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   MANAGEMENT CARD
+   ========================================================= */
+
+.management-card {
+    padding: 24px;
+}
+
+
+/* =========================================================
+   COMMUNICATION FORM
+   ========================================================= */
+
+.communication-form {
+    display: grid;
+
+    gap: 14px;
+}
+
+
+.form-field {
+    display: grid;
+
+    gap: 6px;
+
+    min-width: 0;
+}
+
+
+.form-field label {
+    color: var(--heading);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    min-width: 0;
+
+    box-sizing: border-box;
+
+    padding: 10px 11px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: var(--text);
+
+    font: inherit;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+}
+
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    outline: none;
+
+    border-color: var(--blue);
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+.form-field textarea {
+    min-height: 110px;
+
+    resize: vertical;
+}
+
+
+.form-field ul.errorlist {
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+
+    color: var(--danger);
+
+    font-size: 12px;
+
+    line-height: 1.45;
+}
+
+
+.form-field small {
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.form-actions {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 5px;
+}
+
+
+.communication-submit,
+.communication-cancel {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 38px;
+
+    padding: 8px 14px;
+
+    box-sizing: border-box;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    line-height: 1.3;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+
+.communication-submit {
+    border: 1px solid var(--navy);
+
+    background: var(--navy);
+
+    color: #ffffff;
+}
+
+
+.communication-submit:hover {
+    background: var(--blue-dark);
+
+    border-color: var(--blue-dark);
+
+    color: #ffffff;
+}
+
+
+.communication-cancel {
+    border: 1px solid var(--border);
+
+    background: #ffffff;
+
+    color: var(--navy);
+}
+
+
+.communication-cancel:hover {
+    background: #f8fafc;
+
+    color: var(--blue);
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   STUDENT DASHBOARD COMMUNICATION CARD
+   ========================================================= */
+
+.communication-dashboard-card {
+    width: 100%;
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+
+.communication-dashboard-header {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 18px 20px 13px;
+}
+
+
+.communication-dashboard-heading {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    min-width: 0;
+}
+
+
+.communication-dashboard-icon {
+    width: 39px;
+    height: 39px;
+
+    flex: 0 0 39px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #eff6ff;
+
+    color: var(--blue);
+
+    font-size: 14px;
+}
+
+
+.communication-dashboard-heading > div:last-child {
+    min-width: 0;
+}
+
+
+.communication-dashboard-heading span {
+    display: block;
+
+    color: var(--blue);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.8px;
+
+    line-height: 1.35;
+}
+
+
+.communication-dashboard-heading h4 {
+    margin: 3px 0 0;
+
+    color: var(--heading);
+
+    font-size: 16px;
+    font-weight: 800;
+
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+}
+
+
+.communication-dashboard-heading p {
+    margin: 4px 0 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+}
+
+
+.communication-unread-badge {
+    flex: 0 0 auto;
+
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    background: #eff6ff;
+
+    color: var(--blue);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    line-height: 1.25;
+}
+
+
+/* =========================================================
+   DASHBOARD COMMUNICATION LIST
+   ========================================================= */
+
+.dashboard-communication-list {
+    width: 100%;
+    min-width: 0;
+
+    padding: 0 20px;
+
+    box-sizing: border-box;
+}
+
+
+.dashboard-communication-item {
+    display: grid;
+
+    grid-template-columns:
+        32px
+        minmax(0, 1fr)
+        12px;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 10px 0;
+
+    border-top: 1px solid var(--border-light);
+
+    color: inherit;
+
+    text-decoration: none;
+
+    min-width: 0;
+}
+
+
+.dashboard-communication-item:hover {
+    color: inherit;
+
+    text-decoration: none;
+
+    background: #fbfdff;
+}
+
+
+.dashboard-communication-icon {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #f4f7fb;
+
+    color: var(--blue);
+
+    font-size: 12px;
+}
+
+
+.dashboard-communication-icon.important {
+    background: #fff7ed;
+
+    color: var(--darkorange);
+}
+
+
+.dashboard-communication-content {
+    min-width: 0;
+}
+
+
+.dashboard-communication-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    min-width: 0;
+}
+
+
+.dashboard-communication-title strong {
+    min-width: 0;
+
+    color: var(--heading);
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+}
+
+
+.dashboard-communication-title span {
+    width: 6px;
+    height: 6px;
+
+    flex: 0 0 6px;
+
+    background: var(--blue);
+
+    border-radius: 50%;
+}
+
+
+.dashboard-communication-content p {
+    margin: 3px 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+}
+
+
+.dashboard-communication-content small {
+    color: var(--muted);
+
+    font-size: 10px;
+
+    line-height: 1.4;
+}
+
+
+.dashboard-communication-item > i {
+    color: #94a3b8;
+
+    font-size: 9px;
+}
+
+
+.dashboard-communication-empty {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 18px 0;
+
+    border-top: 1px solid var(--border-light);
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   DASHBOARD UPCOMING EVENTS
+   ========================================================= */
+
+.dashboard-upcoming-row {
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 0 20px;
+
+    padding: 10px 0;
+
+    border-top: 1px solid var(--border-light);
+}
+
+
+.dashboard-upcoming-heading {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color: var(--navy);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    line-height: 1.35;
+}
+
+
+.dashboard-upcoming-items {
+    display: flex;
+
+    gap: 6px;
+
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+
+.dashboard-upcoming-item {
+    display: block;
+
+    min-width: 0;
+
+    padding: 5px 7px;
+
+    border-radius: 7px;
+
+    background: #f8fafc;
+
+    color: var(--muted);
+
+    font-size: 10px;
+
+    line-height: 1.35;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.dashboard-upcoming-item strong {
+    margin-right: 3px;
+
+    color: var(--navy);
+}
+
+
+.dashboard-upcoming-item.muted {
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   DASHBOARD COMMUNICATION FOOTER
+   ========================================================= */
+
+.communication-dashboard-footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-top: 0;
+
+    padding: 11px 20px;
+
+    border-top: 1px solid var(--border-light);
+
+    background: #fbfdff;
+
+    color: var(--navy);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    line-height: 1.35;
+
+    text-decoration: none;
+}
+
+
+.communication-dashboard-footer:hover {
+    background: #f4f7fb;
+
+    color: var(--blue);
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ---------------------------------------------------------
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .communication-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ---------------------------------------------------------
+   SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .communication-hero {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 21px 20px;
+    }
+
+
+    .communication-hero-stat {
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns:
+            30px
+            auto
+            1fr;
+
+        align-items: center;
+
+        gap: 8px;
+
+        min-width: 0;
+
+        text-align: left;
+    }
+
+
+    .communication-hero-stat i {
+        margin: 0;
+    }
+
+
+    .communication-hero-stat strong {
+        font-size: 19px;
+    }
+
+
+    .communication-hero-stat span {
+        margin: 0;
+    }
+
+
+    .communication-list,
+    .event-list {
+        padding: 0 15px;
+    }
+
+
+    .communication-card-header {
+        padding: 17px 15px 13px;
+    }
+
+
+    .communication-card-footer {
+        padding: 11px 15px;
+    }
+
+
+    .dashboard-communication-list {
+        padding: 0 15px;
+    }
+
+
+    .dashboard-upcoming-row {
+        margin: 0 15px;
+    }
+
+
+    .communication-dashboard-footer {
+        padding: 10px 15px;
+    }
+
+
+    .dashboard-upcoming-row {
+        grid-template-columns: 1fr;
+    }
+
+
+    .dashboard-upcoming-items {
+        width: 100%;
+    }
+
+
+    .announcement-detail-card,
+    .management-card {
+        padding: 18px;
+    }
+
+
+    .announcement-detail-top {
+        gap: 11px;
+    }
+
+
+    .announcement-detail-top h1 {
+        font-size: 21px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ---------------------------------------------------------
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .communication-page {
+        padding-top: 2px;
+        padding-bottom: 20px;
+    }
+
+
+    .communication-hero {
+        margin-bottom: 15px;
+
+        padding: 18px 16px;
+
+        border-radius: 15px;
+    }
+
+
+    .communication-eyebrow {
+        font-size: 10px;
+
+        letter-spacing: 0.8px;
+    }
+
+
+    .communication-hero h1 {
+        font-size: 23px;
+    }
+
+
+    .communication-hero p {
+        font-size: 12px;
+
+        line-height: 1.55;
+    }
+
+
+    .communication-hero-action {
+        width: 100%;
+
+        box-sizing: border-box;
+
+        font-size: 12px;
+    }
+
+
+    .communication-grid {
+        gap: 15px;
+    }
+
+
+    .communication-card {
+        border-radius: 15px;
+    }
+
+
+    .communication-card-header {
+        gap: 10px;
+
+        padding: 15px 13px 12px;
+    }
+
+
+    .communication-card-header h1,
+    .communication-card-header h2 {
+        font-size: 17px;
+    }
+
+
+    .communication-card-header p {
+        font-size: 12px;
+    }
+
+
+    .communication-label {
+        font-size: 10px;
+    }
+
+
+    .communication-count,
+    .calendar-header-icon {
+        min-width: 29px;
+        min-height: 29px;
+
+        font-size: 11px;
+    }
+
+
+    .communication-item {
+        grid-template-columns:
+            36px
+            minmax(0, 1fr)
+            14px;
+
+        gap: 9px;
+
+        padding: 12px 0;
+    }
+
+
+    .event-item {
+        grid-template-columns:
+            36px
+            minmax(0, 1fr)
+            14px;
+    }
+
+
+    .communication-item-icon {
+        width: 36px;
+        height: 36px;
+
+        border-radius: 9px;
+    }
+
+
+    .communication-item-top {
+        align-items: flex-start;
+    }
+
+
+    .communication-item-top strong {
+        font-size: 13px;
+    }
+
+
+    .communication-item p {
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+
+    .communication-item small {
+        font-size: 10px;
+    }
+
+
+    .communication-arrow {
+        font-size: 9px;
+    }
+
+
+    .important-pill {
+        padding: 3px 6px;
+
+        font-size: 9px;
+    }
+
+
+    .event-type {
+        font-size: 9px;
+    }
+
+
+    .event-published-pill {
+        font-size: 9px;
+    }
+
+
+    .event-description {
+        font-size: 11px !important;
+    }
+
+
+    .event-content > strong {
+        font-size: 13px;
+    }
+
+
+    .event-content p {
+        font-size: 11px;
+    }
+
+
+    .event-content small {
+        font-size: 10px;
+    }
+
+
+    .event-date strong {
+        font-size: 17px;
+    }
+
+
+    .event-date span {
+        font-size: 9px;
+    }
+
+
+    .communication-empty {
+        min-height: 160px;
+
+        padding: 20px 15px;
+    }
+
+
+    .communication-empty i {
+        font-size: 23px;
+    }
+
+
+    .communication-empty strong {
+        font-size: 13px;
+    }
+
+
+    .communication-empty span {
+        font-size: 11px;
+    }
+
+
+    .communication-notification-badge {
+        min-width: 19px;
+        min-height: 19px;
+
+        padding: 0 5px;
+
+        font-size: 10px;
+    }
+
+
+    .communication-card-footer {
+        justify-content: flex-start;
+    }
+
+
+    .communication-footer-link {
+        font-size: 11px;
+    }
+
+
+    .announcement-detail-card,
+    .management-card {
+        padding: 15px;
+    }
+
+
+    .announcement-detail-top {
+        flex-direction: column;
+    }
+
+
+    .announcement-detail-icon {
+        width: 42px;
+        height: 42px;
+
+        flex-basis: 42px;
+    }
+
+
+    .announcement-detail-top h1 {
+        font-size: 20px;
+    }
+
+
+    .announcement-detail-top p {
+        font-size: 11px;
+    }
+
+
+    .announcement-body {
+        padding-top: 18px;
+
+        font-size: 14px;
+
+        line-height: 1.75;
+    }
+
+
+    .form-field label {
+        font-size: 12px;
+    }
+
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+        font-size: 14px;
+    }
+
+
+    .form-actions {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .communication-submit,
+    .communication-cancel {
+        width: 100%;
+
+        font-size: 12px;
+    }
+
+
+    .communication-dashboard-heading h4 {
+        font-size: 15px;
+    }
+
+
+    .communication-dashboard-heading p {
+        font-size: 11px;
+    }
+
+
+    .communication-dashboard-heading span {
+        font-size: 9px;
+    }
+
+
+    .communication-unread-badge {
+        font-size: 9px;
+    }
+
+
+    .dashboard-communication-title strong {
+        font-size: 12px;
+    }
+
+
+    .dashboard-communication-content p {
+        font-size: 11px;
+    }
+
+
+    .dashboard-communication-content small {
+        font-size: 10px;
+    }
+
+
+    .dashboard-upcoming-heading {
+        font-size: 9px;
+    }
+
+
+    .dashboard-upcoming-item {
+        font-size: 9px;
+    }
+
+
+    .communication-dashboard-footer {
+        font-size: 11px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ---------------------------------------------------------
+   Keep text readable.
+   Do not collapse typography into tiny 7px/8px text.
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .communication-hero {
+        padding: 16px 13px;
+    }
+
+
+    .communication-hero h1 {
+        font-size: 21px;
+    }
+
+
+    .communication-hero p {
+        font-size: 11px;
+    }
+
+
+    .communication-hero-stat {
+        grid-template-columns:
+            26px
+            auto
+            1fr;
+
+        padding: 11px 12px;
+    }
+
+
+    .communication-list,
+    .event-list {
+        padding-left: 11px;
+        padding-right: 11px;
+    }
+
+
+    .communication-card-header {
+        padding-left: 11px;
+        padding-right: 11px;
+    }
+
+
+    .communication-card-header h1,
+    .communication-card-header h2 {
+        font-size: 16px;
+    }
+
+
+    .communication-card-header p {
+        font-size: 11px;
+    }
+
+
+    .communication-item {
+        grid-template-columns:
+            34px
+            minmax(0, 1fr)
+            11px;
+
+        gap: 7px;
+    }
+
+
+    .event-item {
+        grid-template-columns:
+            34px
+            minmax(0, 1fr)
+            11px;
+    }
+
+
+    .communication-item-icon {
+        width: 34px;
+        height: 34px;
+    }
+
+
+    .communication-item-top {
+        flex-wrap: wrap;
+    }
+
+
+    .communication-item-top strong {
+        font-size: 12px;
+    }
+
+
+    .communication-item p {
+        font-size: 10px;
+    }
+
+
+    .communication-item small {
+        font-size: 9px;
+    }
+
+
+    .communication-card-footer {
+        padding-left: 11px;
+        padding-right: 11px;
+    }
+
+
+    .communication-footer-link {
+        font-size: 10px;
+    }
+
+
+    .event-content > strong {
+        font-size: 12px;
+    }
+
+
+    .event-content p {
+        font-size: 10px;
+    }
+
+
+    .event-content small {
+        font-size: 9px;
+    }
+
+
+    .event-type {
+        font-size: 8px;
+    }
+
+
+    .important-pill {
+        font-size: 8px;
+    }
+
+
+    .announcement-detail-top h1 {
+        font-size: 19px;
+    }
+
+
+    .announcement-body {
+        font-size: 13px;
+    }
+
+
+    .dashboard-communication-title strong {
+        font-size: 11px;
+    }
+
+
+    .dashboard-communication-content p {
+        font-size: 10px;
+    }
+
+
+    .dashboard-communication-content small {
+        font-size: 9px;
+    }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITY / FOCUS
+   ========================================================= */
+
+.communication-hero-action:focus-visible,
+.communication-count-link:focus-visible,
+.communication-item:focus-visible,
+.communication-footer-link:focus-visible,
+.communication-back:focus-visible,
+.communication-submit:focus-visible,
+.communication-cancel:focus-visible,
+.communication-dashboard-item:focus-visible,
+.communication-dashboard-footer:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.25);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .communication-hero-action,
+    .communication-count-link,
+    .communication-item,
+    .communication-submit,
+    .communication-cancel {
+        transition: none;
+    }
+
+}
+
+/* =========================================================
+   XORADEX EDUCORE ERP
+   STUDENT DASHBOARD COMMUNICATION TYPOGRAPHY
+   ---------------------------------------------------------
+   Explicit readable ERP scale
+   ========================================================= */
+
+.student-dashboard .communication-card-header .communication-label {
+    font-size: 0.78rem;
+    line-height: 1.4;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+
+.student-dashboard .communication-card-header h2 {
+    font-size: 1.35rem;
+    line-height: 1.35;
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+
+.student-dashboard .communication-card-header p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-top: 6px;
+}
+
+
+/* =========================================================
+   ANNOUNCEMENT / MESSAGE ITEMS
+   ========================================================= */
+
+.student-dashboard .communication-item-top strong {
+    font-size: 1rem;
+    line-height: 1.45;
+    font-weight: 700;
+}
+
+
+.student-dashboard .communication-item-content p {
+    font-size: 0.90rem;
+    line-height: 1.6;
+    margin: 6px 0;
+}
+
+
+.student-dashboard .communication-item-content small {
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   ITEM ICON / ARROW
+   ========================================================= */
+
+.student-dashboard .communication-item-icon {
+    font-size: 1rem;
+}
+
+
+.student-dashboard .communication-arrow {
+    font-size: 0.8rem;
+}
+
+
+/* =========================================================
+   COUNT
+   ========================================================= */
+
+.student-dashboard .communication-count {
+    font-size: 0.85rem;
+}
+
+
+.student-dashboard .communication-notification-badge {
+    font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.student-dashboard .communication-footer-link {
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+   ========================================================= */
+
+.student-dashboard .communication-empty strong {
+    font-size: 1rem;
+}
+
+
+.student-dashboard .communication-empty span {
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   ACADEMIC CALENDAR
+   ========================================================= */
+
+.student-dashboard .event-type {
+    font-size: 0.72rem;
+}
+
+
+.student-dashboard .important-pill {
+    font-size: 0.68rem;
+}
+
+
+.student-dashboard .event-content > strong {
+    font-size: 1rem;
+    line-height: 1.45;
+}
+
+
+.student-dashboard .event-content p {
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+
+
+.student-dashboard .event-content small {
+    font-size: 0.76rem;
+}
+
+
+.student-dashboard .event-date strong {
+    font-size: 1.1rem;
+}
+
+
+.student-dashboard .event-date span {
+    font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .student-dashboard .communication-card-header .communication-label {
+        font-size: 0.72rem;
+    }
+
+
+    .student-dashboard .communication-card-header h2 {
+        font-size: 1.18rem;
+    }
+
+
+    .student-dashboard .communication-card-header p {
+        font-size: 0.88rem;
+    }
+
+
+    .student-dashboard .communication-item-top strong {
+        font-size: 0.94rem;
+    }
+
+
+    .student-dashboard .communication-item-content p {
+        font-size: 0.84rem;
+    }
+
+
+    .student-dashboard .communication-item-content small {
+        font-size: 0.73rem;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .student-dashboard .communication-card-header h2 {
+        font-size: 1.10rem;
+    }
+
+
+    .student-dashboard .communication-card-header p {
+        font-size: 0.84rem;
+    }
+
+
+    .student-dashboard .communication-item-top strong {
+        font-size: 0.90rem;
+    }
+
+
+    .student-dashboard .communication-item-content p {
+        font-size: 0.80rem;
+    }
+
+
+    .student-dashboard .communication-item-content small {
+        font-size: 0.70rem;
+    }
+
+}
+
+/* =========================================================
+   ACADEMIC EVENT DETAIL
+   Improve readability without changing ERP design
+   ========================================================= */
+
+.communication-card .communication-item-content strong {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.communication-card .communication-item-content small {
+    display: block;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-top: 6px;
+}
+
+.communication-card .communication-item-content p {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-top: 10px;
+}
+
+.communication-card .communication-card-header h1 {
+    font-size: 1.75rem;
+    line-height: 1.3;
+}
+
+.communication-card .communication-card-header p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.communication-card .communication-label {
+    font-size: 0.8rem;
+}
+
+.communication-card .important-pill {
+    font-size: 0.8rem;
+}
+
+.communication-card .communication-footer-link {
+    font-size: 0.95rem;
+}

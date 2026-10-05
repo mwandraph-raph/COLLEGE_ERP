@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-3">
+
+    <!-- ======================================================
+         HEADER
+         ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="mb-1">
+                Student Feedback
+            </h2>
+
+            <div class="text-muted">
+                Manage Google Forms feedback surveys for students.
+            </div>
+        </div>
+
+        <a
+            href="{% url 'hod_student_feedback_create' %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-plus-lg me-1"></i>
+            Add Google Form
+        </a>
+
+    </div>
+
+
+    <!-- ======================================================
+         FEEDBACK FORMS
+         ====================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body">
+
+            {% if feedback_forms %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Feedback Form
+                                </th>
+
+                                <th>
+                                    Audience
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Starts
+                                </th>
+
+                                <th>
+                                    Closes
+                                </th>
+
+                                <th class="text-end">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for feedback in feedback_forms %}
+
+                                <tr>
+
+                                    <!-- TITLE -->
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+                                            {{ feedback.title }}
+                                        </div>
+
+                                        {% if feedback.description %}
+
+                                            <div class="small text-muted">
+
+                                                {{ feedback.description|truncatechars:80 }}
+
+                                            </div>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- AUDIENCE -->
+
+                                    <td>
+
+                                        {% if feedback.audience == "ALL" %}
+
+                                            All Students
+
+                                        {% elif feedback.audience == "DEPARTMENT" %}
+
+                                            Department
+
+                                        {% elif feedback.audience == "PROGRAMME" %}
+
+                                            Programme
+
+                                        {% elif feedback.audience == "STUDENT" %}
+
+                                            Individual Student
+
+                                        {% else %}
+
+                                            {{ feedback.audience }}
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        {% if feedback.is_published %}
+
+                                            <span class="badge bg-success">
+                                                Published
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Draft
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- START -->
+
+                                    <td>
+
+                                        {% if feedback.starts_at %}
+
+                                            {{ feedback.starts_at|date:"d M Y H:i" }}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                Immediately
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- CLOSE -->
+
+                                    <td>
+
+                                        {% if feedback.closes_at %}
+
+                                            {{ feedback.closes_at|date:"d M Y H:i" }}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                No closing date
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ACTIONS -->
+
+                                    <td class="text-end">
+
+                                        <div class="d-inline-flex gap-2">
+
+                                            <a
+                                                href="{{ feedback.google_form_url }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="btn btn-sm btn-outline-success"
+                                                title="Open Google Form"
+                                            >
+                                                <i class="bi bi-box-arrow-up-right"></i>
+                                            </a>
+
+                                            <a
+                                                href="{% url 'hod_student_feedback_edit' feedback.pk %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                                title="Edit"
+                                            >
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-5">
+
+                    <div class="mb-3">
+
+                        <i class="bi bi-clipboard-question fs-1 text-muted"></i>
+
+                    </div>
+
+                    <h5>
+                        No feedback forms yet
+                    </h5>
+
+                    <p class="text-muted mb-3">
+                        Create a Google Form and publish it to your students.
+                    </p>
+
+                    <a
+                        href="{% url 'hod_student_feedback_create' %}"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Add Google Form
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

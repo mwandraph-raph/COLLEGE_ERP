@@ -28,6 +28,7 @@ Thumbs.db
 
 # Django generated files
 staticfiles/
+media/
 
 # Local database backups
 backups/

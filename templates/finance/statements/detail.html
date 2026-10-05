@@ -257,11 +257,11 @@
                                     <th class="text-center">
                                         Status
                                     </th>
-
+                                     {% if not request.user.student_profile %}
                                     <th class="text-center print-hide">
                                         Action
                                     </th>
-
+                                     {% endif %}
                                 </tr>
 
                             </thead>
@@ -323,7 +323,7 @@
                                             </span>
 
                                         </td>
-
+                                         {% if not request.user.student_profile %}
                                         <td class="text-center print-hide">
 
                                             <a
@@ -334,7 +334,7 @@
                                             </a>
 
                                         </td>
-
+                                        {% endif %}
                                     </tr>
 
                                     {% endif %}
@@ -344,12 +344,11 @@
                                 <tr>
 
                                     <td
-                                        colspan="8"
+                                        colspan="{% if request.user.student_profile %}7{% else %}8{% endif %}"
                                         class="text-center py-4"
                                     >
                                         No invoices found.
                                     </td>
-
                                 </tr>
 
                                 {% endfor %}

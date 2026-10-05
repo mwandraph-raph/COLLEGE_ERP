@@ -1088,6 +1088,21 @@ def invoice_list(request):
 @login_required
 def invoice_detail(request, pk):
 
+    # =========================================================
+    # FINANCE STAFF ONLY
+    # Students must NOT access individual invoice details.
+    # They can still access their Fee Statement separately.
+    # =========================================================
+
+    if not is_finance_staff(request):
+
+        messages.error(
+            request,
+            "Invoice details are available to Finance staff only.",
+        )
+
+        return redirect("home")
+
     invoice = get_object_or_404(
         StudentInvoice.objects
         .select_related(
@@ -1099,22 +1114,6 @@ def invoice_detail(request, pk):
         ),
         pk=pk,
     )
-
-    if not is_finance_staff(request):
-
-        student = get_logged_in_student(request)
-
-        if (
-            not student
-            or invoice.student_id != student.id
-        ):
-
-            messages.error(
-                request,
-                "You are not authorized to view this invoice.",
-            )
-
-            return redirect("home")
 
     items = (
         invoice.items

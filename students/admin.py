@@ -14,7 +14,28 @@ from .models import (
 
 
 admin.site.register(Applicant)
-admin.site.register(Department)
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "code",
+        "name",
+        "hod",
+        "is_active",
+    )
+
+    list_filter = (
+        "is_active",
+    )
+
+    search_fields = (
+        "code",
+        "name",
+        "hod__username",
+        "hod__first_name",
+        "hod__last_name",
+    )
+
 admin.site.register(Course)
 admin.site.register(Programme)
 admin.site.register(ProgrammeLevel)

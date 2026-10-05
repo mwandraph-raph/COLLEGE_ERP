@@ -8,15 +8,15 @@ from openpyxl.styles import (
                     Font,
                     Alignment,
                     Border,
-                    Side
+                    Side,
                 )
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from .models import (Student,
                      Programme,
-                     Department, 
-                     AcademicYear, 
+                     Department,
+                     AcademicYear,
                      Semester, 
                      Course, 
                      Unit,
@@ -37,9 +37,14 @@ from finance.models import (
     StudentInvoice,
     InvoiceItem,
     FinancialClearance,
-    Payment
+    Payment,
 )
-from students.models import AcademicYear, Semester
+from students.models import (
+    AcademicYear,
+    Semester,
+    Department,
+    Student,
+)
 from finance.services import (
     generate_student_invoice,
     update_financial_clearance,
@@ -83,6 +88,7 @@ from students.services import (
     progress_student as progress_student_service,
     get_outstanding_supplementary_units,
 )
+from communication.services import get_communication_context
 import json
 
 
@@ -107,10 +113,212 @@ from django.db.models import Sum, Count, DecimalField, Value
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from datetime import timedelta
+from communication.models import (
+    Announcement,
+    AcademicEvent,
+    StudentFeedbackForm,
+)
+
+@login_required
+def hod_dashboard(request):
+
+    if not request.user.groups.filter(
+        name="HOD"
+    ).exists():
+        return redirect("home")
+
+    # ============================================================
+    # HOD DEPARTMENT
+    # ============================================================
+
+    department = Department.objects.filter(
+        hod=request.user
+    ).first()
+
+    if not department:
+
+        messages.error(
+            request,
+            "Your HOD account is not assigned to a department."
+        )
+
+        return redirect("home")
+
+    # ============================================================
+    # DEPARTMENT STUDENTS
+    # ============================================================
+
+    department_students = (
+        Student.objects
+        .filter(
+            programme__course__department=department
+        )
+        .select_related(
+            "programme",
+            "programme__course",
+        )
+    )
+
+    # ============================================================
+    # COMMUNICATION MODELS
+    # ============================================================
+
+    from communication.models import (
+        Announcement,
+        AcademicEvent,
+        StudentFeedbackForm,
+    )
+
+    # ============================================================
+    # DEPARTMENT ANNOUNCEMENTS
+    # ============================================================
+
+    department_announcements = (
+        Announcement.objects
+        .filter(
+            created_by=request.user,
+            department=department,
+        )
+    )
+
+    # ============================================================
+    # ANNOUNCEMENT COUNT
+    # ============================================================
+
+    department_announcement_count = (
+        department_announcements.count()
+    )
+
+    # ============================================================
+    # RECENT ANNOUNCEMENTS
+    # ============================================================
+
+    recent_announcements = (
+        department_announcements
+        .order_by(
+            "-created_at"
+        )[:5]
+    )
+
+    # ============================================================
+    # ACADEMIC CALENDAR
+    # ============================================================
+
+    now = timezone.now()
+
+    academic_events = (
+        AcademicEvent.objects
+        .filter(
+            Q(
+                start_at__gte=now
+            )
+            |
+            Q(
+                end_at__gte=now
+            )
+        )
+        .filter(
+            Q(
+                audience=AcademicEvent.ALL
+            )
+            |
+            Q(
+                audience=AcademicEvent.DEPARTMENT,
+                department=department,
+            )
+            |
+            Q(
+                audience=AcademicEvent.PROGRAMME,
+                department=department,
+            )
+            |
+            Q(
+                audience=AcademicEvent.STUDENT,
+                department=department,
+            )
+        )
+        .select_related(
+            "department",
+            "programme",
+            "student",
+            "created_by",
+        )
+        .order_by(
+            "start_at"
+        )[:6]
+    )
+
+    # ============================================================
+    # STUDENT FEEDBACK FORMS
+    # ============================================================
+
+    student_feedback_forms = (
+        StudentFeedbackForm.objects
+        .filter(
+            created_by=request.user,
+        )
+        .select_related(
+            "department",
+            "programme",
+            "student",
+            "created_by",
+        )
+        .order_by(
+            "-created_at",
+        )[:6]
+    )
+
+    # ============================================================
+    # CONTEXT
+    # ============================================================
+
+    context = {
+
+        "dashboard_type": "hod",
+
+        "hod_department": department,
+
+        "department_students": department_students,
+
+        "department_student_count": (
+            department_students.count()
+        ),
+
+        "department_announcement_count": (
+            department_announcement_count
+        ),
+
+        "recent_announcements": (
+            recent_announcements
+        ),
+
+        "academic_events": (
+            academic_events
+        ),
+
+        "student_feedback_forms": (
+            student_feedback_forms
+        ),
+    }
+
+    return render(
+        request,
+        "students/dashboards/hod_home.html",
+        context,
+    )
+
 
 
 @login_required
 def home(request):
+
+    # ======================================================
+    # HOD DASHBOARD
+    # ======================================================
+
+    if request.user.groups.filter(name="HOD").exists():
+        return redirect("hod_dashboard")
+
     principal_dashboard_requested = request.path == "/principal-dashboard/"
     context = {
         "active_year": AcademicYear.objects.filter(is_active=True).first(),
@@ -195,21 +403,94 @@ def home(request):
                 .order_by("unit__code")
             )
 
+
+        # ==================================================
+        # SHARED COMMUNICATION CENTER
+        # ==================================================
+
+        communication_context = get_communication_context(
+            request,
+            student,
+        )
+
+                # ==================================================
+        # STUDENT FEEDBACK — GOOGLE FORMS
+        # ==================================================
+
+        now = timezone.now()
+
+        student_feedback_forms = (
+            StudentFeedbackForm.objects
+            .filter(
+                is_published=True,
+            )
+            .filter(
+                Q(
+                    starts_at__isnull=True
+                )
+                |
+                Q(
+                    starts_at__lte=now
+                )
+            )
+            .filter(
+                Q(
+                    closes_at__isnull=True
+                )
+                |
+                Q(
+                    closes_at__gte=now
+                )
+            )
+            .filter(
+                Q(
+                    audience=StudentFeedbackForm.ALL
+                )
+                |
+                Q(
+                    audience=StudentFeedbackForm.DEPARTMENT,
+                    department=student.programme.course.department,
+                )
+                |
+                Q(
+                    audience=StudentFeedbackForm.PROGRAMME,
+                    programme=student.programme,
+                )
+                |
+                Q(
+                    audience=StudentFeedbackForm.STUDENT,
+                    student=student,
+                )
+            )
+            .select_related(
+                "department",
+                "programme",
+                "student",
+            )
+            .order_by(
+                "-published_at",
+                "-id",
+            )
+        )
+
         context.update({
-
             "dashboard_type": "student",
-
             "student": student,
-
             "enrollment": enrollment,
-
             "latest_enrollment": enrollment,
-
             "registrations": registrations,
-
             "registration_count": registrations.count(),
-
+            "student_feedback_forms": student_feedback_forms,
         })
+
+        # --------------------------------------------------
+        # Add shared communication data without disturbing
+        # the existing student dashboard data.
+        # --------------------------------------------------
+
+        context.update(
+            communication_context
+        )
 
     # ======================================================
     # ADMIN
@@ -6725,22 +7006,57 @@ def add_programme_level_unit(request, pk):
         context
     )
 
+@login_required
 def semester_enrollment_list(request):
 
-    enrollments = SemesterEnrollment.objects.select_related(
-        "student",
-        "programme",
-        "programme_level",
-        "academic_year",
-        "semester",
+    # ========================================================
+    # BASE QUERY
+    # ========================================================
+
+    enrollments = (
+        SemesterEnrollment.objects
+        .select_related(
+            "student",
+            "programme",
+            "programme_level",
+            "academic_year",
+            "semester",
+        )
     )
+
+
+    # ========================================================
+    # STUDENT ACCESS CONTROL
+    #
+    # A student may ONLY see their own enrollments.
+    #
+    # Staff users retain the existing full enrollment list.
+    # ========================================================
+
+    student = getattr(
+        request.user,
+        "student_profile",
+        None,
+    )
+
+
+    if student is not None:
+
+        enrollments = enrollments.filter(
+            student_id=student.id
+        )
+
+
+    # ========================================================
+    # RENDER
+    # ========================================================
 
     return render(
         request,
         "students/enrollments/enrollment_list.html",
         {
-            "enrollments": enrollments
-        }
+            "enrollments": enrollments,
+        },
     )
 
 @login_required
@@ -6839,38 +7155,115 @@ def semester_enrollment_create(request):
         },
     )
 
+@login_required
 def semester_enrollment_detail(request, pk):
 
     enrollment = get_object_or_404(
-        SemesterEnrollment,
-        pk=pk
+        SemesterEnrollment.objects.select_related(
+            "student",
+            "programme_level",
+            "academic_year",
+            "semester",
+        ),
+        pk=pk,
     )
 
-    registrations = enrollment.registrations.all()
 
+    # ========================================================
+    # STUDENT OWNERSHIP CHECK
+    # ========================================================
+
+    student = getattr(
+        request.user,
+        "student_profile",
+        None,
+    )
+
+
+    if student is not None:
+
+        if enrollment.student_id != student.id:
+
+            from django.core.exceptions import PermissionDenied
+
+            raise PermissionDenied
+
+
+    # ========================================================
+    # REGISTRATIONS
+    # ========================================================
+
+    registrations = (
+        enrollment.registrations
+        .select_related(
+            "unit",
+            "unit_offering",
+        )
+        .all()
+    )
+
+
+    # ========================================================
+    # RENDER
+    # ========================================================
 
     return render(
         request,
         "students/enrollments/enrollment_detail.html",
         {
             "enrollment": enrollment,
-            "registrations": registrations
-        }
+            "registrations": registrations,
+        },
     )
 
+
+@login_required
 def semester_enrollment_edit(request, pk):
 
     enrollment = get_object_or_404(
-        SemesterEnrollment,
-        pk=pk
+        SemesterEnrollment.objects.select_related(
+            "student",
+        ),
+        pk=pk,
     )
 
+
+    # ========================================================
+    # STUDENT OWNERSHIP CHECK
+    #
+    # Students must NEVER be allowed to edit an enrollment
+    # belonging to another student.
+    # ========================================================
+
+    student = getattr(
+        request.user,
+        "student_profile",
+        None,
+    )
+
+
+    if student is not None:
+
+        if enrollment.student_id != student.id:
+
+            from django.core.exceptions import PermissionDenied
+
+            raise PermissionDenied
+
+
+    # ========================================================
+    # FORM
+    # ========================================================
 
     form = SemesterEnrollmentForm(
         request.POST or None,
-        instance=enrollment
+        instance=enrollment,
     )
 
+
+    # ========================================================
+    # SAVE
+    # ========================================================
 
     if form.is_valid():
 
@@ -6881,22 +7274,56 @@ def semester_enrollment_edit(request, pk):
         )
 
 
+    # ========================================================
+    # RENDER
+    # ========================================================
+
     return render(
         request,
         "students/enrollments/enrollment_form.html",
         {
-            "form":form
-        }
+            "form": form,
+        },
     )
 
 
+@login_required
 def semester_enrollment_delete(request, pk):
 
     enrollment = get_object_or_404(
-        SemesterEnrollment,
-        pk=pk
+        SemesterEnrollment.objects.select_related(
+            "student",
+        ),
+        pk=pk,
     )
 
+
+    # ========================================================
+    # STUDENT OWNERSHIP CHECK
+    #
+    # Students must NEVER be allowed to delete an enrollment,
+    # especially another student's enrollment.
+    # ========================================================
+
+    student = getattr(
+        request.user,
+        "student_profile",
+        None,
+    )
+
+
+    if student is not None:
+
+        from django.core.exceptions import PermissionDenied
+
+        if enrollment.student_id != student.id:
+
+            raise PermissionDenied
+
+
+    # ========================================================
+    # DELETE
+    # ========================================================
 
     if request.method == "POST":
 
@@ -6907,14 +7334,17 @@ def semester_enrollment_delete(request, pk):
         )
 
 
+    # ========================================================
+    # CONFIRMATION PAGE
+    # ========================================================
+
     return render(
         request,
         "students/enrollments/enrollment_confirm_delete.html",
         {
-            "enrollment": enrollment
-        }
+            "enrollment": enrollment,
+        },
     )
-
 
 @login_required
 @permission_required(

@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Student Feedback | Xorami College ERP
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/communication.css' %}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="student-dashboard">
+
+    <section class="dashboard-section">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    STUDENT SERVICES
+                </span>
+
+                <h3>
+                    Student Feedback
+                </h3>
+
+                <p>
+                    Share your feedback through the active college
+                    feedback forms.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ACTIVE FEEDBACK FORMS
+        ====================================================== -->
+
+        {% if feedback_forms %}
+
+            <div class="services-grid">
+
+                {% for feedback in feedback_forms %}
+
+                    <a
+                        href="{{ feedback.google_form_url }}"
+                        class="service-card"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+
+                        <!-- =====================================
+                             ICON
+                        ====================================== -->
+
+                        <div class="service-icon green">
+
+                            <i class="fa-solid fa-clipboard-question"></i>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             CONTENT
+                        ====================================== -->
+
+                        <div class="service-content">
+
+                            <strong>
+                                {{ feedback.title }}
+                            </strong>
+
+
+                            <span>
+
+                                {% if feedback.description %}
+
+                                    {{ feedback.description|truncatechars:140 }}
+
+                                {% else %}
+
+                                    Share your experience and feedback.
+
+                                {% endif %}
+
+                            </span>
+
+
+                            <!-- =================================
+                                 AUDIENCE
+                            ================================== -->
+
+                            <small>
+
+                                <i class="fa-solid fa-users"></i>
+
+                                {{ feedback.get_audience_display }}
+
+                                {% if feedback.closes_at %}
+
+                                    · Closes
+                                    {{ feedback.closes_at|date:"d M Y, H:i" }}
+
+                                {% endif %}
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             OPEN ICON
+                        ====================================== -->
+
+                        <i
+                            class="fa-solid fa-arrow-up-right-from-square service-arrow"
+                        ></i>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <!-- =================================================
+                 NO ACTIVE FEEDBACK
+            ================================================== -->
+
+            <div class="communication-card">
+
+                <div class="communication-empty">
+
+                    <i class="fa-regular fa-clipboard"></i>
+
+                    <strong>
+                        No active feedback forms
+                    </strong>
+
+                    <span>
+                        There are currently no student feedback forms
+                        available for you.
+                    </span>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             BACK TO DASHBOARD
+        ====================================================== -->
+
+        <div class="communication-card-footer mt-4">
+
+            <a
+                href="{% url 'home' %}"
+                class="communication-footer-link"
+            >
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Back to Student Dashboard
+
+            </a>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

@@ -164,6 +164,15 @@ class Applicant(models.Model):
     
 class Department(models.Model):
 
+    hod = models.OneToOneField(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="hod_department",
+        limit_choices_to={"groups__name": "HOD"},
+    )
+
     code = models.CharField(
         max_length=20,
         unique=True,

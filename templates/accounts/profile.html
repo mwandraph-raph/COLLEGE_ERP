@@ -1,59 +1,280 @@
 {% extends "base.html" %}
 
+{% block title %}
+My Profile | Xorami College ERP
+{% endblock %}
+
 {% block content %}
 
-<div class="card shadow">
+<div class="container-fluid px-4 py-4">
 
-    <div class="card-header bg-primary text-white">
+    <!-- =====================================================
+         PROFILE HEADER
+         ===================================================== -->
 
-        <h3>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-            My Profile
+        <div>
 
-        </h3>
+            <div class="text-muted small text-uppercase">
+                Account
+            </div>
+
+            <h2 class="mb-1">
+                My Profile
+            </h2>
+
+            <p class="text-muted mb-0">
+                View and manage your personal account information.
+            </p>
+
+        </div>
 
     </div>
 
-    <div class="card-body">
 
-        <table class="table">
+    <!-- =====================================================
+         PROFILE CARD
+         ===================================================== -->
 
-            <tr>
+    <div class="card">
 
-                <th>Username</th>
+        <div class="card-header">
 
-                <td>{{ user.username }}</td>
+            <strong>
+                Personal Information
+            </strong>
 
-            </tr>
+        </div>
 
-            <tr>
 
-                <th>First Name</th>
+        <div class="card-body">
 
-                <td>{{ user.first_name }}</td>
 
-            </tr>
+            <!-- =================================================
+                 PROFILE PHOTO
+                 ================================================= -->
 
-            <tr>
+            <form
+                method="post"
+                enctype="multipart/form-data"
+                id="profilePhotoForm"
+            >
 
-                <th>Last Name</th>
+                {% csrf_token %}
 
-                <td>{{ user.last_name }}</td>
 
-            </tr>
+                <!-- =================================================
+                     CLICKABLE PROFILE PHOTO
+                     ================================================= -->
 
-            <tr>
+                <div class="text-center mb-3">
 
-                <th>Email</th>
+                    <label
+                        for="{{ form.photo.id_for_label }}"
+                        class="d-inline-block"
+                        style="cursor: pointer;"
+                        title="{% if user.photo %}Change profile photo{% else %}Upload profile photo{% endif %}"
+                    >
 
-                <td>{{ user.email }}</td>
+                        {% if user.photo %}
 
-            </tr>
+                            <img
+                                src="{{ user.photo.url }}"
+                                alt="Profile photo"
+                                class="rounded-circle"
+                                style="
+                                    width: 120px;
+                                    height: 120px;
+                                    object-fit: cover;
+                                "
+                            >
 
-        </table>
+                        {% else %}
+
+                            <div
+                                class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center"
+                                style="
+                                    width: 120px;
+                                    height: 120px;
+                                "
+                            >
+
+                                <i
+                                    class="fa-solid fa-user text-muted"
+                                    style="font-size: 3rem;"
+                                ></i>
+
+                            </div>
+
+                        {% endif %}
+
+                    </label>
+
+                </div>
+
+
+                <!-- =================================================
+                     HIDDEN FILE INPUT
+                     ================================================= -->
+
+                <div class="d-none">
+
+                    {{ form.photo }}
+
+                </div>
+
+
+                <!-- =================================================
+                     PHOTO ACTION BUTTON
+                     ================================================= -->
+
+                <div class="text-center mb-4">
+
+                    <label
+                        for="{{ form.photo.id_for_label }}"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="fa-solid fa-camera me-1"></i>
+
+                        {% if user.photo %}
+                            Change Profile Photo
+                        {% else %}
+                            Upload Profile Photo
+                        {% endif %}
+
+                    </label>
+
+                </div>
+
+
+                <!-- =================================================
+                     FORM ERRORS
+                     ================================================= -->
+
+                {% if form.photo.errors %}
+
+                    <div class="text-danger small text-center mb-3">
+
+                        {{ form.photo.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </form>
+
+
+            <!-- =================================================
+                 ACCOUNT INFORMATION
+                 ================================================= -->
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th style="width: 220px;">
+                                Username
+                            </th>
+
+                            <td>
+                                {{ user.username }}
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>
+                                First Name
+                            </th>
+
+                            <td>
+                                {{ user.first_name|default:"—" }}
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>
+                                Last Name
+                            </th>
+
+                            <td>
+                                {{ user.last_name|default:"—" }}
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>
+                                Email
+                            </th>
+
+                            <td>
+                                {{ user.email|default:"—" }}
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
 
     </div>
 
 </div>
+
+
+<!-- =========================================================
+     AUTOMATIC UPLOAD AFTER PHOTO SELECTION
+     ========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const photoInput = document.getElementById(
+        "{{ form.photo.id_for_label }}"
+    );
+
+    const photoForm = document.getElementById(
+        "profilePhotoForm"
+    );
+
+    if (photoInput && photoForm) {
+
+        photoInput.addEventListener(
+            "change",
+            function () {
+
+                if (this.files && this.files.length > 0) {
+
+                    photoForm.submit();
+
+                }
+
+            }
+        );
+
+    }
+
+});
+
+</script>
 
 {% endblock %}

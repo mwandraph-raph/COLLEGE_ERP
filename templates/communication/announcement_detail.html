@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ announcement.title }} | Communication Center{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/communication.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="communication-page">
+    <a href="{% url 'communication_center' %}" class="communication-back">
+        <i class="fa-solid fa-arrow-left"></i> Back to Communication Center
+    </a>
+
+    <article class="announcement-detail-card">
+        <div class="announcement-detail-top">
+            <div class="announcement-detail-icon {% if announcement.is_important %}important{% endif %}">
+                <i class="fa-solid {% if announcement.is_important %}fa-circle-exclamation{% else %}fa-bullhorn{% endif %}"></i>
+            </div>
+            <div>
+                {% if announcement.is_important %}<span class="important-pill">Important Notice</span>{% endif %}
+                <h1>{{ announcement.title }}</h1>
+                <p><i class="fa-regular fa-clock"></i> {{ announcement.published_at|date:"l, d F Y · H:i" }} · {{ announcement.created_by.get_full_name|default:announcement.created_by.username }}</p>
+            </div>
+        </div>
+        <div class="announcement-body">{{ announcement.body|linebreaks }}</div>
+    </article>
+</div>
+{% endblock %}

@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Xorami College ERP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/communication.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="communication-page">
+
+    <div class="management-card">
+
+        <!-- ==================================================
+             HEADER
+        =================================================== -->
+
+        <div class="communication-card-header">
+
+            <div>
+
+                <span class="communication-label">
+                    COMMUNICATION MANAGEMENT
+                </span>
+
+                <h1>
+                    {{ title }}
+                </h1>
+
+                <p>
+                    {{ subtitle }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             FORM
+        =================================================== -->
+
+        <form
+            method="post"
+            class="communication-form"
+            id="communication-management-form"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- ==================================================
+                 NON-FIELD ERRORS
+            =================================================== -->
+
+            {% if form.non_field_errors %}
+
+                <div class="form-error-summary">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- ==================================================
+                 FORM FIELDS
+            =================================================== -->
+
+            {% for field in form %}
+
+                <div
+                    class="form-field"
+                    data-field-name="{{ field.name }}"
+                >
+
+                    <label
+                        for="{{ field.id_for_label }}"
+                    >
+
+                        {{ field.label }}
+
+                        {% if field.field.required %}
+                            <span class="required-mark">*</span>
+                        {% endif %}
+
+                    </label>
+
+
+                    {{ field }}
+
+
+                    {% if field.help_text %}
+
+                        <small class="form-help">
+                            {{ field.help_text }}
+                        </small>
+
+                    {% endif %}
+
+
+                    {% if field.errors %}
+
+                        <div class="field-errors">
+
+                            {% for error in field.errors %}
+
+                                <div>
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+
+            <!-- ==================================================
+                 ACTIONS
+            =================================================== -->
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="communication-submit"
+                >
+
+                    <i class="fa-solid fa-paper-plane"></i>
+
+                    Save & Publish
+
+                </button>
+
+
+                <a
+                    href="{% url 'communication_center' %}"
+                    class="communication-cancel"
+                >
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================================
+     AUDIENCE FIELD CONTROL
+=========================================================== -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const audienceField =
+            document.getElementById(
+                "id_audience"
+            );
+
+        if (!audienceField) {
+            return;
+        }
+
+
+        const departmentWrapper =
+            document.querySelector(
+                '[data-field-name="department"]'
+            );
+
+        const programmeWrapper =
+            document.querySelector(
+                '[data-field-name="programme"]'
+            );
+
+        const studentWrapper =
+            document.querySelector(
+                '[data-field-name="student"]'
+            );
+
+
+        const departmentField =
+            document.getElementById(
+                "id_department"
+            );
+
+        const programmeField =
+            document.getElementById(
+                "id_programme"
+            );
+
+        const studentField =
+            document.getElementById(
+                "id_student"
+            );
+
+
+        function hideField(wrapper) {
+
+            if (!wrapper) {
+                return;
+            }
+
+            wrapper.style.display = "none";
+
+        }
+
+
+        function showField(wrapper) {
+
+            if (!wrapper) {
+                return;
+            }
+
+            wrapper.style.display = "";
+
+        }
+
+
+        function clearField(field) {
+
+            if (!field) {
+                return;
+            }
+
+            if (field.tagName === "SELECT") {
+
+                field.selectedIndex = 0;
+
+            } else {
+
+                field.value = "";
+
+            }
+
+        }
+
+
+        function updateAudienceFields() {
+
+            const audience =
+                audienceField.value;
+
+
+            // --------------------------------------------------
+            // DEFAULT
+            // --------------------------------------------------
+
+            hideField(
+                departmentWrapper
+            );
+
+            hideField(
+                programmeWrapper
+            );
+
+            hideField(
+                studentWrapper
+            );
+
+
+            // --------------------------------------------------
+            // ALL STUDENTS
+            //
+            // No specific target.
+            // --------------------------------------------------
+
+            if (
+                audience === "ALL"
+            ) {
+
+                clearField(
+                    programmeField
+                );
+
+                clearField(
+                    studentField
+                );
+
+                return;
+
+            }
+
+
+            // --------------------------------------------------
+            // DEPARTMENT
+            //
+            // Show department only.
+            // --------------------------------------------------
+
+            if (
+                audience === "DEPARTMENT"
+            ) {
+
+                showField(
+                    departmentWrapper
+                );
+
+                clearField(
+                    programmeField
+                );
+
+                clearField(
+                    studentField
+                );
+
+                return;
+
+            }
+
+
+            // --------------------------------------------------
+            // PROGRAMME
+            //
+            // Department remains available because it is the
+            // HOD's department. Programme is the actual target.
+            // --------------------------------------------------
+
+            if (
+                audience === "PROGRAMME"
+            ) {
+
+                showField(
+                    departmentWrapper
+                );
+
+                showField(
+                    programmeWrapper
+                );
+
+                clearField(
+                    studentField
+                );
+
+                return;
+
+            }
+
+
+            // --------------------------------------------------
+            // INDIVIDUAL STUDENT
+            //
+            // Department + student.
+            // --------------------------------------------------
+
+            if (
+                audience === "STUDENT"
+            ) {
+
+                showField(
+                    departmentWrapper
+                );
+
+                showField(
+                    studentWrapper
+                );
+
+                clearField(
+                    programmeField
+                );
+
+                return;
+
+            }
+
+        }
+
+
+        // ------------------------------------------------------
+        // INITIAL STATE
+        // ------------------------------------------------------
+
+        updateAudienceFields();
+
+
+        // ------------------------------------------------------
+        // WHEN AUDIENCE CHANGES
+        // ------------------------------------------------------
+
+        audienceField.addEventListener(
+            "change",
+            updateAudienceFields
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

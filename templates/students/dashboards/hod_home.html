@@ -1,0 +1,906 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-3">
+
+    <!-- ======================================================
+         HOD HEADER
+         ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="mb-1">
+                HOD Dashboard
+            </h2>
+
+            <div class="text-muted">
+                {{ hod_department.name }}
+            </div>
+
+        </div>
+
+        <div>
+
+            <a
+                href="{% url 'communication_announcement_create' %}"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-megaphone"></i>
+                Create Announcement
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         DEPARTMENT SUMMARY
+         ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card h-100 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Department
+                    </div>
+
+                    <h4 class="mt-2 mb-0">
+                        {{ hod_department.name }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card h-100 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Department Students
+                    </div>
+                    <h2 class="mt-2 mb-0">
+                        {{ department_student_count }}
+                    </h2>
+
+                    <div class="text-muted small mt-1">
+                        student{{ department_student_count|pluralize }}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card h-100 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Department Announcements
+                    </div>
+
+                    <h2 class="mt-2 mb-0">
+                        {{ department_announcement_count }}
+                    </h2>
+
+                    <div class="text-muted small mt-1">
+                        announcement{{ department_announcement_count|pluralize }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         QUICK ACTIONS
+         ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <strong>
+                Communication
+            </strong>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <!-- CREATE ANNOUNCEMENT -->
+
+                <div class="col-md-4">
+
+                    <a
+                        href="{% url 'communication_announcement_create' %}"
+                        class="text-decoration-none"
+                    >
+
+                        <div class="border rounded p-3 h-100">
+
+                            <div class="d-flex align-items-center gap-2 mb-2">
+
+                                <i class="bi bi-megaphone fs-4 text-primary"></i>
+
+                                <h5 class="mb-0">
+                                    Create Announcement
+                                </h5>
+
+                            </div>
+
+                            <p class="text-muted mb-0">
+                                Send an official announcement
+                                to your department students.
+                            </p>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- CREATE ACADEMIC EVENT -->
+
+                <div class="col-md-4">
+
+                    <a
+                        href="{% url 'communication_event_create' %}"
+                        class="text-decoration-none"
+                    >
+
+                        <div class="border rounded p-3 h-100">
+
+                            <div class="d-flex align-items-center gap-2 mb-2">
+
+                                <i class="bi bi-calendar-event fs-4 text-primary"></i>
+
+                                <h5 class="mb-0">
+                                    Add Academic Event
+                                </h5>
+
+                            </div>
+
+                            <p class="text-muted mb-0">
+                                Add a deadline or academic
+                                calendar event for students.
+                            </p>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ======================================================
+                    STUDENT FEEDBACK
+                    ====================================================== -->
+
+                <div class="col-md-4">
+
+                    <a
+                        href="{% url 'hod_student_feedback' %}"
+                        class="text-decoration-none"
+                    >
+
+                        <div class="border rounded p-3 h-100">
+
+                            <div class="d-flex align-items-center gap-2 mb-2">
+
+                                <i class="bi bi-clipboard-question fs-4 text-success"></i>
+
+                                <h5 class="mb-0">
+                                    Student Feedback
+                                </h5>
+
+                            </div>
+
+                            <p class="text-muted mb-3">
+                                Create and manage Google Forms
+                                for student feedback.
+                            </p>
+
+                            {% if student_feedback_forms %}
+
+                                <div class="small text-muted mb-3">
+
+                                    <strong>
+                                        {{ student_feedback_forms|length }}
+                                    </strong>
+
+                                    feedback form{{ student_feedback_forms|length|pluralize }}
+                                    created
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="small text-muted mb-3">
+                                    No feedback forms created yet.
+                                </div>
+
+                            {% endif %}
+
+                            <span class="btn btn-sm btn-outline-success">
+
+                                <i class="bi bi-clipboard-plus"></i>
+
+                                Manage Feedback Forms
+
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- COMMUNICATION CENTER -->
+
+                <div class="col-md-4">
+
+                    <a
+                        href="{% url 'communication_center' %}"
+                        class="text-decoration-none"
+                    >
+
+                        <div class="border rounded p-3 h-100">
+
+                            <div class="d-flex align-items-center gap-2 mb-2">
+
+                                <i class="bi bi-chat-square-text fs-4 text-primary"></i>
+
+                                <h5 class="mb-0">
+                                    Communication Center
+                                </h5>
+
+                            </div>
+
+                            <p class="text-muted mb-0">
+                                View communication activity.
+                            </p>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         STUDENT FEEDBACK — GOOGLE FORMS
+         ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <strong>
+                    Student Feedback
+                </strong>
+
+                <div class="text-muted small">
+                    Google Forms created for your department students
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% if student_feedback_forms %}
+
+                <div class="list-group list-group-flush">
+
+                    {% for form in student_feedback_forms %}
+
+                        <div class="list-group-item px-0">
+
+                            <div class="row align-items-start g-3">
+
+                                <!-- FORM ICON -->
+
+                                <div class="col-auto">
+
+                                    <div
+                                        class="border rounded d-flex align-items-center justify-content-center"
+                                        style="width: 52px; height: 52px;"
+                                    >
+
+                                        <i
+                                            class="bi bi-clipboard-question fs-4 text-success"
+                                        ></i>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- FORM DETAILS -->
+
+                                <div class="col">
+
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+
+                                        <h5 class="mb-0">
+                                            {{ form.title }}
+                                        </h5>
+
+
+                                        {% if form.is_published %}
+
+                                            <span class="badge bg-success">
+                                                Published
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Draft
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    {% if form.description %}
+
+                                        <p class="text-muted mt-2 mb-2">
+
+                                            {{ form.description|truncatechars:180 }}
+
+                                        </p>
+
+                                    {% endif %}
+
+
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+
+                                        <!-- AUDIENCE -->
+
+                                        <span class="badge bg-light text-dark border">
+
+                                            {% if form.audience == "ALL" %}
+
+                                                All Students
+
+                                            {% elif form.audience == "DEPARTMENT" %}
+
+                                                Department
+
+                                            {% elif form.audience == "PROGRAMME" %}
+
+                                                Programme
+
+                                            {% elif form.audience == "STUDENT" %}
+
+                                                Individual Student
+
+                                            {% endif %}
+
+                                        </span>
+
+
+                                        <!-- PROGRAMME -->
+
+                                        {% if form.audience == "PROGRAMME" and form.programme %}
+
+                                            <span class="text-muted small">
+
+                                                {{ form.programme.name }}
+
+                                            </span>
+
+                                        {% endif %}
+
+
+                                        <!-- STUDENT -->
+
+                                        {% if form.audience == "STUDENT" and form.student %}
+
+                                            <span class="text-muted small">
+
+                                                {{ form.student.user.get_full_name|default:form.student.user.username }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <!-- DATES -->
+
+                                    <div class="text-muted small mt-2">
+
+                                        {% if form.starts_at %}
+
+                                            <i class="bi bi-calendar-event"></i>
+
+                                            Starts:
+                                            {{ form.starts_at|date:"d M Y, H:i" }}
+
+                                        {% endif %}
+
+
+                                        {% if form.closes_at %}
+
+                                            <span class="ms-3">
+
+                                                <i class="bi bi-calendar-x"></i>
+
+                                                Closes:
+                                                {{ form.closes_at|date:"d M Y, H:i" }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ACTION -->
+
+                                <div class="col-auto">
+
+                                    {% if form.google_form_url %}
+
+                                        <a
+                                            href="{{ form.google_form_url }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="btn btn-outline-success btn-sm"
+                                        >
+
+                                            <i class="bi bi-box-arrow-up-right"></i>
+
+                                            Open Form
+
+                                        </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <!-- EMPTY STATE -->
+
+                <div class="text-center text-muted py-4">
+
+                    <div class="mb-3">
+
+                        <i
+                            class="bi bi-clipboard-question"
+                            style="font-size: 2rem;"
+                        ></i>
+
+                    </div>
+
+                    <h5>
+                        No Student Feedback Forms
+                    </h5>
+
+                    <p class="mb-0">
+                        No Google Forms have been created
+                        for your department yet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         ACADEMIC CALENDAR
+         ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <strong>
+                    Academic Calendar
+                </strong>
+
+                <div class="text-muted small">
+                    Upcoming deadlines and academic events
+                </div>
+
+            </div>
+
+            <a
+                href="{% url 'communication_event_create' %}"
+                class="btn btn-sm btn-primary"
+            >
+                <i class="bi bi-calendar-plus"></i>
+                Add Event
+            </a>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% if academic_events %}
+
+                <div class="list-group list-group-flush">
+
+                    {% for event in academic_events %}
+
+                        <div class="list-group-item px-0">
+
+                            <div class="row align-items-start g-3">
+
+                                <!-- DATE -->
+
+                                <div class="col-auto">
+
+                                    <div
+                                        class="border rounded text-center px-3 py-2"
+                                    >
+
+                                        <div class="small text-muted">
+                                            {{ event.start_at|date:"M" }}
+                                        </div>
+
+                                        <strong class="fs-4">
+                                            {{ event.start_at|date:"d" }}
+                                        </strong>
+
+                                        <div class="small text-muted">
+                                            {{ event.start_at|date:"Y" }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- EVENT DETAILS -->
+
+                                <div class="col">
+
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+
+                                        <h5 class="mb-0">
+                                            {{ event.title }}
+                                        </h5>
+
+
+                                        {% if event.is_important %}
+
+                                            <span class="badge bg-danger">
+                                                Important
+                                            </span>
+
+                                        {% endif %}
+
+
+                                        {% if event.is_published %}
+
+                                            <span class="badge bg-success">
+                                                Published
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Draft
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <div class="text-muted small mt-1">
+
+                                        <i class="bi bi-clock"></i>
+
+                                        {{ event.start_at|date:"d M Y, H:i" }}
+
+                                        {% if event.end_at %}
+
+                                            —
+                                            {{ event.end_at|date:"d M Y, H:i" }}
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <div class="mt-2">
+
+                                        <span class="badge bg-light text-dark border">
+
+                                            {% if event.audience == "ALL" %}
+
+                                                All Students
+
+                                            {% elif event.audience == "DEPARTMENT" %}
+
+                                                Department
+
+                                            {% elif event.audience == "PROGRAMME" %}
+
+                                                Programme
+
+                                            {% elif event.audience == "STUDENT" %}
+
+                                                Individual Student
+
+                                            {% endif %}
+
+                                        </span>
+
+
+                                        {% if event.audience == "PROGRAMME" and event.programme %}
+
+                                            <span class="text-muted small ms-2">
+
+                                                {{ event.programme.name }}
+
+                                            </span>
+
+                                        {% endif %}
+
+
+                                        {% if event.audience == "STUDENT" and event.student %}
+
+                                            <span class="text-muted small ms-2">
+
+                                                {{ event.student.user.get_full_name|default:event.student.user.username }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    {% if event.description %}
+
+                                        <p class="text-muted mt-2 mb-0">
+
+                                            {{ event.description|truncatechars:180 }}
+
+                                        </p>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <!-- EMPTY CALENDAR -->
+
+                <div class="text-center text-muted py-4">
+
+                    <div class="mb-3">
+
+                        <i
+                            class="bi bi-calendar3"
+                            style="font-size: 2rem;"
+                        ></i>
+
+                    </div>
+
+                    <h5>
+                        No upcoming dates
+                    </h5>
+
+                    <p class="mb-3">
+                        No upcoming academic deadlines or events
+                        are currently available.
+                    </p>
+
+                    <a
+                        href="{% url 'communication_event_create' %}"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-calendar-plus"></i>
+                        Create Academic Event
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         RECENT ANNOUNCEMENTS
+         ====================================================== -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <strong>
+                Recent Department Announcements
+            </strong>
+
+            <a
+                href="{% url 'communication_announcement_create' %}"
+                class="btn btn-sm btn-primary"
+            >
+                New Announcement
+            </a>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if recent_announcements %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Title
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Published
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for announcement in recent_announcements %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            {{ announcement.title }}
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if announcement.is_published %}
+
+                                            <span class="badge bg-success">
+                                                Published
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Draft
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ announcement.published_at|date:"d M Y H:i" }}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="p-4 text-center text-muted">
+
+                    No department announcements have been created yet.
+
+                    <div class="mt-3">
+
+                        <a
+                            href="{% url 'communication_announcement_create' %}"
+                            class="btn btn-primary"
+                        >
+                            Create First Announcement
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

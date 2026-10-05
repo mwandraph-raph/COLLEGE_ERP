@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+{{ event.title }} | Academic Calendar
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/communication.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="communication-page">
+
+    <!-- =====================================================
+         ACADEMIC EVENT DETAILS
+         Uses the existing Communication Center UI system
+         ===================================================== -->
+
+    <section class="communication-card">
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <div class="communication-card-header">
+
+            <div>
+
+                <span class="communication-label">
+                    ACADEMIC CALENDAR
+                </span>
+
+                <h1>
+                    {{ event.title }}
+                </h1>
+
+                <p>
+                    Full details of this academic event.
+                </p>
+
+            </div>
+
+            <span class="communication-count">
+
+                <i class="fa-solid fa-calendar-days"></i>
+
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             EVENT SUMMARY
+             ================================================= -->
+
+        <div class="communication-list">
+
+            <div class="communication-item">
+
+                <div class="communication-item-icon">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+
+                </div>
+
+
+                <div class="communication-item-content">
+
+                    <div class="communication-item-top">
+
+                        <strong>
+                            {{ event.get_event_type_display }}
+                        </strong>
+
+                        {% if event.is_important %}
+
+                            <span class="important-pill">
+
+                                <i class="fa-solid fa-circle-exclamation"></i>
+
+                                Important
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <small>
+
+                        <i class="fa-regular fa-calendar"></i>
+
+                        {{ event.start_at|date:"l, d F Y" }}
+
+                        ·
+
+                        <i class="fa-regular fa-clock"></i>
+
+                        {{ event.start_at|date:"H:i" }}
+
+                        {% if event.end_at %}
+                            – {{ event.end_at|date:"H:i" }}
+                        {% endif %}
+
+                    </small>
+
+
+                    <small>
+
+                        <i class="fa-solid fa-users"></i>
+
+                        {{ event.get_audience_display }}
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             DESCRIPTION
+             ================================================= -->
+
+        {% if event.description %}
+
+        <div class="communication-list">
+
+            <div class="communication-item">
+
+                <div class="communication-item-icon">
+
+                    <i class="fa-solid fa-align-left"></i>
+
+                </div>
+
+
+                <div class="communication-item-content">
+
+                    <div class="communication-item-top">
+
+                        <strong>
+                            Description
+                        </strong>
+
+                    </div>
+
+
+                    <p>
+                        {{ event.description|linebreaksbr }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             EVENT TARGET
+             ================================================= -->
+
+        {% if event.department or event.programme or event.student %}
+
+        <div class="communication-list">
+
+            <div class="communication-item">
+
+                <div class="communication-item-icon">
+
+                    <i class="fa-solid fa-bullseye"></i>
+
+                </div>
+
+
+                <div class="communication-item-content">
+
+                    <div class="communication-item-top">
+
+                        <strong>
+                            Event Audience
+                        </strong>
+
+                    </div>
+
+
+                    {% if event.department %}
+
+                    <small>
+
+                        <i class="fa-solid fa-building-columns"></i>
+
+                        Department:
+
+                        <strong>
+                            {{ event.department.name }}
+                        </strong>
+
+                    </small>
+
+                    {% endif %}
+
+
+                    {% if event.programme %}
+
+                    <small>
+
+                        <i class="fa-solid fa-graduation-cap"></i>
+
+                        Programme:
+
+                        <strong>
+                            {{ event.programme.name }}
+                        </strong>
+
+                    </small>
+
+                    {% endif %}
+
+
+                    {% if event.student %}
+
+                    <small>
+
+                        <i class="fa-solid fa-user"></i>
+
+                        Student:
+
+                        <strong>
+                            {{ event.student.user.get_full_name|default:event.student.user.username }}
+                        </strong>
+
+                    </small>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             PUBLISHED BY
+             ================================================= -->
+
+        {% if event.created_by %}
+
+        <div class="communication-list">
+
+            <div class="communication-item">
+
+                <div class="communication-item-icon">
+
+                    <i class="fa-solid fa-user-tie"></i>
+
+                </div>
+
+
+                <div class="communication-item-content">
+
+                    <div class="communication-item-top">
+
+                        <strong>
+                            Published By
+                        </strong>
+
+                    </div>
+
+
+                    <small>
+
+                        <i class="fa-solid fa-user"></i>
+
+                        {{ event.created_by.get_full_name|default:event.created_by.username }}
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             ACTIONS
+             ================================================= -->
+
+        <div class="communication-card-footer">
+
+            <a
+                href="{% url 'communication_center' %}"
+                class="communication-footer-link"
+            >
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Back to Communication Center
+
+            </a>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

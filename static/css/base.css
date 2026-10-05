@@ -55,7 +55,7 @@ body {
    ========================================================= */
 
 html {
-    font-size: 14px;
+    font-size: 15px;
 
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
@@ -83,9 +83,9 @@ body.erp-body {
         Arial,
         sans-serif;
 
-    font-size: 14px;
+    font-size: 15px;
 
-    line-height: 1.5;
+    line-height: 1.55;
 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

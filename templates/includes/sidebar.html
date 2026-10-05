@@ -8,24 +8,67 @@
 
     <div class="sidebar-user">
 
+        <!-- ==================================================
+            PROFILE PHOTO
+            Uses the same photo uploaded in My Profile
+            ================================================== -->
+
         <div class="avatar">
-            <i class="fa-solid fa-user"></i>
+
+            {% if request.user.photo %}
+
+                <img
+                    src="{{ request.user.photo.url }}"
+                    alt="Profile photo"
+                    style="
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 50%;
+                    "
+                >
+
+            {% else %}
+
+                <i class="fa-solid fa-user"></i>
+
+            {% endif %}
+
         </div>
 
+
+        <!-- ==================================================
+            USER INFORMATION
+            ================================================== -->
+
         <div>
+
             <strong>
                 {{ request.user.get_full_name|default:request.user.username }}
             </strong>
 
             <small class="text-light">
+
                 {% if request.user.is_superuser %}
+
                     Administrator
+
                 {% elif request.user.groups.first %}
+
                     {{ request.user.groups.first.name }}
+
+                {% elif request.user.student_profile %}
+
+                    Student
+
                 {% else %}
+
                     User
+
                 {% endif %}
+
             </small>
+
         </div>
 
     </div>
@@ -37,18 +80,739 @@
 
     <ul class="sidebar-menu list-unstyled">
 
+
         <!-- ==================================================
              DASHBOARD
              ================================================== -->
 
         <li>
+
             <a href="{% url 'home' %}">
+
                 <span>
+
                     <i class="fa-solid fa-house"></i>
+
                     Dashboard
+
                 </span>
+
             </a>
+
         </li>
+
+
+<!-- ==================================================
+     HOD PORTAL
+     ================================================== -->
+
+{% if request.user.groups.first.name == "HOD" %}
+
+    <li class="menu-title">
+        HOD Portal
+    </li>
+
+    <!-- ==================================================
+         DASHBOARD
+         ================================================== -->
+<!--
+    <li>
+        <a href="{% url 'hod_dashboard' %}">
+            <span>
+                <i class="fa-solid fa-gauge"></i>
+                Dashboard
+            </span>
+        </a>
+    </li>
+-->
+
+    <!-- ==================================================
+         DEPARTMENT
+         ================================================== -->
+
+    <li>
+        <a
+            class="d-flex justify-content-between align-items-center"
+            data-bs-toggle="collapse"
+            href="#hodDepartmentMenu"
+            role="button"
+            aria-expanded="false"
+            aria-controls="hodDepartmentMenu"
+        >
+            <span>
+                <i class="fa-solid fa-building"></i>
+                Department
+            </span>
+
+            <i class="fa-solid fa-chevron-down"></i>
+        </a>
+
+        <div
+            class="collapse"
+            id="hodDepartmentMenu"
+        >
+            <ul class="sidebar-submenu">
+
+                <li>
+                    <a href="{% url 'student_list' %}">
+                        <i class="fa-solid fa-users"></i>
+                        Students
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'programme_list' %}">
+                        <i class="fa-solid fa-book"></i>
+                        Programmes
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'course_list' %}">
+                        <i class="fa-solid fa-folder"></i>
+                        Courses
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'unit_list' %}">
+                        <i class="fa-solid fa-book-open"></i>
+                        Units
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'semester_enrollment_list' %}">
+                        <i class="fa-solid fa-user-check"></i>
+                        Semester Enrollments
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'registration_list' %}">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        Registrations
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </li>
+
+
+    <!-- ==================================================
+         ACADEMIC MANAGEMENT
+         ================================================== -->
+
+    <li>
+        <a
+            class="d-flex justify-content-between align-items-center"
+            data-bs-toggle="collapse"
+            href="#hodAcademicManagementMenu"
+            role="button"
+            aria-expanded="false"
+            aria-controls="hodAcademicManagementMenu"
+        >
+            <span>
+                <i class="fa-solid fa-graduation-cap"></i>
+                Academic Management
+            </span>
+
+            <i class="fa-solid fa-chevron-down"></i>
+        </a>
+
+        <div
+            class="collapse"
+            id="hodAcademicManagementMenu"
+        >
+            <ul class="sidebar-submenu">
+
+                <li>
+                    <a href="{% url 'unit_offering_list' %}">
+                        <i class="fa-solid fa-list-check"></i>
+                        Unit Offerings
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'lecturer_assignment_list' %}">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        Lecturer Assignments
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'my_units' %}">
+                        <i class="fa-solid fa-person-chalkboard"></i>
+                        My Teaching Units
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'progression_list' %}">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                        Progression
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </li>
+
+
+    <!-- ==================================================
+         EXAMINATION
+         ================================================== -->
+
+    <li>
+        <a
+            class="d-flex justify-content-between align-items-center"
+            data-bs-toggle="collapse"
+            href="#hodExaminationMenu"
+            role="button"
+            aria-expanded="false"
+            aria-controls="hodExaminationMenu"
+        >
+            <span>
+                <i class="fa-solid fa-file-signature"></i>
+                Examination
+            </span>
+
+            <i class="fa-solid fa-chevron-down"></i>
+        </a>
+
+        <div
+            class="collapse"
+            id="hodExaminationMenu"
+        >
+            <ul class="sidebar-submenu">
+
+                <li>
+                    <a href="{% url 'approval_queue' %}">
+                        <i class="fa-solid fa-list-check"></i>
+                        Approval Queue
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'exam_dashboard' %}">
+                        <i class="fa-solid fa-chart-column"></i>
+                        Examination Dashboard
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </li>
+
+
+    <!-- ==================================================
+         COMMUNICATION
+         ================================================== -->
+
+    <li>
+        <a
+            class="d-flex justify-content-between align-items-center"
+            data-bs-toggle="collapse"
+            href="#hodCommunicationMenu"
+            role="button"
+            aria-expanded="false"
+            aria-controls="hodCommunicationMenu"
+        >
+            <span>
+                <i class="fa-solid fa-comments"></i>
+                Communication
+            </span>
+
+            <i class="fa-solid fa-chevron-down"></i>
+        </a>
+
+        <div
+            class="collapse"
+            id="hodCommunicationMenu"
+        >
+            <ul class="sidebar-submenu">
+
+                <li>
+                    <a href="{% url 'communication_dashboard' %}">
+                        <i class="fa-solid fa-gauge"></i>
+                        Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'communication_announcement_list' %}">
+                        <i class="fa-solid fa-bullhorn"></i>
+                        Announcements
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'communication_announcement_create' %}">
+                        <i class="fa-solid fa-plus"></i>
+                        Create Announcement
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'communication_messages' %}">
+                        <i class="fa-solid fa-envelope"></i>
+                        Messages
+
+                        {% if communication_unread_count %}
+                            <span class="sidebar-notification-badge">
+                                {{ communication_unread_count }}
+                            </span>
+                        {% endif %}
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'hod_student_feedback' %}">
+                        <i class="fa-solid fa-clipboard-question"></i>
+                        Student Feedback
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </li>
+
+
+    <!-- ==================================================
+         ACADEMIC CALENDAR
+         ================================================== -->
+
+    <li>
+        <a href="{% url 'communication_event_create' %}">
+            <span>
+                <i class="fa-solid fa-calendar-days"></i>
+                Academic Calendar
+            </span>
+        </a>
+    </li>
+
+
+    <!-- ==================================================
+         MY PROFILE
+         ================================================== -->
+
+    <li>
+        <a href="{% url 'accounts:profile' %}">
+            <span>
+                <i class="fa-solid fa-id-card"></i>
+                My Profile
+            </span>
+        </a>
+    </li>
+
+{% endif %}
+
+        <!-- ==================================================
+             STUDENT PORTAL
+             --------------------------------------------------
+             Displayed only when the logged-in user has a
+             Student profile.
+             ================================================== -->
+
+        {% if request.user.student_profile %}
+
+            {% with current_enrollment=request.user.student_profile.current_enrollment %}
+
+                <li class="menu-title">
+                    Student Portal
+                </li>
+
+
+                <!-- ==========================================
+                     MY STUDIES
+                     ========================================== -->
+
+                <li>
+
+                    <a
+                        class="d-flex justify-content-between align-items-center"
+                        data-bs-toggle="collapse"
+                        href="#studentStudiesMenu"
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls="studentStudiesMenu"
+                    >
+
+                        <span>
+
+                            <i class="fa-solid fa-graduation-cap"></i>
+
+                            My Studies
+
+                        </span>
+
+                        <i class="fa-solid fa-chevron-down"></i>
+
+                    </a>
+
+
+                    <div
+                        class="collapse"
+                        id="studentStudiesMenu"
+                    >
+
+                        <ul class="sidebar-submenu">
+
+
+                            <!-- ==================================
+                                 REGISTER UNITS
+
+                                 Only available when the student
+                                 has a current enrollment.
+                                 ================================== -->
+
+                            {% if current_enrollment %}
+
+                                <li>
+
+                                    <a
+                                        href="{% url 'register_units' current_enrollment.pk %}"
+                                    >
+
+                                        <i class="fa-solid fa-book-open"></i>
+
+                                        Register Units
+
+                                    </a>
+
+                                </li>
+
+                            {% endif %}
+
+
+                            <!-- ==================================
+                                 ACADEMIC RESULTS
+                                 ================================== -->
+
+                            <li>
+
+                                <a
+                                    href="{% url 'student_results' %}"
+                                >
+
+                                    <i class="fa-solid fa-chart-column"></i>
+
+                                    Academic Results
+
+                                </a>
+
+                            </li>
+
+                            <!-- ==========================================
+                            FEE STATEMENT
+                            View and print only
+                            ========================================== -->
+
+                        <li>
+
+                            <a href="{% url 'finance:fee_statement_list' %}">
+
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                                Fee Statement
+
+                            </a>
+
+                        </li>
+
+
+                        </ul>
+
+                    </div>
+
+                </li>
+
+
+                <!-- ==========================================
+                     COMMUNICATION
+                     ========================================== -->
+
+                <li>
+
+                    <a
+                        class="d-flex justify-content-between align-items-center"
+                        data-bs-toggle="collapse"
+                        href="#studentCommunicationMenu"
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls="studentCommunicationMenu"
+                    >
+
+                        <span>
+
+                            <i class="fa-solid fa-comments"></i>
+
+                            Communication
+
+                        </span>
+
+                        <i class="fa-solid fa-chevron-down"></i>
+
+                    </a>
+
+
+                    <div
+                        class="collapse"
+                        id="studentCommunicationMenu"
+                    >
+
+                        <ul class="sidebar-submenu">
+
+
+                            <!-- ==================================
+                                 COMMUNICATION CENTER
+                                 ================================== -->
+
+                            <li>
+
+                                <a
+                                    href="{% url 'communication_center' %}"
+                                >
+
+                                    <i class="fa-solid fa-bullhorn"></i>
+
+                                    Communication Center
+
+                                </a>
+
+                            </li>
+
+
+                            <!-- ==================================
+                                 MESSAGES
+                                 ================================== -->
+
+                            <li>
+
+                                <a
+                                    href="{% url 'communication_messages' %}"
+                                >
+
+                                    <i class="fa-solid fa-envelope"></i>
+
+
+                                    <span class="sidebar-menu-label">
+
+                                        Messages
+
+                                    </span>
+
+
+                                    {% if communication_unread_count %}
+
+                                        <span class="sidebar-notification-badge">
+
+                                            {{ communication_unread_count }}
+
+                                        </span>
+
+                                    {% endif %}
+
+
+                                </a>
+
+                            </li>
+
+
+                            <!-- ==================================
+                                 STUDENT FEEDBACK
+                                 ================================== -->
+
+                            <li>
+
+                                <a
+                                    href="{% url 'student_feedback_list' %}"
+                                >
+
+                                    <i class="fa-solid fa-clipboard-question"></i>
+
+
+                                    <span class="sidebar-menu-label">
+
+                                        Student Feedback
+
+                                    </span>
+
+
+                                    {% if student_feedback_forms %}
+
+                                        <span class="sidebar-notification-badge">
+
+                                            {{ student_feedback_forms|length }}
+
+                                        </span>
+
+                                    {% endif %}
+
+
+                                </a>
+
+                            </li>
+
+
+                        </ul>
+
+                    </div>
+
+                </li>
+
+
+                <!-- ==========================================
+                     MY PROFILE
+                     ========================================== -->
+
+                <li>
+
+                    <a
+                        href="{% url 'accounts:profile' %}"
+                    >
+
+                        <span>
+
+                            <i class="fa-solid fa-id-card"></i>
+
+                            My Profile
+
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+            {% endwith %}
+
+        {% endif %}
+
+
+        <!-- ==================================================
+             COMMUNICATION — STAFF / MANAGEMENT
+             ================================================== -->
+
+        {% if request.user.is_superuser or request.user.groups.first.name == "Administrator" or request.user.groups.first.name == "ICT Officer" or request.user.groups.first.name == "Principal" %}
+
+            <li>
+
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#communicationMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="communicationMenu"
+                >
+
+                    <span>
+
+                        <i class="fa-solid fa-comments"></i>
+
+                        Communication
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-down"></i>
+
+                </a>
+
+
+                <div
+                    class="collapse"
+                    id="communicationMenu"
+                >
+
+                    <ul class="sidebar-submenu">
+
+
+                        <li>
+
+                            <a
+                                href="{% url 'communication_dashboard' %}"
+                            >
+
+                                <i class="fa-solid fa-gauge"></i>
+
+                                Dashboard
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a
+                                href="{% url 'communication_announcement_list' %}"
+                            >
+
+                                <i class="fa-solid fa-bullhorn"></i>
+
+                                Announcements
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a
+                                href="{% url 'communication_announcement_create' %}"
+                            >
+
+                                <i class="fa-solid fa-plus"></i>
+
+                                Create Announcement
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a
+                                href="{% url 'communication_messages' %}"
+                            >
+
+                                <i class="fa-solid fa-envelope"></i>
+
+
+                                <span class="sidebar-menu-label">
+
+                                    Messages
+
+                                </span>
+
+
+                                {% if communication_unread_count %}
+
+                                    <span class="sidebar-notification-badge">
+
+                                        {{ communication_unread_count }}
+
+                                    </span>
+
+                                {% endif %}
+
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
+
+        {% endif %}
 
 
         <!-- ==================================================
@@ -57,55 +821,82 @@
 
         {% if perms.students.view_applicant %}
 
-        <li>
+            <li>
 
-            <a
-                class="d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                href="#admissionsMenu"
-                role="button"
-                aria-expanded="false"
-                aria-controls="admissionsMenu">
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#admissionsMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="admissionsMenu"
+                >
 
-                <span>
-                    <i class="fa-solid fa-user-graduate"></i>
-                    Admissions
-                </span>
+                    <span>
 
-                <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-user-graduate"></i>
 
-            </a>
+                        Admissions
 
-            <div class="collapse" id="admissionsMenu">
+                    </span>
 
-                <ul class="sidebar-submenu">
+                    <i class="fa-solid fa-chevron-down"></i>
 
-                    <li>
-                        <a href="{% url 'applicant_list' %}">
-                            <i class="fa-solid fa-user-plus"></i>
-                            Applicants
-                        </a>
-                    </li>
+                </a>
 
-                    <li>
-                        <a href="{% url 'intake_list' %}">
-                            <i class="fa-solid fa-calendar-plus"></i>
-                            Intakes
-                        </a>
-                    </li>
 
-                    <li>
-                        <a href="{% url 'admissions_report' %}">
-                            <i class="fa-solid fa-chart-column"></i>
-                            Admissions Report
-                        </a>
-                    </li>
+                <div
+                    class="collapse"
+                    id="admissionsMenu"
+                >
 
-                </ul>
+                    <ul class="sidebar-submenu">
 
-            </div>
 
-        </li>
+                        <li>
+
+                            <a href="{% url 'applicant_list' %}">
+
+                                <i class="fa-solid fa-user-plus"></i>
+
+                                Applicants
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'intake_list' %}">
+
+                                <i class="fa-solid fa-calendar-plus"></i>
+
+                                Intakes
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'admissions_report' %}">
+
+                                <i class="fa-solid fa-chart-column"></i>
+
+                                Admissions Report
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
 
         {% endif %}
 
@@ -114,57 +905,84 @@
              STUDENTS
              ================================================== -->
 
-        {% if perms.students.view_student %}
+        {% if perms.students.view_student and request.user.groups.first.name != "HOD" %}
 
-        <li>
+            <li>
 
-            <a
-                class="d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                href="#studentsMenu"
-                role="button"
-                aria-expanded="false"
-                aria-controls="studentsMenu">
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#studentsMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="studentsMenu"
+                >
 
-                <span>
-                    <i class="fa-solid fa-users"></i>
-                    Students
-                </span>
+                    <span>
 
-                <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-users"></i>
 
-            </a>
+                        Students
 
-            <div class="collapse" id="studentsMenu">
+                    </span>
 
-                <ul class="sidebar-submenu">
+                    <i class="fa-solid fa-chevron-down"></i>
 
-                    <li>
-                        <a href="{% url 'student_list' %}">
-                            <i class="fa-solid fa-users"></i>
-                            Students
-                        </a>
-                    </li>
+                </a>
 
-                    <li>
-                        <a href="{% url 'semester_enrollment_list' %}">
-                            <i class="fa-solid fa-user-check"></i>
-                            Semester Enrollments
-                        </a>
-                    </li>
 
-                    <li>
-                        <a href="{% url 'registration_list' %}">
-                            <i class="fa-solid fa-clipboard-check"></i>
-                            Registrations
-                        </a>
-                    </li>
+                <div
+                    class="collapse"
+                    id="studentsMenu"
+                >
 
-                </ul>
+                    <ul class="sidebar-submenu">
 
-            </div>
 
-        </li>
+                        <li>
+
+                            <a href="{% url 'student_list' %}">
+
+                                <i class="fa-solid fa-users"></i>
+
+                                Students
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'semester_enrollment_list' %}">
+
+                                <i class="fa-solid fa-user-check"></i>
+
+                                Semester Enrollments
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'registration_list' %}">
+
+                                <i class="fa-solid fa-clipboard-check"></i>
+
+                                Registrations
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
 
         {% endif %}
 
@@ -173,92 +991,149 @@
              ACADEMIC STRUCTURE
              ================================================== -->
 
-        {% if perms.students.view_programme %}
+        {% if perms.students.view_programme and request.user.groups.first.name != "HOD" %}
 
-        <li>
+            <li>
 
-            <a
-                class="d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                href="#academicMenu"
-                role="button"
-                aria-expanded="false"
-                aria-controls="academicMenu">
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#academicMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="academicMenu"
+                >
 
-                <span>
-                    <i class="fa-solid fa-school"></i>
-                    Academic Structure
-                </span>
+                    <span>
 
-                <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-school"></i>
 
-            </a>
+                        Academic Structure
 
-            <div class="collapse" id="academicMenu">
+                    </span>
 
-                <ul class="sidebar-submenu">
+                    <i class="fa-solid fa-chevron-down"></i>
 
-                    <li>
-                        <a href="{% url 'department_list' %}">
-                            <i class="fa-solid fa-building"></i>
-                            Departments
-                        </a>
-                    </li>
+                </a>
 
-                    <li>
-                        <a href="{% url 'course_list' %}">
-                            <i class="fa-solid fa-folder"></i>
-                            Courses
-                        </a>
-                    </li>
 
-                    <li>
-                        <a href="{% url 'programme_list' %}">
-                            <i class="fa-solid fa-book"></i>
-                            Programmes
-                        </a>
-                    </li>
+                <div
+                    class="collapse"
+                    id="academicMenu"
+                >
 
-                    <li>
-                        <a href="{% url 'programme_level_list' %}">
-                            <i class="fa-solid fa-layer-group"></i>
-                            Programme Levels
-                        </a>
-                    </li>
+                    <ul class="sidebar-submenu">
 
-                    <li>
-                        <a href="{% url 'academic_year_list' %}">
-                            <i class="fa-solid fa-calendar-days"></i>
-                            Academic Years
-                        </a>
-                    </li>
 
-                    <li>
-                        <a href="{% url 'semester_list' %}">
-                            <i class="fa-solid fa-calendar"></i>
-                            Semesters
-                        </a>
-                    </li>
+                        <li>
 
-                    <li>
-                        <a href="{% url 'unit_list' %}">
-                            <i class="fa-solid fa-book-open"></i>
-                            Units
-                        </a>
-                    </li>
+                            <a href="{% url 'department_list' %}">
 
-                    <li>
-                        <a href="{% url 'unit_offering_list' %}">
-                            <i class="fa-solid fa-list-check"></i>
-                            Unit Offerings
-                        </a>
-                    </li>
+                                <i class="fa-solid fa-building"></i>
 
-                </ul>
+                                Departments
 
-            </div>
+                            </a>
 
-        </li>
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'course_list' %}">
+
+                                <i class="fa-solid fa-folder"></i>
+
+                                Courses
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'programme_list' %}">
+
+                                <i class="fa-solid fa-book"></i>
+
+                                Programmes
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'programme_level_list' %}">
+
+                                <i class="fa-solid fa-layer-group"></i>
+
+                                Programme Levels
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'academic_year_list' %}">
+
+                                <i class="fa-solid fa-calendar-days"></i>
+
+                                Academic Years
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'semester_list' %}">
+
+                                <i class="fa-solid fa-calendar"></i>
+
+                                Semesters
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'unit_list' %}">
+
+                                <i class="fa-solid fa-book-open"></i>
+
+                                Units
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'unit_offering_list' %}">
+
+                                <i class="fa-solid fa-list-check"></i>
+
+                                Unit Offerings
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
 
         {% endif %}
 
@@ -267,105 +1142,153 @@
              EXAMINATION
              ================================================== -->
 
-        {% if perms.students.view_lecturerassignment %}
+        {% if perms.students.view_lecturerassignment and request.user.groups.first.name != "HOD" %}
 
-        <li>
+            <li>
 
-            <a
-                class="d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                href="#examMenu"
-                role="button"
-                aria-expanded="false"
-                aria-controls="examMenu">
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#examMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="examMenu"
+                >
 
-                <span>
-                    <i class="fa-solid fa-file-signature"></i>
-                    Examination
-                </span>
+                    <span>
 
-                <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-file-signature"></i>
 
-            </a>
+                        Examination
 
-            <div class="collapse" id="examMenu">
+                    </span>
 
-                <ul class="sidebar-submenu">
+                    <i class="fa-solid fa-chevron-down"></i>
 
-                    <li>
-                        <a href="{% url 'lecturer_assignment_list' %}">
-                            <i class="fa-solid fa-chalkboard-user"></i>
-                            Lecturer Assignments
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{% url 'approval_queue' %}">
-                            <i class="fa-solid fa-list-check"></i>
-                            Approval Queue
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{% url 'exam_dashboard' %}">
-                            <i class="fa-solid fa-chart-column"></i>
-                            Examination Dashboard
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{% url 'progression_list' %}">
-                            <i class="fa-solid fa-arrow-trend-up"></i>
-                            Progression
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
-
-        </li>
+                </a>
 
 
-        <!-- ==================================================
-             LECTURER
-             ================================================== -->
+                <div
+                    class="collapse"
+                    id="examMenu"
+                >
 
-        <li>
+                    <ul class="sidebar-submenu">
 
-            <a
-                class="d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                href="#lecturerMenu"
-                role="button"
-                aria-expanded="false"
-                aria-controls="lecturerMenu">
 
-                <span>
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    Lecturer
-                </span>
+                        <li>
 
-                <i class="fa-solid fa-chevron-down"></i>
+                            <a href="{% url 'lecturer_assignment_list' %}">
 
-            </a>
+                                <i class="fa-solid fa-chalkboard-user"></i>
 
-            <div class="collapse" id="lecturerMenu">
+                                Lecturer Assignments
 
-                <ul class="sidebar-submenu">
+                            </a>
 
-                    <li>
-                        <a href="{% url 'my_units' %}">
-                            <i class="fa-solid fa-book-open-reader"></i>
-                            My Units
-                        </a>
-                    </li>
+                        </li>
 
-                </ul>
 
-            </div>
+                        <li>
 
-        </li>
+                            <a href="{% url 'approval_queue' %}">
+
+                                <i class="fa-solid fa-list-check"></i>
+
+                                Approval Queue
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'exam_dashboard' %}">
+
+                                <i class="fa-solid fa-chart-column"></i>
+
+                                Examination Dashboard
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'progression_list' %}">
+
+                                <i class="fa-solid fa-arrow-trend-up"></i>
+
+                                Progression
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
+
+
+            <!-- ==============================================
+                 LECTURER
+                 ============================================== -->
+
+            <li>
+
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#lecturerMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="lecturerMenu"
+                >
+
+                    <span>
+
+                        <i class="fa-solid fa-chalkboard-user"></i>
+
+                        Lecturer
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-down"></i>
+
+                </a>
+
+
+                <div
+                    class="collapse"
+                    id="lecturerMenu"
+                >
+
+                    <ul class="sidebar-submenu">
+
+
+                        <li>
+
+                            <a href="{% url 'my_units' %}">
+
+                                <i class="fa-solid fa-book-open-reader"></i>
+
+                                My Units
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
 
         {% endif %}
 
@@ -376,41 +1299,56 @@
 
         {% if request.user.is_superuser or request.user.groups.first.name == "Administrator" or request.user.groups.first.name == "ICT Officer" %}
 
-        <li>
+            <li>
 
-            <a
-                class="d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                href="#principalMenu"
-                role="button"
-                aria-expanded="false"
-                aria-controls="principalMenu">
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#principalMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="principalMenu"
+                >
 
-                <span>
-                    <i class="fa-solid fa-user-tie"></i>
-                    Principal
-                </span>
+                    <span>
 
-                <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-user-tie"></i>
 
-            </a>
+                        Principal
 
-            <div class="collapse" id="principalMenu">
+                    </span>
 
-                <ul class="sidebar-submenu">
+                    <i class="fa-solid fa-chevron-down"></i>
 
-                    <li>
-                        <a href="{% url 'principal_dashboard' %}">
-                            <i class="fa-solid fa-chart-line"></i>
-                            Principal Dashboard
-                        </a>
-                    </li>
+                </a>
 
-                </ul>
 
-            </div>
+                <div
+                    class="collapse"
+                    id="principalMenu"
+                >
 
-        </li>
+                    <ul class="sidebar-submenu">
+
+
+                        <li>
+
+                            <a href="{% url 'principal_dashboard' %}">
+
+                                <i class="fa-solid fa-chart-line"></i>
+
+                                Principal Dashboard
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
 
         {% endif %}
 
@@ -421,97 +1359,160 @@
 
         {% if perms.finance.view_payment %}
 
-        <li>
+            <li>
 
-            <a
-                class="d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                href="#financeMenu"
-                role="button"
-                aria-expanded="false"
-                aria-controls="financeMenu">
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#financeMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="financeMenu"
+                >
 
-                <span>
-                    <i class="fa-solid fa-money-bill-wave"></i>
-                    Finance
-                </span>
+                    <span>
 
-                <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-money-bill-wave"></i>
 
-            </a>
+                        Finance
 
-            <div class="collapse" id="financeMenu">
+                    </span>
 
-                <ul class="sidebar-submenu">
+                    <i class="fa-solid fa-chevron-down"></i>
 
-                    <li>
-                        <a href="{% url 'finance:dashboard' %}">
-                            <i class="fa-solid fa-gauge"></i>
-                            Dashboard
-                        </a>
-                    </li>
+                </a>
 
-                    <li>
-                        <a href="{% url 'finance:fee_category_list' %}">
-                            <i class="fa-solid fa-tags"></i>
-                            Fee Categories
-                        </a>
-                    </li>
 
-                    <li>
-                        <a href="{% url 'finance:fee_structure_list' %}">
-                            <i class="fa-solid fa-table-list"></i>
-                            Fee Structures
-                        </a>
-                    </li>
+                <div
+                    class="collapse"
+                    id="financeMenu"
+                >
 
-                    <li>
-                        <a href="{% url 'finance:invoice_list' %}">
-                            <i class="fa-solid fa-file-invoice"></i>
-                            Invoices
-                        </a>
-                    </li>
+                    <ul class="sidebar-submenu">
 
-                    <li>
-                        <a href="{% url 'finance:payment_list' %}">
-                            <i class="fa-solid fa-credit-card"></i>
-                            Payments
-                        </a>
-                    </li>
 
-                    <li>
-                        <a href="{% url 'finance:receipt_list' %}">
-                            <i class="fa-solid fa-receipt"></i>
-                            Receipts
-                        </a>
-                    </li>
+                        <li>
 
-                    <li>
-                        <a href="{% url 'finance:fee_statement_list' %}">
-                            <i class="fa-solid fa-file-lines"></i>
-                            Fee Statements
-                        </a>
-                    </li>
+                            <a href="{% url 'finance:dashboard' %}">
 
-                    <li>
-                        <a href="{% url 'finance:financial_clearance_list' %}">
-                            <i class="fa-solid fa-circle-check"></i>
-                            Financial Clearance
-                        </a>
-                    </li>
+                                <i class="fa-solid fa-gauge"></i>
 
-                    <li>
-                        <a href="{% url 'finance:settings' %}">
-                            <i class="fa-solid fa-gear"></i>
-                            Finance Settings
-                        </a>
-                    </li>
+                                Dashboard
 
-                </ul>
+                            </a>
 
-            </div>
+                        </li>
 
-        </li>
+
+                        <li>
+
+                            <a href="{% url 'finance:fee_category_list' %}">
+
+                                <i class="fa-solid fa-tags"></i>
+
+                                Fee Categories
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'finance:fee_structure_list' %}">
+
+                                <i class="fa-solid fa-table-list"></i>
+
+                                Fee Structures
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'finance:invoice_list' %}">
+
+                                <i class="fa-solid fa-file-invoice"></i>
+
+                                Invoices
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'finance:payment_list' %}">
+
+                                <i class="fa-solid fa-credit-card"></i>
+
+                                Payments
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'finance:receipt_list' %}">
+
+                                <i class="fa-solid fa-receipt"></i>
+
+                                Receipts
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'finance:fee_statement_list' %}">
+
+                                <i class="fa-solid fa-file-lines"></i>
+
+                                Fee Statements
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'finance:financial_clearance_list' %}">
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                                Financial Clearance
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'finance:settings' %}">
+
+                                <i class="fa-solid fa-gear"></i>
+
+                                Finance Settings
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
 
         {% endif %}
 
@@ -522,48 +1523,69 @@
 
         {% if perms.graduation.view_graduation %}
 
-        <li>
+            <li>
 
-            <a
-                class="d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                href="#graduationMenu"
-                role="button"
-                aria-expanded="false"
-                aria-controls="graduationMenu">
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#graduationMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="graduationMenu"
+                >
 
-                <span>
-                    <i class="fa-solid fa-graduation-cap"></i>
-                    Graduation
-                </span>
+                    <span>
 
-                <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-graduation-cap"></i>
 
-            </a>
+                        Graduation
 
-            <div class="collapse" id="graduationMenu">
+                    </span>
 
-                <ul class="sidebar-submenu">
+                    <i class="fa-solid fa-chevron-down"></i>
 
-                    <li>
-                        <a href="{% url 'graduation:dashboard' %}">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                            Graduation Dashboard
-                        </a>
-                    </li>
+                </a>
 
-                    <li>
-                        <a href="{% url 'graduation:graduation_list' %}">
-                            <i class="fa-solid fa-user-graduate"></i>
-                            Graduation List
-                        </a>
-                    </li>
 
-                </ul>
+                <div
+                    class="collapse"
+                    id="graduationMenu"
+                >
 
-            </div>
+                    <ul class="sidebar-submenu">
 
-        </li>
+
+                        <li>
+
+                            <a href="{% url 'graduation:dashboard' %}">
+
+                                <i class="fa-solid fa-graduation-cap"></i>
+
+                                Graduation Dashboard
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'graduation:graduation_list' %}">
+
+                                <i class="fa-solid fa-user-graduate"></i>
+
+                                Graduation List
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
 
         {% endif %}
 
@@ -574,82 +1596,131 @@
 
         {% if user.is_staff and perms.auth.view_user %}
 
-        <li class="menu-title">
-            System Admin
-        </li>
+            <li class="menu-title">
 
-        <li>
+                System Admin
 
-            <a
-                class="d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                href="#adminMenu"
-                role="button"
-                aria-expanded="false"
-                aria-controls="adminMenu">
+            </li>
 
-                <span>
-                    <i class="fa-solid fa-user-shield"></i>
-                    Administration
-                </span>
 
-                <i class="fa-solid fa-chevron-down"></i>
+            <li>
 
-            </a>
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#adminMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="adminMenu"
+                >
 
-            <div class="collapse" id="adminMenu">
+                    <span>
 
-                <ul class="sidebar-submenu">
+                        <i class="fa-solid fa-user-shield"></i>
 
-                    <li>
-                        <a href="{% url 'accounts:user_list' %}">
-                            <i class="fa-solid fa-users-gear"></i>
-                            Users
-                        </a>
-                    </li>
+                        Administration
 
-                    <li>
-                        <a href="{% url 'accounts:group_list' %}">
-                            <i class="fa-solid fa-user-shield"></i>
-                            Roles & Permissions
-                        </a>
-                    </li>
+                    </span>
 
-                    <li>
-                        <a href="/admin/">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
-                            Django Admin
-                        </a>
-                    </li>
+                    <i class="fa-solid fa-chevron-down"></i>
 
-                    <li>
-                        <a href="{% url 'system:activity' %}">
-                            <i class="fa-solid fa-shield-halved"></i>
-                            Audit Trail
-                        </a>
-                    </li>
+                </a>
 
-                    <li>
-                        <a href="{% url 'accounts:profile' %}">
-                            <i class="fa-solid fa-id-badge"></i>
-                            My Profile
-                        </a>
-                    </li>
 
-                    <li>
-                        <a href="{% url 'accounts:logout' %}">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            Logout
-                        </a>
-                    </li>
+                <div
+                    class="collapse"
+                    id="adminMenu"
+                >
 
-                </ul>
+                    <ul class="sidebar-submenu">
 
-            </div>
 
-        </li>
+                        <li>
+
+                            <a href="{% url 'accounts:user_list' %}">
+
+                                <i class="fa-solid fa-users-gear"></i>
+
+                                Users
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'accounts:group_list' %}">
+
+                                <i class="fa-solid fa-user-shield"></i>
+
+                                Roles & Permissions
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="/admin/">
+
+                                <i class="fa-solid fa-screwdriver-wrench"></i>
+
+                                Django Admin
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'system:activity' %}">
+
+                                <i class="fa-solid fa-shield-halved"></i>
+
+                                Audit Trail
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'accounts:profile' %}">
+
+                                <i class="fa-solid fa-id-badge"></i>
+
+                                My Profile
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{% url 'accounts:logout' %}">
+
+                                <i class="fa-solid fa-right-from-bracket"></i>
+
+                                Logout
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </li>
 
         {% endif %}
+
 
     </ul>
 
@@ -661,9 +1732,12 @@
     <div class="sidebar-footer text-center">
 
         <small>
+
             Xoradex EduCore Version 1.0
+
         </small>
 
     </div>
+
 
 </aside>

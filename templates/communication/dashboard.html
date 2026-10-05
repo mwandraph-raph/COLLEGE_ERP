@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Communication Dashboard</h2>
+            <p class="text-muted mb-0">
+                Manage institutional and student communication.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- SUMMARY -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted mb-1">
+                        Announcements
+                    </div>
+
+                    <h2 class="mb-0">
+                        {{ announcement_count }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted mb-1">
+                        Academic Events
+                    </div>
+
+                    <h2 class="mb-0">
+                        {{ event_count }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted mb-1">
+                        Messages
+                    </div>
+
+                    <h2 class="mb-0">
+                        0
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- QUICK ACTIONS -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <strong>Quick Actions</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="d-flex flex-wrap gap-2">
+
+                <a
+                    href="{% url 'communication_announcement_list' %}"
+                    class="btn btn-primary">
+
+                    <i class="fa-solid fa-bullhorn me-1"></i>
+                    Announcements
+
+                </a>
+
+
+                <a
+                    href="{% url 'communication_announcement_create' %}"
+                    class="btn btn-success">
+
+                    <i class="fa-solid fa-plus me-1"></i>
+                    Create Announcement
+
+                </a>
+
+
+                <a
+                    href="{% url 'communication_messages' %}"
+                    class="btn btn-outline-primary">
+
+                    <i class="fa-solid fa-envelope me-1"></i>
+                    Messages
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- RECENT ANNOUNCEMENTS -->
+    <div class="card shadow-sm">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <strong>Recent Announcements</strong>
+
+            <a
+                href="{% url 'communication_announcement_list' %}"
+                class="btn btn-sm btn-outline-primary">
+
+                View All
+
+            </a>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if recent_announcements %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Audience</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for announcement in recent_announcements %}
+
+                                <tr>
+
+                                    <td>
+                                        <a
+                                            href="{% url 'communication_announcement_detail' announcement.pk %}">
+                                            {{ announcement.title }}
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        {{ announcement.get_audience_display }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if announcement.is_published %}
+
+                                            <span class="badge bg-success">
+                                                Published
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Draft
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ announcement.created_at|date:"d M Y H:i" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="p-4 text-center text-muted">
+                    No announcements yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

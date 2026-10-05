@@ -336,3 +336,29 @@ class GroupForm(forms.ModelForm):
                 "name",
             )
         )
+
+
+# ======================================================
+# Profile Photo Form
+# ======================================================
+
+class ProfilePhotoForm(forms.ModelForm):
+
+    class Meta:
+
+        model = User
+
+        fields = [
+            "photo",
+        ]
+
+        widgets = {
+
+            "photo": forms.ClearableFileInput(
+                attrs={
+                    "class": "form-control",
+                    "accept": "image/*",
+                }
+            ),
+
+        }
