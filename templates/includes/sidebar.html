@@ -8,11 +8,6 @@
 
     <div class="sidebar-user">
 
-        <!-- ==================================================
-            PROFILE PHOTO
-            Uses the same photo uploaded in My Profile
-            ================================================== -->
-
         <div class="avatar">
 
             {% if request.user.photo %}
@@ -36,10 +31,6 @@
 
         </div>
 
-
-        <!-- ==================================================
-            USER INFORMATION
-            ================================================== -->
 
         <div>
 
@@ -80,6 +71,8 @@
 
     <ul class="sidebar-menu list-unstyled">
 
+        {% with role=request.user.groups.first.name %}
+
 
         <!-- ==================================================
              DASHBOARD
@@ -102,317 +95,359 @@
         </li>
 
 
-<!-- ==================================================
-     HOD PORTAL
-     ================================================== -->
+        <!-- ==================================================
+             HOD PORTAL
+             ================================================== -->
 
-{% if request.user.groups.first.name == "HOD" %}
+        {% if role == "HOD" %}
 
-    <li class="menu-title">
-        HOD Portal
-    </li>
-
-    <!-- ==================================================
-         DASHBOARD
-         ================================================== -->
-<!--
-    <li>
-        <a href="{% url 'hod_dashboard' %}">
-            <span>
-                <i class="fa-solid fa-gauge"></i>
-                Dashboard
-            </span>
-        </a>
-    </li>
--->
-
-    <!-- ==================================================
-         DEPARTMENT
-         ================================================== -->
-
-    <li>
-        <a
-            class="d-flex justify-content-between align-items-center"
-            data-bs-toggle="collapse"
-            href="#hodDepartmentMenu"
-            role="button"
-            aria-expanded="false"
-            aria-controls="hodDepartmentMenu"
-        >
-            <span>
-                <i class="fa-solid fa-building"></i>
-                Department
-            </span>
-
-            <i class="fa-solid fa-chevron-down"></i>
-        </a>
-
-        <div
-            class="collapse"
-            id="hodDepartmentMenu"
-        >
-            <ul class="sidebar-submenu">
-
-                <li>
-                    <a href="{% url 'student_list' %}">
-                        <i class="fa-solid fa-users"></i>
-                        Students
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'programme_list' %}">
-                        <i class="fa-solid fa-book"></i>
-                        Programmes
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'course_list' %}">
-                        <i class="fa-solid fa-folder"></i>
-                        Courses
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'unit_list' %}">
-                        <i class="fa-solid fa-book-open"></i>
-                        Units
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'semester_enrollment_list' %}">
-                        <i class="fa-solid fa-user-check"></i>
-                        Semester Enrollments
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'registration_list' %}">
-                        <i class="fa-solid fa-clipboard-check"></i>
-                        Registrations
-                    </a>
-                </li>
-
-            </ul>
-        </div>
-    </li>
+            <li class="menu-title">
+                HOD Portal
+            </li>
 
 
-    <!-- ==================================================
-         ACADEMIC MANAGEMENT
-         ================================================== -->
+            <!-- ==============================================
+                 DEPARTMENT
+                 ============================================== -->
 
-    <li>
-        <a
-            class="d-flex justify-content-between align-items-center"
-            data-bs-toggle="collapse"
-            href="#hodAcademicManagementMenu"
-            role="button"
-            aria-expanded="false"
-            aria-controls="hodAcademicManagementMenu"
-        >
-            <span>
-                <i class="fa-solid fa-graduation-cap"></i>
-                Academic Management
-            </span>
+            <li>
 
-            <i class="fa-solid fa-chevron-down"></i>
-        </a>
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#hodDepartmentMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="hodDepartmentMenu"
+                >
 
-        <div
-            class="collapse"
-            id="hodAcademicManagementMenu"
-        >
-            <ul class="sidebar-submenu">
+                    <span>
 
-                <li>
-                    <a href="{% url 'unit_offering_list' %}">
-                        <i class="fa-solid fa-list-check"></i>
-                        Unit Offerings
-                    </a>
-                </li>
+                        <i class="fa-solid fa-building"></i>
 
-                <li>
-                    <a href="{% url 'lecturer_assignment_list' %}">
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                        Lecturer Assignments
-                    </a>
-                </li>
+                        Department
 
-                <li>
-                    <a href="{% url 'my_units' %}">
-                        <i class="fa-solid fa-person-chalkboard"></i>
-                        My Teaching Units
-                    </a>
-                </li>
+                    </span>
 
-                <li>
-                    <a href="{% url 'progression_list' %}">
-                        <i class="fa-solid fa-arrow-trend-up"></i>
-                        Progression
-                    </a>
-                </li>
+                    <i class="fa-solid fa-chevron-down"></i>
 
-            </ul>
-        </div>
-    </li>
+                </a>
 
 
-    <!-- ==================================================
-         EXAMINATION
-         ================================================== -->
+                <div
+                    class="collapse"
+                    id="hodDepartmentMenu"
+                >
 
-    <li>
-        <a
-            class="d-flex justify-content-between align-items-center"
-            data-bs-toggle="collapse"
-            href="#hodExaminationMenu"
-            role="button"
-            aria-expanded="false"
-            aria-controls="hodExaminationMenu"
-        >
-            <span>
-                <i class="fa-solid fa-file-signature"></i>
-                Examination
-            </span>
+                    <ul class="sidebar-submenu">
 
-            <i class="fa-solid fa-chevron-down"></i>
-        </a>
+                        <li>
+                            <a href="{% url 'student_list' %}">
+                                <i class="fa-solid fa-users"></i>
+                                Students
+                            </a>
+                        </li>
 
-        <div
-            class="collapse"
-            id="hodExaminationMenu"
-        >
-            <ul class="sidebar-submenu">
+                        <li>
+                            <a href="{% url 'programme_list' %}">
+                                <i class="fa-solid fa-book"></i>
+                                Programmes
+                            </a>
+                        </li>
 
-                <li>
-                    <a href="{% url 'approval_queue' %}">
-                        <i class="fa-solid fa-list-check"></i>
-                        Approval Queue
-                    </a>
-                </li>
+                        <li>
+                            <a href="{% url 'course_list' %}">
+                                <i class="fa-solid fa-folder"></i>
+                                Courses
+                            </a>
+                        </li>
 
-                <li>
-                    <a href="{% url 'exam_dashboard' %}">
-                        <i class="fa-solid fa-chart-column"></i>
-                        Examination Dashboard
-                    </a>
-                </li>
+                        <li>
+                            <a href="{% url 'unit_list' %}">
+                                <i class="fa-solid fa-book-open"></i>
+                                Units
+                            </a>
+                        </li>
 
-            </ul>
-        </div>
-    </li>
+                        <li>
+                            <a href="{% url 'semester_enrollment_list' %}">
+                                <i class="fa-solid fa-user-check"></i>
+                                Semester Enrollments
+                            </a>
+                        </li>
 
+                        <li>
+                            <a href="{% url 'registration_list' %}">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                                Registrations
+                            </a>
+                        </li>
 
-    <!-- ==================================================
-         COMMUNICATION
-         ================================================== -->
+                    </ul>
 
-    <li>
-        <a
-            class="d-flex justify-content-between align-items-center"
-            data-bs-toggle="collapse"
-            href="#hodCommunicationMenu"
-            role="button"
-            aria-expanded="false"
-            aria-controls="hodCommunicationMenu"
-        >
-            <span>
-                <i class="fa-solid fa-comments"></i>
-                Communication
-            </span>
+                </div>
 
-            <i class="fa-solid fa-chevron-down"></i>
-        </a>
-
-        <div
-            class="collapse"
-            id="hodCommunicationMenu"
-        >
-            <ul class="sidebar-submenu">
-
-                <li>
-                    <a href="{% url 'communication_dashboard' %}">
-                        <i class="fa-solid fa-gauge"></i>
-                        Dashboard
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'communication_announcement_list' %}">
-                        <i class="fa-solid fa-bullhorn"></i>
-                        Announcements
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'communication_announcement_create' %}">
-                        <i class="fa-solid fa-plus"></i>
-                        Create Announcement
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'communication_messages' %}">
-                        <i class="fa-solid fa-envelope"></i>
-                        Messages
-
-                        {% if communication_unread_count %}
-                            <span class="sidebar-notification-badge">
-                                {{ communication_unread_count }}
-                            </span>
-                        {% endif %}
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'hod_student_feedback' %}">
-                        <i class="fa-solid fa-clipboard-question"></i>
-                        Student Feedback
-                    </a>
-                </li>
-
-            </ul>
-        </div>
-    </li>
+            </li>
 
 
-    <!-- ==================================================
-         ACADEMIC CALENDAR
-         ================================================== -->
+            <!-- ==============================================
+                 ACADEMIC MANAGEMENT
+                 ============================================== -->
 
-    <li>
-        <a href="{% url 'communication_event_create' %}">
-            <span>
-                <i class="fa-solid fa-calendar-days"></i>
-                Academic Calendar
-            </span>
-        </a>
-    </li>
+            <li>
+
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#hodAcademicManagementMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="hodAcademicManagementMenu"
+                >
+
+                    <span>
+
+                        <i class="fa-solid fa-graduation-cap"></i>
+
+                        Academic Management
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-down"></i>
+
+                </a>
 
 
-    <!-- ==================================================
-         MY PROFILE
-         ================================================== -->
+                <div
+                    class="collapse"
+                    id="hodAcademicManagementMenu"
+                >
 
-    <li>
-        <a href="{% url 'accounts:profile' %}">
-            <span>
-                <i class="fa-solid fa-id-card"></i>
-                My Profile
-            </span>
-        </a>
-    </li>
+                    <ul class="sidebar-submenu">
 
-{% endif %}
+                        <li>
+                            <a href="{% url 'unit_offering_list' %}">
+                                <i class="fa-solid fa-list-check"></i>
+                                Unit Offerings
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'lecturer_assignment_list' %}">
+                                <i class="fa-solid fa-chalkboard-user"></i>
+                                Lecturer Assignments
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'my_units' %}">
+                                <i class="fa-solid fa-person-chalkboard"></i>
+                                My Teaching Units
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'progression_list' %}">
+                                <i class="fa-solid fa-arrow-trend-up"></i>
+                                Progression
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </li>
+
+
+            <!-- ==============================================
+                 EXAMINATION
+                 ============================================== -->
+
+            <li>
+
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#hodExaminationMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="hodExaminationMenu"
+                >
+
+                    <span>
+
+                        <i class="fa-solid fa-file-signature"></i>
+
+                        Examination
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-down"></i>
+
+                </a>
+
+
+                <div
+                    class="collapse"
+                    id="hodExaminationMenu"
+                >
+
+                    <ul class="sidebar-submenu">
+
+                        <li>
+                            <a href="{% url 'approval_queue' %}">
+                                <i class="fa-solid fa-list-check"></i>
+                                Approval Queue
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'exam_dashboard' %}">
+                                <i class="fa-solid fa-chart-column"></i>
+                                Examination Dashboard
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </li>
+
+
+            <!-- ==============================================
+                 COMMUNICATION
+                 ============================================== -->
+
+            <li>
+
+                <a
+                    class="d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse"
+                    href="#hodCommunicationMenu"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="hodCommunicationMenu"
+                >
+
+                    <span>
+
+                        <i class="fa-solid fa-comments"></i>
+
+                        Communication
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-down"></i>
+
+                </a>
+
+
+                <div
+                    class="collapse"
+                    id="hodCommunicationMenu"
+                >
+
+                    <ul class="sidebar-submenu">
+
+                        <li>
+                            <a href="{% url 'communication_dashboard' %}">
+                                <i class="fa-solid fa-gauge"></i>
+                                Dashboard
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'communication_announcement_list' %}">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                Announcements
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'communication_announcement_create' %}">
+                                <i class="fa-solid fa-plus"></i>
+                                Create Announcement
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'communication_messages' %}">
+
+                                <i class="fa-solid fa-envelope"></i>
+
+                                Messages
+
+                                {% if communication_unread_count %}
+                                    <span class="sidebar-notification-badge">
+                                        {{ communication_unread_count }}
+                                    </span>
+                                {% endif %}
+
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'hod_student_feedback' %}">
+                                <i class="fa-solid fa-clipboard-question"></i>
+                                Student Feedback
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </li>
+
+
+            <!-- ==============================================
+                 ACADEMIC CALENDAR
+                 ============================================== -->
+
+            <li>
+
+                <a href="{% url 'communication_event_create' %}">
+
+                    <span>
+
+                        <i class="fa-solid fa-calendar-days"></i>
+
+                        Academic Calendar
+
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <!-- ==============================================
+                 MY PROFILE
+                 ============================================== -->
+
+            <li>
+
+                <a href="{% url 'accounts:profile' %}">
+
+                    <span>
+
+                        <i class="fa-solid fa-id-card"></i>
+
+                        My Profile
+
+                    </span>
+
+                </a>
+
+            </li>
+
+        {% endif %}
+
 
         <!-- ==================================================
              STUDENT PORTAL
-             --------------------------------------------------
-             Displayed only when the logged-in user has a
-             Student profile.
              ================================================== -->
 
         {% if request.user.student_profile %}
@@ -459,14 +494,6 @@
 
                         <ul class="sidebar-submenu">
 
-
-                            <!-- ==================================
-                                 REGISTER UNITS
-
-                                 Only available when the student
-                                 has a current enrollment.
-                                 ================================== -->
-
                             {% if current_enrollment %}
 
                                 <li>
@@ -486,15 +513,9 @@
                             {% endif %}
 
 
-                            <!-- ==================================
-                                 ACADEMIC RESULTS
-                                 ================================== -->
-
                             <li>
 
-                                <a
-                                    href="{% url 'student_results' %}"
-                                >
+                                <a href="{% url 'student_results' %}">
 
                                     <i class="fa-solid fa-chart-column"></i>
 
@@ -504,23 +525,18 @@
 
                             </li>
 
-                            <!-- ==========================================
-                            FEE STATEMENT
-                            View and print only
-                            ========================================== -->
 
-                        <li>
+                            <li>
 
-                            <a href="{% url 'finance:fee_statement_list' %}">
+                                <a href="{% url 'finance:fee_statement_list' %}">
 
-                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                                    <i class="fa-solid fa-file-invoice-dollar"></i>
 
-                                Fee Statement
+                                    Fee Statement
 
-                            </a>
+                                </a>
 
-                        </li>
-
+                            </li>
 
                         </ul>
 
@@ -564,16 +580,9 @@
 
                         <ul class="sidebar-submenu">
 
-
-                            <!-- ==================================
-                                 COMMUNICATION CENTER
-                                 ================================== -->
-
                             <li>
 
-                                <a
-                                    href="{% url 'communication_center' %}"
-                                >
+                                <a href="{% url 'communication_center' %}">
 
                                     <i class="fa-solid fa-bullhorn"></i>
 
@@ -584,77 +593,50 @@
                             </li>
 
 
-                            <!-- ==================================
-                                 MESSAGES
-                                 ================================== -->
-
                             <li>
 
-                                <a
-                                    href="{% url 'communication_messages' %}"
-                                >
+                                <a href="{% url 'communication_messages' %}">
 
                                     <i class="fa-solid fa-envelope"></i>
 
-
                                     <span class="sidebar-menu-label">
-
                                         Messages
-
                                     </span>
-
 
                                     {% if communication_unread_count %}
 
                                         <span class="sidebar-notification-badge">
-
                                             {{ communication_unread_count }}
-
                                         </span>
 
                                     {% endif %}
-
 
                                 </a>
 
                             </li>
 
 
-                            <!-- ==================================
-                                 STUDENT FEEDBACK
-                                 ================================== -->
-
                             <li>
 
-                                <a
-                                    href="{% url 'student_feedback_list' %}"
-                                >
+                                <a href="{% url 'student_feedback_list' %}">
 
                                     <i class="fa-solid fa-clipboard-question"></i>
 
-
                                     <span class="sidebar-menu-label">
-
                                         Student Feedback
-
                                     </span>
-
 
                                     {% if student_feedback_forms %}
 
                                         <span class="sidebar-notification-badge">
-
                                             {{ student_feedback_forms|length }}
-
                                         </span>
 
                                     {% endif %}
 
-
                                 </a>
 
                             </li>
-
 
                         </ul>
 
@@ -669,9 +651,7 @@
 
                 <li>
 
-                    <a
-                        href="{% url 'accounts:profile' %}"
-                    >
+                    <a href="{% url 'accounts:profile' %}">
 
                         <span>
 
@@ -685,7 +665,6 @@
 
                 </li>
 
-
             {% endwith %}
 
         {% endif %}
@@ -695,7 +674,7 @@
              COMMUNICATION — STAFF / MANAGEMENT
              ================================================== -->
 
-        {% if request.user.is_superuser or request.user.groups.first.name == "Administrator" or request.user.groups.first.name == "ICT Officer" or request.user.groups.first.name == "Principal" %}
+        {% if request.user.is_superuser or role == "Administrator" or role == "ICT Officer" or role == "Principal" %}
 
             <li>
 
@@ -728,83 +707,48 @@
 
                     <ul class="sidebar-submenu">
 
-
                         <li>
-
-                            <a
-                                href="{% url 'communication_dashboard' %}"
-                            >
-
+                            <a href="{% url 'communication_dashboard' %}">
                                 <i class="fa-solid fa-gauge"></i>
-
                                 Dashboard
-
                             </a>
-
                         </li>
 
-
                         <li>
-
-                            <a
-                                href="{% url 'communication_announcement_list' %}"
-                            >
-
+                            <a href="{% url 'communication_announcement_list' %}">
                                 <i class="fa-solid fa-bullhorn"></i>
-
                                 Announcements
-
                             </a>
-
                         </li>
 
-
                         <li>
-
-                            <a
-                                href="{% url 'communication_announcement_create' %}"
-                            >
-
+                            <a href="{% url 'communication_announcement_create' %}">
                                 <i class="fa-solid fa-plus"></i>
-
                                 Create Announcement
-
                             </a>
-
                         </li>
-
 
                         <li>
 
-                            <a
-                                href="{% url 'communication_messages' %}"
-                            >
+                            <a href="{% url 'communication_messages' %}">
 
                                 <i class="fa-solid fa-envelope"></i>
 
-
                                 <span class="sidebar-menu-label">
-
                                     Messages
-
                                 </span>
-
 
                                 {% if communication_unread_count %}
 
                                     <span class="sidebar-notification-badge">
-
                                         {{ communication_unread_count }}
-
                                     </span>
 
                                 {% endif %}
 
-
                             </a>
 
                         </li>
-
 
                     </ul>
 
@@ -819,7 +763,7 @@
              ADMISSIONS
              ================================================== -->
 
-        {% if perms.students.view_applicant %}
+        {% if request.user.is_superuser or role == "Administrator" or role == "Registrar" %}
 
             <li>
 
@@ -845,52 +789,30 @@
                 </a>
 
 
-                <div
-                    class="collapse"
-                    id="admissionsMenu"
-                >
+                <div class="collapse" id="admissionsMenu">
 
                     <ul class="sidebar-submenu">
 
-
                         <li>
-
                             <a href="{% url 'applicant_list' %}">
-
                                 <i class="fa-solid fa-user-plus"></i>
-
                                 Applicants
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'intake_list' %}">
-
                                 <i class="fa-solid fa-calendar-plus"></i>
-
                                 Intakes
-
                             </a>
-
                         </li>
-
 
                         <li>
-
                             <a href="{% url 'admissions_report' %}">
-
                                 <i class="fa-solid fa-chart-column"></i>
-
                                 Admissions Report
-
                             </a>
-
                         </li>
-
 
                     </ul>
 
@@ -905,7 +827,7 @@
              STUDENTS
              ================================================== -->
 
-        {% if perms.students.view_student and request.user.groups.first.name != "HOD" %}
+        {% if request.user.is_superuser or role == "Administrator" or role == "Registrar" %}
 
             <li>
 
@@ -931,52 +853,30 @@
                 </a>
 
 
-                <div
-                    class="collapse"
-                    id="studentsMenu"
-                >
+                <div class="collapse" id="studentsMenu">
 
                     <ul class="sidebar-submenu">
 
-
                         <li>
-
                             <a href="{% url 'student_list' %}">
-
                                 <i class="fa-solid fa-users"></i>
-
                                 Students
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'semester_enrollment_list' %}">
-
                                 <i class="fa-solid fa-user-check"></i>
-
                                 Semester Enrollments
-
                             </a>
-
                         </li>
-
 
                         <li>
-
                             <a href="{% url 'registration_list' %}">
-
                                 <i class="fa-solid fa-clipboard-check"></i>
-
                                 Registrations
-
                             </a>
-
                         </li>
-
 
                     </ul>
 
@@ -991,7 +891,7 @@
              ACADEMIC STRUCTURE
              ================================================== -->
 
-        {% if perms.students.view_programme and request.user.groups.first.name != "HOD" %}
+        {% if request.user.is_superuser or role == "Administrator" or role == "Registrar" %}
 
             <li>
 
@@ -1017,117 +917,65 @@
                 </a>
 
 
-                <div
-                    class="collapse"
-                    id="academicMenu"
-                >
+                <div class="collapse" id="academicMenu">
 
                     <ul class="sidebar-submenu">
 
-
                         <li>
-
                             <a href="{% url 'department_list' %}">
-
                                 <i class="fa-solid fa-building"></i>
-
                                 Departments
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'course_list' %}">
-
                                 <i class="fa-solid fa-folder"></i>
-
                                 Courses
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'programme_list' %}">
-
                                 <i class="fa-solid fa-book"></i>
-
                                 Programmes
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'programme_level_list' %}">
-
                                 <i class="fa-solid fa-layer-group"></i>
-
                                 Programme Levels
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'academic_year_list' %}">
-
                                 <i class="fa-solid fa-calendar-days"></i>
-
                                 Academic Years
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'semester_list' %}">
-
                                 <i class="fa-solid fa-calendar"></i>
-
                                 Semesters
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'unit_list' %}">
-
                                 <i class="fa-solid fa-book-open"></i>
-
                                 Units
-
                             </a>
-
                         </li>
-
 
                         <li>
-
                             <a href="{% url 'unit_offering_list' %}">
-
                                 <i class="fa-solid fa-list-check"></i>
-
                                 Unit Offerings
-
                             </a>
-
                         </li>
-
 
                     </ul>
 
@@ -1142,7 +990,7 @@
              EXAMINATION
              ================================================== -->
 
-        {% if perms.students.view_lecturerassignment and request.user.groups.first.name != "HOD" %}
+        {% if request.user.is_superuser or role == "Administrator" or role == "Exam Officer" %}
 
             <li>
 
@@ -1168,65 +1016,37 @@
                 </a>
 
 
-                <div
-                    class="collapse"
-                    id="examMenu"
-                >
+                <div class="collapse" id="examMenu">
 
                     <ul class="sidebar-submenu">
 
-
                         <li>
-
                             <a href="{% url 'lecturer_assignment_list' %}">
-
                                 <i class="fa-solid fa-chalkboard-user"></i>
-
                                 Lecturer Assignments
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'approval_queue' %}">
-
                                 <i class="fa-solid fa-list-check"></i>
-
                                 Approval Queue
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'exam_dashboard' %}">
-
                                 <i class="fa-solid fa-chart-column"></i>
-
                                 Examination Dashboard
-
                             </a>
-
                         </li>
-
 
                         <li>
-
                             <a href="{% url 'progression_list' %}">
-
                                 <i class="fa-solid fa-arrow-trend-up"></i>
-
                                 Progression
-
                             </a>
-
                         </li>
-
 
                     </ul>
 
@@ -1234,10 +1054,14 @@
 
             </li>
 
+        {% endif %}
 
-            <!-- ==============================================
-                 LECTURER
-                 ============================================== -->
+
+        <!-- ==================================================
+             LECTURER
+             ================================================== -->
+
+        {% if role == "Lecturer" %}
 
             <li>
 
@@ -1263,13 +1087,9 @@
                 </a>
 
 
-                <div
-                    class="collapse"
-                    id="lecturerMenu"
-                >
+                <div class="collapse" id="lecturerMenu">
 
                     <ul class="sidebar-submenu">
-
 
                         <li>
 
@@ -1282,7 +1102,6 @@
                             </a>
 
                         </li>
-
 
                     </ul>
 
@@ -1297,7 +1116,7 @@
              PRINCIPAL
              ================================================== -->
 
-        {% if request.user.is_superuser or request.user.groups.first.name == "Administrator" or request.user.groups.first.name == "ICT Officer" %}
+        {% if request.user.is_superuser or role == "Administrator" or role == "Principal" or role == "ICT Officer" %}
 
             <li>
 
@@ -1323,13 +1142,9 @@
                 </a>
 
 
-                <div
-                    class="collapse"
-                    id="principalMenu"
-                >
+                <div class="collapse" id="principalMenu">
 
                     <ul class="sidebar-submenu">
-
 
                         <li>
 
@@ -1342,7 +1157,6 @@
                             </a>
 
                         </li>
-
 
                     </ul>
 
@@ -1357,7 +1171,7 @@
              FINANCE
              ================================================== -->
 
-        {% if perms.finance.view_payment %}
+        {% if request.user.is_superuser or role == "Administrator" or role == "Finance Officer" %}
 
             <li>
 
@@ -1383,130 +1197,72 @@
                 </a>
 
 
-                <div
-                    class="collapse"
-                    id="financeMenu"
-                >
+                <div class="collapse" id="financeMenu">
 
                     <ul class="sidebar-submenu">
 
-
                         <li>
-
                             <a href="{% url 'finance:dashboard' %}">
-
                                 <i class="fa-solid fa-gauge"></i>
-
                                 Dashboard
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'finance:fee_category_list' %}">
-
                                 <i class="fa-solid fa-tags"></i>
-
                                 Fee Categories
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'finance:fee_structure_list' %}">
-
                                 <i class="fa-solid fa-table-list"></i>
-
                                 Fee Structures
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'finance:invoice_list' %}">
-
                                 <i class="fa-solid fa-file-invoice"></i>
-
                                 Invoices
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'finance:payment_list' %}">
-
                                 <i class="fa-solid fa-credit-card"></i>
-
                                 Payments
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'finance:receipt_list' %}">
-
                                 <i class="fa-solid fa-receipt"></i>
-
                                 Receipts
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'finance:fee_statement_list' %}">
-
                                 <i class="fa-solid fa-file-lines"></i>
-
                                 Fee Statements
-
                             </a>
-
                         </li>
 
-
                         <li>
-
                             <a href="{% url 'finance:financial_clearance_list' %}">
-
                                 <i class="fa-solid fa-circle-check"></i>
-
                                 Financial Clearance
-
                             </a>
-
                         </li>
-
 
                         <li>
-
                             <a href="{% url 'finance:settings' %}">
-
                                 <i class="fa-solid fa-gear"></i>
-
                                 Finance Settings
-
                             </a>
-
                         </li>
-
 
                     </ul>
 
@@ -1521,7 +1277,7 @@
              GRADUATION
              ================================================== -->
 
-        {% if perms.graduation.view_graduation %}
+        {% if request.user.is_superuser or role == "Administrator" or role == "Registrar" or role == "Exam Officer" or role == "HOD" %}
 
             <li>
 
@@ -1547,13 +1303,9 @@
                 </a>
 
 
-                <div
-                    class="collapse"
-                    id="graduationMenu"
-                >
+                <div class="collapse" id="graduationMenu">
 
                     <ul class="sidebar-submenu">
-
 
                         <li>
 
@@ -1567,7 +1319,6 @@
 
                         </li>
 
-
                         <li>
 
                             <a href="{% url 'graduation:graduation_list' %}">
@@ -1580,7 +1331,6 @@
 
                         </li>
 
-
                     </ul>
 
                 </div>
@@ -1589,12 +1339,32 @@
 
         {% endif %}
 
+        <!-- ==================================================
+            REPORTS
+            ================================================== -->
+
+        {% if request.user.is_superuser or role == "Administrator" or role == "Principal" or role == "HOD" or role == "Finance Officer" %}
+
+            <li class="menu-title">
+                Reports
+            </li>
+
+            <li>
+                <a href="{% url 'report_center' %}">
+                    <span>
+                        <i class="fa-solid fa-chart-pie"></i>
+                        Reports Center
+                    </span>
+                </a>
+            </li>
+
+        {% endif %}
 
         <!-- ==================================================
              SYSTEM ADMINISTRATION
              ================================================== -->
 
-        {% if user.is_staff and perms.auth.view_user %}
+        {% if request.user.is_superuser or role == "Administrator" or role == "ICT Officer" %}
 
             <li class="menu-title">
 
@@ -1627,13 +1397,9 @@
                 </a>
 
 
-                <div
-                    class="collapse"
-                    id="adminMenu"
-                >
+                <div class="collapse" id="adminMenu">
 
                     <ul class="sidebar-submenu">
-
 
                         <li>
 
@@ -1712,7 +1478,6 @@
 
                         </li>
 
-
                     </ul>
 
                 </div>
@@ -1721,6 +1486,8 @@
 
         {% endif %}
 
+
+        {% endwith %}
 
     </ul>
 
@@ -1732,12 +1499,10 @@
     <div class="sidebar-footer text-center">
 
         <small>
-
             Xoradex EduCore Version 1.0
-
         </small>
 
     </div>
 
-
 </aside>
+
