@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ======================================================
+         HEADER
+         ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="mb-1">
+                Examination Performance
+            </h2>
+
+            <p class="text-muted mb-0">
+                Academic examination performance summary.
+            </p>
+            <div class="d-flex gap-2 mt-3">
+
+            <a
+                href="{% url 'examination_performance_excel' %}?semester={{ selected_semester|default:'' }}&department={{ selected_department|default:'' }}&programme={{ selected_programme|default:'' }}&search={{ search|urlencode }}"
+                class="btn btn-outline-success"
+            >
+                Excel
+            </a>
+
+            <a
+                href="{% url 'examination_performance_pdf' %}?semester={{ selected_semester|default:'' }}&department={{ selected_department|default:'' }}&programme={{ selected_programme|default:'' }}&search={{ search|urlencode }}"
+                class="btn btn-outline-danger"
+            >
+                PDF
+            </a>
+
+        </div>
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         FILTERS
+         ====================================================== -->
+
+    <div class="border rounded p-3 mb-4">
+
+        <form method="get">
+
+            <div class="row g-3">
+
+                <!-- SEMESTER -->
+
+                <div class="col-lg-3 col-md-6">
+
+                    <label class="form-label">
+                        Semester
+                    </label>
+
+<select
+    name="semester"
+    class="form-select"
+>
+    <option value="">
+        All Semesters
+    </option>
+
+    {% for item in semesters %}
+
+        <option
+            value="{{ item.id }}"
+            {% if selected_semester|stringformat:"s" == item.id|stringformat:"s" %}
+                selected
+            {% endif %}
+        >
+            {{ item.academic_year.year_name }} - {{ item.semester_name }}
+        </option>
+
+    {% endfor %}
+
+</select>
+
+                </div>
+
+
+                <!-- DEPARTMENT -->
+
+                <div class="col-lg-3 col-md-6">
+
+                    <label class="form-label">
+                        Department
+                    </label>
+
+                    <select
+                        name="department"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Departments
+                        </option>
+
+                        {% for item in departments %}
+
+                            <option
+                                value="{{ item.id }}"
+                                {% if selected_department|stringformat:"s" == item.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ item.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- PROGRAMME -->
+
+                <div class="col-lg-3 col-md-6">
+
+                    <label class="form-label">
+                        Programme
+                    </label>
+
+                    <select
+                        name="programme"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Programmes
+                        </option>
+
+                        {% for item in programmes %}
+
+                            <option
+                                value="{{ item.id }}"
+                                {% if selected_programme|stringformat:"s" == item.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ item.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- SEARCH -->
+
+                <div class="col-lg-3 col-md-6">
+
+                    <label class="form-label">
+                        Search
+                    </label>
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Admission no. or student name"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="d-flex gap-2 mt-3">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Apply Filters
+                </button>
+
+                <a
+                    href="{% url 'examination_performance' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Reset
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- ======================================================
+         SUMMARY
+         ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-lg-2 col-md-4 col-6">
+
+            <div class="border rounded p-3 h-100">
+
+                <div class="text-muted small mb-1">
+                    Students
+                </div>
+
+                <div class="fw-semibold fs-5">
+                    {{ summary.student_count }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-2 col-md-4 col-6">
+
+            <div class="border rounded p-3 h-100">
+
+                <div class="text-muted small mb-1">
+                    Results
+                </div>
+
+                <div class="fw-semibold fs-5">
+                    {{ summary.result_count }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-2 col-md-4 col-6">
+
+            <div class="border rounded p-3 h-100">
+
+                <div class="text-muted small mb-1">
+                    Passed
+                </div>
+
+                <div class="fw-semibold fs-5">
+                    {{ summary.passed }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-2 col-md-4 col-6">
+
+            <div class="border rounded p-3 h-100">
+
+                <div class="text-muted small mb-1">
+                    Failed
+                </div>
+
+                <div class="fw-semibold fs-5">
+                    {{ summary.failed }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-2 col-md-4 col-6">
+
+            <div class="border rounded p-3 h-100">
+
+                <div class="text-muted small mb-1">
+                    Pass Rate
+                </div>
+
+                <div class="fw-semibold fs-5">
+                    {{ summary.pass_rate|floatformat:2 }}%
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-2 col-md-4 col-6">
+
+            <div class="border rounded p-3 h-100">
+
+                <div class="text-muted small mb-1">
+                    Average Mark
+                </div>
+
+                <div class="fw-semibold fs-5">
+                    {{ summary.average_mark|floatformat:2 }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<!-- ======================================================
+     STUDENT RESULTS SUMMARY
+     ====================================================== -->
+
+<div class="border rounded">
+
+    <div class="p-3 border-bottom">
+
+        <h5 class="mb-0">
+            Examination Results
+        </h5>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+
+                    <th>Admission No.</th>
+
+                    <th>Student</th>
+
+                    <th>Department</th>
+
+                    <th>Programme</th>
+
+                    <th>Units</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% regroup rows by admission_no as student_groups %}
+
+                {% for group in student_groups %}
+
+                    {% with student=group.list.0 %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+                                {{ student.admission_no }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ student.student_name }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ student.department }}
+                            </td>
+
+                            <td>
+                                {{ student.programme }}
+                            </td>
+
+                            <td>
+                                {{ group.list|length }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'student_result_history' student.student_id %}"
+                                    class="btn btn-sm btn-outline-primary"
+                                >
+                                    <i class="bi bi-clock-history me-1"></i>
+                                    View Result History
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endwith %}
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="text-center text-muted py-5"
+                        >
+
+                            No examination results found.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+</div>
+
+{% endblock %}
+

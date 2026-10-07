@@ -1,0 +1,527 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ======================================================
+         PAGE HEADER
+    ======================================================= -->
+
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+
+            <h2 class="mb-1">
+                Student Result History
+            </h2>
+
+            <p class="text-muted mb-0">
+                Complete examination results for the student.
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'examination_performance' %}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Examination Performance
+        </a>
+
+    </div>
+
+
+    <!-- ======================================================
+         STUDENT INFORMATION
+    ======================================================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row g-4">
+
+                <!-- STUDENT -->
+
+                <div class="col-md-6">
+
+                    <div class="text-muted small">
+                        STUDENT
+                    </div>
+
+                    <h4 class="mb-1">
+
+                        {{ student.first_name }}
+
+                        {% if student.middle_name %}
+                            {{ student.middle_name }}
+                        {% endif %}
+
+                        {{ student.last_name }}
+
+                    </h4>
+
+                    <div class="text-muted">
+
+                        Admission No:
+
+                        <strong>
+                            {{ student.admission_no }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROGRAMME -->
+
+                <div class="col-md-3">
+
+                    <div class="text-muted small">
+                        PROGRAMME
+                    </div>
+
+                    <strong>
+                        {{ student.programme.name }}
+                    </strong>
+
+                </div>
+
+
+                <!-- COURSE -->
+
+                <div class="col-md-3">
+
+                    <div class="text-muted small">
+                        COURSE
+                    </div>
+
+                    <strong>
+                        {{ student.programme.course.name }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         SUMMARY
+    ======================================================= -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- TOTAL -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        TOTAL RESULTS
+                    </div>
+
+                    <div class="fs-3 fw-bold">
+                        {{ total_results }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PASSED -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        PASSED
+                    </div>
+
+                    <div class="fs-3 fw-bold text-success">
+                        {{ passed }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FAILED -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        FAILED
+                    </div>
+
+                    <div class="fs-3 fw-bold text-danger">
+                        {{ failed }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         SEMESTER-BY-SEMESTER RESULT HISTORY
+    ======================================================= -->
+
+    {% if grouped_results %}
+
+        {% for group in grouped_results %}
+
+            <div class="card shadow-sm border-0 mb-4">
+
+
+                <!-- ==================================================
+                     SEMESTER HEADER
+                =================================================== -->
+
+                <div class="card-header bg-white py-3">
+
+                    <div class="d-flex
+                                flex-column
+                                flex-md-row
+                                justify-content-between
+                                align-items-md-center
+                                gap-2">
+
+                        <div>
+
+                            <div class="small text-muted">
+
+                                {{ group.enrollment.academic_year.year_name }}
+
+                                &nbsp; • &nbsp;
+
+                                {{ group.enrollment.semester.semester_name }}
+
+                            </div>
+
+                            <h5 class="mb-0 mt-1">
+
+                                {{ group.enrollment.programme_level.name }}
+
+                            </h5>
+
+                        </div>
+
+
+                        <span class="badge bg-primary">
+
+                            {{ group.results|length }}
+
+                            {% if group.results|length == 1 %}
+                                Unit
+                            {% else %}
+                                Units
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     RESULT TABLE
+                =================================================== -->
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th style="width: 50px;">
+                                    #
+                                </th>
+
+                                <th>
+                                    Unit Code
+                                </th>
+
+                                <th>
+                                    Unit
+                                </th>
+
+                                <th class="text-center">
+                                    CAT 1
+                                </th>
+
+                                <th class="text-center">
+                                    CAT 2
+                                </th>
+
+                                <th class="text-center">
+                                    Exam
+                                </th>
+
+                                <th class="text-center">
+                                    Total
+                                </th>
+
+                                <th class="text-center">
+                                    Grade
+                                </th>
+
+                                <th class="text-center">
+                                    Remarks
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for result in group.results %}
+
+                                <tr>
+
+                                    <!-- NUMBER -->
+
+                                    <td>
+                                        {{ forloop.counter }}
+                                    </td>
+
+
+                                    <!-- UNIT CODE -->
+
+                                    <td>
+
+                                        <strong>
+
+                                            {% if result.registered_unit %}
+                                                {{ result.registered_unit.code }}
+
+                                            {% elif result.unit_offering %}
+                                                {{ result.unit_offering.unit.code }}
+
+                                            {% else %}
+                                                —
+                                            {% endif %}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- UNIT NAME -->
+
+                                    <td>
+
+                                        {% if result.registered_unit %}
+
+                                            {{ result.registered_unit.name }}
+
+                                        {% elif result.unit_offering %}
+
+                                            {{ result.unit_offering.unit.name }}
+
+                                        {% else %}
+
+                                            —
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- CAT 1 -->
+
+                                    <td class="text-center">
+
+                                        {% if result.cat1 is not None %}
+                                            {{ result.cat1 }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- CAT 2 -->
+
+                                    <td class="text-center">
+
+                                        {% if result.cat2 is not None %}
+                                            {{ result.cat2 }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- EXAM -->
+
+                                    <td class="text-center">
+
+                                        {% if result.exam is not None %}
+                                            {{ result.exam }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- TOTAL -->
+
+                                    <td class="text-center">
+
+                                        <strong>
+
+                                            {% if result.total is not None %}
+                                                {{ result.total|floatformat:2 }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- GRADE -->
+
+                                    <td class="text-center">
+
+                                        {% if result.grade == "F" %}
+
+                                            <span class="badge bg-danger">
+                                                {{ result.grade }}
+                                            </span>
+
+                                        {% elif result.grade %}
+
+                                            <span class="badge bg-primary">
+                                                {{ result.grade }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- REMARKS -->
+
+                                    <td class="text-center">
+
+                                        {% if result.remarks == "PASS" %}
+
+                                            <span class="badge bg-success">
+                                                PASS
+                                            </span>
+
+                                        {% elif result.remarks == "FAIL" %}
+
+                                            <span class="badge bg-danger">
+                                                FAIL
+                                            </span>
+
+                                        {% elif result.remarks %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ result.remarks }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <!-- ==================================================
+             NO RESULTS
+        =================================================== -->
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body text-center py-5">
+
+                <i class="bi bi-file-earmark-text fs-1 text-muted"></i>
+
+                <h5 class="mt-3">
+                    No Results Found
+                </h5>
+
+                <p class="text-muted mb-0">
+
+                    This student does not have any examination
+                    results recorded yet.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+
+            <h2 class="mb-1">
+                Audit Trail
+            </h2>
+
+            <p class="text-muted mb-0">
+                Recorded system activity and audit events.
+            </p>
+
+        </div>
+
+        <span class="badge bg-primary fs-6">
+            {{ count }} Events
+        </span>
+
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row g-3">
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <label class="form-label">
+                            Search
+                        </label>
+
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ search }}"
+                            class="form-control"
+                            placeholder="Description, object or user"
+                        >
+
+                    </div>
+
+
+                    <div class="col-lg-2 col-md-6">
+
+                        <label class="form-label">
+                            Module
+                        </label>
+
+                        <select
+                            name="module"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Modules
+                            </option>
+
+                            {% for item in modules %}
+
+                                <option
+                                    value="{{ item }}"
+                                    {% if selected_module == item %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ item }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-lg-2 col-md-6">
+
+                        <label class="form-label">
+                            Action
+                        </label>
+
+                        <select
+                            name="action"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Actions
+                            </option>
+
+                            {% for item in actions %}
+
+                                <option
+                                    value="{{ item }}"
+                                    {% if selected_action == item %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ item }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-lg-2 col-md-6">
+
+                        <label class="form-label">
+                            Severity
+                        </label>
+
+                        <select
+                            name="severity"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Severity
+                            </option>
+
+                            {% for item in severities %}
+
+                                <option
+                                    value="{{ item }}"
+                                    {% if selected_severity == item %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ item }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-lg-2 col-md-6">
+
+                        <label class="form-label">
+                            User
+                        </label>
+
+                        <select
+                            name="user"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Users
+                            </option>
+
+                            {% for user in users %}
+
+                                <option
+                                    value="{{ user.id }}"
+                                    {% if selected_user|stringformat:"s" == user.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
+
+                                    {{ user.get_full_name|default:user.username }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-lg-1 col-md-6 d-flex align-items-end">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                            title="Filter"
+                        >
+                            <i class="bi bi-search"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- AUDIT TABLE -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>#</th>
+                        <th>Date / Time</th>
+                        <th>User</th>
+                        <th>Module</th>
+                        <th>Action</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                        <th>Object</th>
+                        <th>IP Address</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for row in rows %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td class="text-nowrap">
+
+                                {{ row.created_at|date:"d M Y" }}
+
+                                <br>
+
+                                <small class="text-muted">
+                                    {{ row.created_at|date:"H:i:s" }}
+                                </small>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if row.user %}
+
+                                    <strong>
+                                        {{ row.user.get_full_name|default:row.user.username }}
+                                    </strong>
+
+                                    <br>
+
+                                    <small class="text-muted">
+                                        @{{ row.user.username }}
+                                    </small>
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        System
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ row.module }}
+                                </span>
+                            </td>
+
+
+                            <td>
+
+                                {% if row.action == "Delete" %}
+
+                                    <span class="badge bg-danger">
+                                        {{ row.action }}
+                                    </span>
+
+                                {% elif row.action == "Approve" %}
+
+                                    <span class="badge bg-success">
+                                        {{ row.action }}
+                                    </span>
+
+                                {% elif row.action == "Reject" %}
+
+                                    <span class="badge bg-danger">
+                                        {{ row.action }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-primary">
+                                        {{ row.action }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if row.severity == "Critical" %}
+
+                                    <span class="badge bg-danger">
+                                        Critical
+                                    </span>
+
+                                {% elif row.severity == "Warning" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Warning
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        Info
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td style="min-width: 280px;">
+
+                                {{ row.description }}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if row.object_name %}
+                                    {{ row.object_name }}
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="text-nowrap">
+
+                                {% if row.ip_address %}
+                                    {{ row.ip_address }}
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                class="text-center py-5"
+                            >
+
+                                <i class="bi bi-shield-check fs-1 text-muted"></i>
+
+                                <h5 class="mt-3">
+                                    No Audit Events Found
+                                </h5>
+
+                                <p class="text-muted mb-0">
+                                    No audit events match the selected filters.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

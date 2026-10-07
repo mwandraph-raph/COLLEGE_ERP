@@ -1,0 +1,738 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-3">
+
+
+    <!-- =====================================================
+         REPORT CENTER HEADER
+         ===================================================== -->
+
+    <div class="mb-4">
+
+        <h2 class="mb-1">
+
+            <i class="fa-solid fa-chart-column me-2"></i>
+
+            Reports Center
+
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            Generate, preview and download authorised institutional reports.
+
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         AVAILABLE REPORT CATEGORIES
+         ===================================================== -->
+
+    {% if report_categories %}
+
+        <div class="row g-4">
+
+            {% for category_key, reports in report_categories.items %}
+
+                <div class="col-12">
+
+                    <div class="card border-0 shadow-sm">
+
+
+                        <!-- =================================================
+                             CATEGORY HEADER
+                             ================================================= -->
+
+                        <div class="card-header bg-transparent py-3">
+
+                            <h5 class="mb-0">
+
+                                {% if category_key == "students" %}
+
+                                    <i class="fa-solid fa-user-graduate me-2"></i>
+
+                                {% elif category_key == "academics" %}
+
+                                    <i class="fa-solid fa-book-open me-2"></i>
+
+                                {% elif category_key == "finance" %}
+
+                                    <i class="fa-solid fa-coins me-2"></i>
+
+                                {% elif category_key == "graduation" %}
+
+                                    <i class="fa-solid fa-graduation-cap me-2"></i>
+
+                                {% elif category_key == "staff" %}
+
+                                    <i class="fa-solid fa-users me-2"></i>
+
+                                {% elif category_key == "communication" %}
+
+                                    <i class="fa-solid fa-comments me-2"></i>
+
+                                {% elif category_key == "system" %}
+
+                                    <i class="fa-solid fa-gears me-2"></i>
+
+                                {% else %}
+
+                                    <i class="fa-solid fa-file-lines me-2"></i>
+
+                                {% endif %}
+
+                                {{ category_key|title }}
+
+                            </h5>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             REPORT CARDS
+                             ================================================= -->
+
+                        <div class="card-body">
+
+                            <div class="row g-3">
+
+
+                                {% for report in reports %}
+
+                                    <div class="col-xl-4 col-md-6">
+
+
+                                        <!-- =================================
+                                             STUDENT REGISTER
+                                             ================================= -->
+
+                                        {% if report.key == "student_register" %}
+
+                                            <a
+                                                href="{% url 'student_register_report' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-file-lines fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                        <!-- =================================
+                                             ENROLLMENT SUMMARY
+                                             ================================= -->
+
+                                        {% elif report.key == "enrollment_summary" %}
+
+                                            <a
+                                                href="{% url 'enrollment_summary' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-chart-column fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                        <!-- =================================
+                                             STUDENT STATUS
+                                             ================================= -->
+
+                                        {% elif report.key == "student_status" %}
+
+                                            <a
+                                                href="{% url 'student_status_report' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-user-check fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                        <!-- =================================
+                                             FINANCIAL POSITION
+                                             ================================= -->
+
+                                        {% elif report.key == "financial_position" %}
+
+                                            <a
+                                                href="{% url 'financial_position' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-chart-line fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                        <!-- =================================
+                                             FINANCIAL TRANSACTIONS
+                                             ================================= -->
+
+                                        {% elif report.key == "financial_transactions" %}
+
+                                            <a
+                                                href="{% url 'financial_transactions' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-money-bill-trend-up fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                        <!-- =================================
+                                             OUTSTANDING FEES
+                                             ================================= -->
+
+                                        {% elif report.key == "outstanding_fees" %}
+
+                                            <a
+                                                href="{% url 'outstanding_fees' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-hand-holding-dollar fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                        <!-- =================================
+                                             EXAMINATION PERFORMANCE
+                                             ================================= -->
+
+                                        {% elif report.key == "examination_performance" %}
+
+                                            <a
+                                                href="{% url 'examination_performance' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-chart-column fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+                                        <!-- =================================
+                                            MISSING MARKS
+                                            ================================= -->
+
+                                        {% elif report.key == "missing_marks" %}
+
+                                            <a
+                                                href="{% url 'missing_marks' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-triangle-exclamation fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+                                                                {{ report.name }}
+                                                            </h6>
+
+                                                            <small class="text-muted">
+                                                                {{ report.description }}
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                            <!-- =================================
+                                            GRADUATION ELIGIBILITY
+                                            ================================= -->
+
+                                        {% elif report.key == "graduation_eligibility" %}
+
+                                            <a
+                                                href="{% url 'graduation:eligibility_list' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+                                                            <i class="fa-solid fa-user-check fs-4 text-primary"></i>
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+                                                                {{ report.name }}
+                                                            </h6>
+
+                                                            <small class="text-muted">
+                                                                {{ report.description }}
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                        <!-- =================================
+                                            GRADUATION LIST
+                                            ================================= -->
+
+                                        {% elif report.key == "graduation_list" %}
+
+                                            <a
+                                                href="{% url 'graduation:graduation_list' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+                                                            <i class="fa-solid fa-graduation-cap fs-4 text-primary"></i>
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+                                                                {{ report.name }}
+                                                            </h6>
+
+                                                            <small class="text-muted">
+                                                                {{ report.description }}
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                            <!-- =================================
+                                             STAFF REGISTER
+                                             ================================= -->
+
+                                        {% elif report.key == "staff_register" %}
+
+                                            <a
+                                                href="{% url 'staff_register' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-users fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+                                            <!-- =================================
+                                            USER ACCOUNTS
+                                            ================================= -->
+
+                                        {% elif report.key == "user_accounts" %}
+
+                                            <a
+                                                href="{% url 'user_accounts' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-users-gear fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+
+                                        <!-- =================================
+                                            AUDIT TRAIL
+                                            ================================= -->
+
+                                        {% elif report.key == "audit_trail" %}
+
+                                            <a
+                                                href="{% url 'audit_trail' %}"
+                                                class="text-decoration-none"
+                                            >
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="d-flex align-items-center gap-3">
+
+                                                        <div>
+
+                                                            <i class="fa-solid fa-shield-halved fs-4 text-primary"></i>
+
+                                                        </div>
+
+                                                        <div class="min-width-0">
+
+                                                            <h6 class="mb-1">
+
+                                                                {{ report.name }}
+
+                                                            </h6>
+
+                                                            <small class="text-muted">
+
+                                                                {{ report.description }}
+
+                                                            </small>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+
+                                        <!-- =================================
+                                             OTHER REPORTS
+                                             ================================= -->
+
+                                        {% else %}
+
+                                            <div class="border rounded p-3 h-100">
+
+                                                <div class="d-flex align-items-center gap-3">
+
+                                                    <div>
+
+                                                        <i class="fa-solid fa-file-lines fs-4 text-primary"></i>
+
+                                                    </div>
+
+                                                    <div class="min-width-0">
+
+                                                        <h6 class="mb-1">
+
+                                                            {{ report.name }}
+
+                                                        </h6>
+
+                                                        <small class="text-muted">
+
+                                                            {{ report.description }}
+
+                                                        </small>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        {% endif %}
+
+
+                                    </div>
+
+                                {% endfor %}
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+
+        <!-- =====================================================
+             NO REPORTS
+             ===================================================== -->
+
+        <div class="alert alert-info">
+
+            No reports are currently available for your role.
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

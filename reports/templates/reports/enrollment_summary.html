@@ -1,0 +1,743 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-3">
+
+
+    <!-- =====================================================
+         REPORT HEADER
+         ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-2">
+
+                <a
+                    href="{% url 'report_center' %}"
+                    class="btn btn-outline-secondary btn-sm"
+                >
+                    <i class="fa-solid fa-arrow-left me-1"></i>
+                    Reports Center
+                </a>
+
+            </div>
+
+            <div class="eyebrow mb-1">
+                REPORTS CENTER
+            </div>
+
+            <h2 class="mb-1">
+                Enrollment Summary
+            </h2>
+
+            <div class="text-muted small">
+                Student enrollment overview across the academic structure.
+            </div>
+
+        </div>
+
+
+        <!-- ======================================================
+            EXPORT ACTIONS
+            ====================================================== -->
+
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+
+            <a
+                href="{% url 'enrollment_summary_excel' %}"
+                class="btn btn-outline-success btn-sm"
+            >
+                <i class="fa-solid fa-file-excel me-1"></i>
+                Excel
+            </a>
+
+            <a
+                href="{% url 'enrollment_summary_pdf' %}"
+                class="btn btn-outline-danger btn-sm"
+            >
+                <i class="fa-solid fa-file-pdf me-1"></i>
+                PDF
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ENROLLMENT OVERVIEW
+         ===================================================== -->
+
+    <section class="dashboard-section mb-4">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+
+            <div>
+
+                <div class="fw-semibold">
+                    Enrollment Overview
+                </div>
+
+                <div class="text-muted small">
+                    Current student population and academic structure.
+                </div>
+
+            </div>
+
+            {% if report_role %}
+
+                <div class="text-muted small">
+                    {{ report_role|title }} View
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="row g-3">
+
+
+            <!-- TOTAL STUDENTS -->
+
+            <div class="col-6 col-xl-2">
+
+                <div class="border rounded p-3 h-100">
+
+                    <div class="text-muted small mb-1">
+                        Total Students
+                    </div>
+
+                    <div class="fs-4 fw-semibold">
+                        {{ total_students }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIVE -->
+
+            <div class="col-6 col-xl-2">
+
+                <div class="border rounded p-3 h-100">
+
+                    <div class="text-muted small mb-1">
+                        Active
+                    </div>
+
+                    <div class="fs-4 fw-semibold">
+                        {{ active_students }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- INACTIVE -->
+
+            <div class="col-6 col-xl-2">
+
+                <div class="border rounded p-3 h-100">
+
+                    <div class="text-muted small mb-1">
+                        Inactive
+                    </div>
+
+                    <div class="fs-4 fw-semibold">
+                        {{ inactive_students }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DEPARTMENTS -->
+
+            <div class="col-6 col-xl-2">
+
+                <div class="border rounded p-3 h-100">
+
+                    <div class="text-muted small mb-1">
+                        Departments
+                    </div>
+
+                    <div class="fs-4 fw-semibold">
+                        {{ department_count }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- COURSES -->
+
+            <div class="col-6 col-xl-2">
+
+                <div class="border rounded p-3 h-100">
+
+                    <div class="text-muted small mb-1">
+                        Courses
+                    </div>
+
+                    <div class="fs-4 fw-semibold">
+                        {{ course_count }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROGRAMMES -->
+
+            <div class="col-6 col-xl-2">
+
+                <div class="border rounded p-3 h-100">
+
+                    <div class="text-muted small mb-1">
+                        Programmes
+                    </div>
+
+                    <div class="fs-4 fw-semibold">
+                        {{ programme_count }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ENROLLMENT BY DEPARTMENT
+         ===================================================== -->
+
+    <section class="dashboard-section mb-4">
+
+        <div class="mb-3">
+
+            <div class="fw-semibold">
+                Enrollment by Department
+            </div>
+
+            <div class="text-muted small">
+                Student population grouped by academic department.
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width: 60px;">
+                            #
+                        </th>
+
+                        <th>
+                            Department Code
+                        </th>
+
+                        <th>
+                            Department
+                        </th>
+
+                        <th class="text-end">
+                            Students
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for department in departments %}
+
+                        <tr>
+
+                            <td class="text-muted">
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ department.programme__course__department__code }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ department.programme__course__department__name }}
+                            </td>
+
+                            <td class="text-end fw-semibold">
+                                {{ department.total }}
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="text-center py-5"
+                            >
+
+                                <div class="dashboard-empty">
+
+                                    <i class="fa-solid fa-building-columns fa-2x text-muted mb-3"></i>
+
+                                    <div class="fw-semibold mb-1">
+                                        No enrollment data
+                                    </div>
+
+                                    <div class="text-muted small">
+                                        There are no student enrollment records available for this report.
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         COURSE + PROGRAMME
+         ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- COURSE -->
+
+        <div class="col-xl-6">
+
+            <section class="dashboard-section h-100">
+
+                <div class="mb-3">
+
+                    <div class="fw-semibold">
+                        Enrollment by Course
+                    </div>
+
+                    <div class="text-muted small">
+                        Student population grouped by course.
+                    </div>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Course
+                                </th>
+
+                                <th class="text-end">
+                                    Students
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for course in courses %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+                                            {{ course.programme__course__name }}
+                                        </div>
+
+                                        <div class="text-muted small">
+                                            {{ course.programme__course__code }}
+                                        </div>
+
+                                    </td>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ course.total }}
+                                    </td>
+
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="2"
+                                        class="text-center py-4 text-muted"
+                                    >
+                                        No course enrollment data available.
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- PROGRAMME -->
+
+        <div class="col-xl-6">
+
+            <section class="dashboard-section h-100">
+
+                <div class="mb-3">
+
+                    <div class="fw-semibold">
+                        Enrollment by Programme
+                    </div>
+
+                    <div class="text-muted small">
+                        Student population grouped by programme and award.
+                    </div>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Programme
+                                </th>
+
+                                <th>
+                                    Award
+                                </th>
+
+                                <th class="text-end">
+                                    Students
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for programme in programmes %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+                                            {{ programme.programme__name }}
+                                        </div>
+
+                                        <div class="text-muted small">
+                                            {{ programme.programme__code }}
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+                                        {{ programme.programme__award|title }}
+                                    </td>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ programme.total }}
+                                    </td>
+
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="3"
+                                        class="text-center py-4 text-muted"
+                                    >
+                                        No programme enrollment data available.
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         AWARD + DEMOGRAPHIC SUMMARY
+         ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- AWARD -->
+
+        <div class="col-xl-6">
+
+            <section class="dashboard-section h-100">
+
+                <div class="mb-3">
+
+                    <div class="fw-semibold">
+                        Enrollment by Award
+                    </div>
+
+                    <div class="text-muted small">
+                        Students grouped by programme award level.
+                    </div>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Award
+                                </th>
+
+                                <th class="text-end">
+                                    Students
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for award in awards %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ award.programme__award|title }}
+                                    </td>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ award.total }}
+                                    </td>
+
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="2"
+                                        class="text-center py-4 text-muted"
+                                    >
+                                        No award data available.
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- GENDER -->
+
+        <div class="col-xl-3">
+
+            <section class="dashboard-section h-100">
+
+                <div class="mb-3">
+
+                    <div class="fw-semibold">
+                        Gender
+                    </div>
+
+                    <div class="text-muted small">
+                        Student distribution.
+                    </div>
+
+                </div>
+
+
+                {% for item in gender %}
+
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+
+                        <span>
+                            {{ item.gender|default:"Not specified" }}
+                        </span>
+
+                        <strong>
+                            {{ item.total }}
+                        </strong>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="text-muted small">
+                        No gender data available.
+                    </div>
+
+                {% endfor %}
+
+            </section>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="col-xl-3">
+
+            <section class="dashboard-section h-100">
+
+                <div class="mb-3">
+
+                    <div class="fw-semibold">
+                        Student Status
+                    </div>
+
+                    <div class="text-muted small">
+                        Current student status.
+                    </div>
+
+                </div>
+
+
+                {% for item in status %}
+
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+
+                        <span>
+                            {{ item.status|title }}
+                        </span>
+
+                        <strong>
+                            {{ item.total }}
+                        </strong>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="text-muted small">
+                        No status data available.
+                    </div>
+
+                {% endfor %}
+
+            </section>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         REPORT FOOTER
+         ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+
+        <div class="text-muted small">
+
+            <i class="fa-solid fa-circle-info me-1"></i>
+
+            Enrollment Summary
+
+        </div>
+
+        <div class="text-muted small">
+
+            XORADEX EDUCORE ERP
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}
+

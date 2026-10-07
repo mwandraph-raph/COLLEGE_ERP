@@ -1,0 +1,1245 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-3">
+
+<!-- =========================================================
+     REPORT HEADER + NAVIGATION
+     ========================================================= -->
+
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-2">
+
+            <a
+                href="{% url 'report_center' %}"
+                class="btn btn-outline-secondary btn-sm"
+            >
+                <i class="fa-solid fa-arrow-left me-1"></i>
+                Reports Center
+            </a>
+
+        </div>
+
+        <div class="eyebrow mb-1">REPORTS CENTER</div>
+
+        <h2 class="mb-1">
+            Student Master Register
+        </h2>
+
+        <div class="text-muted small">
+            Complete student registration, enrolment and academic records
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+
+        <a
+            href="{% url 'student_register_excel' %}"
+            id="excelExport"
+            class="dashboard-action"
+        >
+            <i class="fa-solid fa-file-excel me-1"></i>
+            Export Excel
+        </a>
+
+        <a
+            href="{% url 'student_register_pdf' %}"
+            id="pdfExport"
+            class="dashboard-action"
+        >
+            <i class="fa-solid fa-file-pdf me-1"></i>
+            Export PDF
+        </a>
+
+    </div>
+
+</div>
+
+
+    <!-- =========================================================
+         REPORT SUMMARY
+         ========================================================= -->
+
+    <section class="dashboard-section mb-3">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div>
+                    <div class="text-muted small">
+                        Current Result Set
+                    </div>
+
+                    <div
+                        class="fw-semibold fs-5"
+                        id="resultCount"
+                    >
+                        {{ rows|length }}
+                        student{{ rows|length|pluralize }}
+                    </div>
+                </div>
+
+                <div class="vr d-none d-md-block"></div>
+
+                <div>
+                    <div class="text-muted small">
+                        Report
+                    </div>
+
+                    <div class="fw-semibold">
+                        Student Register
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div
+                id="searchStatus"
+                class="text-muted small"
+                aria-live="polite"
+            ></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         FILTERS
+         ========================================================= -->
+
+    <section class="dashboard-section mb-3">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+
+            <div>
+
+                <div class="fw-semibold">
+                    Filter student records
+                </div>
+
+                <div class="text-muted small">
+                    Refine the register using academic, demographic and admission criteria.
+                </div>
+
+            </div>
+
+            <a
+                href="{% url 'student_register_report' %}"
+                class="btn btn-outline-secondary btn-sm"
+            >
+                <i class="fa-solid fa-rotate-left me-1"></i>
+                Reset Filters
+            </a>
+
+        </div>
+
+
+        <form
+            method="get"
+            id="studentRegisterFilterForm"
+        >
+
+            <!-- =================================================
+                 PRIMARY SEARCH
+                 ================================================= -->
+
+            <div class="mb-3">
+
+                <label
+                    for="search"
+                    class="form-label small mb-1"
+                >
+                    Search students
+                </label>
+
+                <div class="position-relative">
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+
+                        <input
+                            type="search"
+                            name="search"
+                            id="search"
+                            class="form-control"
+                            placeholder="Search by admission number, student name or other available student details..."
+                            value="{{ search }}"
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACADEMIC FILTERS
+                 ================================================= -->
+
+            <div class="row g-3">
+
+                <!-- DEPARTMENT -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <label
+                        for="department"
+                        class="form-label small mb-1"
+                    >
+                        Department
+                    </label>
+
+                    <select
+                        name="department"
+                        id="department"
+                        class="form-select form-select-sm"
+                    >
+
+                        <option value="">
+                            All Departments
+                        </option>
+
+                        {% for department in departments %}
+
+                            <option
+                                value="{{ department.programme__course__department_id }}"
+                                {% if selected_department == department.programme__course__department_id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ department.programme__course__department__name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- COURSE -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <label
+                        for="course"
+                        class="form-label small mb-1"
+                    >
+                        Course
+                    </label>
+
+                    <select
+                        name="course"
+                        id="course"
+                        class="form-select form-select-sm"
+                    >
+
+                        <option value="">
+                            All Courses
+                        </option>
+
+                        {% for course in courses %}
+
+                            <option
+                                value="{{ course.programme__course_id }}"
+                                {% if selected_course == course.programme__course_id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ course.programme__course__name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- PROGRAMME -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <label
+                        for="programme"
+                        class="form-label small mb-1"
+                    >
+                        Programme
+                    </label>
+
+                    <select
+                        name="programme"
+                        id="programme"
+                        class="form-select form-select-sm"
+                    >
+
+                        <option value="">
+                            All Programmes
+                        </option>
+
+                        {% for programme in programmes %}
+
+                            <option
+                                value="{{ programme.programme_id }}"
+                                {% if selected_programme == programme.programme_id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ programme.programme__name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <label
+                        for="status"
+                        class="form-label small mb-1"
+                    >
+                        Student Status
+                    </label>
+
+                    <select
+                        name="status"
+                        id="status"
+                        class="form-select form-select-sm"
+                    >
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        {% for value, label in status_choices %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if selected_status == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- =================================================
+                     SECONDARY FILTERS
+                     ================================================= -->
+
+                <!-- GENDER -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <label
+                        for="gender"
+                        class="form-label small mb-1"
+                    >
+                        Gender
+                    </label>
+
+                    <select
+                        name="gender"
+                        id="gender"
+                        class="form-select form-select-sm"
+                    >
+
+                        <option value="">
+                            All Genders
+                        </option>
+
+                        {% for value, label in gender_choices %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if selected_gender == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- FROM DATE -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <label
+                        for="admission_date_from"
+                        class="form-label small mb-1"
+                    >
+                        Admission Date From
+                    </label>
+
+                    <input
+                        type="date"
+                        name="admission_date_from"
+                        id="admission_date_from"
+                        class="form-control form-control-sm"
+                        value="{{ admission_date_from }}"
+                    >
+
+                </div>
+
+
+                <!-- TO DATE -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <label
+                        for="admission_date_to"
+                        class="form-label small mb-1"
+                    >
+                        Admission Date To
+                    </label>
+
+                    <input
+                        type="date"
+                        name="admission_date_to"
+                        id="admission_date_to"
+                        class="form-control form-control-sm"
+                        value="{{ admission_date_to }}"
+                    >
+
+                </div>
+
+
+                <!-- APPLY -->
+
+                <div class="col-md-6 col-xl-3 d-flex align-items-end">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-sm w-100"
+                    >
+                        <i class="fa-solid fa-filter me-1"></i>
+                        Apply Filters
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================================================
+         RESULTS HEADER
+         ========================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+
+        <div>
+
+            <div class="fw-semibold">
+                Student Register
+            </div>
+
+            <div class="text-muted small">
+                Live student records matching the current criteria
+            </div>
+
+        </div>
+
+
+        <div
+            class="text-muted small"
+            id="tableSummary"
+        >
+            Showing
+            {{ rows|length }}
+            student{{ rows|length|pluralize }}
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         DATA TABLE
+         ========================================================= -->
+
+    <section class="dashboard-section p-0 overflow-hidden">
+
+        <div class="table-responsive">
+
+            <table
+                class="table align-middle mb-0"
+                id="studentRegisterTable"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width: 50px;">
+                            #
+                        </th>
+
+                        <th>
+                            Admission No.
+                        </th>
+
+                        <th>
+                            Student
+                        </th>
+
+                        <th>
+                            Gender
+                        </th>
+
+                        <th>
+                            Department
+                        </th>
+
+                        <th>
+                            Course
+                        </th>
+
+                        <th>
+                            Programme
+                        </th>
+
+                        <th>
+                            Admission Date
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="studentRegisterBody">
+
+                    {% for row in rows %}
+
+                        <tr>
+
+                            <td class="text-muted">
+                                {{ forloop.counter }}
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    {{ row.admission_no }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="fw-semibold">
+                                    {{ row.name }}
+                                </div>
+
+                                {% if row.email %}
+
+                                    <div class="text-muted small">
+                                        {{ row.email }}
+                                    </div>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+                                {{ row.gender|default:"—" }}
+                            </td>
+
+
+                            <td>
+                                {{ row.department|default:"—" }}
+                            </td>
+
+
+                            <td>
+                                {{ row.course|default:"—" }}
+                            </td>
+
+
+                            <td>
+                                {{ row.programme|default:"—" }}
+                            </td>
+
+
+                            <td>
+
+                                {% if row.admission_date %}
+
+                                    {{ row.admission_date|date:"d M Y" }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if row.status %}
+
+                                    <span class="dashboard-status">
+                                        {{ row.status }}
+                                    </span>
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                class="text-center py-5"
+                            >
+
+                                <div class="dashboard-empty">
+
+                                    <i class="fa-solid fa-user-graduate fa-2x text-muted mb-3"></i>
+
+                                    <div class="fw-semibold mb-1">
+                                        No students found
+                                    </div>
+
+                                    <div class="text-muted small">
+                                        No students match the selected criteria.
+                                        Try adjusting your filters or search term.
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         REPORT FOOTER
+         ========================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+
+        <div class="text-muted small">
+
+            <i class="fa-solid fa-circle-info me-1"></i>
+
+            Student Master Register
+
+        </div>
+
+        <div class="text-muted small">
+
+            XORADEX EDUCORE ERP
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    // =========================================================
+    // ELEMENTS
+    // =========================================================
+
+    const form = document.getElementById(
+        "studentRegisterFilterForm"
+    );
+
+    const searchInput = document.getElementById(
+        "search"
+    );
+
+    const tableBody = document.getElementById(
+        "studentRegisterBody"
+    );
+
+    const resultCount = document.getElementById(
+        "resultCount"
+    );
+
+    const tableSummary = document.getElementById(
+        "tableSummary"
+    );
+
+    const searchStatus = document.getElementById(
+        "searchStatus"
+    );
+
+    const excelExport = document.getElementById(
+        "excelExport"
+    );
+
+    const pdfExport = document.getElementById(
+        "pdfExport"
+    );
+
+
+    let searchTimer = null;
+
+
+    // =========================================================
+    // SAFETY CHECK
+    // =========================================================
+
+    if (
+        !form ||
+        !searchInput ||
+        !tableBody ||
+        !resultCount ||
+        !tableSummary ||
+        !searchStatus ||
+        !excelExport ||
+        !pdfExport
+    ) {
+        return;
+    }
+
+
+    // =========================================================
+    // BUILD QUERY STRING
+    // =========================================================
+
+    function getQueryString() {
+
+        const formData = new FormData(form);
+
+        const params = new URLSearchParams();
+
+
+        for (
+            const [key, value]
+            of formData.entries()
+        ) {
+
+            if (value !== "") {
+
+                params.set(
+                    key,
+                    value
+                );
+
+            }
+
+        }
+
+
+        return params;
+
+    }
+
+
+    // =========================================================
+    // ESCAPE HTML
+    // =========================================================
+
+    function escapeHtml(value) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+
+            return "";
+
+        }
+
+
+        return String(value)
+
+            .replace(/&/g, "&amp;")
+
+            .replace(/</g, "&lt;")
+
+            .replace(/>/g, "&gt;")
+
+            .replace(/"/g, "&quot;")
+
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    // =========================================================
+    // FORMAT DATE
+    // =========================================================
+
+    function formatDate(value) {
+
+        if (!value) {
+
+            return "—";
+
+        }
+
+
+        const date = new Date(
+            value + "T00:00:00"
+        );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return escapeHtml(value);
+
+        }
+
+
+        return date.toLocaleDateString(
+            "en-GB",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
+
+    }
+
+
+    // =========================================================
+    // UPDATE RESULT SUMMARY
+    // =========================================================
+
+    function updateSummary(count) {
+
+        const label =
+            count === 1
+                ? "student"
+                : "students";
+
+
+        resultCount.textContent =
+            count + " " + label;
+
+
+        tableSummary.textContent =
+            "Showing " +
+            count +
+            " " +
+            label;
+
+    }
+
+
+    // =========================================================
+    // RENDER TABLE
+    // =========================================================
+
+    function renderRows(rows) {
+
+        if (
+            !rows ||
+            !rows.length
+        ) {
+
+            tableBody.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="text-center py-5"
+                    >
+
+                        <div class="dashboard-empty">
+
+                            <i class="fa-solid fa-user-graduate fa-2x text-muted mb-3"></i>
+
+                            <div class="fw-semibold mb-1">
+                                No students found
+                            </div>
+
+                            <div class="text-muted small">
+                                No students match the selected criteria.
+                                Try adjusting your filters or search term.
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+        tableBody.innerHTML = rows.map(
+            function (row, index) {
+
+                return `
+
+                    <tr>
+
+                        <td class="text-muted">
+                            ${index + 1}
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                ${escapeHtml(row.admission_no)}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="fw-semibold">
+                                ${escapeHtml(row.name)}
+                            </div>
+
+                            ${
+                                row.email
+                                    ? `
+                                        <div class="text-muted small">
+                                            ${escapeHtml(row.email)}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(row.gender || "—")}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(row.department || "—")}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(row.course || "—")}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(row.programme || "—")}
+                        </td>
+
+
+                        <td>
+                            ${formatDate(row.admission_date)}
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                row.status
+                                    ? `
+                                        <span class="dashboard-status">
+                                            ${escapeHtml(row.status)}
+                                        </span>
+                                    `
+                                    : "—"
+                            }
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        ).join("");
+
+    }
+
+
+    // =========================================================
+    // UPDATE EXPORT LINKS
+    // =========================================================
+
+    function updateExportLinks() {
+
+        const params = getQueryString();
+
+        const query = params.toString();
+
+
+        excelExport.href =
+            "{% url 'student_register_excel' %}" +
+            (
+                query
+                    ? "?" + query
+                    : ""
+            );
+
+
+        pdfExport.href =
+            "{% url 'student_register_pdf' %}" +
+            (
+                query
+                    ? "?" + query
+                    : ""
+            );
+
+    }
+
+
+    // =========================================================
+    // AJAX SEARCH
+    // =========================================================
+
+    function performAjaxSearch() {
+
+        const params = getQueryString();
+
+
+        searchStatus.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin me-1"></i>
+            Updating results…
+        `;
+
+
+        fetch(
+            "{% url 'student_register_ajax_search' %}?" +
+            params.toString(),
+            {
+                method: "GET",
+
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            }
+        )
+
+        .then(
+            function (response) {
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Search request failed."
+                    );
+
+                }
+
+
+                return response.json();
+
+            }
+        )
+
+        .then(
+            function (data) {
+
+                if (!data.success) {
+
+                    throw new Error(
+                        "Unable to retrieve students."
+                    );
+
+                }
+
+
+                renderRows(
+                    data.rows
+                );
+
+
+                const count =
+                    Number(data.count) || 0;
+
+
+                updateSummary(
+                    count
+                );
+
+
+                searchStatus.textContent = "";
+
+            }
+        )
+
+        .catch(
+            function (error) {
+
+                console.error(error);
+
+                searchStatus.textContent =
+                    "Unable to update results.";
+
+            }
+        );
+
+    }
+
+
+    // =========================================================
+    // LIVE SEARCH
+    // =========================================================
+
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            clearTimeout(
+                searchTimer
+            );
+
+
+            searchTimer = setTimeout(
+                function () {
+
+                    updateExportLinks();
+
+                    performAjaxSearch();
+
+                },
+                350
+            );
+
+        }
+    );
+
+
+    // =========================================================
+    // FILTER SUBMIT
+    // =========================================================
+
+    form.addEventListener(
+        "submit",
+        function () {
+
+            updateExportLinks();
+
+        }
+    );
+
+
+    // =========================================================
+    // FILTER CHANGES
+    // =========================================================
+
+    [
+        "department",
+        "course",
+        "programme",
+        "status",
+        "gender",
+        "admission_date_from",
+        "admission_date_to"
+    ].forEach(
+        function (id) {
+
+            const element =
+                document.getElementById(id);
+
+
+            if (!element) {
+
+                return;
+
+            }
+
+
+            element.addEventListener(
+                "change",
+                function () {
+
+                    updateExportLinks();
+
+                }
+            );
+
+        }
+    );
+
+
+    // =========================================================
+    // INITIAL EXPORT URLS
+    // =========================================================
+
+    updateExportLinks();
+
+})();
+
+</script>
+
+{% endblock %}

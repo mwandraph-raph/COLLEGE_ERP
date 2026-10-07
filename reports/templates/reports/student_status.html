@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-3">
+
+<!-- ======================================================
+     HEADER
+     ====================================================== -->
+
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+
+    <div>
+
+        <div class="d-flex align-items-center gap-2 mb-2">
+
+            <a
+                href="{% url 'report_center' %}"
+                class="btn btn-outline-secondary btn-sm"
+            >
+                <i class="fa-solid fa-arrow-left me-1"></i>
+                Reports Center
+            </a>
+
+        </div>
+
+        <div class="eyebrow mb-1">
+            REPORTS CENTER
+        </div>
+
+        <h2 class="mb-1">
+            Student Status Report
+        </h2>
+
+        <div class="text-muted small">
+            Student numbers grouped by current status.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     OVERVIEW
+     ====================================================== -->
+
+<section class="dashboard-section mb-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+
+        <div>
+
+            <div class="fw-semibold">
+                Student Status Overview
+            </div>
+
+            <div class="text-muted small">
+                Current distribution of students by status.
+            </div>
+
+        </div>
+
+        {% if report_role %}
+
+            <div class="text-muted small">
+                {{ report_role|title }} View
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="row g-3">
+
+        <!-- TOTAL -->
+
+        <div class="col-12 col-sm-6 col-xl-4">
+
+            <div class="border rounded p-3 h-100">
+
+                <div class="text-muted small mb-1">
+                    Total Students
+                </div>
+
+                <div class="fs-4 fw-semibold">
+                    {{ total_students }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE -->
+
+        <div class="col-12 col-sm-6 col-xl-4">
+
+            <div class="border rounded p-3 h-100">
+
+                <div class="text-muted small mb-1">
+                    Active Students
+                </div>
+
+                <div class="fs-4 fw-semibold">
+                    {{ active_students }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- INACTIVE -->
+
+        <div class="col-12 col-sm-6 col-xl-4">
+
+            <div class="border rounded p-3 h-100">
+
+                <div class="text-muted small mb-1">
+                    Inactive Students
+                </div>
+
+                <div class="fs-4 fw-semibold">
+                    {{ inactive_students }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     STATUS BREAKDOWN
+     ====================================================== -->
+
+<section class="dashboard-section mb-4">
+
+    <div class="mb-3">
+
+        <div class="fw-semibold">
+            Student Status Breakdown
+        </div>
+
+        <div class="text-muted small">
+            Student numbers grouped by current status.
+        </div>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table align-middle mb-0">
+
+            <thead>
+
+                <tr>
+
+                    <th style="width: 60px;">
+                        #
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th class="text-end">
+                        Students
+                    </th>
+
+                    <th class="text-end">
+                        Percentage
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for item in statuses %}
+
+                    <tr>
+
+                        <td class="text-muted">
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+
+                            <div class="fw-semibold">
+                                {{ item.label }}
+                            </div>
+
+                        </td>
+
+                        <td class="text-end fw-semibold">
+                            {{ item.total }}
+                        </td>
+
+                        <td class="text-end">
+                            {{ item.percentage }}%
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="text-center py-5"
+                        >
+
+                            <div class="dashboard-empty">
+
+                                <i
+                                    class="fa-solid fa-user-check fa-2x text-muted mb-3"
+                                ></i>
+
+                                <div class="fw-semibold mb-1">
+                                    No student status data
+                                </div>
+
+                                <div class="text-muted small">
+                                    There are no student records available
+                                    for this report.
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     REPORT FOOTER
+     ====================================================== -->
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+
+    <div class="text-muted small">
+
+        <i class="fa-solid fa-circle-info me-1"></i>
+
+        Student Status Report
+
+    </div>
+
+
+    <div class="text-muted small">
+
+        XORADEX EDUCORE ERP
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

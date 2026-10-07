@@ -45,6 +45,10 @@ urlpatterns = [
         include("communication.urls"),
     ),
 
+    path("reports/",
+          include("reports.urls"),
+    ),
+
 ]
 
 
